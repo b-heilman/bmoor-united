@@ -1,6 +1,21 @@
 {
-  "noEmitOnError": true,
-  "noImplicitAny": true,
-  "noImplicitReturns": true,
-  "noFallthroughCasesInSwitch": true
+  "compilerOptions": {
+    "module": "commonjs",
+    "composite": true,
+    "moduleResolution": "node",
+    "removeComments": true,
+
+    "noEmitOnError": true,
+    "noImplicitAny": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+
+    "target": "es2019",
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "lib": [
+      "es2019"
+    ]
+  }
 }

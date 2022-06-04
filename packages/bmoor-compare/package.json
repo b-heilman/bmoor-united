@@ -1,7 +1,7 @@
 {
-  "name": "@bmoor/object",
+  "name": "@bmoor/compare",
   "version": "0.1.0",
-  "description": "Better ways to work with objects",
+  "description": "Comparison functions",
   "main": "src/index.ts",
   "files": [
     "src/*[!.spec].js",
