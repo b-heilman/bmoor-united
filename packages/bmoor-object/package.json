@@ -1,0 +1,19 @@
+{
+  "name": "@bmoor/object",
+  "version": "0.1.0",
+  "description": "Better ways to work with objects",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/b-heilman/bmoor-united.git"
+  },
+  "author": "Brian Heilman",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/b-heilman/bmoor-united/issues"
+  },
+  "homepage": "https://github.com/b-heilman/bmoor-united#readme"
+}
