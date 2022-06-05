@@ -1,8 +1,8 @@
 import {expect} from 'chai';
-import {parsePath, set, DynamicObject, makeSetter} from './index';
+import {DynamicObject, parsePath, set, makeSetter, get, makeGetter} from './index';
 
 describe('@bmoor/object', function () {
-	describe('parse', function () {
+	describe('parsePath', function () {
 		it('should parse an array correctly', function () {
 			expect(parsePath(['1', '2', '3'])).to.deep.equal(['1', '2', '3']);
 		});
@@ -80,6 +80,94 @@ describe('@bmoor/object', function () {
 			}
 
 			expect(failed).to.equal(true);
+		});
+	});
+
+	describe('get', function () {
+		it('should be working', function () {
+			const t = {
+				eins: 1,
+				zwei: {
+					drei: 3
+				}
+			};
+
+			expect(get(t, 'eins')).to.equal(1);
+			expect(get(t, 'zwei.drei')).to.equal(3);
+		});
+
+		it('should be working with empty strings', function () {
+			const t = {
+				eins: 1,
+				zwei: {
+					drei: 3
+				}
+			};
+
+			expect(get(t, '')).to.equal(null);
+		});
+
+		it('should not allow __proto__', function () {
+			const t = get({}, '__proto__');
+
+			expect(t).to.equal(null);
+		});
+	});
+
+	describe('makeGetter', function () {
+		it('should be working', function () {
+			const t = {
+				eins: 1,
+				zwei: {
+					drei: 3
+				}
+			};
+			const f1 = makeGetter<number>('eins');
+			const f2 = makeGetter<number>('zwei.drei');
+
+			expect(f1(t)).to.equal(1);
+			expect(f2(t)).to.equal(3);
+		});
+
+		it('should fail with __proto__', function () {
+			let failed = false;
+
+			try {
+				makeGetter('__proto__.polluted');
+			} catch (ex) {
+				failed = true;
+			}
+
+			expect(failed).to.equal(true);
+		});
+
+		it('should work with empty strings', function () {
+			const f1 = makeGetter<number>('');
+
+			expect(f1).to.equal(null);
+		});
+	});
+
+	describe('set + get', function(){
+		it('should allow setting a variable and getting it back', function(){
+			const t = <DynamicObject<number>>{};
+
+			set<number>(t, 'zwei.drei', 3);
+
+			expect(get<number>(t, 'zwei.drei')).to.equal(3);
+		});
+	});
+
+	describe('makeSetter + makeGetter', function(){
+		it('should allow setting a variable and getting it back', function(){
+			const setter = makeSetter<number>('zwei.drei');
+			const getter = makeGetter<number>('zwei.drei');
+
+			const t = <DynamicObject<number>>{};
+
+			setter(t, 3);
+
+			expect(getter(t)).to.equal(3);
 		});
 	});
 });

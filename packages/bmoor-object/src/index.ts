@@ -126,45 +126,46 @@ export function makeSetter<T>(space: IncomingPathType): SetterFn<T> {
  * @param {object} root The root of the namespace, bMoor.namespace.root if not defined
  * @param {string|array|function} space The namespace
  * @return {array}
+ **/
+export function get<T>(root: DynamicObject<T>, path: IncomingPathType): T {
+	const space = parsePath(path);
 
-export function get(root, path: IncomingPathType) {
-	var i,
-		c,
-		space,
-		nextSpace,
-		curSpace = root;
+	let curSpace = root;
+	let rtnValue = null;
 
-	if (!root) {
-		return root;
-	}
+	let nextSpace = null;
 
-	space = parsePath(path);
-	if (space.length) {
-		for (i = 0, c = space.length; i < c; i++) {
-			nextSpace = String(space[i]);
+	for (let i = 0, c = space.length-1; !rtnValue; i++) {
+		nextSpace = space[i];
 
-			if (
-				nextSpace === '__proto__' ||
-				nextSpace === 'constructor' ||
-				nextSpace === 'prototype'
-			) {
-				return null;
+		if (
+			nextSpace === '__proto__' ||
+			nextSpace === 'constructor' ||
+			nextSpace === 'prototype'
+		) {
+			return rtnValue;
+		}
+
+		if (nextSpace in curSpace) {
+			if (i === c){
+				rtnValue = <T>curSpace[nextSpace];
+			} else { 
+				curSpace = <DynamicObject<T>>curSpace[nextSpace];
 			}
-
-			if (isUndefined(curSpace[nextSpace])) {
-				return;
-			}
-
-			curSpace = curSpace[nextSpace];
+		} else {
+			return null;
 		}
 	}
 
-	return curSpace;
+	return rtnValue;
 }
 
-export function _makeGetter(property, next) {
-	property = String(property);
+type GetterFn<T> = (root: DynamicObject<T>) => T;
 
+export function _makeGetter<T>(
+	property: string,
+	next: GetterFn<T>
+): GetterFn<T> {
 	if (
 		property === '__proto__' ||
 		property === 'constructor' ||
@@ -174,17 +175,17 @@ export function _makeGetter(property, next) {
 	}
 
 	if (next) {
-		return function getter(obj) {
+		return function getter(obj: DynamicObject<T>): T {
 			try {
-				return next(obj[property]);
+				return next(<DynamicObject<T>>obj[property]);
 			} catch (ex) {
 				return undefined;
 			}
 		};
 	} else {
-		return function getter(obj) {
+		return function getter(obj: DynamicObject<T>): T {
 			try {
-				return obj[property];
+				return <T>obj[property];
 			} catch (ex) {
 				return undefined;
 			}
@@ -192,19 +193,14 @@ export function _makeGetter(property, next) {
 	}
 }
 
-export function makeGetter(path: IncomingPathType) {
-	var i,
-		fn,
-		space = parsePath(path);
+export function makeGetter<T>(path: IncomingPathType): GetterFn<T> {
+	const space = parsePath(path);
 
-	if (space.length) {
-		for (i = space.length - 1; i > -1; i--) {
-			fn = _makeGetter(space[i], fn);
-		}
-	} else {
-		return function (obj) {
-			return obj;
-		};
+	let fn = null;
+
+	// if space.length === 0, fn is still null
+	for (let i = space.length - 1; i > -1; i--) {
+		fn = _makeGetter<T>(space[i], fn);
 	}
 
 	return fn;
