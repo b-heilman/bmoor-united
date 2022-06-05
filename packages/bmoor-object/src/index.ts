@@ -1,4 +1,4 @@
-import {isString, isArray, isUndefined /*, isArrayLike*/} from '@bmoor/compare';
+import {isString, isArray, isUndefined} from '@bmoor/compare';
 
 export type ParsedPathType = Array<string>;
 export type IncomingPathType = string | ParsedPathType;
@@ -73,6 +73,7 @@ export function set<T>(
 	return curSpace;
 }
 
+// https://www.typescriptlang.org/docs/handbook/2/functions.html
 type SetterFn<T> = (root: DynamicObject<T>, value: T) => DynamicObject<T>;
 
 export function _makeSetter<T>(
@@ -132,10 +133,9 @@ export function get<T>(root: DynamicObject<T>, path: IncomingPathType): T {
 
 	let curSpace = root;
 	let rtnValue = null;
-
 	let nextSpace = null;
 
-	for (let i = 0, c = space.length-1; !rtnValue; i++) {
+	for (let i = 0, c = space.length - 1; !rtnValue; i++) {
 		nextSpace = space[i];
 
 		if (
@@ -147,9 +147,9 @@ export function get<T>(root: DynamicObject<T>, path: IncomingPathType): T {
 		}
 
 		if (nextSpace in curSpace) {
-			if (i === c){
+			if (i === c) {
 				rtnValue = <T>curSpace[nextSpace];
-			} else { 
+			} else {
 				curSpace = <DynamicObject<T>>curSpace[nextSpace];
 			}
 		} else {
@@ -213,32 +213,29 @@ export function makeGetter<T>(path: IncomingPathType): GetterFn<T> {
  * @param {object} root The root of the namespace, bMoor.namespace.root if not defined
  * @param {string|array} space The namespace
  * @return {*}
+ **/
 
-export function del(root, space: IncomingPathType) {
-	var old,
-		val,
-		nextSpace,
-		curSpace = root;
+export function del<T>(root: DynamicObject<T>, path: IncomingPathType): T {
+	const space = parsePath(path);
 
-	if (space && (isString(space) || isArrayLike(space))) {
-		space = parsePath(space);
+	let curSpace = root;
+	let rtnValue = null;
+	let nextSpace = null;
 
-		val = space.pop();
+	for (let i = 0, c = space.length - 1; !rtnValue; i++) {
+		nextSpace = space[i];
 
-		for (var i = 0; i < space.length; i++) {
-			nextSpace = space[i];
-
-			if (isUndefined(curSpace[nextSpace])) {
-				return;
+		if (nextSpace in curSpace) {
+			if (i === c) {
+				rtnValue = <T>curSpace[nextSpace];
+				delete curSpace[nextSpace];
+			} else {
+				curSpace = <DynamicObject<T>>curSpace[nextSpace];
 			}
-
-			curSpace = curSpace[nextSpace];
+		} else {
+			return null;
 		}
-
-		old = curSpace[val];
-		delete curSpace[val];
 	}
 
-	return old;
+	return rtnValue;
 }
-**/

@@ -1,5 +1,13 @@
 import {expect} from 'chai';
-import {DynamicObject, parsePath, set, makeSetter, get, makeGetter} from './index';
+import {
+	DynamicObject,
+	parsePath,
+	set,
+	makeSetter,
+	get,
+	makeGetter,
+	del
+} from './index';
 
 describe('@bmoor/object', function () {
 	describe('parsePath', function () {
@@ -148,8 +156,8 @@ describe('@bmoor/object', function () {
 		});
 	});
 
-	describe('set + get', function(){
-		it('should allow setting a variable and getting it back', function(){
+	describe('set + get', function () {
+		it('should allow setting a variable and getting it back', function () {
 			const t = <DynamicObject<number>>{};
 
 			set<number>(t, 'zwei.drei', 3);
@@ -158,8 +166,8 @@ describe('@bmoor/object', function () {
 		});
 	});
 
-	describe('makeSetter + makeGetter', function(){
-		it('should allow setting a variable and getting it back', function(){
+	describe('makeSetter + makeGetter', function () {
+		it('should allow setting a variable and getting it back', function () {
 			const setter = makeSetter<number>('zwei.drei');
 			const getter = makeGetter<number>('zwei.drei');
 
@@ -168,6 +176,23 @@ describe('@bmoor/object', function () {
 			setter(t, 3);
 
 			expect(getter(t)).to.equal(3);
+		});
+	});
+
+	describe('del', function () {
+		it('should work', function () {
+			const t = {
+				eins: 1,
+				zwei: {
+					drei: 3
+				}
+			};
+
+			expect(del(t, 'eins')).to.equal(1);
+			expect(del(t, 'zwei.drei')).to.equal(3);
+			expect(t.eins).to.not.exist;
+			expect(t.zwei).to.exist;
+			expect(t.zwei.drei).to.not.exist;
 		});
 	});
 });
