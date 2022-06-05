@@ -1,5 +1,5 @@
 import {expect} from 'chai';
-import {parsePath, set, DynamicObject} from './index';
+import {parsePath, set, DynamicObject, makeSetter} from './index';
 
 describe('@bmoor/object', function () {
 	describe('parse', function () {
@@ -54,6 +54,32 @@ describe('@bmoor/object', function () {
 			set(t, ['__proto__', 'polluted'], 'polluted');
 
 			expect(t.polluted).to.not.equal('polluted');
+		});
+	});
+
+	describe('makeSetter', function () {
+		it('should actually work', function () {
+			const t = <DynamicObject<number | string>>{};
+			const f1 = makeSetter('eins');
+			const f2 = makeSetter('zwei.drei');
+
+			f1(t, 1);
+			f2(t, 3);
+
+			expect(t.eins).to.equal(1);
+			expect((<DynamicObject<number>>t.zwei).drei).to.equal(3);
+		});
+
+		it('should fail with __proto__', function () {
+			let failed = false;
+
+			try {
+				makeSetter('__proto__.polluted');
+			} catch (ex) {
+				failed = true;
+			}
+
+			expect(failed).to.equal(true);
 		});
 	});
 });

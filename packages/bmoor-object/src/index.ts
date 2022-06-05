@@ -72,8 +72,13 @@ export function set<T>(
 
 	return curSpace;
 }
-/*
-export function _makeSetter(property, next) {
+
+type SetterFn<T> = (root: DynamicObject<T>, value: T) => DynamicObject<T>;
+
+export function _makeSetter<T>(
+	property: string,
+	next: SetterFn<T>
+): SetterFn<T> {
 	property = String(property);
 
 	if (
@@ -85,36 +90,36 @@ export function _makeSetter(property, next) {
 	}
 
 	if (next) {
-		return function setter(ctx, value) {
-			var t = ctx[property];
+		return function setter(root: DynamicObject<T>, value: T): DynamicObject<T> {
+			let t = <DynamicObject<T>>root[property];
 
 			if (!t) {
-				t = ctx[property] = {};
+				t = root[property] = <DynamicObject<T>>{};
 			}
 
 			return next(t, value);
 		};
 	} else {
-		return function (ctx, value) {
-			ctx[property] = value;
-			return ctx;
+		return function (root: DynamicObject<T>, value: T): DynamicObject<T> {
+			root[property] = value;
+			return root;
 		};
 	}
 }
 
-export function makeSetter(space: IncomingPathType) {
-	var i,
-		fn,
-		readings = parsePath(space);
+export function makeSetter<T>(space: IncomingPathType): SetterFn<T> {
+	const path = parsePath(space);
 
-	for (i = readings.length - 1; i > -1; i--) {
-		fn = _makeSetter(readings[i], fn);
+	let fn = null;
+
+	for (let i = path.length - 1; i > -1; i--) {
+		fn = _makeSetter<T>(path[i], fn);
 	}
 
 	return fn;
 }
 
-// /**
+/**
  * get a value from a namespace, if it doesn't exist, the path will be created
  *
  * @function get
