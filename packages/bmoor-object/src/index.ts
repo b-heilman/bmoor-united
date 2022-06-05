@@ -1,6 +1,9 @@
-import {isString, isArray, isUndefined, isArrayLike} from '@bmoor/compare';
+import {isString, isArray, isUndefined /*, isArrayLike*/} from '@bmoor/compare';
 
-export function parsePath(path: string | Array<string>): Array<string> {
+export type ParsedPathType = Array<string>;
+export type IncomingPathType = string | ParsedPathType;
+
+export function parsePath(path: IncomingPathType): ParsedPathType {
 	if (!path) {
 		return [];
 	} else if (isString(path)) {
@@ -26,6 +29,8 @@ export function parsePath(path: string | Array<string>): Array<string> {
 	}
 }
 
+export type DynamicObject<T> = {[key: string]: T | DynamicObject<T>};
+
 /**
  * Sets a value to a namespace, returns the old value
  *
@@ -35,19 +40,18 @@ export function parsePath(path: string | Array<string>): Array<string> {
  * @param {*} value The value to set the namespace to
  * @return {*}
  **/
-export function set(root, space, value) {
-	var i,
-		c,
-		val,
-		nextSpace,
-		curSpace = root;
+export function set<T>(
+	root: DynamicObject<T>,
+	space: IncomingPathType,
+	value: T
+): DynamicObject<T> {
+	const path = parsePath(space);
+	const val = path.pop();
 
-	space = parsePath(space);
+	let curSpace = root;
 
-	val = space.pop();
-
-	for (i = 0, c = space.length; i < c; i++) {
-		nextSpace = String(space[i]);
+	for (let i = 0, c = path.length; i < c; i++) {
+		const nextSpace = path[i];
 
 		if (
 			nextSpace === '__proto__' ||
@@ -58,17 +62,17 @@ export function set(root, space, value) {
 		}
 
 		if (isUndefined(curSpace[nextSpace])) {
-			curSpace[nextSpace] = {};
+			curSpace[nextSpace] = <DynamicObject<T>>{};
 		}
 
-		curSpace = curSpace[nextSpace];
+		curSpace = <DynamicObject<T>>curSpace[nextSpace];
 	}
 
 	curSpace[val] = value;
 
 	return curSpace;
 }
-
+/*
 export function _makeSetter(property, next) {
 	property = String(property);
 
@@ -98,7 +102,7 @@ export function _makeSetter(property, next) {
 	}
 }
 
-export function makeSetter(space) {
+export function makeSetter(space: IncomingPathType) {
 	var i,
 		fn,
 		readings = parsePath(space);
@@ -110,15 +114,15 @@ export function makeSetter(space) {
 	return fn;
 }
 
-/**
+// /**
  * get a value from a namespace, if it doesn't exist, the path will be created
  *
  * @function get
  * @param {object} root The root of the namespace, bMoor.namespace.root if not defined
  * @param {string|array|function} space The namespace
  * @return {array}
- **/
-export function get(root, path) {
+
+export function get(root, path: IncomingPathType) {
 	var i,
 		c,
 		space,
@@ -183,7 +187,7 @@ export function _makeGetter(property, next) {
 	}
 }
 
-export function makeGetter(path) {
+export function makeGetter(path: IncomingPathType) {
 	var i,
 		fn,
 		space = parsePath(path);
@@ -208,8 +212,8 @@ export function makeGetter(path) {
  * @param {object} root The root of the namespace, bMoor.namespace.root if not defined
  * @param {string|array} space The namespace
  * @return {*}
- **/
-export function del(root, space) {
+
+export function del(root, space: IncomingPathType) {
 	var old,
 		val,
 		nextSpace,
@@ -236,3 +240,4 @@ export function del(root, space) {
 
 	return old;
 }
+**/

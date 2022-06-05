@@ -10,7 +10,7 @@
  * @param {*} value - The variable to test
  * @return {boolean}
  **/
-export function isUndefined(value: any) {
+export function isUndefined(value: unknown) {
 	return value === undefined;
 }
 
@@ -21,7 +21,7 @@ export function isUndefined(value: any) {
  * @param {*} value The variable to test
  * @return {boolean}
  **/
-export function isDefined(value: any) {
+export function isDefined(value: unknown) {
 	return value !== undefined;
 }
 
@@ -32,7 +32,7 @@ export function isDefined(value: any) {
  * @param {*} value The variable to test
  * @return {boolean}
  **/
-export function isString(value: any) {
+export function isString(value: unknown) {
 	return typeof value === 'string';
 }
 
@@ -43,7 +43,7 @@ export function isString(value: any) {
  * @param {*} value The variable to test
  * @return {boolean}
  **/
-export function isNumber(value: any) {
+export function isNumber(value: unknown) {
 	return typeof value === 'number';
 }
 
@@ -54,7 +54,7 @@ export function isNumber(value: any) {
  * @param {*} value The variable to test
  * @return {boolean}
  **/
-export function isFunction(value: any) {
+export function isFunction(value: unknown) {
 	return typeof value === 'function';
 }
 
@@ -65,7 +65,7 @@ export function isFunction(value: any) {
  * @param {*} value The variable to test
  * @return {boolean}
  **/
-export function isObject(value: any) {
+export function isObject(value: unknown) {
 	return !!value && typeof value === 'object';
 }
 
@@ -76,7 +76,7 @@ export function isObject(value: any) {
  * @param {*} value The variable to test
  * @return {boolean}
  **/
-export function isBoolean(value: any) {
+export function isBoolean(value: unknown) {
 	return typeof value === 'boolean';
 }
 
@@ -87,13 +87,10 @@ export function isBoolean(value: any) {
  * @param {*} value The variable to test
  * @return {boolean}
  **/
-export function isArrayLike(value: any) {
+export function isArrayLike(value: object) {
 	// for me, if you have a length, I'm assuming you're array like, might change
 	if (value) {
-		return (
-			isObject(value) &&
-			(value.length === 0 || (0 in value && value.length - 1 in value))
-		);
+		return isObject(value) && 'length' in value;
 	} else {
 		return false;
 	}
@@ -106,7 +103,7 @@ export function isArrayLike(value: any) {
  * @param {*} value The variable to test
  * @return {boolean}
  **/
-export function isArray(value: any) {
+export function isArray(value: unknown) {
 	return value instanceof Array;
 }
 
@@ -120,17 +117,17 @@ export function isArray(value: any) {
  * @param {*} value The variable to test
  * @return {boolean}
  **/
-export function isEmpty(value: any) {
-	var key;
-
+export function isEmpty(value: object) {
 	if (isObject(value)) {
-		for (key in value) {
+		for (const key in value) {
 			if (Object.prototype.hasOwnProperty.call(value, key)) {
 				return false;
 			}
 		}
 	} else if (isArrayLike(value)) {
-		return value.length === 0;
+		const arr = <Array<unknown>>value;
+
+		return arr.length === 0;
 	} else {
 		return isUndefined(value);
 	}

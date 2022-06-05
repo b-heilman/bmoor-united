@@ -1,5 +1,5 @@
 import {expect} from 'chai';
-import {parsePath} from './index';
+import {parsePath, set, DynamicObject} from './index';
 
 describe('@bmoor/object', function () {
 	describe('parse', function () {
@@ -26,6 +26,34 @@ describe('@bmoor/object', function () {
 				'ok',
 				'hello'
 			]);
+		});
+	});
+
+	describe('set', function () {
+		it('should be working working', function () {
+			const t = <DynamicObject<number>>{};
+
+			set<number>(t, 'eins', 1);
+			set<number>(t, 'zwei.drei', 3);
+
+			expect(t.eins).to.equal(1);
+			expect((<DynamicObject<number>>t.zwei).drei).to.equal(3);
+		});
+
+		it('should not allow __proto__', function () {
+			const t = <DynamicObject<boolean>>{};
+
+			set<boolean>(t, '__proto__.polluted', true);
+
+			expect(t.polluted).to.not.equal(true);
+		});
+
+		it('should not allow __proto__ when in array', function () {
+			const t = <DynamicObject<number | string>>{};
+
+			set(t, ['__proto__', 'polluted'], 'polluted');
+
+			expect(t.polluted).to.not.equal('polluted');
 		});
 	});
 });
