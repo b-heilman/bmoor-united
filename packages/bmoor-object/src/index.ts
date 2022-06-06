@@ -239,3 +239,93 @@ export function del<T>(root: DynamicObject<T>, path: IncomingPathType): T {
 
 	return rtnValue;
 }
+
+/**
+ * Takes a hash and uses the indexs as namespaces to add properties to an objs
+ *
+ * @function explode
+ * @param {object} target The object to map the variables onto
+ * @param {object} mappings An object orientended as [ namespace ] => value
+ * @return {object} The object that has had content mapped into it
+ **/
+export type MappedObject<T> = {[key: string]: T};
+
+export function explode<T>(
+	mappings: MappedObject<T>,
+	target: DynamicObject<T> = null
+): <DynamicObject<T>> {
+	if (!target) {
+		target = <DynamicObject<T>>{};
+	}
+
+	for (const key in mappings) {
+		set<T>(target, key, mappings[key]);
+	}
+
+	return target;
+}
+
+/*
+function implode(obj, settings = {}) {
+	var rtn = {};
+
+	let ignore = {};
+	if (settings.ignore) {
+		ignore = settings.ignore;
+	}
+
+	let format = null;
+
+	if (bmoor.isArray(obj)) {
+		format = function fn1(key, next) {
+			if (next) {
+				if (next[0] === '[') {
+					return '[' + key + ']' + next;
+				} else {
+					return '[' + key + '].' + next;
+				}
+			} else {
+				return '[' + key + ']';
+			}
+		};
+	} else {
+		format = function fn2(key, next) {
+			if (next) {
+				if (next[0] === '[') {
+					return key + next;
+				} else {
+					return key + '.' + next;
+				}
+			} else {
+				return key;
+			}
+		};
+	}
+
+	for (const key in obj) {
+		const val = obj[key];
+		const t = ignore[key];
+
+		if (t !== true) {
+			if (settings.skipArray && bmoor.isArray(val)) {
+				rtn[format(key)] = val;
+			} else if (
+				bmoor.isObject(val) &&
+				!(val instanceof Symbol) &&
+				(!settings.instanceOf || !(val instanceof settings.instanceOf))
+			) {
+				const todo = implode(val, Object.assign({}, settings, {ignore: t}));
+
+				for (const k in todo) {
+					rtn[format(key, k)] = todo[k];
+				}
+			} else {
+				rtn[format(key)] = val;
+			}
+		}
+	}
+
+	return rtn;
+}
+
+*/

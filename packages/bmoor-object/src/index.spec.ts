@@ -6,7 +6,8 @@ import {
 	makeSetter,
 	get,
 	makeGetter,
-	del
+	del,
+	explode
 } from './index';
 
 describe('@bmoor/object', function () {
@@ -195,4 +196,43 @@ describe('@bmoor/object', function () {
 			expect(t.zwei.drei).to.not.exist;
 		});
 	});
+
+	describe('explode', function () {
+		it('should operate explode correctly', function () {
+			const t = {
+				'eins.zwei': 12,
+				'eins.drei': 13,
+				fier: 4
+			};
+
+			expect(explode<number>(t)).to.deep.equal({
+				eins: {
+					zwei: 12,
+					drei: 13
+				},
+				fier: 4
+			});
+		});
+	});
+
+	/*
+	describe('explode', function () {
+		it('should operate makeExploder correctly', function () {
+			const t = {
+				'eins.zwei': 12,
+				'eins.drei': 13,
+				fier: 4
+			};
+			const fn = makeExploder(Object.keys(t));
+
+			expect(explode(t)).to.deep.equal({
+				eins: {
+					zwei: 12,
+					drei: 13
+				},
+				fier: 4
+			});
+		});
+	});
+	*/
 });
