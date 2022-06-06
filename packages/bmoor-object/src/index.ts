@@ -1,4 +1,4 @@
-import {isString, isArray, isUndefined} from '@bmoor/compare';
+import {isString, isArray, isUndefined, isObject} from '@bmoor/compare';
 
 export type ParsedPathType = Array<string>;
 export type IncomingPathType = string | ParsedPathType;
@@ -29,7 +29,10 @@ export function parsePath(path: IncomingPathType): ParsedPathType {
 	}
 }
 
-export type DynamicObject<T> = {[key: string]: T | DynamicObject<T>};
+// base functionality does not support arrays
+export type DynamicObject<T> = {
+	[key: string]: T | DynamicObject<T>;
+};
 
 /**
  * Sets a value to a namespace, returns the old value
@@ -253,31 +256,41 @@ export type MappedObject<T> = {[key: string]: T};
 export function explode<T>(
 	mappings: MappedObject<T>,
 	target: DynamicObject<T> = null
-): <DynamicObject<T>> {
+): DynamicObject<T> {
 	if (!target) {
 		target = <DynamicObject<T>>{};
 	}
 
 	for (const key in mappings) {
-		set<T>(target, key, mappings[key]);
+		set<T>(<DynamicObject<T>>target, key, mappings[key]);
 	}
 
 	return target;
 }
 
-/*
-function implode(obj, settings = {}) {
-	var rtn = {};
+type IgnoreSettings = {[key: string]: boolean | IgnoreSettings};
 
-	let ignore = {};
+export interface ImplodeSettings {
+	ignore?: IgnoreSettings;
+	// eslint-disable-next-line  @typescript-eslint/no-explicit-any
+	skipInstanceOf?: any;
+}
+
+export function implode<T>(
+	obj: DynamicObject<T>,
+	settings: ImplodeSettings = {}
+): MappedObject<T> {
+	const rtn = <MappedObject<T>>{};
+
+	let ignore = <IgnoreSettings>{};
 	if (settings.ignore) {
 		ignore = settings.ignore;
 	}
 
 	let format = null;
 
-	if (bmoor.isArray(obj)) {
-		format = function fn1(key, next) {
+	if (isArray(obj)) {
+		format = function fn1(key: string, next: string = null): string {
 			if (next) {
 				if (next[0] === '[') {
 					return '[' + key + ']' + next;
@@ -289,7 +302,7 @@ function implode(obj, settings = {}) {
 			}
 		};
 	} else {
-		format = function fn2(key, next) {
+		format = function fn2(key: string, next: string = null): string {
 			if (next) {
 				if (next[0] === '[') {
 					return key + next;
@@ -307,25 +320,26 @@ function implode(obj, settings = {}) {
 		const t = ignore[key];
 
 		if (t !== true) {
-			if (settings.skipArray && bmoor.isArray(val)) {
-				rtn[format(key)] = val;
+			if (isArray(val)) {
+				// we won't support arrays in this version
 			} else if (
-				bmoor.isObject(val) &&
+				isObject(val) &&
 				!(val instanceof Symbol) &&
-				(!settings.instanceOf || !(val instanceof settings.instanceOf))
+				(!settings.skipInstanceOf || !(val instanceof settings.skipInstanceOf))
 			) {
-				const todo = implode(val, Object.assign({}, settings, {ignore: t}));
+				const todo = implode(
+					<MappedObject<T>>val,
+					Object.assign({}, settings, {ignore: t})
+				);
 
 				for (const k in todo) {
-					rtn[format(key, k)] = todo[k];
+					rtn[format(key, k)] = <T>todo[k];
 				}
 			} else {
-				rtn[format(key)] = val;
+				rtn[format(key)] = <T>val;
 			}
 		}
 	}
 
 	return rtn;
 }
-
-*/

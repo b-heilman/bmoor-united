@@ -7,7 +7,8 @@ import {
 	get,
 	makeGetter,
 	del,
-	explode
+	explode,
+	implode
 } from './index';
 
 describe('@bmoor/object', function () {
@@ -215,24 +216,56 @@ describe('@bmoor/object', function () {
 		});
 	});
 
-	/*
-	describe('explode', function () {
-		it('should operate makeExploder correctly', function () {
+	describe('implode', function () {
+		it('should operate correctly', function () {
 			const t = {
-				'eins.zwei': 12,
-				'eins.drei': 13,
-				fier: 4
-			};
-			const fn = makeExploder(Object.keys(t));
-
-			expect(explode(t)).to.deep.equal({
-				eins: {
-					zwei: 12,
-					drei: 13
+				time: {
+					start: 99,
+					stop: 100
 				},
-				fier: 4
+				id: 'woot',
+				foo: {
+					bar: {
+						hello: 'world'
+					}
+				}
+			};
+
+			expect(implode<string | number>(t)).to.deep.equal({
+				'time.start': 99,
+				'time.stop': 100,
+				id: 'woot',
+				'foo.bar.hello': 'world'
+			});
+		});
+
+		it('should operate implode correctly - with an ignore', function () {
+			const t = {
+				time: {
+					start: 99,
+					stop: 100
+				},
+				id: 'woot',
+				foo: {
+					bar: {
+						hello: 'world'
+					}
+				}
+			};
+
+			expect(
+				implode<string | number>(t, {
+					ignore: {
+						time: {
+							start: true
+						},
+						id: true,
+						foo: true
+					}
+				})
+			).to.deep.equal({
+				'time.stop': 100
 			});
 		});
 	});
-	*/
 });
