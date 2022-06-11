@@ -290,17 +290,8 @@ export function implode<T>(
 	let format = null;
 
 	if (isArray(obj)) {
-		format = function fn1(key: string, next: string = null): string {
-			if (next) {
-				if (next[0] === '[') {
-					return '[' + key + ']' + next;
-				} else {
-					return '[' + key + '].' + next;
-				}
-			} else {
-				return '[' + key + ']';
-			}
-		};
+		// array support will go into path operators
+		throw new Error('unable to process arrays');
 	} else {
 		format = function fn2(key: string, next: string = null): string {
 			if (next) {
@@ -321,7 +312,7 @@ export function implode<T>(
 
 		if (t !== true) {
 			if (isArray(val)) {
-				// we won't support arrays in this version
+				throw new Error('unable to process arrays');
 			} else if (
 				isObject(val) &&
 				!(val instanceof Symbol) &&
@@ -342,4 +333,35 @@ export function implode<T>(
 	}
 
 	return rtn;
+}
+
+export function merge<T>(to: DynamicObject<T>, ...args: DynamicObject<T>[]): DynamicObject<T> {
+	for (let i = 0, c = args.length; i < c; i++) {
+		let from = args[i];
+
+		if (to === from) {
+			continue;
+		} else if (isArray(from)){
+			throw new Error('unable to process arrays');
+		} else if (!isObject(from)) {
+			// only to is an objects
+			to = from;
+		} else if (!isObject(to)) {
+			// only from is an object
+			to = merge({}, from);
+		} else {
+			// both from and to are objects
+			for (const key in from) {
+				const val = <DynamicObject<T>> from[key];
+
+				if (isObject(val)){
+					to[key] = merge(<DynamicObject<T>>to[key], val);
+				} else {
+					to[key] = val; 
+				}
+			}
+		}
+	}
+
+	return to;
 }

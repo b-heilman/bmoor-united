@@ -8,7 +8,8 @@ import {
 	makeGetter,
 	del,
 	explode,
-	implode
+	implode,
+	merge
 } from './index';
 
 describe('@bmoor/object', function () {
@@ -265,6 +266,39 @@ describe('@bmoor/object', function () {
 				})
 			).to.deep.equal({
 				'time.stop': 100
+			});
+		});
+	});
+
+	describe('merge', function () {
+		it('should replace null correctly', function () {
+			const res = merge(
+				{
+					foo: null,
+					bar: {a: 'ok'},
+					hello: {
+						world: 1,
+						other: 'thing'
+					}
+				},
+				{
+					foo: 'bar',
+					bar: null,
+					hello: {
+						world: null,
+						foo: 'bar'
+					}
+				}
+			);
+			console.log(JSON.stringify(res, null, 2));
+			expect(res).to.deep.equal({
+				foo: 'bar',
+				bar: null,
+				hello: {
+					world: null,
+					other: 'thing',
+					foo: 'bar'
+				}
 			});
 		});
 	});
