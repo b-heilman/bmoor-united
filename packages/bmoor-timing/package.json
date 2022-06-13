@@ -1,0 +1,23 @@
+{
+  "name": "@bmoor/timing",
+  "version": "0.1.0",
+  "description": "Better ways to work with objects",
+  "main": "src/index.ts",
+  "files": [
+    "src/*[!.spec].js",
+    "src/**/*[!.spec].js"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/b-heilman/bmoor-united.git"
+  },
+  "author": "Brian Heilman",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/b-heilman/bmoor-united/issues"
+  },
+  "homepage": "https://github.com/b-heilman/bmoor-united#readme",
+  "scripts": {
+    "test": "mocha --recursive \"./src/**/*.spec.js\""
+  }
+}

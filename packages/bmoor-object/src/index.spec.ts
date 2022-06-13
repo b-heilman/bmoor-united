@@ -268,6 +268,57 @@ describe('@bmoor/object', function () {
 				'time.stop': 100
 			});
 		});
+
+		it('should operate implode correctly - with skipInstanceOf', function () {
+			class Junk {
+				value: number;
+
+				constructor() {
+					this.value = 1;
+				}
+			}
+
+			class Another {
+				value: number;
+
+				constructor() {
+					this.value = 2;
+				}
+			}
+
+			class Ok {
+				value: number;
+
+				constructor() {
+					this.value = 3;
+				}
+			}
+
+			const junk = new Junk();
+			const another = new Another();
+			const ok = new Ok();
+			const t = {
+				hello: 'world',
+				foo: {
+					bar: 'ok',
+					eins: junk
+				},
+				zwei: another,
+				drei: ok
+			};
+
+			expect(
+				implode<string | number | Another | Junk>(t, {
+					skipInstanceOf: [Another, Junk]
+				})
+			).to.deep.equal({
+				hello: 'world',
+				'foo.bar': 'ok',
+				'foo.eins': junk,
+				zwei: another,
+				'drei.value': 3
+			});
+		});
 	});
 
 	describe('merge', function () {
@@ -290,7 +341,7 @@ describe('@bmoor/object', function () {
 					}
 				}
 			);
-			console.log(JSON.stringify(res, null, 2));
+
 			expect(res).to.deep.equal({
 				foo: 'bar',
 				bar: null,

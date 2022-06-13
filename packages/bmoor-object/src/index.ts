@@ -315,8 +315,15 @@ export function implode<T>(
 				throw new Error('unable to process arrays');
 			} else if (
 				isObject(val) &&
-				!(val instanceof Symbol) &&
-				(!settings.skipInstanceOf || !(val instanceof settings.skipInstanceOf))
+				(!settings.skipInstanceOf ||
+					// eslint-disable-next-line  @typescript-eslint/no-explicit-any
+					!settings.skipInstanceOf.reduce((agg: boolean, type: any) => {
+						if (agg) {
+							return true;
+						} else {
+							return val instanceof type;
+						}
+					}, false))
 			) {
 				const todo = implode(
 					<MappedObject<T>>val,
@@ -335,13 +342,16 @@ export function implode<T>(
 	return rtn;
 }
 
-export function merge<T>(to: DynamicObject<T>, ...args: DynamicObject<T>[]): DynamicObject<T> {
+export function merge<T>(
+	to: DynamicObject<T>,
+	...args: DynamicObject<T>[]
+): DynamicObject<T> {
 	for (let i = 0, c = args.length; i < c; i++) {
-		let from = args[i];
+		const from = args[i];
 
 		if (to === from) {
 			continue;
-		} else if (isArray(from)){
+		} else if (isArray(from)) {
 			throw new Error('unable to process arrays');
 		} else if (!isObject(from)) {
 			// only to is an objects
@@ -352,12 +362,12 @@ export function merge<T>(to: DynamicObject<T>, ...args: DynamicObject<T>[]): Dyn
 		} else {
 			// both from and to are objects
 			for (const key in from) {
-				const val = <DynamicObject<T>> from[key];
+				const val = <DynamicObject<T>>from[key];
 
-				if (isObject(val)){
+				if (isObject(val)) {
 					to[key] = merge(<DynamicObject<T>>to[key], val);
 				} else {
-					to[key] = val; 
+					to[key] = val;
 				}
 			}
 		}
