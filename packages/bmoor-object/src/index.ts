@@ -1,3 +1,4 @@
+import {create} from '@bmoor/error';
 import {isString, isArray, isUndefined, isObject} from '@bmoor/compare';
 
 export type ParsedPathType = Array<string>;
@@ -25,7 +26,13 @@ export function parsePath(path: IncomingPathType): ParsedPathType {
 
 		return asArray.slice(0);
 	} else {
-		throw new Error('unable to parse path: ' + path + ' : ' + typeof path);
+		throw create('unable to parse path', {
+			code: 'BM_OB_PATH',
+			context: {
+				path,
+				type: typeof path
+			}
+		});
 	}
 }
 
@@ -90,7 +97,9 @@ export function _makeSetter<T>(
 		property === 'constructor' ||
 		property === 'prototype'
 	) {
-		throw new Error('unable to access __proto__, constructor, prototype');
+		throw create('unable to access __proto__, constructor, prototype', {
+			code: 'BM_OB_MAKESETTER'
+		});
 	}
 
 	if (next) {
@@ -174,7 +183,9 @@ export function _makeGetter<T>(
 		property === 'constructor' ||
 		property === 'prototype'
 	) {
-		throw new Error('unable to access __proto__, constructor, prototype');
+		throw create('unable to access __proto__, constructor, prototype', {
+			code: 'BM_OB_MAKEGETTER'
+		});
 	}
 
 	if (next) {
@@ -291,7 +302,9 @@ export function implode<T>(
 
 	if (isArray(obj)) {
 		// array support will go into path operators
-		throw new Error('unable to process arrays');
+		throw create('unable to process arrays', {
+			code: 'BM_OB_IMPLODE_1'
+		});
 	} else {
 		format = function fn2(key: string, next: string = null): string {
 			if (next) {
@@ -312,7 +325,9 @@ export function implode<T>(
 
 		if (t !== true) {
 			if (isArray(val)) {
-				throw new Error('unable to process arrays');
+				throw create('unable to process arrays', {
+					code: 'BM_OB_IMPLODE_2'
+				});
 			} else if (
 				isObject(val) &&
 				(!settings.skipInstanceOf ||
@@ -352,7 +367,9 @@ export function merge<T>(
 		if (to === from) {
 			continue;
 		} else if (isArray(from)) {
-			throw new Error('unable to process arrays');
+			throw create('unable to process arrays', {
+				code: 'BM_OB_MERGE_ARRAY'
+			});
 		} else if (!isObject(from)) {
 			// only to is an objects
 			to = from;

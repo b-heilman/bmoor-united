@@ -1,3 +1,4 @@
+import {create as createError} from '@bmoor/error';
 import {implode, MappedObject, DynamicObject} from '@bmoor/object';
 
 // eslint-disable-next-line  @typescript-eslint/no-explicit-any
@@ -41,13 +42,17 @@ export class Config<I> {
 					if (val instanceof Config) {
 						val.merge(original);
 					} else {
-						throw new Error('no mixing');
+						throw createError('no mixing', {
+							code: 'BM_CFG_MIX_1'
+						});
 					}
 				} else if (original instanceof ConfigObject) {
 					if (val instanceof ConfigObject) {
 						this.settings[path] = val;
 					} else {
-						throw new Error('no mixing');
+						throw createError('no mixing', {
+							code: 'BM_CFG_MIX_2'
+						});
 					}
 				} else {
 					// nothing needs to be done

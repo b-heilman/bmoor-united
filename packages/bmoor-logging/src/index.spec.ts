@@ -1,4 +1,5 @@
 import {expect} from 'chai';
+
 import {Logging, LogInfo, ERROR, INFO} from './index';
 
 describe('@bmoor/logging', function () {
