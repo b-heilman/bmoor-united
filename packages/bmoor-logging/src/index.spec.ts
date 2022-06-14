@@ -1,5 +1,5 @@
 import {expect} from 'chai';
-import {Logging, LogInfo, ERROR, WARN, INFO} from './index';
+import {Logging, LogInfo, ERROR, INFO} from './index';
 
 describe('@bmoor/logging', function () {
 	describe('Logging', function () {
@@ -35,7 +35,7 @@ describe('@bmoor/logging', function () {
 				let logged = false;
 
 				const logger = new Logging({
-					write: async (type: symbol, info: LogInfo) => {
+					write: async () => {
 						logged = true;
 
 						throw new Error('never should be here');

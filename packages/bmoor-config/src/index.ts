@@ -1,6 +1,7 @@
 import {implode, MappedObject, DynamicObject} from '@bmoor/object';
 
-export type ConfigValue = string | number | boolean;
+// eslint-disable-next-line  @typescript-eslint/no-explicit-any
+export type ConfigValue = any;
 
 export class ConfigObject<T> extends Object {
 	constructor(settings: DynamicObject<T>) {
@@ -12,20 +13,24 @@ export class ConfigObject<T> extends Object {
 	}
 }
 
-export class Config<T> {
-	settings: MappedObject<T | Config<T> | ConfigObject<T>>;
+export class Config<I> {
+	settings: MappedObject<
+		ConfigValue | Config<ConfigValue> | ConfigObject<ConfigValue>
+	>;
 
-	constructor(settings: DynamicObject<T | ConfigObject<T> | Config<T>>) {
-		this.settings = implode(settings, {
+	constructor(settings: I) {
+		this.settings = implode(<DynamicObject<ConfigValue>>settings, {
 			skipInstanceOf: [ConfigObject, Config]
 		});
 	}
 
-	get(path: string): T | Config<T> | ConfigObject<T> {
+	get(
+		path: string
+	): ConfigValue | Config<ConfigValue> | ConfigObject<ConfigValue> {
 		return this.settings[path];
 	}
 
-	merge(primary: Config<T>) {
+	merge(primary: Config<I>) {
 		for (const path in primary.settings) {
 			const original = primary.settings[path];
 
@@ -54,8 +59,8 @@ export class Config<T> {
 		}
 	}
 
-	override(settings: DynamicObject<T | ConfigObject<T> | Config<T>>) {
-		const newConfig = new Config<T>(settings);
+	override(settings: I) {
+		const newConfig = new Config<I>(settings);
 
 		newConfig.merge(this);
 
@@ -63,6 +68,6 @@ export class Config<T> {
 	}
 }
 
-export function create<T>(settings: DynamicObject<T>) {
-	return new Config<T>(settings);
+export function create<I>(settings: I) {
+	return new Config<I>(settings);
 }

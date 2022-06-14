@@ -62,7 +62,14 @@ describe('@bmoor/config', function () {
 
 	describe('create', function () {
 		it('should allow the defining and reading of properties', function () {
-			const cfg = create<string | number>({
+			interface cfgI {
+				foo: string;
+				hello: {
+					world: number;
+				};
+			}
+
+			const cfg = create<cfgI>({
 				foo: 'bar',
 				hello: {
 					world: 1

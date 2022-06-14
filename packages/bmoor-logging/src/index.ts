@@ -38,7 +38,12 @@ export interface LogInfo {
 }
 
 // TODO: define this as an interface
-const config = new Config<any | symbol>({
+interface LoggingConfigInterface {
+	write?: (type: symbol, info: LogInfo) => Promise<void>;
+	level?: symbol;
+}
+
+const config = new Config<LoggingConfigInterface>({
 	write: async function (type: symbol, info: LogInfo) {
 		const message = info.message;
 		const timestamp = info.timestamp || Date.now();
@@ -62,9 +67,9 @@ const config = new Config<any | symbol>({
 });
 
 export class Logging {
-	config: Config<any | symbol>;
+	config: Config<LoggingConfigInterface>;
 
-	constructor(settings = {}) {
+	constructor(settings: LoggingConfigInterface = {}) {
 		this.config = config.override(settings);
 	}
 
