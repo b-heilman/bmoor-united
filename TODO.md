@@ -1,0 +1,6 @@
+- [ ] bmoor/compiler
+  - [ ] Diagram
+- [ ] bmoor/path (need compiler)
+- [ ] bmoor/modeling (need path)
+  - [ ] modeling.field
+  - [ ] modeling.model
