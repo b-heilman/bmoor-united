@@ -1,5 +1,5 @@
 {
-  "name": "@bmoor/streaming",
+  "name": "@bmoor/modeling",
   "version": "0.1.0",
   "description": "Better ways to work with objects",
   "main": "src/index.ts",

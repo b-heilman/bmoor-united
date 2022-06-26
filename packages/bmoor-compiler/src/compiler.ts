@@ -1,4 +1,1 @@
-
-class Compiler {
-	
-}
+export class Compiler {}

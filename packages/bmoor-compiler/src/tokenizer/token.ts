@@ -1,35 +1,48 @@
+import {Expressable} from '../expression/expressable';
 
-import {State} from '../state';
+import {TokenizerState} from './state';
 
-interface TokenSettings {
-	subType: string
+// eslint-disable-next-line  @typescript-eslint/no-explicit-any
+export type TokenValue = any;
+
+export interface TokenSettings {
+	subType: string;
 }
 
-abstract class Token<T> {
-	state: State;
-	content: T;
+export abstract class Token {
+	abstract toExpressable(): Expressable[];
+
+	type: string;
+	state: TokenizerState;
+	content: TokenValue;
 	settings: TokenSettings;
 
-	constructor(type: string, content: T, settings: TokenSettings){
+	constructor(
+		type: string,
+		content: TokenValue,
+		state: TokenizerState,
+		settings: TokenSettings = null
+	) {
 		this.type = type;
+		this.state = state;
 		this.content = content;
 		this.settings = settings;
 	}
 
-	setState(state: State){
-		this.state = state;
+	getNextPosition() {
+		return this.state.end + 1;
 	}
 
-	toExpressable(): Expressable[]{
-		throw new Error('must be overriden');
+	getReference() {
+		return this.type;
 	}
 
 	// TODO: assign(incoming: TokenInterface)
 
 	toJSON() {
 		return {
-			type: this.type,
-			value: this.value,
+			reference: this.getReference(),
+			content: this.content,
 			settings: this.settings
 		};
 	}

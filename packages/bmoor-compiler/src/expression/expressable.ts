@@ -1,21 +1,25 @@
+// eslint-disable-next-line  @typescript-eslint/no-explicit-any
+export type ExpressableValue = any;
 
-type RandomFunction = 
-// TODO: Expressable should be interface
-export class Expressable<T> {
+export abstract class Expressable {
 	type: string;
 	rank: number;
-	method: (...args: any) => T;
+	method: (...args: ExpressableValue) => ExpressableValue;
 
-	constructor(type, method: (...args: any) => T, rank=null){
+	constructor(
+		type,
+		method: (...args: ExpressableValue) => ExpressableValue,
+		rank = null
+	) {
 		this.type = type;
-		this.rank =  rank;
+		this.rank = rank;
 		this.method = method;
 	}
 
-	abstract eval(...args: any[]): T
+	abstract eval(...args: ExpressableValue[]): ExpressableValue;
 
-	prepare(): (...args: any) => T {
-		return (...args: any[]) => {
+	prepare(): (...args: ExpressableValue) => ExpressableValue {
+		return (...args: ExpressableValue[]) => {
 			return this.eval(...args);
 		};
 	}
