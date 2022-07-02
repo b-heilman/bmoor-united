@@ -1,5 +1,5 @@
 // eslint-disable-next-line  @typescript-eslint/no-explicit-any
-import {Expressable} from '../expression/expressable';
+import {Expressable} from '../expressor/expressable';
 import {ExpressableToken, Token} from '../tokenizer/token';
 
 export abstract class Compound implements ExpressableToken {

@@ -1,8 +1,8 @@
 - [ ] bmoor/compiler
   - [x] Diagram : https://drive.google.com/file/d/1ZBGGUEif3EVbtI8cUTfGJqhBcfPQoxJE/view?usp=sharing
-  - [ ] Tokenizer
+  - [x] Tokenizer
+  - [x] Compressor
   - [ ] Expressor
-  - [ ] Compressor
   - [ ] Executable
   - [ ] Compiler Settings
 - [ ] bmoor/path (need compiler)

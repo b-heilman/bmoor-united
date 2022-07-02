@@ -1,6 +1,10 @@
 // eslint-disable-next-line  @typescript-eslint/no-explicit-any
 export type ExpressableValue = any;
 
+export type ExpressableFunction = (
+	...args: ExpressableValue
+) => ExpressableValue;
+
 export enum Usages {
 	operation = new Symbol('operation'),
 	value = new Symbol('value')
@@ -23,7 +27,7 @@ export abstract class Expressable {
 		this.method = method;
 	}
 
-	prepare(): (...args: ExpressableValue) => ExpressableValue {
+	prepare(): ExpressableFunction {
 		return (...args: ExpressableValue[]) => {
 			return this.eval(...args);
 		};

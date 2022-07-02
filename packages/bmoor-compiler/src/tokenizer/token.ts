@@ -1,4 +1,4 @@
-import {Expressable} from '../expression/expressable';
+import {Expressable} from '../expressor/expressable';
 
 import {TokenizerState} from './state';
 
