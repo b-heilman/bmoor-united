@@ -9,7 +9,12 @@ export interface TokenSettings {
 	subType: string;
 }
 
-export abstract class Token {
+export interface ExpressableToken {
+	toExpressable(): Expressable[];
+	getReference(): string;
+}
+
+export abstract class Token implements ExpressableToken {
 	abstract toExpressable(): Expressable[];
 
 	type: string;

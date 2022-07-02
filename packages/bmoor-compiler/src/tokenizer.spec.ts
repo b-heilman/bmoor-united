@@ -13,7 +13,7 @@ describe('@bmoor/compiler', function () {
 			}
 		}
 
-		class Proto extends Protoken {
+		class TestProto extends Protoken {
 			begin: string;
 			end: string;
 
@@ -57,9 +57,9 @@ describe('@bmoor/compiler', function () {
 
 		it('properly parses', async function () {
 			const tokenizer = new Tokenizer([
-				new Proto('|', '|'),
-				new Proto('{', '}'),
-				new Proto('${', '}')
+				new TestProto('|', '|'),
+				new TestProto('{', '}'),
+				new TestProto('${', '}')
 			]);
 
 			const tokens = tokenizer.tokenize('{ok} |foo|${bar}');
@@ -79,9 +79,9 @@ describe('@bmoor/compiler', function () {
 
 		it('properly parses with order mattering', async function () {
 			const tokenizer = new Tokenizer([
-				new Proto('|', '|'),
-				new Proto('${', '}'),
-				new Proto('{', '}')
+				new TestProto('|', '|'),
+				new TestProto('${', '}'),
+				new TestProto('{', '}')
 			]);
 
 			const tokens = tokenizer.tokenize('{ok} |foo|  ${bar}');

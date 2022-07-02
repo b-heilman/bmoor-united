@@ -1,22 +1,27 @@
 // eslint-disable-next-line  @typescript-eslint/no-explicit-any
 export type ExpressableValue = any;
 
+export enum Usages {
+	operation = new Symbol('operation'),
+	value = new Symbol('value')
+}
+
 export abstract class Expressable {
-	type: string;
+	abstract eval(...args: ExpressableValue[]): ExpressableValue;
+
+	usage: Usages;
 	rank: number;
 	method: (...args: ExpressableValue) => ExpressableValue;
 
 	constructor(
-		type,
+		usage: Usages,
 		method: (...args: ExpressableValue) => ExpressableValue,
-		rank = null
+		rank = 0
 	) {
-		this.type = type;
+		this.usage = usage;
 		this.rank = rank;
 		this.method = method;
 	}
-
-	abstract eval(...args: ExpressableValue[]): ExpressableValue;
 
 	prepare(): (...args: ExpressableValue) => ExpressableValue {
 		return (...args: ExpressableValue[]) => {
@@ -25,10 +30,10 @@ export abstract class Expressable {
 	}
 
 	toJSON() {
-		return {type: this.type, method: this.method.name};
+		return {usage: this.usage, method: this.method.name};
 	}
 
 	toString() {
-		return `{"type":"${this.type}", "method":"${this.method.name}"}`;
+		return `{"usage":"${this.usage}", "method":"${this.method.name}"}`;
 	}
 }
