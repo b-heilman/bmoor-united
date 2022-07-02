@@ -1,8 +1,10 @@
 // eslint-disable-next-line  @typescript-eslint/no-explicit-any
+import {Expressable} from '../expression/expressable';
 import {ExpressableToken, Token} from '../tokenizer/token';
 
-export abstract class Compound extends ExpressableToken {
-	static abstract pieces: Token[];
+export abstract class Compound implements ExpressableToken {
+	// https://github.com/microsoft/TypeScript/issues/34516
+	static pieces: typeof Token[] = [];
 
 	abstract toExpressable(): Expressable[];
 

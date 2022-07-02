@@ -30,11 +30,11 @@ describe('@bmoor/compiler', function () {
 			}
 		}
 
-		const eins = new EinsToken('1');
-		const otherEins = new EinsToken('2');
-		const zwei = new ZweiToken('3');
-		const drei = new DreiToken('4');
-		const fier = new FierToken('5');
+		const eins = new EinsToken('1', null, null);
+		const otherEins = new EinsToken('2', null, null);
+		const zwei = new ZweiToken('3', null, null);
+		const drei = new DreiToken('4', null, null);
+		const fier = new FierToken('5', null, null);
 
 		class Compound1 extends Compound {
 			static pieces = [EinsToken, ZweiToken];

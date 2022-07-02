@@ -1,14 +1,14 @@
-import {Compound} from '../reducer/compound';
-import {ExpressableToken} from '../tokenizer/token';
+import {Compound} from './reducer/compound';
+import {ExpressableToken, Token} from './tokenizer/token';
 
 type TreeBranch = {
-	value: Compound;
+	value: typeof Compound;
 	next: {
 		[Token]: TreeBranch;
 	};
 };
 
-function treeBuilder(arr: Compound[]): TreeBranch {
+function treeBuilder(arr: typeof Compound[]): TreeBranch {
 	const root: TreeBranch = {
 		value: null,
 		next: {}
@@ -42,14 +42,15 @@ function treeBuilder(arr: Compound[]): TreeBranch {
 }
 
 type TreeHistory = {
-	value: Compound;
+	value: typeof Compound;
 	token: Token;
 };
 
 export class Reducer {
 	compoundTree: TreeBranch;
 
-	constructor(compounds: Compound[]) {
+	// https://www.typescriptlang.org/docs/handbook/2/generics.html#using-class-types-in-generics
+	constructor(compounds: typeof Compound[]) {
 		this.compoundTree = treeBuilder(compounds);
 	}
 
@@ -81,8 +82,8 @@ export class Reducer {
 				}
 
 				if (history.length) {
-					const Constructor = history[history.length - 1].value;
-					rtn.push(new Constructor(history.map((h) => h.token)));
+					const Compounder = history[history.length - 1].value;
+					rtn.push(new Compounder(history.map((h) => h.token)));
 				}
 
 				rtn.push(...misses);
