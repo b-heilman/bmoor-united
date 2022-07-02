@@ -5,6 +5,8 @@ import {TokenizerState} from './state';
 // eslint-disable-next-line  @typescript-eslint/no-explicit-any
 export type TokenValue = any;
 
+export type TokenReference = string;
+
 export interface TokenSettings {
 	subType: string;
 }
@@ -14,6 +16,12 @@ export interface ExpressableToken {
 	getReference(): string;
 }
 
+export type TokenConstructor = {
+	// eslint-disable-next-line  @typescript-eslint/no-explicit-any
+	new (..._: any): Token;
+	reference: TokenReference;
+};
+
 export abstract class Token implements ExpressableToken {
 	abstract toExpressable(): Expressable[];
 
@@ -22,13 +30,13 @@ export abstract class Token implements ExpressableToken {
 	content: TokenValue;
 	settings: TokenSettings;
 
+	static reference: TokenReference = 'not-defined';
+
 	constructor(
-		type: string,
 		content: TokenValue,
 		state: TokenizerState,
 		settings: TokenSettings = null
 	) {
-		this.type = type;
 		this.state = state;
 		this.content = content;
 		this.settings = settings;
@@ -39,7 +47,7 @@ export abstract class Token implements ExpressableToken {
 	}
 
 	getReference() {
-		return this.type;
+		return (<TokenConstructor>this.constructor).reference;
 	}
 
 	// TODO: assign(incoming: TokenInterface)

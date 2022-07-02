@@ -11,6 +11,10 @@ describe('@bmoor/compiler', function () {
 			toExpressable() {
 				return [];
 			}
+
+			getReference() {
+				return this.settings.subType;
+			}
 		}
 
 		class TestProto extends Protoken {
@@ -44,9 +48,11 @@ describe('@bmoor/compiler', function () {
 
 			toToken(base: string, state: TokenizerState) {
 				return new TestToken(
-					this.begin + ':' + this.end,
 					base.substring(state.begin, state.end + this.end.length - 1),
-					state
+					state,
+					{
+						subType: this.begin + ':' + this.end
+					}
 				);
 			}
 
