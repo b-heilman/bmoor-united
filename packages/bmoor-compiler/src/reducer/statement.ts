@@ -2,7 +2,7 @@
 import {Expressable} from '../expressor/expressable';
 import {ExpressableToken, Token} from '../tokenizer/token';
 
-export abstract class Compound implements ExpressableToken {
+export abstract class Statement implements ExpressableToken {
 	// https://github.com/microsoft/TypeScript/issues/34516
 	static pieces: typeof Token[] = [];
 

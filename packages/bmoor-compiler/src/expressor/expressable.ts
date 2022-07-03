@@ -6,31 +6,29 @@ export type ExpressableFunction = (
 ) => ExpressableValue;
 
 export enum Usages {
-	operation = new Symbol('operation'),
-	value = new Symbol('value')
+	operation = 'operation',
+	value = 'value'
 }
 
-export abstract class Expressable {
-	abstract eval(...args: ExpressableValue[]): ExpressableValue;
-
+export class Expressable {
 	usage: Usages;
 	rank: number;
 	method: (...args: ExpressableValue) => ExpressableValue;
 
-	constructor(
-		usage: Usages,
-		method: (...args: ExpressableValue) => ExpressableValue,
-		rank = 0
-	) {
+	constructor(usage: Usages, method: ExpressableFunction, rank = 0) {
 		this.usage = usage;
-		this.rank = rank;
 		this.method = method;
+		this.rank = rank;
 	}
 
 	prepare(): ExpressableFunction {
 		return (...args: ExpressableValue[]) => {
-			return this.eval(...args);
+			return this.method(...args);
 		};
+	}
+
+	eval(...args: ExpressableValue[]): ExpressableValue {
+		return this.method(...args);
 	}
 
 	toJSON() {

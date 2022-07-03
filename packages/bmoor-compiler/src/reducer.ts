@@ -1,4 +1,4 @@
-import {Compound} from './reducer/compound';
+import {Statement} from './reducer/statement';
 import {
 	ExpressableToken,
 	Token,
@@ -6,17 +6,17 @@ import {
 	TokenConstructor
 } from './tokenizer/token';
 
-type CompoundConstructor = {
-	new (tokens: Token[]): Compound;
+type StatementConstructor = {
+	new (tokens: Token[]): Statement;
 	pieces: TokenConstructor[];
 };
 
 type TreeBranch = {
-	value: CompoundConstructor;
+	value: StatementConstructor;
 	next: Map<TokenReference, TreeBranch>;
 };
 
-function treeBuilder(arr: CompoundConstructor[]): TreeBranch {
+function treeBuilder(arr: StatementConstructor[]): TreeBranch {
 	const root: TreeBranch = {
 		value: null,
 		next: new Map<TokenReference, TreeBranch>()
@@ -54,7 +54,7 @@ function treeBuilder(arr: CompoundConstructor[]): TreeBranch {
 }
 
 type TreeHistory = {
-	value: CompoundConstructor;
+	value: StatementConstructor;
 	token: Token;
 };
 
@@ -66,8 +66,8 @@ function unwrapHistory(target, history) {
 	}
 
 	if (history.length) {
-		const Compounder = history[history.length - 1].value;
-		target.push(new Compounder(history.map((h) => h.token)));
+		const Statementer = history[history.length - 1].value;
+		target.push(new Statementer(history.map((h) => h.token)));
 	}
 
 	target.push(...misses);
@@ -77,7 +77,7 @@ export class Reducer {
 	compoundTree: TreeBranch;
 
 	// https://www.typescriptlang.org/docs/handbook/2/generics.html#using-class-types-in-generics
-	constructor(compounds: CompoundConstructor[]) {
+	constructor(compounds: StatementConstructor[]) {
 		this.compoundTree = treeBuilder(compounds);
 	}
 

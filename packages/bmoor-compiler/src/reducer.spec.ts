@@ -1,7 +1,7 @@
 import {expect} from 'chai';
 
 import {Token, TokenReference} from './tokenizer/token';
-import {Compound} from './reducer/compound';
+import {Statement} from './reducer/statement';
 import {Reducer} from './reducer';
 
 describe('@bmoor/compiler', function () {
@@ -44,7 +44,7 @@ describe('@bmoor/compiler', function () {
 		const drei = new DreiToken('4', null, null);
 		const fier = new FierToken('5', null, null);
 
-		class Compound1 extends Compound {
+		class Statement1 extends Statement {
 			static pieces = [EinsToken, ZweiToken];
 
 			toExpressable() {
@@ -52,7 +52,7 @@ describe('@bmoor/compiler', function () {
 			}
 		}
 
-		class Compound2 extends Compound {
+		class Statement2 extends Statement {
 			static pieces = [EinsToken, ZweiToken, DreiToken];
 
 			toExpressable() {
@@ -60,7 +60,7 @@ describe('@bmoor/compiler', function () {
 			}
 		}
 
-		class Compound3 extends Compound {
+		class Statement3 extends Statement {
 			static pieces = [EinsToken, ZweiToken, FierToken];
 
 			toExpressable() {
@@ -69,7 +69,7 @@ describe('@bmoor/compiler', function () {
 		}
 
 		it('should reduce a whole set', async function () {
-			const reducer = new Reducer([Compound1, Compound2, Compound3]);
+			const reducer = new Reducer([Statement1, Statement2, Statement3]);
 
 			const tokens = reducer.reduce([eins, zwei]);
 
@@ -79,7 +79,7 @@ describe('@bmoor/compiler', function () {
 		});
 
 		it('should handle left overs', async function () {
-			const reducer = new Reducer([Compound1, Compound2, Compound3]);
+			const reducer = new Reducer([Statement1, Statement2, Statement3]);
 
 			const tokens = reducer.reduce([eins, zwei, otherEins, drei, fier]);
 
@@ -92,7 +92,7 @@ describe('@bmoor/compiler', function () {
 		});
 
 		it('properly handle back to back', async function () {
-			const reducer = new Reducer([Compound1, Compound2, Compound3]);
+			const reducer = new Reducer([Statement1, Statement2, Statement3]);
 
 			const tokens = reducer.reduce([eins, zwei, otherEins, zwei, drei, fier]);
 
@@ -104,7 +104,7 @@ describe('@bmoor/compiler', function () {
 		});
 
 		it('properly handle with a gap', async function () {
-			const reducer = new Reducer([Compound1, Compound2, Compound3]);
+			const reducer = new Reducer([Statement1, Statement2, Statement3]);
 
 			const tokens = reducer.reduce([
 				eins,

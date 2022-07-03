@@ -6,14 +6,14 @@ import {
 } from './expressor/expressable';
 
 export enum Modes {
-	infix = new Symbol('infix'),
-	postfix = new Symbol('postfix')
+	infix = 'infix',
+	postfix = 'postfix'
 }
 
 export class Expressor {
 	// TODO: is there something needed for the constructor?
 
-	express(tokens: ExpressableToken[], mode: Modes) {
+	express(tokens: ExpressableToken[], mode: Modes): Expressable[] {
 		const infix: Expressable[] = tokens.flatMap((token) =>
 			token.toExpressable()
 		);
@@ -48,7 +48,7 @@ export class Expressor {
 
 	makeExecutable(tokens: ExpressableToken[]): ExpressableFunction {
 		return this.express(tokens, Modes.postfix).reduce((stack, exp) => {
-			if (exp.type === Usages.value) {
+			if (exp.usage === Usages.value) {
 				stack.push(exp.prepare());
 			} else {
 				const right = stack.pop();
