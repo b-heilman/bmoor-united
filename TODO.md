@@ -2,9 +2,8 @@
   - [x] Diagram : https://drive.google.com/file/d/1ZBGGUEif3EVbtI8cUTfGJqhBcfPQoxJE/view?usp=sharing
   - [x] Tokenizer
   - [x] Compressor
-  - [ ] Expressor
-  - [ ] Executable
-  - [ ] Compiler Settings
+  - [x] Expressor
+  - [x] Compiler Settings
 - [ ] bmoor/path (need compiler)
 - [ ] bmoor/modeling (need path)
   - [ ] modeling.field

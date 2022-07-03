@@ -1,7 +1,7 @@
 import {expect} from 'chai';
 
 import {Tokenizer} from './tokenizer';
-import {Protoken} from './tokenizer/protoken';
+import {Pattern} from './tokenizer/pattern';
 import {Token} from './tokenizer/token';
 import {TokenizerState} from './tokenizer/state';
 
@@ -17,7 +17,7 @@ describe('@bmoor/compiler', function () {
 			}
 		}
 
-		class TestProto extends Protoken {
+		class TestProto extends Pattern {
 			begin: string;
 			end: string;
 

@@ -1,9 +1,6 @@
 import {ExpressableToken} from './tokenizer/token';
-import {
-	Expressable,
-	Usages,
-	ExpressableFunction
-} from './expressor/expressable';
+import {Expressable, Usages} from './expressor/expressable';
+import {ExecutableFunction} from './expressor/executable';
 
 export enum Modes {
 	infix = 'infix',
@@ -46,7 +43,7 @@ export class Expressor {
 		}
 	}
 
-	makeExecutable(tokens: ExpressableToken[]): ExpressableFunction {
+	makeExecutable(tokens: ExpressableToken[]): ExecutableFunction {
 		return this.express(tokens, Modes.postfix).reduce((stack, exp) => {
 			if (exp.usage === Usages.value) {
 				stack.push(exp.prepare());
@@ -54,8 +51,8 @@ export class Expressor {
 				const right = stack.pop();
 				const left = stack.pop();
 
-				stack.push(function preparedBlock(obj) {
-					return exp.eval(left, right, obj);
+				stack.push(function preparedBlock(ctx) {
+					return exp.eval(left(ctx), right(ctx));
 				});
 			}
 

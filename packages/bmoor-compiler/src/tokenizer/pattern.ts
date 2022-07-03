@@ -1,7 +1,7 @@
 import {Token} from './token';
 import {TokenizerState} from './state';
 
-export abstract class Protoken {
+export abstract class Pattern {
 	abstract getReference(): string;
 	abstract open(string, number): TokenizerState;
 	abstract close(string, number, TokenizerState): number;

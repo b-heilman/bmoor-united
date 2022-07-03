@@ -1,15 +1,5 @@
-import {Statement} from './reducer/statement';
-import {
-	ExpressableToken,
-	Token,
-	TokenReference,
-	TokenConstructor
-} from './tokenizer/token';
-
-type StatementConstructor = {
-	new (tokens: Token[]): Statement;
-	pieces: TokenConstructor[];
-};
+import {StatementConstructor} from './reducer/statement';
+import {ExpressableToken, Token, TokenReference} from './tokenizer/token';
 
 type TreeBranch = {
 	value: StatementConstructor;

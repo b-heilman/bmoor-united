@@ -1,10 +1,10 @@
-import {Protoken} from './tokenizer/protoken';
+import {Pattern} from './tokenizer/pattern';
 import {Token} from './tokenizer/token';
 
 export class Tokenizer {
-	rules: Protoken[];
+	rules: Pattern[];
 
-	constructor(rules: Protoken[]) {
+	constructor(rules: Pattern[]) {
 		this.rules = rules;
 	}
 
