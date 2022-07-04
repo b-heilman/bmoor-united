@@ -67,7 +67,13 @@ export class OpToken extends Token {
 	static reference = 'operation';
 
 	toExpressable() {
-		return [new Expressable(Usages.operation, (a, b) => this.content(a, b))];
+		return [
+			new Expressable(
+				Usages.operation,
+				(a, b) => this.content(a, b),
+				parseInt(this.settings.subType) || 5
+			)
+		];
 	}
 }
 

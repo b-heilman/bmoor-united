@@ -1,6 +1,7 @@
 import {ExpressableToken} from './tokenizer/token';
 import {Expressable, Usages} from './expressor/expressable';
 import {ExecutableFunction} from './expressor/executable';
+import {CompilerInterface} from './compiler.interface';
 
 export enum Modes {
 	infix = 'infix',
@@ -8,11 +9,15 @@ export enum Modes {
 }
 
 export class Expressor {
-	// TODO: is there something needed for the constructor?
+	compiler: CompilerInterface;
+
+	constructor(compiler: CompilerInterface = null) {
+		this.compiler = compiler;
+	}
 
 	express(tokens: ExpressableToken[], mode: Modes): Expressable[] {
 		const infix: Expressable[] = tokens.flatMap((token) =>
-			token.toExpressable()
+			token.toExpressable(this.compiler)
 		);
 
 		if (mode === Modes.infix) {

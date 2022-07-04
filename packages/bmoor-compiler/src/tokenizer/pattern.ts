@@ -2,7 +2,6 @@ import {Token} from './token';
 import {TokenizerState} from './state';
 
 export abstract class Pattern {
-	abstract getReference(): string;
 	abstract open(string, number): TokenizerState;
 	abstract close(string, number, TokenizerState): number;
 	abstract toToken(string, TokenizerState): Token;
@@ -33,5 +32,9 @@ export abstract class Pattern {
 		} else {
 			return null;
 		}
+	}
+
+	getReference() {
+		return this.constructor.name;
 	}
 }

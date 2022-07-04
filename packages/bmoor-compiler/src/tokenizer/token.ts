@@ -1,5 +1,5 @@
 import {Expressable} from '../expressor/expressable';
-
+import {CompilerInterface} from '../compiler.interface';
 import {TokenizerState} from './state';
 
 // eslint-disable-next-line  @typescript-eslint/no-explicit-any
@@ -12,7 +12,7 @@ export interface TokenSettings {
 }
 
 export interface ExpressableToken {
-	toExpressable(): Expressable[];
+	toExpressable(compiler?: CompilerInterface): Expressable[];
 	getReference(): string;
 }
 
@@ -23,7 +23,7 @@ export type TokenConstructor = {
 };
 
 export abstract class Token implements ExpressableToken {
-	abstract toExpressable(): Expressable[];
+	abstract toExpressable(compiler?: CompilerInterface): Expressable[];
 
 	type: string;
 	state: TokenizerState;
