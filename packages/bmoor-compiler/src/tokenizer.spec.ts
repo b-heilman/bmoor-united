@@ -9,7 +9,7 @@ describe('@bmoor/compiler', function () {
 	describe('Tokenizer', function () {
 		class TestToken extends Token {
 			toExpressable() {
-				return [];
+				return null;
 			}
 
 			getReference() {

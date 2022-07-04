@@ -9,49 +9,43 @@ describe('@bmoor/compiler', function () {
 	describe('Expressor', function () {
 		class ValueToken extends Token {
 			toExpressable() {
-				return [new Expressable(Usages.value, () => parseInt(this.content))];
+				return new Expressable(Usages.value, () => parseInt(this.content));
 			}
 		}
 
 		class AddToken extends Token {
 			toExpressable() {
-				return [
-					new Expressable(
-						Usages.operation,
-						(a, b) => {
-							return a + b;
-						},
-						4
-					)
-				];
+				return new Expressable(
+					Usages.operation,
+					(a, b) => {
+						return a + b;
+					},
+					4
+				);
 			}
 		}
 
 		class MultToken extends Token {
 			toExpressable() {
-				return [
-					new Expressable(
-						Usages.operation,
-						(a, b) => {
-							return a * b;
-						},
-						3
-					)
-				];
+				return new Expressable(
+					Usages.operation,
+					(a, b) => {
+						return a * b;
+					},
+					3
+				);
 			}
 		}
 
 		class TestStatement extends Statement {
 			toExpressable() {
-				return [
-					new Expressable(
-						Usages.operation,
-						(a, b) => {
-							return a - b;
-						},
-						4
-					)
-				];
+				return new Expressable(
+					Usages.operation,
+					(a, b) => {
+						return a - b;
+					},
+					4
+				);
 			}
 		}
 

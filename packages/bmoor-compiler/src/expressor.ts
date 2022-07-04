@@ -15,10 +15,12 @@ export class Expressor {
 		this.compiler = compiler;
 	}
 
+	toExpressables(tokens: ExpressableToken[]): Expressable[] {
+		return tokens.map((token) => token.toExpressable(this.compiler));
+	}
+
 	express(tokens: ExpressableToken[], mode: Modes): Expressable[] {
-		const infix: Expressable[] = tokens.flatMap((token) =>
-			token.toExpressable(this.compiler)
-		);
+		const infix: Expressable[] = this.toExpressables(tokens);
 
 		if (mode === Modes.infix) {
 			return infix;

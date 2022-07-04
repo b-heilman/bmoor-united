@@ -1,4 +1,4 @@
-- [ ] bmoor/compiler
+- [x] bmoor/compiler
   - [x] Diagram : https://drive.google.com/file/d/1ZBGGUEif3EVbtI8cUTfGJqhBcfPQoxJE/view?usp=sharing
   - [x] Tokenizer
   - [x] Compressor

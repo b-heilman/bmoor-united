@@ -10,7 +10,7 @@ describe('@bmoor/compiler', function () {
 			static reference: TokenReference = 'eins';
 
 			toExpressable() {
-				return [];
+				return null;
 			}
 		}
 
@@ -18,7 +18,7 @@ describe('@bmoor/compiler', function () {
 			static reference: TokenReference = 'zwei';
 
 			toExpressable() {
-				return [];
+				return null;
 			}
 		}
 
@@ -26,7 +26,7 @@ describe('@bmoor/compiler', function () {
 			static reference: TokenReference = 'drei';
 
 			toExpressable() {
-				return [];
+				return null;
 			}
 		}
 
@@ -34,7 +34,7 @@ describe('@bmoor/compiler', function () {
 			static reference: TokenReference = 'fier';
 
 			toExpressable() {
-				return [];
+				return null;
 			}
 		}
 
@@ -48,7 +48,7 @@ describe('@bmoor/compiler', function () {
 			static pieces = [EinsToken, ZweiToken];
 
 			toExpressable() {
-				return [];
+				return null;
 			}
 		}
 
@@ -56,7 +56,7 @@ describe('@bmoor/compiler', function () {
 			static pieces = [EinsToken, ZweiToken, DreiToken];
 
 			toExpressable() {
-				return [];
+				return null;
 			}
 		}
 
@@ -64,7 +64,7 @@ describe('@bmoor/compiler', function () {
 			static pieces = [EinsToken, ZweiToken, FierToken];
 
 			toExpressable() {
-				return [];
+				return null;
 			}
 		}
 
