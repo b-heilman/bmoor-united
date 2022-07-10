@@ -38,10 +38,11 @@ export class RegexValuePattern extends Pattern {
 		return null;
 	}
 
-	close(str: string, pos: number) {
+	close(str: string, pos: number, state: TokenizerState) {
 		const ch = str[pos];
 
 		if (!this.pattern.test(ch)) {
+			state.setClose(pos);
 			return pos - 1;
 		}
 
@@ -50,7 +51,7 @@ export class RegexValuePattern extends Pattern {
 
 	toToken(base: string, state: TokenizerState) {
 		return new ValueToken(
-			this.parser(base.substring(state.begin, state.end + 1)),
+			this.parser(base.substring(state.open, state.close)),
 			state,
 			{
 				subType: this.subType

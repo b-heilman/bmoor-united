@@ -1,6 +1,8 @@
 
 import {Pattern, Token, TokenizerState, Compiler} from '@bmoor/compiler';
 
+const isVariable = /[A-Za-z_0-9]/;
+
 export class AccessorToken {
 
 }
@@ -13,11 +15,37 @@ export class DotPattern {
 	open(str: string, pos: number) {
 		const ch = str[pos];
 
-		if (this.pattern.test(ch)) {
+		if (isVariable.test(ch)) {
 			return new TokenizerState(pos);
 		}
 
 		return null;
+	}
+
+	close(str: string, pos: number, state: TokenizerState) {
+		const ch = str[pos];
+
+		if (!isVariable.test(ch)) {
+			if (ch === '.'){
+				state.setClose(pos-1);
+
+				return pos;
+			} else /*if (ch === '[')*/ {
+				return pos - 1;
+			}
+		}
+
+		return null;
+	}
+
+	toToken(base: string, state: TokenizerState) {
+		return new ValueToken(
+			this.parser(base.substring(state.open, state.close + 1)),
+			state,
+			{
+				subType: this.subType
+			}
+		);
 	}
 }
 
