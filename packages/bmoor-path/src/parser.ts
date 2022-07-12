@@ -43,9 +43,19 @@ export class DotPattern {
 			this.parser(base.substring(state.open, state.close)),
 			state,
 			{
-				subType: this.subType
+			//	subType: this.subType
 			}
 		);
+	}
+}
+
+class BracketState extends TokenizerState {
+	isQuote: boolean;
+
+	constructor(begin: number, isQuote: boolean = false){
+		super(begin);
+
+		this.isQuote = isQuote;		
 	}
 }
 
@@ -54,30 +64,58 @@ export class BracketPattern {
 		const ch = str[pos];
 
 		if (ch === '[') {
-			return new TokenizerState(pos);
+			const next = str[pos+1];
+
+			if (next === '"'){
+				return new BracketState(pos+2, true);
+			} else {
+				return new BracketState(pos+1);
+			}
 		}
 
 		return null;
 	}
 
-	close(str: string, pos: number, state: TokenizerState) {
+	close(str: string, pos: number, state: BracketState) {
 		const ch = str[pos];
 
 		if (ch === ']') {
-			return pos;
+			if (state.isQuote){
+				const prev = str[pos-1];
+
+				if (prev === '"'){
+					state.setClose(pos-2);
+
+					return pos+1;
+				}
+			} else {
+				state.setClose(pos-1);
+
+				return pos+1;
+			}
 		}
 
 		return null;
 	}
 
-	toToken(base: string, state: TokenizerState) {
-		return new ArrayToken(
-			this.parser(base.substring(state.open, state.close)),
-			state,
-			{
-				subType: this.subType
-			}
-		);
+	toToken(base: string, state: BracketState) {
+		if (state.isQuote){
+			return new ValueToken(
+				this.parser(base.substring(state.open, state.close)),
+				state,
+				{
+				// 	subType: this.subType
+				}
+			);
+		} else {
+			return new ArrayToken(
+				this.parser(base.substring(state.open, state.close)),
+				state,
+				{
+					subType: 'object'
+				}
+			);
+		}
 	}
 }
 
