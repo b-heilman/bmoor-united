@@ -5,6 +5,8 @@ export type ExpressableFunction = (
 	...args: ExpressableValue
 ) => ExpressableValue;
 
+export type ExpressableSettings = any;
+
 export enum Usages {
 	operation = 'operation',
 	value = 'value'

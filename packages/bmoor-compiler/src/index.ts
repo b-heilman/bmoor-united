@@ -6,13 +6,14 @@ export {
 	Expressable,
 	Usages,
 	ExpressableValue,
-	ExpressableFunction
+	ExpressableFunction,
+	ExpressableSettings
 } from './expressor/expressable';
 export {
 	ExecutableFunction
 } from './expressor/executable';
 export {
-	Modes
+	ExpressorModes
 } from './expressor';
 export {
 	ValueToken,

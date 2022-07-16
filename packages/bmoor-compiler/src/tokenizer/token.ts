@@ -1,4 +1,4 @@
-import {Expressable} from '../expressor/expressable';
+import {Expressable, ExpressableSettings} from '../expressor/expressable';
 import {CompilerInterface} from '../compiler.interface';
 import {TokenizerState} from './state';
 
@@ -12,7 +12,7 @@ export interface TokenSettings {
 }
 
 export interface ExpressableToken {
-	toExpressable(compiler?: CompilerInterface): Expressable;
+	toExpressable(compiler?: CompilerInterface, settings?: ExpressableSettings): Expressable;
 	getReference(): string;
 }
 
@@ -23,7 +23,7 @@ export type TokenConstructor = {
 };
 
 export abstract class Token implements ExpressableToken {
-	abstract toExpressable(compiler?: CompilerInterface): Expressable;
+	abstract toExpressable(compiler?: CompilerInterface, settings?: ExpressableSettings): Expressable;
 
 	type: string;
 	state: TokenizerState;

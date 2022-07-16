@@ -1,9 +1,9 @@
 import {ExpressableToken} from './tokenizer/token';
-import {Expressable, Usages} from './expressor/expressable';
+import {Expressable, Usages, ExpressableSettings} from './expressor/expressable';
 import {ExecutableFunction} from './expressor/executable';
 import {CompilerInterface} from './compiler.interface';
 
-export enum Modes {
+export enum ExpressorModes {
 	infix = 'infix',
 	postfix = 'postfix'
 }
@@ -15,14 +15,14 @@ export class Expressor {
 		this.compiler = compiler;
 	}
 
-	toExpressables(tokens: ExpressableToken[]): Expressable[] {
-		return tokens.map((token) => token.toExpressable(this.compiler));
+	toExpressables(tokens: ExpressableToken[], settings: ExpressableSettings={}): Expressable[] {
+		return tokens.map((token) => token.toExpressable(this.compiler, settings));
 	}
 
-	express(tokens: ExpressableToken[], mode: Modes): Expressable[] {
-		const infix: Expressable[] = this.toExpressables(tokens);
+	express(tokens: ExpressableToken[], mode: ExpressorModes, settings: ExpressableSettings={}): Expressable[] {
+		const infix: Expressable[] = this.toExpressables(tokens, settings);
 
-		if (mode === Modes.infix) {
+		if (mode === ExpressorModes.infix) {
 			return infix;
 		} else {
 			const processed = infix.reduce(
@@ -51,7 +51,7 @@ export class Expressor {
 	}
 
 	makeExecutable(tokens: ExpressableToken[]): ExecutableFunction {
-		return this.express(tokens, Modes.postfix).reduce((stack, exp) => {
+		return this.express(tokens, ExpressorModes.postfix).reduce((stack, exp) => {
 			if (exp.usage === Usages.value) {
 				stack.push(exp.prepare());
 			} else {

@@ -7,10 +7,14 @@ import {
 	Usages,
 	Expressable,
 	ExecutableFunction,
-	Modes
+	ExpressorModes
 } from '@bmoor/compiler';
 
 const isVariable = /[A-Za-z_0-9]/;
+
+export interface ParserSettings {
+	mode: ParserModes
+}
 
 export class AccessorToken extends Token {
 	static reference: 'accessor-token';
@@ -143,6 +147,11 @@ export class BracketPattern extends Pattern {
 	}
 }
 
+export enum ParserModes {
+	read = 'read',
+	write = 'write'
+}
+
 export class Parser extends Compiler {
 	constructor(){
 		super({
@@ -155,7 +164,13 @@ export class Parser extends Compiler {
 	}
 
 	compile(str: string): ExecutableFunction {
-		const ops: Expressable[] = this.expressor.express(this.parse(str), Modes.infix);
+		const ops: Expressable[] = this.expressor.express(
+			this.parse(str), 
+			ExpressorModes.infix,
+			{
+
+			}
+		);
 
 		return function(obj){
 			return ops.reduce((agg, exp) => exp.eval(agg), obj);

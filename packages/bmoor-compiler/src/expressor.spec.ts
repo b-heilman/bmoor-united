@@ -2,7 +2,7 @@ import {expect} from 'chai';
 
 import {Token} from './tokenizer/token';
 import {Statement} from './reducer/statement';
-import {Expressor, Modes} from './expressor';
+import {Expressor, ExpressorModes} from './expressor';
 import {Expressable, Usages} from './expressor/expressable';
 
 describe('@bmoor/compiler', function () {
@@ -61,9 +61,9 @@ describe('@bmoor/compiler', function () {
 
 			const ex = new Expressor();
 
-			const infix = ex.express([eins, add, zwei, sub, drei], Modes.infix);
+			const infix = ex.express([eins, add, zwei, sub, drei], ExpressorModes.infix);
 
-			const postfix = ex.express([eins, add, zwei, sub, drei], Modes.postfix);
+			const postfix = ex.express([eins, add, zwei, sub, drei], ExpressorModes.postfix);
 
 			expect(infix.map((e) => e.usage)).to.deep.equal([
 				'value',
