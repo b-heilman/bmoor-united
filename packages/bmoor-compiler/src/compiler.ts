@@ -1,5 +1,6 @@
 import {Tokenizer} from './tokenizer';
 import {Pattern} from './tokenizer/pattern';
+import {ExpressableToken} from './tokenizer/token';
 import {Reducer} from './reducer';
 import {StatementConstructor} from './reducer/statement';
 import {Expressor} from './expressor';
@@ -22,9 +23,11 @@ export class Compiler implements CompilerInterface {
 		this.expressor = new Expressor(this);
 	}
 
+	parse(str: string): ExpressableToken[] {
+		return this.reducer.reduce(this.tokenizer.tokenize(str));
+	}
+
 	compile(str: string): ExecutableFunction {
-		return this.expressor.makeExecutable(
-			this.reducer.reduce(this.tokenizer.tokenize(str))
-		);
+		return this.expressor.makeExecutable(this.parse(str));
 	}
 }

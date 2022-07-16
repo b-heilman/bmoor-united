@@ -9,6 +9,12 @@ export {
 	ExpressableFunction
 } from './expressor/expressable';
 export {
+	ExecutableFunction
+} from './expressor/executable';
+export {
+	Modes
+} from './expressor';
+export {
 	ValueToken,
 	RegexValuePattern,
 	OpToken,

@@ -8,7 +8,7 @@ export type TokenValue = any;
 export type TokenReference = string;
 
 export interface TokenSettings {
-	subType: string;
+	subType?: string;
 }
 
 export interface ExpressableToken {

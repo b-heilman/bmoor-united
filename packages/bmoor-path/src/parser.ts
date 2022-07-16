@@ -1,17 +1,26 @@
 
-import {Pattern, Token, TokenizerState, Compiler} from '@bmoor/compiler';
+import {
+	Pattern, 
+	Token, 
+	TokenizerState, 
+	Compiler,
+	Usages,
+	Expressable,
+	ExecutableFunction,
+	Modes
+} from '@bmoor/compiler';
 
 const isVariable = /[A-Za-z_0-9]/;
 
-export class AccessorToken {
+export class AccessorToken extends Token {
+	static reference: 'accessor-token';
 
+	toExpressable() {
+		return new Expressable(Usages.value, (obj) => obj[this.content]);
+	}
 }
 
-export class ArrayToken {
-
-}
-
-export class DotPattern {
+export class DotPattern extends Pattern {
 	open(str: string, pos: number) {
 		const ch = str[pos];
 
@@ -23,15 +32,13 @@ export class DotPattern {
 	}
 
 	close(str: string, pos: number, state: TokenizerState) {
-		const ch = str[pos];
+		if (pos >= str.length){
+			return pos;
+		} else {
+			const ch = str[pos];
 
-		if (!isVariable.test(ch)) {
-			if (ch === '.'){
-				state.setClose(pos-1);
-
+			if (!isVariable.test(ch)) {
 				return pos;
-			} else /*if (ch === '[')*/ {
-				return pos - 1;
 			}
 		}
 
@@ -39,8 +46,8 @@ export class DotPattern {
 	}
 
 	toToken(base: string, state: TokenizerState) {
-		return new ValueToken(
-			this.parser(base.substring(state.open, state.close)),
+		return new AccessorToken(
+			base.substring(state.open, state.close),
 			state,
 			{
 			//	subType: this.subType
@@ -59,7 +66,22 @@ class BracketState extends TokenizerState {
 	}
 }
 
-export class BracketPattern {
+export class ArrayToken extends Token {
+	static reference: 'array-token';
+
+	toExpressable() {
+		return new Expressable(Usages.value, (arr) => {
+			if (this.content === ''){
+				return arr;
+			} else {
+				// TODO: array operators
+				// this.content
+			}
+		});
+	}
+}
+
+export class BracketPattern extends Pattern {
 	open(str: string, pos: number) {
 		const ch = str[pos];
 
@@ -84,14 +106,14 @@ export class BracketPattern {
 				const prev = str[pos-1];
 
 				if (prev === '"'){
-					state.setClose(pos-2);
+					state.setClose(pos-1);
 
-					return pos+1;
+					return pos;
 				}
 			} else {
-				state.setClose(pos-1);
+				state.setClose(pos);
 
-				return pos+1;
+				return pos;
 			}
 		}
 
@@ -99,9 +121,11 @@ export class BracketPattern {
 	}
 
 	toToken(base: string, state: BracketState) {
+		const content = base.substring(state.open, state.close);
+		
 		if (state.isQuote){
-			return new ValueToken(
-				this.parser(base.substring(state.open, state.close)),
+			return new AccessorToken(
+				content,
 				state,
 				{
 				// 	subType: this.subType
@@ -109,7 +133,7 @@ export class BracketPattern {
 			);
 		} else {
 			return new ArrayToken(
-				this.parser(base.substring(state.open, state.close)),
+				content,
 				state,
 				{
 					subType: 'object'
@@ -129,4 +153,14 @@ export class Parser extends Compiler {
 			reducer: []
 		})
 	}
+
+	compile(str: string): ExecutableFunction {
+		const ops: Expressable[] = this.expressor.express(this.parse(str), Modes.infix);
+
+		return function(obj){
+			return ops.reduce((agg, exp) => exp.eval(agg), obj);
+		};
+	}
 }
+
+export const parser = new Parser();

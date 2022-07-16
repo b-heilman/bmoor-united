@@ -9,7 +9,10 @@ describe('@bmoor/compiler', function () {
 	describe('Expressor', function () {
 		class ValueToken extends Token {
 			toExpressable() {
-				return new Expressable(Usages.value, () => parseInt(this.content));
+				return new Expressable(
+					Usages.value, 
+					() => parseInt(this.content)
+				);
 			}
 		}
 

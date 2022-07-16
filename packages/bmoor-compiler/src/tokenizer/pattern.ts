@@ -19,7 +19,11 @@ export abstract class Pattern {
 				end = this.close(str, pos, state);
 			} while (!end && pos < str.length);
 
-			if (end) {
+			if (end === null){
+				end = this.close(str, str.length, state);
+			}
+
+			if (end !== null) {
 				state.setEnd(end);
 
 				const token = this.toToken(str, state);
