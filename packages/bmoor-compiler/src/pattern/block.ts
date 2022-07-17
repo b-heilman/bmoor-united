@@ -2,7 +2,7 @@ import {CompilerInterface} from '../compiler.interface';
 import {Pattern} from '../tokenizer/pattern';
 import {Token} from '../tokenizer/token';
 import {TokenizerState} from '../tokenizer/state';
-import {Expressable, Usages} from '../expressor/expressable';
+import {Expressable, ExpressableUsages} from '../expressor/expressable';
 
 export class BlockToken extends Token {
 	static reference = 'block';
@@ -10,7 +10,7 @@ export class BlockToken extends Token {
 	toExpressable(compiler: CompilerInterface) {
 		const fn = compiler.compile(this.content);
 
-		return new Expressable(Usages.value, fn);
+		return new Expressable(ExpressableUsages.value, fn);
 	}
 }
 

@@ -19,7 +19,7 @@ export abstract class Pattern {
 				end = this.close(str, pos, state);
 			} while (!end && pos < str.length);
 
-			if (end === null){
+			if (end === null) {
 				end = this.close(str, str.length, state);
 			}
 

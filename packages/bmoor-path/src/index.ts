@@ -1,4 +1,1 @@
-
-export class Path {
-	
-}
+export class Path {}

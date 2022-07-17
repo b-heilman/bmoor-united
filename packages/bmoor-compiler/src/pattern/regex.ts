@@ -3,7 +3,7 @@ import {Token} from '../tokenizer/token';
 import {TokenizerState} from '../tokenizer/state';
 import {
 	Expressable,
-	Usages,
+	ExpressableUsages,
 	ExpressableFunction
 } from '../expressor/expressable';
 
@@ -11,7 +11,7 @@ export class ValueToken extends Token {
 	static reference = 'value';
 
 	toExpressable() {
-		return new Expressable(Usages.value, () => this.content);
+		return new Expressable(ExpressableUsages.value, () => this.content);
 	}
 }
 
@@ -69,7 +69,7 @@ export class OpToken extends Token {
 
 	toExpressable() {
 		return new Expressable(
-			Usages.operation,
+			ExpressableUsages.operation,
 			(a, b) => this.content(a, b),
 			parseInt(this.settings.subType) || 5
 		);

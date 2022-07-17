@@ -3,15 +3,14 @@ import {expect} from 'chai';
 import {Token} from './tokenizer/token';
 import {Statement} from './reducer/statement';
 import {Expressor, ExpressorModes} from './expressor';
-import {Expressable, Usages} from './expressor/expressable';
+import {Expressable, ExpressableUsages} from './expressor/expressable';
 
 describe('@bmoor/compiler', function () {
 	describe('Expressor', function () {
 		class ValueToken extends Token {
 			toExpressable() {
-				return new Expressable(
-					Usages.value, 
-					() => parseInt(this.content)
+				return new Expressable(ExpressableUsages.value, () =>
+					parseInt(this.content)
 				);
 			}
 		}
@@ -19,7 +18,7 @@ describe('@bmoor/compiler', function () {
 		class AddToken extends Token {
 			toExpressable() {
 				return new Expressable(
-					Usages.operation,
+					ExpressableUsages.operation,
 					(a, b) => {
 						return a + b;
 					},
@@ -31,7 +30,7 @@ describe('@bmoor/compiler', function () {
 		class MultToken extends Token {
 			toExpressable() {
 				return new Expressable(
-					Usages.operation,
+					ExpressableUsages.operation,
 					(a, b) => {
 						return a * b;
 					},
@@ -43,7 +42,7 @@ describe('@bmoor/compiler', function () {
 		class TestStatement extends Statement {
 			toExpressable() {
 				return new Expressable(
-					Usages.operation,
+					ExpressableUsages.operation,
 					(a, b) => {
 						return a - b;
 					},
@@ -61,9 +60,15 @@ describe('@bmoor/compiler', function () {
 
 			const ex = new Expressor();
 
-			const infix = ex.express([eins, add, zwei, sub, drei], ExpressorModes.infix);
+			const infix = ex.express(
+				[eins, add, zwei, sub, drei],
+				ExpressorModes.infix
+			);
 
-			const postfix = ex.express([eins, add, zwei, sub, drei], ExpressorModes.postfix);
+			const postfix = ex.express(
+				[eins, add, zwei, sub, drei],
+				ExpressorModes.postfix
+			);
 
 			expect(infix.map((e) => e.usage)).to.deep.equal([
 				'value',

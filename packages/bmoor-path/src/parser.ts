@@ -1,26 +1,36 @@
-
 import {
-	Pattern, 
-	Token, 
-	TokenizerState, 
+	Pattern,
+	Token,
+	TokenizerState,
 	Compiler,
-	Usages,
+	ExpressableUsages,
 	Expressable,
 	ExecutableFunction,
-	ExpressorModes
+	ExpressorModes,
+	ExpressableSettings,
+	CompilerInterface
 } from '@bmoor/compiler';
 
 const isVariable = /[A-Za-z_0-9]/;
 
-export interface ParserSettings {
-	mode: ParserModes
+export enum ParserModes {
+	read = 'read',
+	write = 'write'
+}
+
+export interface ParserSettings extends ExpressableSettings {
+	mode: ParserModes;
 }
 
 export class AccessorToken extends Token {
 	static reference: 'accessor-token';
 
-	toExpressable() {
-		return new Expressable(Usages.value, (obj) => obj[this.content]);
+	toExpressable(
+		compiler: CompilerInterface = null,
+		settings: ParserSettings = {mode: ParserModes.read}
+	) {
+		console.log(settings);
+		return new Expressable(ExpressableUsages.value, (obj) => obj[this.content]);
 	}
 }
 
@@ -35,8 +45,8 @@ export class DotPattern extends Pattern {
 		return null;
 	}
 
-	close(str: string, pos: number, state: TokenizerState) {
-		if (pos >= str.length){
+	close(str: string, pos: number) {
+		if (pos >= str.length) {
 			return pos;
 		} else {
 			const ch = str[pos];
@@ -50,23 +60,19 @@ export class DotPattern extends Pattern {
 	}
 
 	toToken(base: string, state: TokenizerState) {
-		return new AccessorToken(
-			base.substring(state.open, state.close),
-			state,
-			{
+		return new AccessorToken(base.substring(state.open, state.close), state, {
 			//	subType: this.subType
-			}
-		);
+		});
 	}
 }
 
 class BracketState extends TokenizerState {
 	isQuote: boolean;
 
-	constructor(begin: number, isQuote: boolean = false){
+	constructor(begin: number, isQuote = false) {
 		super(begin);
 
-		this.isQuote = isQuote;		
+		this.isQuote = isQuote;
 	}
 }
 
@@ -74,8 +80,8 @@ export class ArrayToken extends Token {
 	static reference: 'array-token';
 
 	toExpressable() {
-		return new Expressable(Usages.value, (arr) => {
-			if (this.content === ''){
+		return new Expressable(ExpressableUsages.value, (arr) => {
+			if (this.content === '') {
 				return arr;
 			} else {
 				// TODO: array operators
@@ -90,12 +96,12 @@ export class BracketPattern extends Pattern {
 		const ch = str[pos];
 
 		if (ch === '[') {
-			const next = str[pos+1];
+			const next = str[pos + 1];
 
-			if (next === '"'){
-				return new BracketState(pos+2, true);
+			if (next === '"') {
+				return new BracketState(pos + 2, true);
 			} else {
-				return new BracketState(pos+1);
+				return new BracketState(pos + 1);
 			}
 		}
 
@@ -106,11 +112,11 @@ export class BracketPattern extends Pattern {
 		const ch = str[pos];
 
 		if (ch === ']') {
-			if (state.isQuote){
-				const prev = str[pos-1];
+			if (state.isQuote) {
+				const prev = str[pos - 1];
 
-				if (prev === '"'){
-					state.setClose(pos-1);
+				if (prev === '"') {
+					state.setClose(pos - 1);
 
 					return pos;
 				}
@@ -126,53 +132,35 @@ export class BracketPattern extends Pattern {
 
 	toToken(base: string, state: BracketState) {
 		const content = base.substring(state.open, state.close);
-		
-		if (state.isQuote){
-			return new AccessorToken(
-				content,
-				state,
-				{
+
+		if (state.isQuote) {
+			return new AccessorToken(content, state, {
 				// 	subType: this.subType
-				}
-			);
+			});
 		} else {
-			return new ArrayToken(
-				content,
-				state,
-				{
-					subType: 'object'
-				}
-			);
+			return new ArrayToken(content, state, {
+				subType: 'object'
+			});
 		}
 	}
 }
 
-export enum ParserModes {
-	read = 'read',
-	write = 'write'
-}
-
 export class Parser extends Compiler {
-	constructor(){
+	constructor() {
 		super({
-			tokenizer: [
-				new DotPattern(),
-				new BracketPattern()
-			],
+			tokenizer: [new DotPattern(), new BracketPattern()],
 			reducer: []
-		})
+		});
 	}
 
 	compile(str: string): ExecutableFunction {
 		const ops: Expressable[] = this.expressor.express(
-			this.parse(str), 
+			this.parse(str),
 			ExpressorModes.infix,
-			{
-
-			}
+			{}
 		);
 
-		return function(obj){
+		return function (obj) {
 			return ops.reduce((agg, exp) => exp.eval(agg), obj);
 		};
 	}

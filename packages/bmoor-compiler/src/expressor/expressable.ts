@@ -5,19 +5,27 @@ export type ExpressableFunction = (
 	...args: ExpressableValue
 ) => ExpressableValue;
 
-export type ExpressableSettings = any;
+export enum ExpressablePosition {
+	first = 'first',
+	last = 'last',
+	middle = 'middle'
+}
 
-export enum Usages {
+export interface ExpressableSettings {
+	position?: ExpressablePosition;
+}
+
+export enum ExpressableUsages {
 	operation = 'operation',
 	value = 'value'
 }
 
 export class Expressable {
-	usage: Usages;
+	usage: ExpressableUsages;
 	rank: number;
 	method: (...args: ExpressableValue) => ExpressableValue;
 
-	constructor(usage: Usages, method: ExpressableFunction, rank = 0) {
+	constructor(usage: ExpressableUsages, method: ExpressableFunction, rank = 0) {
 		this.usage = usage;
 		this.method = method;
 		this.rank = rank;

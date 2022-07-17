@@ -12,7 +12,10 @@ export interface TokenSettings {
 }
 
 export interface ExpressableToken {
-	toExpressable(compiler?: CompilerInterface, settings?: ExpressableSettings): Expressable;
+	toExpressable(
+		compiler?: CompilerInterface,
+		settings?: ExpressableSettings
+	): Expressable;
 	getReference(): string;
 }
 
@@ -23,7 +26,10 @@ export type TokenConstructor = {
 };
 
 export abstract class Token implements ExpressableToken {
-	abstract toExpressable(compiler?: CompilerInterface, settings?: ExpressableSettings): Expressable;
+	abstract toExpressable(
+		compiler?: CompilerInterface,
+		settings?: ExpressableSettings
+	): Expressable;
 
 	type: string;
 	state: TokenizerState;

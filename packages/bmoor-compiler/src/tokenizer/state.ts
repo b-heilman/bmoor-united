@@ -1,21 +1,21 @@
 export class TokenizerState {
 	begin: number; // where the scanner should continue for the token
-	open: number;  // where the value actually begins
+	open: number; // where the value actually begins
 	close: number; // where the value actually ends
-	end: number;   // where the scanner should continue for the next token
+	end: number; // where the scanner should continue for the next token
 
 	constructor(begin) {
 		this.begin = begin;
 	}
 
-	setOpen(open){
-		this.open;
+	setOpen(open) {
+		this.open = open;
 	}
 
 	setClose(close) {
 		this.close = close;
 
-		if (this.open === undefined){
+		if (this.open === undefined) {
 			this.open = this.begin;
 		}
 	}
@@ -23,7 +23,7 @@ export class TokenizerState {
 	setEnd(end) {
 		this.end = end;
 
-		if (this.close === undefined){
+		if (this.close === undefined) {
 			this.setClose(end);
 		}
 	}

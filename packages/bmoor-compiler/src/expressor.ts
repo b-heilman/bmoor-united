@@ -1,5 +1,10 @@
 import {ExpressableToken} from './tokenizer/token';
-import {Expressable, Usages, ExpressableSettings} from './expressor/expressable';
+import {
+	Expressable,
+	ExpressableUsages,
+	ExpressableSettings,
+	ExpressablePosition
+} from './expressor/expressable';
 import {ExecutableFunction} from './expressor/executable';
 import {CompilerInterface} from './compiler.interface';
 
@@ -15,11 +20,27 @@ export class Expressor {
 		this.compiler = compiler;
 	}
 
-	toExpressables(tokens: ExpressableToken[], settings: ExpressableSettings={}): Expressable[] {
-		return tokens.map((token) => token.toExpressable(this.compiler, settings));
+	toExpressables(
+		tokens: ExpressableToken[],
+		settings: ExpressableSettings = {}
+	): Expressable[] {
+		return tokens.map((token, pos) => {
+			settings.position =
+				pos === 0
+					? ExpressablePosition.first
+					: pos === tokens.length - 1
+					? ExpressablePosition.last
+					: ExpressablePosition.middle;
+
+			return token.toExpressable(this.compiler, settings);
+		});
 	}
 
-	express(tokens: ExpressableToken[], mode: ExpressorModes, settings: ExpressableSettings={}): Expressable[] {
+	express(
+		tokens: ExpressableToken[],
+		mode: ExpressorModes,
+		settings: ExpressableSettings = {}
+	): Expressable[] {
 		const infix: Expressable[] = this.toExpressables(tokens, settings);
 
 		if (mode === ExpressorModes.infix) {
@@ -27,7 +48,7 @@ export class Expressor {
 		} else {
 			const processed = infix.reduce(
 				(state, exp) => {
-					if (exp.usage === Usages.operation) {
+					if (exp.usage === ExpressableUsages.operation) {
 						while (state.ops.length && exp.rank >= state.ops[0].rank) {
 							state.postfix.push(state.ops.shift());
 						}
@@ -52,7 +73,7 @@ export class Expressor {
 
 	makeExecutable(tokens: ExpressableToken[]): ExecutableFunction {
 		return this.express(tokens, ExpressorModes.postfix).reduce((stack, exp) => {
-			if (exp.usage === Usages.value) {
+			if (exp.usage === ExpressableUsages.value) {
 				stack.push(exp.prepare());
 			} else {
 				const right = stack.pop();
