@@ -22,6 +22,9 @@ export interface ParserSettings extends ExpressableSettings {
 	mode: ParserModes;
 }
 
+// Doing this because null or undefined COULD be valid parameter values
+const NO_VALUE = Symbol('no-value');
+
 export class AccessorToken extends Token {
 	static reference: 'accessor-token';
 
@@ -29,8 +32,33 @@ export class AccessorToken extends Token {
 		compiler: CompilerInterface = null,
 		settings: ParserSettings = {mode: ParserModes.read}
 	) {
-		console.log(settings);
-		return new Expressable(ExpressableUsages.value, (obj) => obj[this.content]);
+		if (settings.mode === ParserModes.write) {
+			return new Expressable(
+				ExpressableUsages.value,
+				(obj, value: any = NO_VALUE) => {
+					if (value === NO_VALUE) {
+						let rtn = obj[this.content];
+
+						if (!rtn) {
+							rtn = {};
+
+							obj[this.content] = rtn;
+						}
+
+						return rtn;
+					} else {
+						obj[this.content] = value;
+
+						return obj;
+					}
+				}
+			);
+		} else {
+			return new Expressable(
+				ExpressableUsages.value,
+				(obj) => obj[this.content]
+			);
+		}
 	}
 }
 
@@ -79,15 +107,25 @@ class BracketState extends TokenizerState {
 export class ArrayToken extends Token {
 	static reference: 'array-token';
 
-	toExpressable() {
-		return new Expressable(ExpressableUsages.value, (arr) => {
-			if (this.content === '') {
-				return arr;
-			} else {
-				// TODO: array operators
-				// this.content
-			}
-		});
+	toExpressable(
+		compiler: CompilerInterface = null,
+		settings: ParserSettings = {mode: ParserModes.read}
+	) {
+		if (settings.mode === ParserModes.write) {
+			return new Expressable(ExpressableUsages.value, () => {
+				// TODO: this won't work...
+				return [];
+			});
+		} else {
+			return new Expressable(ExpressableUsages.value, (arr) => {
+				if (this.content === '') {
+					return arr;
+				} else {
+					// TODO: array operators
+					// this.content
+				}
+			});
+		}
 	}
 }
 
@@ -153,16 +191,32 @@ export class Parser extends Compiler {
 		});
 	}
 
-	compile(str: string): ExecutableFunction {
+	compile(
+		str: string,
+		mode: ParserModes = ParserModes.read
+	): ExecutableFunction {
 		const ops: Expressable[] = this.expressor.express(
 			this.parse(str),
 			ExpressorModes.infix,
-			{}
+			<ParserSettings>{
+				mode
+			}
 		);
 
-		return function (obj) {
-			return ops.reduce((agg, exp) => exp.eval(agg), obj);
-		};
+		if (mode === ParserModes.read) {
+			return function (obj) {
+				return ops.reduce((agg, exp) => exp.eval(agg), obj);
+			};
+		} else {
+			const setter = ops.pop();
+			return function (obj, value) {
+				const root = ops.reduce((agg, exp) => exp.eval(agg), obj);
+
+				setter.eval(root, value);
+
+				return obj;
+			};
+		}
 	}
 }
 
