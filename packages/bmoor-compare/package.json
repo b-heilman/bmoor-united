@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/b-heilman/bmoor-united#readme",
   "scripts": {
-    "test": "mocha --recursive \"./src/**/*.spec.js\""
+    "lint": "eslint ./src",
+    "test": "mocha -r ts-node/register --recursive \"./src/**/*.spec.ts\""
   }
 }
