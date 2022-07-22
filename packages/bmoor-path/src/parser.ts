@@ -29,12 +29,14 @@ export class AccessorToken extends Token {
 	static reference: 'accessor-token';
 
 	toExpressable(
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		compiler: CompilerInterface = null,
 		settings: ParserSettings = {mode: ParserModes.read}
 	) {
 		if (settings.mode === ParserModes.write) {
 			return new Expressable(
 				ExpressableUsages.value,
+				// eslint-disable-next-line  @typescript-eslint/no-explicit-any
 				(obj, value: any = NO_VALUE) => {
 					if (value === NO_VALUE) {
 						let rtn = obj[this.content];
@@ -108,6 +110,7 @@ export class ArrayToken extends Token {
 	static reference: 'array-token';
 
 	toExpressable(
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		compiler: CompilerInterface = null,
 		settings: ParserSettings = {mode: ParserModes.read}
 	) {
