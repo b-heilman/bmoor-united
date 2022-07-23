@@ -16,9 +16,13 @@
   "bugs": {
     "url": "https://github.com/b-heilman/bmoor-united/issues"
   },
-  "homepage": "https://github.com/b-heilman/bmoor-united#readme",
+  "homepage": "https://github.com/b-heilman/bmoor-united/blob/main/packages/bmoor-compiler/README.md",
+  "dependencies": {},
   "scripts": {
+    "build": "echo \"compiler building...\"",
     "lint": "eslint ./src",
-    "test": "mocha -r ts-node/register --recursive \"./src/**/*.spec.ts\""
-  }
+    "test": "mocha -r ts-node/register --recursive \"./src/**/*.spec.ts\"",
+    "publish": "echo \"compiler publishing...\""
+  },
+  "keywords": []
 }

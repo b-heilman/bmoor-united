@@ -7,16 +7,20 @@
       "outputs": ["dist/**"]
     },
     "test": {
-      "dependsOn": ["^test"],
-      "outputs": [],
-      "inputs": ["src/**/*.ts"]
+      "dependsOn": ["build"],
+      "inputs": ["src/**/*.ts"],
+      "outputs": []
     },
     "lint": {
-      "dependsOn": ["^lint"],
+      "outputs": []
+    },
+    "publish": {
+      "dependsOn": ["test", "lint"],
+      "inputs": ["src/**/*.ts"],
       "outputs": []
     },
     "deploy": {
-      "dependsOn": ["build", "test", "lint"],
+      "dependsOn": ["test", "lint"],
       "outputs": []
     }
   }
