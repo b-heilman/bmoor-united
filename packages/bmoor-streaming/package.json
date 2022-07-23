@@ -17,12 +17,14 @@
     "url": "https://github.com/b-heilman/bmoor-united/issues"
   },
   "homepage": "https://github.com/b-heilman/bmoor-united/blob/main/packages/bmoor-streaming/README.md",
-  "dependencies": {},
   "scripts": {
-    "build": "echo \"streaming building...\"",
+    "build": "mkdir dist/; cp -r src/ dist/src;  cp package.json dist/package.json",
     "lint": "eslint ./src",
     "test": "mocha -r ts-node/register --recursive \"./src/**/*.spec.ts\"",
     "publish": "echo \"streaming publishing...\""
   },
-  "keywords": []
+  "keywords": [],
+  "devDependencies": {
+    "@bmoor/timing": "^0.1.1"
+  }
 }

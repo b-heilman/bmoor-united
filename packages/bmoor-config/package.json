@@ -17,9 +17,12 @@
     "url": "https://github.com/b-heilman/bmoor-united/issues"
   },
   "homepage": "https://github.com/b-heilman/bmoor-united/blob/main/packages/bmoor-config/README.md",
-  "dependencies": {},
+  "dependencies": {
+    "@bmoor/error": "^0.1.0",
+    "@bmoor/object": "^0.1.1"
+  },
   "scripts": {
-    "build": "echo \"config building...\"",
+    "build": "mkdir dist/; cp -r src/ dist/src;  cp package.json dist/package.json",
     "lint": "eslint ./src",
     "test": "mocha -r ts-node/register --recursive \"./src/**/*.spec.ts\"",
     "publish": "echo \"config publishing...\""

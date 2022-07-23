@@ -22,7 +22,7 @@
     "@bmoor/error": "^0.1.0"
   },
   "scripts": {
-    "build": "echo \"object building...\"",
+    "build": "mkdir dist/; cp -r src/ dist/src;  cp package.json dist/package.json",
     "lint": "eslint ./src",
     "test": "mocha -r ts-node/register --recursive \"./src/**/*.spec.ts\"",
     "publish": "echo \"object publishing...\""

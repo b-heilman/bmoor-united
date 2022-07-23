@@ -16,7 +16,7 @@
     },
     "publish": {
       "dependsOn": ["test", "lint"],
-      "inputs": ["src/**/*.ts"],
+      "inputs": ["dist/**"],
       "outputs": []
     },
     "deploy": {

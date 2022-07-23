@@ -1,7 +1,8 @@
 .DS_Store
 .turbo
+dist/
+build/
+node_modules/
 /.settings
 /.project
-/node_modules
-/dist
-/build
+

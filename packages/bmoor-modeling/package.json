@@ -1,6 +1,6 @@
 {
   "name": "@bmoor/modeling",
-  "version": "0.1.0",
+  "version": "0.0.1",
   "description": "Better ways to work with objects",
   "main": "src/index.ts",
   "files": [
@@ -17,9 +17,11 @@
     "url": "https://github.com/b-heilman/bmoor-united/issues"
   },
   "homepage": "https://github.com/b-heilman/bmoor-united/blob/main/packages/bmoor-modeling/README.md",
-  "dependencies": {},
+  "dependencies": {
+    "@bmoor/context": "^0.0.1"
+  },
   "scripts": {
-    "build": "echo \"modeling building...\"",
+    "build": "mkdir dist/; cp -r src/ dist/src;  cp package.json dist/package.json",
     "lint": "eslint ./src",
     "test": "mocha -r ts-node/register --recursive \"./src/**/*.spec.ts\"",
     "publish": "echo \"modeling publishing...\""

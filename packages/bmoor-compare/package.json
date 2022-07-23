@@ -19,7 +19,7 @@
   "homepage": "https://github.com/b-heilman/bmoor-united/blob/main/packages/bmoor-compare/README.md",
   "dependencies": {},
   "scripts": {
-    "build": "echo \"compare building...\"",
+    "build": "mkdir dist/; cp -r src/ dist/src;  cp package.json dist/package.json",
     "lint": "eslint ./src",
     "test": "mocha -r ts-node/register --recursive \"./src/**/*.spec.ts\"",
     "publish": "echo \"compare publishing...\""
