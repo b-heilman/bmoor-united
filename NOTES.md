@@ -12,3 +12,5 @@ https://docs.npmjs.com/about-scopes
 npm login
 
 npm publish --access public
+
+https://turborepo.org/docs/ci/github-actions
