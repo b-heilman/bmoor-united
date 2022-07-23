@@ -48,7 +48,8 @@
     "test:workspaces": "npm run test --workspaces",
     "test:file": "mocha -r ts-node/register",
     "prettier": "npx prettier --write ./packages/*/src",
-    "finalize": "npm run prettier && turbo run deploy",
-    "publish": "npm run prettier && turbo run publish"
+    "validate": "npm run lint &&  npm run test",
+    "finalize": "npm run prettier && npm run validate",
+    "publish": "turbo run publish"
   }
 }
