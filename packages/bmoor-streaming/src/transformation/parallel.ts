@@ -15,18 +15,18 @@ export function parallel(fn, limit = 10, settings = {objectMode: true}) {
 				called = true;
 			}
 
-			fn(chunk, encoding).then((res) => {
-				this.push(res);
+			const res = await fn(chunk, encoding);
 
-				inFlight--;
-				if (!called) {
-					next();
-				}
+			this.push(res);
 
-				if (!inFlight && onEnd) {
-					onEnd();
-				}
-			});
+			inFlight--;
+			if (!called) {
+				next();
+			}
+
+			if (!inFlight && onEnd) {
+				onEnd();
+			}
 		},
 		flush: function (callback) {
 			if (!inFlight) {
