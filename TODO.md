@@ -14,6 +14,6 @@
 # CI Work
 - [ ] versioning
 - [ ] dependency validation
-- [ ] github hooks
+- [x] github hooks
 - [ ] implement remote cacheing
 - [ ] automate publishing
