@@ -54,6 +54,6 @@
     "finalize": "npm run prettier && npm run validate",
     "version:bump": "changeset add",
     "version": "npm run finalize && changeset version",
-    "publish": "turbo run publish"
+    "publish": "changeset publish"
   }
 }
