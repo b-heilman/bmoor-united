@@ -13,6 +13,7 @@ jobs:
     env:
       TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
       TURBO_TEAM: ${{ secrets.TURBO_USER }}
+      TURBO_REMOTE_ONLY: true
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
@@ -27,6 +28,7 @@ jobs:
     env:
       TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
       TURBO_TEAM: ${{ secrets.TURBO_USER }}
+      TURBO_REMOTE_ONLY: true
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3

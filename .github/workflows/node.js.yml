@@ -14,7 +14,8 @@ jobs:
     env:
       TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
       TURBO_TEAM: ${{ secrets.TURBO_USER }}
-
+      TURBO_REMOTE_ONLY: true
+      
     runs-on: ubuntu-latest
 
     strategy:
