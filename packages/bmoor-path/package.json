@@ -1,6 +1,6 @@
 {
   "name": "@bmoor/path",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Better ways to work with objects",
   "main": "src/index.ts",
   "files": [
@@ -18,7 +18,7 @@
   },
   "homepage": "https://github.com/b-heilman/bmoor-united/blob/main/packages/bmoor-path/README.md",
   "dependencies": {
-    "@bmoor/compiler": "^0.1.0"
+    "@bmoor/compiler": "^0.2.0"
   },
   "scripts": {
     "build": "mkdir dist/; cp -r src/ dist/src;  cp package.json dist/package.json",

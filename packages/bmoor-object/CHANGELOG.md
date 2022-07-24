@@ -1,6 +1,6 @@
-# @bmoor/config
+# @bmoor/object
 
-## 0.3.0
+## 0.2.0
 
 ### Minor Changes
 
@@ -9,11 +9,5 @@
 ### Patch Changes
 
 - Updated dependencies [[`44e7297`](https://github.com/b-heilman/bmoor-united/commit/44e7297e86bb599750f1d7706d946fac5ca6848c)]:
+  - @bmoor/compare@0.2.0
   - @bmoor/error@0.2.0
-  - @bmoor/object@0.2.0
-
-## 0.2.0
-
-### Minor Changes
-
-- This is a test for changeset
