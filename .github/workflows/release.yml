@@ -29,11 +29,13 @@ jobs:
         # https://github.com/changesets/action
         uses: changesets/action@v1
         with:
+          # publish: npm run publish
           publish: echo "Don't publish till release is tagged"
           version: npm run version
         env:
           GITHUB_TOKEN: ${{ secrets.GITHB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          # not needed because I'm not publishing from here
+          # NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
           TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
           TURBO_TEAM: ${{ secrets.TURBO_USER }}
           TURBO_REMOTE_ONLY: true

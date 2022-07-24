@@ -45,4 +45,6 @@ jobs:
 
       - run: npm ci
       - run: npm run publish
+      # if you want to push tags back to github, but it can cause feed back
+      # - run: git push --tag
         
