@@ -1,6 +1,6 @@
 {
   "name": "@bmoor/error",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Better ways to work with errors",
   "main": "src/index.ts",
   "files": [
