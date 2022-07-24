@@ -15,7 +15,7 @@ jobs:
       TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
       TURBO_TEAM: ${{ secrets.TURBO_USER }}
       TURBO_REMOTE_ONLY: true
-      
+
     runs-on: ubuntu-latest
 
     strategy:
@@ -31,4 +31,5 @@ jobs:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
     - run: npm ci
+    - run: echo "$TURBO_TEAM | $TURBO_TOKEN"
     - run: npm run validate
