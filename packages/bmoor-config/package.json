@@ -1,6 +1,6 @@
 {
   "name": "@bmoor/config",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Better ways to work with objects",
   "main": "src/index.ts",
   "files": [
@@ -18,8 +18,8 @@
   },
   "homepage": "https://github.com/b-heilman/bmoor-united/blob/main/packages/bmoor-config/README.md",
   "dependencies": {
-    "@bmoor/error": "^0.2.0",
-    "@bmoor/object": "^0.2.0"
+    "@bmoor/error": "^0.2.1",
+    "@bmoor/object": "^0.2.1"
   },
   "scripts": {
     "build": "mkdir dist/; cp -r src/ dist/src;  cp package.json dist/package.json",
