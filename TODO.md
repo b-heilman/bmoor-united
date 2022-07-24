@@ -15,5 +15,5 @@
 - [ ] versioning
 - [ ] dependency validation
 - [x] github hooks
-- [ ] implement remote cacheing
+- [x] implement remote cacheing
 - [ ] automate publishing
