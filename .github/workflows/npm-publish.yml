@@ -14,13 +14,13 @@ jobs:
       TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
       TURBO_TEAM: ${{ secrets.TURBO_USER }}
       TURBO_REMOTE_ONLY: true
+    
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
           node-version: 16
       - run: npm ci
-      - run: echo $TURBO_TEAM - $TURBO_TOKEN
       - run: npm run validate
 
   publish-npm:
@@ -30,13 +30,19 @@ jobs:
       TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
       TURBO_TEAM: ${{ secrets.TURBO_USER }}
       TURBO_REMOTE_ONLY: true
+      GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+      NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
       - uses: actions/setup-node@v3
         with:
           node-version: 16
           registry-url: https://registry.npmjs.org/
+
       - run: npm ci
       - run: npm run publish
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.npm_token}}
+        

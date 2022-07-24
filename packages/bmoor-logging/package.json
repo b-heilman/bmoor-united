@@ -1,6 +1,6 @@
 {
   "name": "@bmoor/logging",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Better ways to work with logging",
   "main": "src/index.ts",
   "files": [
@@ -18,7 +18,7 @@
   },
   "homepage": "https://github.com/b-heilman/bmoor-united/blob/main/packages/bmoor-logging/README.md",
   "dependencies": {
-    "@bmoor/config": "^0.1.0",
+    "@bmoor/config": "^0.2.0",
     "@bmoor/error": "^0.1.0"
   },
   "scripts": {

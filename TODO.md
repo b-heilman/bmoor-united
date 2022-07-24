@@ -12,8 +12,8 @@
   - [ ] develop way to visualize relationships
 
 # CI Work
-- [ ] versioning
-- [ ] dependency validation
+- [x] versioning
+- [x] dependency validation
 - [x] github hooks
 - [x] implement remote cacheing
 - [ ] automate publishing
