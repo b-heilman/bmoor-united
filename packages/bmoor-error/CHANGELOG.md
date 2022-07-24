@@ -1,5 +1,11 @@
 # @bmoor/error
 
+## 0.2.1
+
+### Patch Changes
+
+- [`256ad7c`](https://github.com/b-heilman/bmoor-united/commit/256ad7cd531e7ccdf65c8c7dc0da95991f6c7c56) Thanks [@b-heilman](https://github.com/b-heilman)! - Patching them all
+
 ## 0.2.0
 
 ### Minor Changes

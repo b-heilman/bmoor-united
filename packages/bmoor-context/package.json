@@ -1,6 +1,6 @@
 {
   "name": "@bmoor/context",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Better ways to work with objects",
   "main": "src/index.ts",
   "files": [
