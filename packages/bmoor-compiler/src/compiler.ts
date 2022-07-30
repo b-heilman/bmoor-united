@@ -1,6 +1,6 @@
 import {Tokenizer} from './tokenizer';
 import {Pattern} from './tokenizer/pattern';
-import {ExpressableToken} from './tokenizer/token';
+import {ExpressableToken} from './tokenizer/token.interface';
 import {Reducer} from './reducer';
 import {StatementConstructor} from './reducer/statement';
 import {Expressor} from './expressor';

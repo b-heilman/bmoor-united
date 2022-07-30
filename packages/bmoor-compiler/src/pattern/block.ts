@@ -2,7 +2,8 @@ import {CompilerInterface} from '../compiler.interface';
 import {Pattern} from '../tokenizer/pattern';
 import {Token} from '../tokenizer/token';
 import {TokenizerState} from '../tokenizer/state';
-import {Expressable, ExpressableUsages} from '../expressor/expressable';
+import {Expressable} from '../expressor/expressable';
+import {ExpressableUsages} from '../expressor/expressable.interface';
 
 export class BlockToken extends Token {
 	static reference = 'block';

@@ -6,12 +6,15 @@ export {Pattern} from './tokenizer/pattern';
 export {Token} from './tokenizer/token';
 export {TokenizerState} from './tokenizer/state';
 export {
-	Expressable,
 	ExpressableUsages,
 	ExpressableValue,
-	ExpressableFunction,
-	ExpressableSettings
-} from './expressor/expressable';
+	ExpressableFunction
+} from './expressor/expressable.interface';
+export {Expressable} from './expressor/expressable';
+export {
+	ExpressorExpressPosition,
+	ExpressorExpressSettings
+} from './expressor.interface';
 export {ExecutableFunction} from './expressor/executable';
 export {ExpressorModes} from './expressor';
 export {

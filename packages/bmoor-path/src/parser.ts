@@ -7,20 +7,12 @@ import {
 	Expressable,
 	ExecutableFunction,
 	ExpressorModes,
-	ExpressableSettings,
 	CompilerInterface
 } from '@bmoor/compiler';
 
+import {ParserModes, ParserSettings} from './parser.interface';
+
 const isVariable = /[A-Za-z_0-9]/;
-
-export enum ParserModes {
-	read = 'read',
-	write = 'write'
-}
-
-export interface ParserSettings extends ExpressableSettings {
-	mode: ParserModes;
-}
 
 // Doing this because null or undefined COULD be valid parameter values
 const NO_VALUE = Symbol('no-value');
@@ -186,6 +178,10 @@ export class BracketPattern extends Pattern {
 	}
 }
 
+export type ReaderFunction = ExecutableFunction;
+
+export type WriterFunction = ExecutableFunction;
+
 export class Parser extends Compiler {
 	constructor() {
 		super({
@@ -197,7 +193,7 @@ export class Parser extends Compiler {
 	compile(
 		str: string,
 		mode: ParserModes = ParserModes.read
-	): ExecutableFunction {
+	): ReaderFunction | WriterFunction {
 		const ops: Expressable[] = this.expressor.express(
 			this.parse(str),
 			ExpressorModes.infix,
@@ -207,12 +203,12 @@ export class Parser extends Compiler {
 		);
 
 		if (mode === ParserModes.read) {
-			return function (obj) {
+			return <ReaderFunction>function (obj) {
 				return ops.reduce((agg, exp) => exp.eval(agg), obj);
 			};
 		} else {
 			const setter = ops.pop();
-			return function (obj, value) {
+			return <WriterFunction>function (obj, value) {
 				const root = ops.reduce((agg, exp) => exp.eval(agg), obj);
 
 				setter.eval(root, value);
@@ -220,6 +216,14 @@ export class Parser extends Compiler {
 				return obj;
 			};
 		}
+	}
+
+	getReader(str: string): ReaderFunction {
+		return this.compile(str, ParserModes.read);
+	}
+
+	getWriter(str: string): WriterFunction {
+		return this.compile(str, ParserModes.write);
 	}
 }
 

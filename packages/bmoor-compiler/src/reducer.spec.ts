@@ -1,6 +1,7 @@
 import {expect} from 'chai';
 
-import {Token, TokenReference} from './tokenizer/token';
+import {Token} from './tokenizer/token';
+import {TokenReference} from './tokenizer/token.interface';
 import {Statement} from './reducer/statement';
 import {Reducer} from './reducer';
 

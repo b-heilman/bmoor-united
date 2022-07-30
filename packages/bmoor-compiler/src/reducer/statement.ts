@@ -1,6 +1,7 @@
 // eslint-disable-next-line  @typescript-eslint/no-explicit-any
 import {Expressable} from '../expressor/expressable';
-import {ExpressableToken, Token, TokenConstructor} from '../tokenizer/token';
+import {Token, TokenConstructor} from '../tokenizer/token';
+import {ExpressableToken} from '../tokenizer/token.interface';
 
 export type StatementConstructor = {
 	new (tokens: Token[]): Statement;

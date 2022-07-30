@@ -3,7 +3,8 @@ import {expect} from 'chai';
 import {Token} from './tokenizer/token';
 import {Statement} from './reducer/statement';
 import {Expressor, ExpressorModes} from './expressor';
-import {Expressable, ExpressableUsages} from './expressor/expressable';
+import {Expressable} from './expressor/expressable';
+import {ExpressableUsages} from './expressor/expressable.interface';
 
 describe('@bmoor/compiler', function () {
 	describe('Expressor', function () {

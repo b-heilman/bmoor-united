@@ -1,10 +1,10 @@
-import {ExpressableToken} from './tokenizer/token';
+import {ExpressableToken} from './tokenizer/token.interface';
+import {Expressable} from './expressor/expressable';
+import {ExpressableUsages} from './expressor/expressable.interface';
 import {
-	Expressable,
-	ExpressableUsages,
-	ExpressableSettings,
-	ExpressablePosition
-} from './expressor/expressable';
+	ExpressorExpressPosition,
+	ExpressorExpressSettings
+} from './expressor.interface';
 import {ExecutableFunction} from './expressor/executable';
 import {CompilerInterface} from './compiler.interface';
 
@@ -22,15 +22,15 @@ export class Expressor {
 
 	toExpressables(
 		tokens: ExpressableToken[],
-		settings: ExpressableSettings = {}
+		settings: ExpressorExpressSettings = {}
 	): Expressable[] {
 		return tokens.map((token, pos) => {
 			settings.position =
 				pos === 0
-					? ExpressablePosition.first
+					? ExpressorExpressPosition.first
 					: pos === tokens.length - 1
-					? ExpressablePosition.last
-					: ExpressablePosition.middle;
+					? ExpressorExpressPosition.last
+					: ExpressorExpressPosition.middle;
 
 			return token.toExpressable(this.compiler, settings);
 		});
@@ -39,7 +39,7 @@ export class Expressor {
 	express(
 		tokens: ExpressableToken[],
 		mode: ExpressorModes,
-		settings: ExpressableSettings = {}
+		settings: ExpressorExpressSettings = {}
 	): Expressable[] {
 		const infix: Expressable[] = this.toExpressables(tokens, settings);
 

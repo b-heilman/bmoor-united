@@ -1,23 +1,13 @@
-import {Expressable, ExpressableSettings} from '../expressor/expressable';
+import {Expressable} from '../expressor/expressable';
+import {ExpressorExpressSettings} from '../expressor.interface';
 import {CompilerInterface} from '../compiler.interface';
 import {TokenizerState} from './state';
-
-// eslint-disable-next-line  @typescript-eslint/no-explicit-any
-export type TokenValue = any;
-
-export type TokenReference = string;
-
-export interface TokenSettings {
-	subType?: string;
-}
-
-export interface ExpressableToken {
-	toExpressable(
-		compiler?: CompilerInterface,
-		settings?: ExpressableSettings
-	): Expressable;
-	getReference(): string;
-}
+import {
+	TokenValue,
+	TokenReference,
+	TokenSettings,
+	ExpressableToken
+} from './token.interface';
 
 export type TokenConstructor = {
 	// eslint-disable-next-line  @typescript-eslint/no-explicit-any
@@ -28,7 +18,7 @@ export type TokenConstructor = {
 export abstract class Token implements ExpressableToken {
 	abstract toExpressable(
 		compiler?: CompilerInterface,
-		settings?: ExpressableSettings
+		settings?: ExpressorExpressSettings
 	): Expressable;
 
 	type: string;

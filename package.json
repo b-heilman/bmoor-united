@@ -49,6 +49,7 @@
     "test": "turbo run test",
     "test:workspaces": "npm run test --workspaces",
     "test:file": "mocha -r ts-node/register",
+    "test:simple": "mocha -r ts-node/register --recursive \"./packages/*/src/**/*.spec.ts\"",
     "prettier": "npx prettier --write ./packages/*/src",
     "validate": "npm run lint &&  npm run test",
     "finalize": "npm run prettier && npm run validate",

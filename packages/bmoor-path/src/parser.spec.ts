@@ -1,12 +1,13 @@
 import {expect} from 'chai';
 
-import {parser, ParserModes} from './parser';
+import {parser} from './parser';
+import {ParserModes} from './parser.interface';
 
 describe('@bmoor/path', function () {
 	describe('parser', function () {
 		describe('ParserModes.read', function () {
 			it('should work with dots', function () {
-				const fn = parser.compile('foo.bar');
+				const fn = parser.getReader('foo.bar');
 
 				expect(fn({foo: {bar: 'ok'}})).to.equal('ok');
 			});
@@ -26,7 +27,7 @@ describe('@bmoor/path', function () {
 
 		describe('ParserModes.write', function () {
 			it('should work with dots', function () {
-				const fn = parser.compile('foo.bar', ParserModes.write);
+				const fn = parser.getWriter('foo.bar');
 
 				expect(fn({}, 'ok')).to.deep.equal({foo: {bar: 'ok'}});
 			});

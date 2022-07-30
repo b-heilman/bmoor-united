@@ -78,12 +78,10 @@ describe('@bmoor/stream', function () {
 
 			const data = readable.pipe(
 				parallel(async (obj = {eins: 1, zwei: 2}) => {
-					console.log('--entry--');
 					await new Promise((resolve) => {
 						closures.push(resolve);
 					});
 
-					console.log('--exit--');
 					return {
 						value: obj.eins + obj.zwei
 					};
@@ -94,13 +92,10 @@ describe('@bmoor/stream', function () {
 
 			expect(closures.length).to.equal(2);
 
-			console.log('--cp1--');
 			closures.forEach((fn) => fn(true));
 
-			console.log('--cp2--');
 			await pause(3);
 
-			console.log('--cp3--');
 			expect(closures.length).to.equal(3);
 
 			closures.forEach((fn) => fn(true));

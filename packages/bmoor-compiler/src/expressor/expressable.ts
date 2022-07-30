@@ -1,24 +1,8 @@
-// eslint-disable-next-line  @typescript-eslint/no-explicit-any
-export type ExpressableValue = any;
-
-export type ExpressableFunction = (
-	...args: ExpressableValue
-) => ExpressableValue;
-
-export enum ExpressablePosition {
-	first = 'first',
-	last = 'last',
-	middle = 'middle'
-}
-
-export interface ExpressableSettings {
-	position?: ExpressablePosition;
-}
-
-export enum ExpressableUsages {
-	operation = 'operation',
-	value = 'value'
-}
+import {
+	ExpressableValue,
+	ExpressableFunction,
+	ExpressableUsages
+} from './expressable.interface';
 
 export class Expressable {
 	usage: ExpressableUsages;
