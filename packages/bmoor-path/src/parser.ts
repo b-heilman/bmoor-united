@@ -18,7 +18,7 @@ const isVariable = /[A-Za-z_0-9]/;
 const NO_VALUE = Symbol('no-value');
 
 export class AccessorToken extends Token {
-	static reference: 'accessor-token';
+	static reference = 'accessor-token';
 
 	toExpressable(
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -76,7 +76,7 @@ export class DotPattern extends Pattern {
 			const ch = str[pos];
 
 			if (!isVariable.test(ch)) {
-				return pos;
+				return pos - 1;
 			}
 		}
 
@@ -84,9 +84,13 @@ export class DotPattern extends Pattern {
 	}
 
 	toToken(base: string, state: TokenizerState) {
-		return new AccessorToken(base.substring(state.open, state.close), state, {
-			//	subType: this.subType
-		});
+		return new AccessorToken(
+			base.substring(state.open, state.close + 1),
+			state,
+			{
+				//	subType: this.subType
+			}
+		);
 	}
 }
 
@@ -101,7 +105,7 @@ class BracketState extends TokenizerState {
 }
 
 export class ArrayToken extends Token {
-	static reference: 'array-token';
+	static reference = 'array-token';
 
 	toExpressable(
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -116,10 +120,11 @@ export class ArrayToken extends Token {
 		} else {
 			return new Expressable(this, ExpressableUsages.value, (arr) => {
 				if (this.content === '') {
-					return arr;
+					return arr.slice(0);
 				} else {
-					// TODO: array operators
-					// this.content
+					const [begin, end] = this.content.split(':');
+
+					return arr.slice(begin || 0, end || arr.length);
 				}
 			});
 		}
@@ -134,9 +139,9 @@ export class BracketPattern extends Pattern {
 			const next = str[pos + 1];
 
 			if (next === '"') {
-				return new BracketState(pos + 2, true);
+				return new BracketState(pos + 1, true);
 			} else {
-				return new BracketState(pos + 1);
+				return new BracketState(pos);
 			}
 		}
 
@@ -166,7 +171,7 @@ export class BracketPattern extends Pattern {
 	}
 
 	toToken(base: string, state: BracketState) {
-		const content = base.substring(state.open, state.close);
+		const content = base.substring(state.open + 1, state.close);
 
 		if (state.isQuote) {
 			return new AccessorToken(content, state, {
@@ -186,10 +191,69 @@ export type WriterFunction = ExecutableFunction;
 
 export type PathContent = any;
 
-function createReader(ops: Expressable[]): ReaderFunction {
+type ArrayOperations = {
+	ops: Expressable[];
+	array: Expressable;
+};
+
+function chunkPaths(ops: Expressable[]): ArrayOperations[] {
+	// convert tthe ops into multiple sets of path accessors and
+	// array modifiers
+	const rtn = ops.reduce(
+		(agg, exp) => {
+			let cur = agg[0];
+
+			if (!cur) {
+				cur = {
+					ops: [],
+					array: null
+				};
+
+				agg[0] = cur;
+			}
+
+			if (exp.token instanceof ArrayToken) {
+				cur.array = exp;
+
+				agg.unshift(null);
+			} else {
+				cur.ops.push(exp);
+			}
+
+			return agg;
+		},
+		[null]
+	);
+
+	// We need to remove the first one if it's still null
+	if (!rtn[0]) {
+		rtn.shift();
+	}
+
+	// need to flip this, is this wasteful?  Maybe?
+	return rtn.reverse();
+}
+
+function createArrayReader(cur: ArrayOperations) {
 	return function (obj): PathContent {
-		return ops.reduce((agg, exp) => exp.eval(agg), obj);
+		const rtn = cur.ops.reduce((agg, exp) => exp.eval(agg), obj);
+
+		if (cur.array) {
+			return cur.array.eval(rtn);
+		} else {
+			return rtn;
+		}
 	};
+}
+
+function createReader(ops: Expressable[]): ReaderFunction {
+	const chunks = chunkPaths(ops);
+
+	if (chunks.length > 1) {
+		// TODO
+	} else {
+		return createArrayReader(chunks[0]);
+	}
 }
 
 function createWriter(ops: Expressable[]): ReaderFunction {
