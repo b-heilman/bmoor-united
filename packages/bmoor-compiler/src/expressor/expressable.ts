@@ -1,18 +1,27 @@
 import {
 	ExpressableValue,
 	ExpressableFunction,
-	ExpressableUsages
+	ExpressableUsages,
+	ExpressableSettings
 } from './expressable.interface';
+import {ExpressableToken} from '../tokenizer/token.interface';
 
 export class Expressable {
 	usage: ExpressableUsages;
-	rank: number;
+	token: ExpressableToken;
+	settings: ExpressableSettings;
 	method: (...args: ExpressableValue) => ExpressableValue;
 
-	constructor(usage: ExpressableUsages, method: ExpressableFunction, rank = 0) {
+	constructor(
+		token: ExpressableToken,
+		usage: ExpressableUsages,
+		method: ExpressableFunction,
+		settings: ExpressableSettings = {rank: 0}
+	) {
+		this.token = token;
 		this.usage = usage;
 		this.method = method;
-		this.rank = rank;
+		this.settings = settings;
 	}
 
 	prepare(): ExpressableFunction {

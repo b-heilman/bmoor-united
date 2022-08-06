@@ -11,7 +11,7 @@ export class ValueToken extends Token {
 	static reference = 'value';
 
 	toExpressable() {
-		return new Expressable(ExpressableUsages.value, () => this.content);
+		return new Expressable(this, ExpressableUsages.value, () => this.content);
 	}
 }
 
@@ -69,9 +69,12 @@ export class OpToken extends Token {
 
 	toExpressable() {
 		return new Expressable(
+			this,
 			ExpressableUsages.operation,
 			(a, b) => this.content(a, b),
-			parseInt(this.settings.subType) || 5
+			{
+				rank: parseInt(this.settings.subType) || 5
+			}
 		);
 	}
 }

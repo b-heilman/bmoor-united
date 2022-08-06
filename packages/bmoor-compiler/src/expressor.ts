@@ -49,7 +49,10 @@ export class Expressor {
 			const processed = infix.reduce(
 				(state, exp) => {
 					if (exp.usage === ExpressableUsages.operation) {
-						while (state.ops.length && exp.rank >= state.ops[0].rank) {
+						while (
+							state.ops.length &&
+							exp.settings.rank >= state.ops[0].settings.rank
+						) {
 							state.postfix.push(state.ops.shift());
 						}
 

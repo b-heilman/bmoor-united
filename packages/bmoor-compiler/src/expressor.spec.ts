@@ -10,7 +10,7 @@ describe('@bmoor/compiler', function () {
 	describe('Expressor', function () {
 		class ValueToken extends Token {
 			toExpressable() {
-				return new Expressable(ExpressableUsages.value, () =>
+				return new Expressable(this, ExpressableUsages.value, () =>
 					parseInt(this.content)
 				);
 			}
@@ -19,11 +19,12 @@ describe('@bmoor/compiler', function () {
 		class AddToken extends Token {
 			toExpressable() {
 				return new Expressable(
+					this,
 					ExpressableUsages.operation,
 					(a, b) => {
 						return a + b;
 					},
-					4
+					{rank: 4}
 				);
 			}
 		}
@@ -31,11 +32,12 @@ describe('@bmoor/compiler', function () {
 		class MultToken extends Token {
 			toExpressable() {
 				return new Expressable(
+					this,
 					ExpressableUsages.operation,
 					(a, b) => {
 						return a * b;
 					},
-					3
+					{rank: 3}
 				);
 			}
 		}
@@ -43,11 +45,12 @@ describe('@bmoor/compiler', function () {
 		class TestStatement extends Statement {
 			toExpressable() {
 				return new Expressable(
+					this,
 					ExpressableUsages.operation,
 					(a, b) => {
 						return a - b;
 					},
-					4
+					{rank: 4}
 				);
 			}
 		}

@@ -9,3 +9,8 @@ export enum ExpressableUsages {
 	operation = 'operation',
 	value = 'value'
 }
+
+export interface ExpressableSettings {
+	rank: number;
+	tag?: string;
+}

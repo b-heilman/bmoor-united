@@ -11,7 +11,7 @@ export class BlockToken extends Token {
 	toExpressable(compiler: CompilerInterface) {
 		const fn = compiler.compile(this.content);
 
-		return new Expressable(ExpressableUsages.value, fn);
+		return new Expressable(this, ExpressableUsages.value, fn);
 	}
 }
 

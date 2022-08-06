@@ -27,6 +27,7 @@ export class AccessorToken extends Token {
 	) {
 		if (settings.mode === ParserModes.write) {
 			return new Expressable(
+				this,
 				ExpressableUsages.value,
 				// eslint-disable-next-line  @typescript-eslint/no-explicit-any
 				(obj, value: any = NO_VALUE) => {
@@ -49,6 +50,7 @@ export class AccessorToken extends Token {
 			);
 		} else {
 			return new Expressable(
+				this,
 				ExpressableUsages.value,
 				(obj) => obj[this.content]
 			);
@@ -107,12 +109,12 @@ export class ArrayToken extends Token {
 		settings: ParserSettings = {mode: ParserModes.read}
 	) {
 		if (settings.mode === ParserModes.write) {
-			return new Expressable(ExpressableUsages.value, () => {
+			return new Expressable(this, ExpressableUsages.value, () => {
 				// TODO: this won't work...
 				return [];
 			});
 		} else {
-			return new Expressable(ExpressableUsages.value, (arr) => {
+			return new Expressable(this, ExpressableUsages.value, (arr) => {
 				if (this.content === '') {
 					return arr;
 				} else {
@@ -182,6 +184,26 @@ export type ReaderFunction = ExecutableFunction;
 
 export type WriterFunction = ExecutableFunction;
 
+export type PathContent = any;
+
+function createReader(ops: Expressable[]): ReaderFunction {
+	return function (obj): PathContent {
+		return ops.reduce((agg, exp) => exp.eval(agg), obj);
+	};
+}
+
+function createWriter(ops: Expressable[]): ReaderFunction {
+	const setter = ops.pop();
+
+	return function (obj, value: PathContent) {
+		const root = ops.reduce((agg, exp) => exp.eval(agg), obj);
+
+		setter.eval(root, value);
+
+		return obj;
+	};
+}
+
 export class Parser extends Compiler {
 	constructor() {
 		super({
@@ -202,20 +224,7 @@ export class Parser extends Compiler {
 			}
 		);
 
-		if (mode === ParserModes.read) {
-			return <ReaderFunction>function (obj) {
-				return ops.reduce((agg, exp) => exp.eval(agg), obj);
-			};
-		} else {
-			const setter = ops.pop();
-			return <WriterFunction>function (obj, value) {
-				const root = ops.reduce((agg, exp) => exp.eval(agg), obj);
-
-				setter.eval(root, value);
-
-				return obj;
-			};
-		}
+		return mode === ParserModes.read ? createReader(ops) : createWriter(ops);
 	}
 
 	getReader(str: string): ReaderFunction {
