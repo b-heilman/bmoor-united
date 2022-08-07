@@ -74,28 +74,53 @@ describe('@bmoor/path', function () {
 				expect(fn({foo: {bar: {value: 'ok'}}})).to.equal('ok');
 			});
 
-			it('should work with an array', function () {
-				const fn = parser.compile('foo[]');
+			describe('simple array', function () {
+				it('should work with an array', function () {
+					const fn = parser.compile('foo[]');
 
-				expect(fn({foo: [1, 2]})).to.deep.equal([1, 2]);
+					expect(fn({foo: [1, 2]})).to.deep.equal([1, 2]);
+				});
+
+				it('should work with an array sub section beginning', function () {
+					const fn = parser.compile('foo[1:]');
+
+					expect(fn({foo: [1, 2, 3, 4]})).to.deep.equal([2, 3, 4]);
+				});
+
+				it('should work with an array sub section inside', function () {
+					const fn = parser.compile('foo[1:2]');
+
+					expect(fn({foo: [1, 2, 3, 4]})).to.deep.equal([2]);
+				});
+
+				it('should work with an array sub section ending', function () {
+					const fn = parser.compile('foo[:2]');
+
+					expect(fn({foo: [1, 2, 3, 4]})).to.deep.equal([1, 2]);
+				});
 			});
 
-			it('should work with an array sub section beginning', function () {
-				const fn = parser.compile('foo[1:]');
+			describe('multi level array', function () {
+				const base = {
+					foo: [
+						{bar: [1.1, 1.2, 1.3]},
+						{bar: [2.1, 2.2, 2.3]},
+						{bar: [3.1, 3.2, 3.3]},
+						{bar: [4.1, 4.2, 4.3, 4.4]}
+					]
+				};
 
-				expect(fn({foo: [1, 2, 3, 4]})).to.deep.equal([2, 3, 4]);
-			});
+				it('should work with an array ', function () {
+					const fn = parser.compile('foo[].bar[2:3]');
 
-			it('should work with an array sub section inside', function () {
-				const fn = parser.compile('foo[1:2]');
+					expect(fn(base)).to.deep.equal([[1.3], [2.3], [3.3], [4.3]]);
+				});
 
-				expect(fn({foo: [1, 2, 3, 4]})).to.deep.equal([2]);
-			});
+				it('should work with an array sub section ending', function () {
+					const fn = parser.compile('foo[:2].bar[2:3]');
 
-			it('should work with an array sub section ending', function () {
-				const fn = parser.compile('foo[:2]');
-
-				expect(fn({foo: [1, 2, 3, 4]})).to.deep.equal([1, 2]);
+					expect(fn(base)).to.deep.equal([[1.3], [2.3]]);
+				});
 			});
 		});
 

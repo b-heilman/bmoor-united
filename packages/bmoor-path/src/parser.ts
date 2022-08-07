@@ -234,7 +234,7 @@ function chunkPaths(ops: Expressable[]): ArrayOperations[] {
 	return rtn.reverse();
 }
 
-function createArrayReader(cur: ArrayOperations) {
+function createArrayReader(cur: ArrayOperations): ReaderFunction {
 	return function (obj): PathContent {
 		const rtn = cur.ops.reduce((agg, exp) => exp.eval(agg), obj);
 
@@ -246,11 +246,23 @@ function createArrayReader(cur: ArrayOperations) {
 	};
 }
 
+function readArray(arr, [fn, ...rest]: ReaderFunction[]) {
+	if (rest.length) {
+		return arr.map((datum) => readArray(fn(datum), rest));
+	} else {
+		return arr.map(fn);
+	}
+}
+
 function createReader(ops: Expressable[]): ReaderFunction {
 	const chunks = chunkPaths(ops);
 
 	if (chunks.length > 1) {
-		// TODO
+		const [first, ...fns]: ReaderFunction[] = chunks.map(createArrayReader);
+
+		return function (obj) {
+			return readArray(first(obj), fns);
+		};
 	} else {
 		return createArrayReader(chunks[0]);
 	}
