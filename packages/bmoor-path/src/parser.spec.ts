@@ -148,10 +148,10 @@ describe('@bmoor/path', function () {
 					const fn = parser.getWriter('foo[]');
 					const tgt = {};
 
-					fn(tgt, [1, 2, 3])
+					fn(tgt, [1, 2, 3]);
 
 					expect(tgt).to.deep.equal({
-						foo:[1, 2, 3]
+						foo: [1, 2, 3]
 					});
 				});
 
@@ -159,10 +159,10 @@ describe('@bmoor/path', function () {
 					const fn = parser.getWriter('foo[1:2]');
 					const tgt = {};
 
-					fn(tgt, [1, 2, 3])
+					fn(tgt, [1, 2, 3]);
 
 					expect(tgt).to.deep.equal({
-						foo:[1, 2, 3]
+						foo: [1, 2, 3]
 					});
 				});
 			});

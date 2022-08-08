@@ -270,7 +270,10 @@ function createReader(ops: Expressable[]): ReaderFunction {
 	}
 }
 
-function createArrayWriter(cur: ArrayOperations, final: boolean): WriterFunction {
+function createArrayWriter(
+	cur: ArrayOperations,
+	final: boolean
+): WriterFunction {
 	const setter = cur.ops.length ? cur.ops.pop() : null;
 
 	return function (obj, value: PathContent) {
@@ -279,8 +282,8 @@ function createArrayWriter(cur: ArrayOperations, final: boolean): WriterFunction
 		if (cur.array) {
 			let existing = setter.eval(root, RTN_VALUE);
 
-			if (final){
-				if (existing){
+			if (final) {
+				if (existing) {
 					existing.splice(0, value.length, value);
 				} else {
 					existing = value;
@@ -289,12 +292,12 @@ function createArrayWriter(cur: ArrayOperations, final: boolean): WriterFunction
 				// TODO
 			}
 
-			if (setter){
+			if (setter) {
 				setter.eval(root, existing);
 			}
 
 			return existing;
-		} else if (setter){
+		} else if (setter) {
 			setter.eval(root, value);
 
 			return value;
