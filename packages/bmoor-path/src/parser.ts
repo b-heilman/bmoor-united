@@ -16,6 +16,7 @@ const isVariable = /[A-Za-z_0-9]/;
 
 // Doing this because null or undefined COULD be valid parameter values
 const NO_VALUE = Symbol('no-value');
+const RTN_VALUE = Symbol('return-value');
 
 export class AccessorToken extends Token {
 	static reference = 'accessor-token';
@@ -41,6 +42,8 @@ export class AccessorToken extends Token {
 						}
 
 						return rtn;
+					} else if (value === RTN_VALUE) {
+						return obj[this.content];
 					} else {
 						obj[this.content] = value;
 
@@ -113,9 +116,8 @@ export class ArrayToken extends Token {
 		settings: ParserSettings = {mode: ParserModes.read}
 	) {
 		if (settings.mode === ParserModes.write) {
-			return new Expressable(this, ExpressableUsages.value, () => {
-				// TODO: this won't work...
-				return [];
+			return new Expressable(this, ExpressableUsages.value, (arr) => {
+				return arr.slice(0);
 			});
 		} else {
 			return new Expressable(this, ExpressableUsages.value, (arr) => {
@@ -268,16 +270,54 @@ function createReader(ops: Expressable[]): ReaderFunction {
 	}
 }
 
-function createWriter(ops: Expressable[]): ReaderFunction {
-	const setter = ops.pop();
+function createArrayWriter(cur: ArrayOperations, final: boolean): WriterFunction {
+	const setter = cur.ops.length ? cur.ops.pop() : null;
 
 	return function (obj, value: PathContent) {
-		const root = ops.reduce((agg, exp) => exp.eval(agg), obj);
+		const root = cur.ops.reduce((agg, exp) => exp.eval(agg), obj);
 
-		setter.eval(root, value);
+		if (cur.array) {
+			let existing = setter.eval(root, RTN_VALUE);
 
-		return obj;
+			if (final){
+				if (existing){
+					existing.splice(0, value.length, value);
+				} else {
+					existing = value;
+				}
+			} else {
+				// TODO
+			}
+
+			if (setter){
+				setter.eval(root, existing);
+			}
+
+			return existing;
+		} else if (setter){
+			setter.eval(root, value);
+
+			return value;
+		} else {
+			throw new Error('well this is no good');
+		}
 	};
+}
+
+function createWriter(ops: Expressable[]): WriterFunction {
+	const chunks = chunkPaths(ops);
+
+	if (chunks.length > 1) {
+		/* TODO
+		const [first, ...fns]: WriterFunction[] = chunks.map(createArrayWriter);
+
+		return function (obj) {
+			return readArray(first(obj), fns);
+		};
+		*/
+	} else {
+		return createArrayWriter(chunks[0], true);
+	}
 }
 
 export class Parser extends Compiler {

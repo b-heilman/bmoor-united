@@ -142,6 +142,30 @@ describe('@bmoor/path', function () {
 
 				expect(fn({}, 'ok')).to.deep.equal({foo: {bar: {value: 'ok'}}});
 			});
+
+			describe('simple array', function () {
+				it.only('should work with an array', function () {
+					const fn = parser.getWriter('foo[]');
+					const tgt = {};
+
+					fn(tgt, [1, 2, 3])
+
+					expect(tgt).to.deep.equal({
+						foo:[1, 2, 3]
+					});
+				});
+
+				it.only('should work with an array ignoring any op', function () {
+					const fn = parser.getWriter('foo[1:2]');
+					const tgt = {};
+
+					fn(tgt, [1, 2, 3])
+
+					expect(tgt).to.deep.equal({
+						foo:[1, 2, 3]
+					});
+				});
+			});
 		});
 	});
 });
