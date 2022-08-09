@@ -191,6 +191,7 @@ export type ReaderFunction = ExecutableFunction;
 
 export type WriterFunction = ExecutableFunction;
 
+// eslint-disable-next-line  @typescript-eslint/no-explicit-any
 export type PathContent = any;
 
 type ArrayOperations = {
@@ -272,7 +273,8 @@ function createReader(ops: Expressable[]): ReaderFunction {
 
 function createArrayWriter(
 	cur: ArrayOperations,
-	final: boolean
+	final: boolean, //
+	object = true // object || array
 ): WriterFunction {
 	const setter = cur.ops.length ? cur.ops.pop() : null;
 
@@ -280,16 +282,25 @@ function createArrayWriter(
 		const root = cur.ops.reduce((agg, exp) => exp.eval(agg), obj);
 
 		if (cur.array) {
-			let existing = setter.eval(root, RTN_VALUE);
+			let existing = setter ? setter.eval(root, RTN_VALUE) : root;
 
 			if (final) {
+				// if final, we are dealing with leaves
 				if (existing) {
-					existing.splice(0, value.length, value);
+					existing.splice(0, value.length, ...value);
 				} else {
 					existing = value;
 				}
 			} else {
-				// TODO
+				if (!existing) {
+					existing = [];
+				}
+
+				for (let i = 0, c = value.length; i < c; i++) {
+					if (!existing[i]) {
+						existing[i] = object ? {} : [];
+					}
+				}
 			}
 
 			if (setter) {
@@ -307,17 +318,39 @@ function createArrayWriter(
 	};
 }
 
+function writeArray(
+	obj,
+	arr: PathContent[],
+	[fn, ...rest]: WriterFunction
+): WriterFunction {
+	for (let i = 0, c = arr.length; i < c; i++) {
+		const value = arr[i];
+		const tgt = obj[i];
+
+		if (rest.length) {
+			writeArray(fn(tgt, value), value, rest);
+		} else {
+			fn(tgt, value);
+		}
+	}
+
+	return obj;
+}
+
 function createWriter(ops: Expressable[]): WriterFunction {
 	const chunks = chunkPaths(ops);
 
 	if (chunks.length > 1) {
-		/* TODO
-		const [first, ...fns]: WriterFunction[] = chunks.map(createArrayWriter);
+		const [first, ...fns]: WriterFunction[] = chunks.map((op, pos, arr) => {
+			const final = arr.length - 1;
 
-		return function (obj) {
-			return readArray(first(obj), fns);
+			// null > 0 === false ... it won't matter because final will be true
+			return createArrayWriter(op, pos === final, arr[pos + 1]?.ops.length > 0);
+		});
+
+		return function (obj, value: PathContent[]) {
+			return writeArray(first(obj, value), value, fns);
 		};
-		*/
 	} else {
 		return createArrayWriter(chunks[0], true);
 	}
