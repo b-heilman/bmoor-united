@@ -19,6 +19,14 @@ export class AccessorToken extends Token {
 		compiler: CompilerInterface = null,
 		settings: ParserSettings = {mode: ParserModes.read}
 	) {
+		if (
+			this.content === '__proto__' ||
+			this.content === 'constructor' ||
+			this.content === 'prototype'
+		) {
+			throw new Error(`can not access ${this.content} in path`);
+		}
+
 		if (settings.mode === ParserModes.write) {
 			return new Expressable(
 				this,
