@@ -12,6 +12,8 @@ export interface TokenSettings {
 }
 
 export interface ExpressableToken {
+	content: TokenValue;
+
 	toExpressable(
 		compiler?: CompilerInterface,
 		settings?: ExpressorExpressSettings
