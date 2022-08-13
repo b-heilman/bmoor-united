@@ -19,7 +19,7 @@ export abstract class Statement implements ExpressableToken {
 
 	constructor(tokens: Token[]) {
 		this.tokens = tokens;
-		this.content = tokens.map((token) => token.content).join('');
+		this.content = tokens.map((token) => token.content).join(':');
 	}
 
 	getReference() {

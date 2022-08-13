@@ -1,8 +1,7 @@
 import {Expressable} from '@bmoor/compiler';
 
-import {Parser} from './parser';
+import {Parser, WriterFunction, ReaderFunction} from './parser';
 import {ParserModes} from './parser.interface';
-import {createOperands, Operand} from './operands';
 
 type mapping = {
 	from: string;
@@ -75,17 +74,35 @@ function addMapping(
 	mapExpressables(ref, to, toMap);
 }
 
+function createReader(dex: MappingIndex): ReaderFunction {
+	console.log(dex);
+
+	return function () {
+		return 'reader';
+	};
+}
+
+function createWriter(dex: MappingIndex): WriterFunction {
+	console.log(dex);
+
+	return function () {
+		return 'writer';
+	};
+}
 export class Mappings {
-	fromMap: MappingIndex;
-	toMap: MappingIndex;
+	readFn: ReaderFunction;
+	writeFn: WriterFunction;
 
-	constructor(settings: mapping[]) {
+	constructor(mappings: mapping[]) {
 		// convert the mappings into a unified
-		this.fromMap = new Map();
-		this.toMap = new Map();
+		const fromMap = new Map();
+		const toMap = new Map();
 
-		settings.forEach((mapping, i) =>
-			addMapping(`p${i}`, this.fromMap, this.toMap, mapping)
-		);
+		for (let i = 0, c = mappings.length; i < c; i++) {
+			addMapping(`p${i}`, fromMap, toMap, mappings[i]);
+		}
+
+		this.readFn = createReader(fromMap);
+		this.writeFn = createWriter(toMap);
 	}
 }
