@@ -2,22 +2,9 @@ import {Expressable} from '@bmoor/compiler';
 
 import {Parser, WriterFunction, ReaderFunction} from './parser';
 import {ParserModes} from './parser.interface';
-
-type mapping = {
-	from: string;
-	to: string;
-};
+import {MappingIndex, mapping} from './mapping.interface';
 
 const pathParser = new Parser();
-
-type MappingIndex = Map<
-	string,
-	{
-		exp: Expressable;
-		next?: MappingIndex;
-		ref?: string;
-	}
->;
 
 // reduces all Expressables to an series of property maps
 function mapExpressables(
@@ -74,24 +61,69 @@ function addMapping(
 	mapExpressables(ref, to, toMap);
 }
 
-function createReader(dex: MappingIndex): ReaderFunction {
-	console.log(dex);
+function runReaderMap(dex: MappingIndex, tgt, obj) {
+	const it = dex.values();
 
-	return function () {
-		return 'reader';
+	let entry = it.next();
+	while (!entry.done) {
+		const dexCommand = entry.value;
+
+		// TODO: handle arrays
+		if (dexCommand.next) {
+			// leaves don't have next, so this is get and run children
+			runReaderMap(dexCommand.next, tgt, dexCommand.exp.eval(obj));
+		} else {
+			// if we are on a leaf, access the data and write it back
+			tgt[dexCommand.ref] = dexCommand.exp.eval(obj);
+		}
+
+		entry = it.next();
+	}
+}
+
+function createReader(dex: MappingIndex): ReaderFunction {
+	return function (tgt, obj) {
+		runReaderMap(dex, tgt, obj);
+
+		return tgt;
 	};
+}
+
+function runWriterMap(dex: MappingIndex, tgt, obj) {
+	const it = dex.values();
+
+	let entry = it.next();
+	while (!entry.done) {
+		const dexCommand = entry.value;
+
+		// TODO: handle arrays
+		if (dexCommand.next) {
+			// leaves don't have next, so this is get and run children
+			const next = {};
+
+			dexCommand.exp.eval(tgt, next);
+
+			runWriterMap(dexCommand.next, next, obj);
+		} else {
+			// if we are on a leaf, access the data and write it back
+			dexCommand.exp.eval(tgt, obj[dexCommand.ref]);
+		}
+
+		entry = it.next();
+	}
 }
 
 function createWriter(dex: MappingIndex): WriterFunction {
-	console.log(dex);
+	return function (tgt, obj) {
+		runWriterMap(dex, tgt, obj);
 
-	return function () {
-		return 'writer';
+		return tgt;
 	};
 }
-export class Mappings {
-	readFn: ReaderFunction;
-	writeFn: WriterFunction;
+
+export class Mapping {
+	read: ReaderFunction;
+	write: WriterFunction;
 
 	constructor(mappings: mapping[]) {
 		// convert the mappings into a unified
@@ -102,7 +134,15 @@ export class Mappings {
 			addMapping(`p${i}`, fromMap, toMap, mappings[i]);
 		}
 
-		this.readFn = createReader(fromMap);
-		this.writeFn = createWriter(toMap);
+		this.read = createReader(fromMap);
+		this.write = createWriter(toMap);
+	}
+
+	map(tgt, src) {
+		return this.write(tgt, this.read({}, src));
+	}
+
+	transform(src) {
+		return this.map({}, src);
 	}
 }
