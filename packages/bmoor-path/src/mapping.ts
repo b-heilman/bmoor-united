@@ -2,62 +2,25 @@ import {Expressable} from '@bmoor/compiler';
 
 import {Parser, WriterFunction, ReaderFunction} from './parser';
 import {ParserModes} from './parser.interface';
-import {MappingIndex, mapping} from './mapping.interface';
+import {mapping} from './mapping.interface';
+import {OperandIndex, indexExpressables} from './operands';
 
 const pathParser = new Parser();
 
-// reduces all Expressables to an series of property maps
-function mapExpressables(
-	ref: string,
-	exps: Expressable[],
-	target: MappingIndex
-) {
-	const chain = exps.reduce((prev: MappingIndex, exp: Expressable, i) => {
-		let next: MappingIndex = null;
-
-		if (prev.has(<string>exp.token.content)) {
-			next = prev.get(exp.token.content).next;
-		} else {
-			let cur = null;
-
-			// I would love to not do this, but for now...
-			if (i < exps.length - 1) {
-				next = new Map();
-
-				cur = {
-					exp,
-					next
-				};
-			} else {
-				next = null;
-
-				cur = {
-					exp,
-					ref
-				};
-			}
-
-			prev.set(exp.token.content, cur);
-		}
-
-		return next;
-	}, target);
-}
-
 function addMapping(
 	ref: string,
-	fromMap: MappingIndex,
-	toMap: MappingIndex,
+	fromMap: OperandIndex,
+	toMap: OperandIndex,
 	m: mapping
 ) {
 	const from: Expressable[] = pathParser.express(m.from, ParserModes.read);
 	const to: Expressable[] = pathParser.express(m.to, ParserModes.write);
 
-	mapExpressables(ref, from, fromMap);
-	mapExpressables(ref, to, toMap);
+	indexExpressables(ref, from, fromMap);
+	indexExpressables(ref, to, toMap);
 }
 
-function runReaderMap(dex: MappingIndex, tgt, obj) {
+function runReaderMap(dex: OperandIndex, tgt, obj) {
 	const it = dex.values();
 
 	let entry = it.next();
@@ -77,7 +40,7 @@ function runReaderMap(dex: MappingIndex, tgt, obj) {
 	}
 }
 
-function createReader(dex: MappingIndex): ReaderFunction {
+function createReader(dex: OperandIndex): ReaderFunction {
 	return function (tgt, obj) {
 		runReaderMap(dex, tgt, obj);
 
@@ -85,7 +48,7 @@ function createReader(dex: MappingIndex): ReaderFunction {
 	};
 }
 
-function runWriterMap(dex: MappingIndex, tgt, obj) {
+function runWriterMap(dex: OperandIndex, tgt, obj) {
 	const it = dex.values();
 
 	let entry = it.next();
@@ -109,7 +72,7 @@ function runWriterMap(dex: MappingIndex, tgt, obj) {
 	}
 }
 
-function createWriter(dex: MappingIndex): WriterFunction {
+function createWriter(dex: OperandIndex): WriterFunction {
 	return function (tgt, obj) {
 		runWriterMap(dex, tgt, obj);
 

@@ -7,7 +7,7 @@ import {
 
 import {ParserModes, ParserSettings} from './parser.interface';
 
-import {createOperands} from './operands';
+import {reduceExpressables} from './operands';
 
 import {RTN_VALUE} from './token/accessor';
 
@@ -48,7 +48,7 @@ function readArray(arr, [fn, ...rest]: ReaderFunction[]) {
 }
 
 function createReader(ops: Expressable[]): ReaderFunction {
-	const chunks = createOperands(ops);
+	const chunks = reduceExpressables(ops);
 
 	if (chunks.length > 1) {
 		const [first, ...fns]: ReaderFunction[] = chunks.map(createArrayReader);
@@ -128,7 +128,7 @@ function writeArray(
 }
 
 function createWriter(ops: Expressable[]): WriterFunction {
-	const chunks = createOperands(ops);
+	const chunks = reduceExpressables(ops);
 
 	if (chunks.length > 1) {
 		const [first, ...fns]: WriterFunction[] = chunks.map((op, pos, arr) => {
