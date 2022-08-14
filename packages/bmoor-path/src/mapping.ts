@@ -53,10 +53,6 @@ function addMapping(
 	const from: Expressable[] = pathParser.express(m.from, ParserModes.read);
 	const to: Expressable[] = pathParser.express(m.to, ParserModes.write);
 
-	if (from.length !== to.length) {
-		throw new Error(`not compatible: ${m.from} => ${m.to}`);
-	}
-
 	mapExpressables(ref, from, fromMap);
 	mapExpressables(ref, to, toMap);
 }
