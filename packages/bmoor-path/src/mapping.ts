@@ -20,6 +20,14 @@ function addMapping(
 	indexExpressables(ref, to, toMap);
 }
 
+/***
+ * This method will reduce an array to a 'normalized' one.  By that, it flattens
+ * all object down to one level, but arrays retain their dimensions.
+ * ----
+ * This should simplify logic down the road when I am trying to rehydrate into
+ * a different shape.  I am sure I can optimize more in the future, but for now
+ * I want to establish the pattern.
+ */
 function runReaderMap(dex: OperandIndex, tgt, obj) {
 	const it = dex.values();
 
@@ -30,7 +38,13 @@ function runReaderMap(dex: OperandIndex, tgt, obj) {
 		// TODO: handle arrays
 		if (dexCommand.next) {
 			// leaves don't have next, so this is get and run children
-			runReaderMap(dexCommand.next, tgt, dexCommand.exp.eval(obj));
+			if (dexCommand.isArray) {
+				tgt[dexCommand.ref] = obj.map((datum) =>
+					runReaderMap(dexCommand.next, {}, datum)
+				);
+			} else {
+				runReaderMap(dexCommand.next, tgt, dexCommand.exp.eval(obj));
+			}
 		} else {
 			// if we are on a leaf, access the data and write it back
 			tgt[dexCommand.ref] = dexCommand.exp.eval(obj);
@@ -38,6 +52,8 @@ function runReaderMap(dex: OperandIndex, tgt, obj) {
 
 		entry = it.next();
 	}
+
+	return tgt;
 }
 
 function createReader(dex: OperandIndex): ReaderFunction {
@@ -54,22 +70,29 @@ function runWriterMap(dex: OperandIndex, tgt, obj) {
 	let entry = it.next();
 	while (!entry.done) {
 		const dexCommand = entry.value;
+		const setter = dexCommand.exp;
 
 		// TODO: handle arrays
 		if (dexCommand.next) {
-			// leaves don't have next, so this is get and run children
-			const next = {};
+			// leaves don't have next, so this is set and run children
+			if (dexCommand.isArray) {
+				// obj[dexCommand.ref]
+			} else {
+				const next = {};
 
-			dexCommand.exp.eval(tgt, next);
+				setter.eval(tgt, next);
 
-			runWriterMap(dexCommand.next, next, obj);
+				runWriterMap(dexCommand.next, next, obj);
+			}
 		} else {
 			// if we are on a leaf, access the data and write it back
-			dexCommand.exp.eval(tgt, obj[dexCommand.ref]);
+			setter.eval(tgt, obj[dexCommand.ref]);
 		}
 
 		entry = it.next();
 	}
+
+	return tgt;
 }
 
 function createWriter(dex: OperandIndex): WriterFunction {

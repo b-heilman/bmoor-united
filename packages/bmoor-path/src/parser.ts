@@ -6,17 +6,12 @@ import {
 } from '@bmoor/compiler';
 
 import {ParserModes, ParserSettings} from './parser.interface';
-
 import {reduceExpressables} from './operands';
-
 import {RTN_VALUE} from './token/accessor';
-
 import {DotPattern} from './pattern/dot';
-
 import {BracketPattern} from './pattern/bracket';
 
 export type ReaderFunction = ExecutableFunction;
-
 export type WriterFunction = ExecutableFunction;
 
 // eslint-disable-next-line  @typescript-eslint/no-explicit-any

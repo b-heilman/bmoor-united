@@ -18,11 +18,11 @@ export type OperandIndex = Map<
 >;
 
 export type IndexStats = {
-	arrays: number
-}
+	arrays: number;
+};
 
 export function containsArray(exp: Expressable): boolean {
-	return (exp.token instanceof ArrayToken);	
+	return exp.token instanceof ArrayToken;
 }
 
 export function reduceExpressables(ops: Expressable[]): Operand[] {
@@ -79,9 +79,10 @@ export function indexExpressables(
 		} else {
 			const isArray = containsArray(exp);
 
+			count++;
+
 			let cur = null;
 
-			// I would love to not do this, but for now...
 			if (i < exps.length - 1) {
 				next = new Map();
 

@@ -110,8 +110,100 @@ describe('@bmoor/mappings', function () {
 	});
 
 	describe('single dimensional arrays', function () {
-		xit('should work', function () {
-			expect(1).to.equal(2);
+		const mappings = new Mapping([
+			{
+				from: 'foo[].bar',
+				to: 'hello[].world'
+			},
+			{
+				from: 'foo[].eins',
+				to: 'hello[].zwei'
+			},
+			{
+				from: 'foo[].other[].value',
+				to: 'flat[][]'
+			},
+			// I'm not supporting merging arrays right now
+			// from: foo[].dis
+			// to: world[].some
+			// ,
+			// from: bar[].dat
+			// to: world[].thing
+			{
+				from: 'bar[]',
+				to: 'world[].value'
+			}
+		]);
+
+		it('should read correctly', function () {
+			const res = mappings.read(
+				{},
+				{
+					foo: [
+						{
+							bar: 'v-1-1',
+							eins: 'v-1-2',
+							other: [
+								{
+									value: 'v-1-3'
+								}
+							]
+						},
+						{
+							bar: 'v-2-1',
+							eins: 'v-2-2',
+							other: [
+								{
+									value: 'v-2-3'
+								}
+							]
+						},
+						{
+							bar: 'v-3-1',
+							eins: 'v-3-2',
+							other: [
+								{
+									value: 'v-3-3'
+								}
+							]
+						}
+					],
+					bar: [1, 2, 3]
+				}
+			);
+
+			expect(res).to.deep.equal({
+				p0_1: [
+					{
+						p0: 'v-1-1',
+						p1: 'v-1-2',
+						p2_3: [
+							{
+								p2: 'v-1-3'
+							}
+						]
+					},
+					{
+						p0: 'v-2-1',
+						p1: 'v-2-2',
+						p2_3: [
+							{
+								p2: 'v-2-3'
+							}
+						]
+					},
+					{
+						p0: 'v-3-1',
+						p1: 'v-3-2',
+						p2_3: [
+							{
+								p2: 'v-3-3'
+							}
+						]
+					}
+				],
+				p3: [1, 2, 3]
+			});
 		});
 	});
 
