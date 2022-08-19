@@ -74,15 +74,44 @@ function runWriterMap(dex: OperandIndex, tgt, obj) {
 
 		// TODO: handle arrays
 		if (dexCommand.next) {
+			const next = dexCommand.next;
+
 			// leaves don't have next, so this is set and run children
 			if (dexCommand.isArray) {
-				// obj[dexCommand.ref]
+				console.log('->', obj);
+
+				const srcArr = obj[dexCommand.ref];
+				console.log('srcArr -->', dexCommand.ref, JSON.stringify(obj, null, 2));
+				console.log('tgt >', tgt);
+				if (!next.isArray && !next.next) {
+					srcArr.map(value => {
+						tgt.push(value);
+					});
+				} else {
+					srcArr.map((src: string, i: number) => {
+						let nextTgt = tgt[i];
+						if (!nextTgt) {
+							if (next.isArray) {
+								// the children are arrays
+								nextTgt = [];
+								tgt[i] = nextTgt;
+							} /*if (next.next)*/ else {
+								// the children are objects
+								nextTgt = {};
+								tgt[i] = nextTgt;
+							}
+						}
+
+						runWriterMap(next, nextTgt, src);
+					});
+				}
 			} else {
-				const next = {};
+				const nextTgt = next.isArray ? [] : {};
+				console.log('next >', next);
+				setter.eval(tgt, nextTgt);
 
-				setter.eval(tgt, next);
-
-				runWriterMap(dexCommand.next, next, obj);
+				console.log('nextTgt >', nextTgt);
+				runWriterMap(next, nextTgt, obj);
 			}
 		} else {
 			// if we are on a leaf, access the data and write it back
@@ -97,6 +126,7 @@ function runWriterMap(dex: OperandIndex, tgt, obj) {
 
 function createWriter(dex: OperandIndex): WriterFunction {
 	return function (tgt, obj) {
+		console.log('?', dex);
 		runWriterMap(dex, tgt, obj);
 
 		return tgt;

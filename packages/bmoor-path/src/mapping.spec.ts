@@ -44,7 +44,7 @@ describe('@bmoor/mappings', function () {
 			});
 		});
 
-		it('should write correctly', function () {
+		it.only('should write correctly', function () {
 			expect(
 				mappings.write(
 					{},
@@ -119,10 +119,6 @@ describe('@bmoor/mappings', function () {
 				from: 'foo[].eins',
 				to: 'hello[].zwei'
 			},
-			{
-				from: 'foo[].other[].value',
-				to: 'flat[][]'
-			},
 			// I'm not supporting merging arrays right now
 			// from: foo[].dis
 			// to: world[].some
@@ -142,30 +138,15 @@ describe('@bmoor/mappings', function () {
 					foo: [
 						{
 							bar: 'v-1-1',
-							eins: 'v-1-2',
-							other: [
-								{
-									value: 'v-1-3'
-								}
-							]
+							eins: 'v-1-2'
 						},
 						{
 							bar: 'v-2-1',
-							eins: 'v-2-2',
-							other: [
-								{
-									value: 'v-2-3'
-								}
-							]
+							eins: 'v-2-2'
 						},
 						{
 							bar: 'v-3-1',
-							eins: 'v-3-2',
-							other: [
-								{
-									value: 'v-3-3'
-								}
-							]
+							eins: 'v-3-2'
 						}
 					],
 					bar: [1, 2, 3]
@@ -177,39 +158,111 @@ describe('@bmoor/mappings', function () {
 					{
 						p0: 'v-1-1',
 						p1: 'v-1-2',
-						p2_3: [
-							{
-								p2: 'v-1-3'
-							}
-						]
 					},
 					{
 						p0: 'v-2-1',
 						p1: 'v-2-2',
-						p2_3: [
-							{
-								p2: 'v-2-3'
-							}
-						]
 					},
 					{
 						p0: 'v-3-1',
 						p1: 'v-3-2',
-						p2_3: [
-							{
-								p2: 'v-3-3'
-							}
-						]
 					}
 				],
-				p3: [1, 2, 3]
+				p2: [1, 2, 3]
+			});
+		});
+
+		it.only('should write correctly', function(){
+			const res = mappings.write(
+				{},
+				{
+					p0_1: [
+						{
+							p0: 'v-1-1',
+							p1: 'v-1-2',
+						},
+						{
+							p0: 'v-2-1',
+							p1: 'v-2-2',
+						},
+						{
+							p0: 'v-3-1',
+							p1: 'v-3-2',
+						}
+					],
+					p2: [1, 2, 3]
+				}
+			);
+
+			expect(res).to.deep.equal({
+				
 			});
 		});
 	});
 
 	describe('single dimensional arrays', function () {
-		xit('should work', function () {
-			expect(1).to.equal(2);
+		const mappings = new Mapping([
+			{
+				from: 'foo[].other[].value',
+				to: 'flat[][]'
+			}
+		]);
+
+		it('should read correctly', function () {
+			const res = mappings.read(
+				{},
+				{
+					foo: [
+						{
+							other: [
+								{
+									value: 'v-1-3'
+								}
+							]
+						},
+						{
+							other: [
+								{
+									value: 'v-2-3'
+								}
+							]
+						},
+						{
+							other: [
+								{
+									value: 'v-3-3'
+								}
+							]
+						}
+					]
+				}
+			);
+
+			expect(res).to.deep.equal({
+				p0_1: [
+					{
+						p0_3: [
+							{
+								p0: 'v-1-3'
+							}
+						]
+					},
+					{
+						p0_3: [
+							{
+								p0: 'v-2-3'
+							}
+						]
+					},
+					{
+						p0_3: [
+							{
+								p0: 'v-3-3'
+							}
+						]
+					}
+				]
+			});
 		});
 	});
 });
