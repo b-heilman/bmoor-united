@@ -2,7 +2,7 @@ import {expect} from 'chai';
 
 import {Mapping} from './mapping';
 
-describe('@bmoor/mappings', function () {
+describe('@bmoor/path - mapping', function () {
 	describe('simple object transformations', function () {
 		const mappings = new Mapping([
 			{
@@ -23,7 +23,7 @@ describe('@bmoor/mappings', function () {
 			}
 		]);
 
-		it('should read correctly', function () {
+		it.only('should read correctly', function () {
 			expect(
 				mappings.read(
 					{},
@@ -172,7 +172,7 @@ describe('@bmoor/mappings', function () {
 			});
 		});
 
-		it.only('should write correctly', function(){
+		xit('should write correctly', function(){
 			const res = mappings.write(
 				{},
 				{
@@ -208,7 +208,7 @@ describe('@bmoor/mappings', function () {
 			}
 		]);
 
-		it('should read correctly', function () {
+		xit('should read correctly', function () {
 			const res = mappings.read(
 				{},
 				{

@@ -33,17 +33,17 @@ function runReaderMap(dex: OperandIndex, tgt, obj) {
 
 	let entry = it.next();
 	while (!entry.done) {
-		const dexCommand = entry.value;
+		const dexCommand = <OperandIndex>entry.value;
 
 		// TODO: handle arrays
-		if (dexCommand.next) {
+		if (dexCommand.hasNext) {
 			// leaves don't have next, so this is get and run children
-			if (dexCommand.isArray) {
+			if (dexCommand.array) {
 				tgt[dexCommand.ref] = obj.map((datum) =>
-					runReaderMap(dexCommand.next, {}, datum)
+					runReaderMap(dexCommand, {}, datum)
 				);
 			} else {
-				runReaderMap(dexCommand.next, tgt, dexCommand.exp.eval(obj));
+				runReaderMap(dexCommand, tgt, dexCommand.exp.eval(obj));
 			}
 		} else {
 			// if we are on a leaf, access the data and write it back
@@ -69,15 +69,14 @@ function runWriterMap(dex: OperandIndex, tgt, obj) {
 
 	let entry = it.next();
 	while (!entry.done) {
-		const dexCommand = entry.value;
+		const dexCommand = <OperandIndex>entry.value;
 		const setter = dexCommand.exp;
 
 		// TODO: handle arrays
-		if (dexCommand.next) {
-			const next = dexCommand.next;
-
+		if (dexCommand.hasNext) {
+			/*
 			// leaves don't have next, so this is set and run children
-			if (dexCommand.isArray) {
+			if (dexCommand.array) {
 				console.log('->', obj);
 
 				const srcArr = obj[dexCommand.ref];
@@ -95,7 +94,7 @@ function runWriterMap(dex: OperandIndex, tgt, obj) {
 								// the children are arrays
 								nextTgt = [];
 								tgt[i] = nextTgt;
-							} /*if (next.next)*/ else {
+							} if (next.next) else {
 								// the children are objects
 								nextTgt = {};
 								tgt[i] = nextTgt;
@@ -113,6 +112,7 @@ function runWriterMap(dex: OperandIndex, tgt, obj) {
 				console.log('nextTgt >', nextTgt);
 				runWriterMap(next, nextTgt, obj);
 			}
+			*/
 		} else {
 			// if we are on a leaf, access the data and write it back
 			setter.eval(tgt, obj[dexCommand.ref]);
@@ -139,8 +139,8 @@ export class Mapping {
 
 	constructor(mappings: mapping[]) {
 		// convert the mappings into a unified
-		const fromMap = new Map();
-		const toMap = new Map();
+		const fromMap = new OperandIndex('root');
+		const toMap = new OperandIndex('root');
 
 		for (let i = 0, c = mappings.length; i < c; i++) {
 			addMapping(`p${i}`, fromMap, toMap, mappings[i]);

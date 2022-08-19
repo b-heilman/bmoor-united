@@ -7,15 +7,24 @@ export type Operand = {
 	array: Expressable;
 };
 
-export type OperandIndex = Map<
-	string,
-	{
-		exp: Expressable;
-		isArray: boolean;
-		ref: string;
-		next?: OperandIndex;
+export class OperandIndex extends Map<string, OperandIndex>{
+	ref: string;
+	exp: Expressable;
+	array?: OperandIndex;
+	hasNext: boolean
+
+	constructor(ref: string, exp: Expressable=null, array: OperandIndex = null){
+		super();
+
+		this.hasNext = false;
 	}
->;
+
+	set(path: string, dex: OperandIndex){
+		this.hasNext = true;
+
+		return super.set(path, dex);
+	}
+}
 
 export type IndexStats = {
 	arrays: number;
@@ -75,34 +84,23 @@ export function indexExpressables(
 		let next: OperandIndex = null;
 
 		if (prev.has(<string>exp.token.content)) {
-			next = prev.get(exp.token.content).next;
+			next = prev.get(exp.token.content);
 		} else {
 			const isArray = containsArray(exp);
 
 			count++;
 
-			let cur = null;
-
 			if (i < exps.length - 1) {
-				next = new Map();
-
-				cur = {
-					exp,
-					isArray,
-					ref: `${ref}_${i}`,
-					next
-				};
+				next = new OperandIndex(`${ref}_${i}`, exp);
 			} else {
-				next = null;
-
-				cur = {
-					exp,
-					isArray,
-					ref
-				};
+				next = new OperandIndex(ref, exp);
 			}
 
-			prev.set(exp.token.content, cur);
+			if (isArray){
+				prev.array = next;
+			} else {
+				prev.set(exp.token.content, next);
+			}
 		}
 
 		return next;
