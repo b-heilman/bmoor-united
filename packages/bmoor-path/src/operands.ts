@@ -1,4 +1,5 @@
 import {Expressable} from '@bmoor/compiler';
+import {cursorTo} from 'readline';
 
 import {ArrayToken} from './token/array';
 
@@ -7,22 +8,43 @@ export type Operand = {
 	array: Expressable;
 };
 
-export class OperandIndex extends Map<string, OperandIndex>{
+export class OperandIndex extends Map<string, OperandIndex> {
 	ref: string;
 	exp: Expressable;
-	array?: OperandIndex;
-	hasNext: boolean
+	array: Expressable;
 
-	constructor(ref: string, exp: Expressable=null, array: OperandIndex = null){
+	constructor(ref: string, exp: Expressable = null) {
 		super();
 
-		this.hasNext = false;
+		this.ref = ref;
+		this.exp = exp;
+		this.array = null;
 	}
 
-	set(path: string, dex: OperandIndex){
-		this.hasNext = true;
+	toJSON() {
+		const rtn = {
+			ref: this.ref,
+			// exp: this.exp,
+			array: !!this.array,
+			next: null
+		};
 
-		return super.set(path, dex);
+		if (this.size) {
+			const next = {};
+			for (
+				let iterator = this.entries(), cur = iterator.next();
+				!cur.done;
+				cur = iterator.next()
+			) {
+				const [key, value] = cur.value;
+
+				next[key] = value.toJSON();
+			}
+
+			rtn.next = next;
+		}
+
+		return rtn;
 	}
 }
 
@@ -93,11 +115,17 @@ export function indexExpressables(
 			if (i < exps.length - 1) {
 				next = new OperandIndex(`${ref}_${i}`, exp);
 			} else {
-				next = new OperandIndex(ref, exp);
+				if (isArray) {
+					prev.ref = ref;
+				} else {
+					next = new OperandIndex(ref, exp);
+				}
 			}
 
-			if (isArray){
-				prev.array = next;
+			if (isArray) {
+				prev.array = exp;
+				// TODO: array operator
+				next = prev;
 			} else {
 				prev.set(exp.token.content, next);
 			}

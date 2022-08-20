@@ -36,12 +36,12 @@ function runReaderMap(dex: OperandIndex, tgt, obj) {
 		const dexCommand = <OperandIndex>entry.value;
 
 		// TODO: handle arrays
-		if (dexCommand.hasNext) {
+		if (dexCommand.size) {
 			// leaves don't have next, so this is get and run children
 			if (dexCommand.array) {
-				tgt[dexCommand.ref] = obj.map((datum) =>
-					runReaderMap(dexCommand, {}, datum)
-				);
+				tgt[dexCommand.ref] = dexCommand.exp
+					.eval(obj)
+					.map((datum) => runReaderMap(dexCommand, {}, datum));
 			} else {
 				runReaderMap(dexCommand, tgt, dexCommand.exp.eval(obj));
 			}
@@ -73,10 +73,13 @@ function runWriterMap(dex: OperandIndex, tgt, obj) {
 		const setter = dexCommand.exp;
 
 		// TODO: handle arrays
-		if (dexCommand.hasNext) {
-			/*
+		if (dexCommand.size) {
+			let nextTgt = null;
 			// leaves don't have next, so this is set and run children
 			if (dexCommand.array) {
+				nextTgt = [];
+
+				/*
 				console.log('->', obj);
 
 				const srcArr = obj[dexCommand.ref];
@@ -104,18 +107,21 @@ function runWriterMap(dex: OperandIndex, tgt, obj) {
 						runWriterMap(next, nextTgt, src);
 					});
 				}
+				*/
 			} else {
-				const nextTgt = next.isArray ? [] : {};
-				console.log('next >', next);
-				setter.eval(tgt, nextTgt);
-
-				console.log('nextTgt >', nextTgt);
-				runWriterMap(next, nextTgt, obj);
+				nextTgt = {};
 			}
-			*/
+
+			setter.eval(tgt, nextTgt);
+
+			runWriterMap(dexCommand, nextTgt, obj);
 		} else {
-			// if we are on a leaf, access the data and write it back
-			setter.eval(tgt, obj[dexCommand.ref]);
+			if (dexCommand.array) {
+				setter.eval(tgt, obj[dexCommand.ref].slice());
+			} else {
+				// if we are on a leaf, access the data and write it back
+				setter.eval(tgt, obj[dexCommand.ref]);
+			}
 		}
 
 		entry = it.next();

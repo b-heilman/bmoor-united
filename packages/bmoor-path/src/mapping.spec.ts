@@ -23,7 +23,7 @@ describe('@bmoor/path - mapping', function () {
 			}
 		]);
 
-		it.only('should read correctly', function () {
+		it('should read correctly', function () {
 			expect(
 				mappings.read(
 					{},
@@ -44,7 +44,7 @@ describe('@bmoor/path - mapping', function () {
 			});
 		});
 
-		it.only('should write correctly', function () {
+		it('should write correctly', function () {
 			expect(
 				mappings.write(
 					{},
@@ -154,49 +154,47 @@ describe('@bmoor/path - mapping', function () {
 			);
 
 			expect(res).to.deep.equal({
-				p0_1: [
+				p0_0: [
 					{
 						p0: 'v-1-1',
-						p1: 'v-1-2',
+						p1: 'v-1-2'
 					},
 					{
 						p0: 'v-2-1',
-						p1: 'v-2-2',
+						p1: 'v-2-2'
 					},
 					{
 						p0: 'v-3-1',
-						p1: 'v-3-2',
+						p1: 'v-3-2'
 					}
 				],
 				p2: [1, 2, 3]
 			});
 		});
 
-		xit('should write correctly', function(){
+		xit('should write correctly', function () {
 			const res = mappings.write(
 				{},
 				{
 					p0_1: [
 						{
 							p0: 'v-1-1',
-							p1: 'v-1-2',
+							p1: 'v-1-2'
 						},
 						{
 							p0: 'v-2-1',
-							p1: 'v-2-2',
+							p1: 'v-2-2'
 						},
 						{
 							p0: 'v-3-1',
-							p1: 'v-3-2',
+							p1: 'v-3-2'
 						}
 					],
 					p2: [1, 2, 3]
 				}
 			);
 
-			expect(res).to.deep.equal({
-				
-			});
+			expect(res).to.deep.equal({});
 		});
 	});
 
