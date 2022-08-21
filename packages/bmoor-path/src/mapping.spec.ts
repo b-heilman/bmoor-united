@@ -1,27 +1,32 @@
 import {expect} from 'chai';
+import { beforeEach } from 'mocha';
 
 import {Mapping} from './mapping';
 
 describe('@bmoor/path - mapping', function () {
 	describe('simple object transformations', function () {
-		const mappings = new Mapping([
-			{
-				from: 'foo',
-				to: 'bar'
-			},
-			{
-				from: 'hello',
-				to: 'world'
-			},
-			{
-				from: 'property.eins',
-				to: 'aField.dis'
-			},
-			{
-				from: 'property.zwei',
-				to: 'aField.dat'
-			}
-		]);
+		let mappings = null;
+
+		beforeEach(function(){
+			mappings = new Mapping([
+				{
+					from: 'foo',
+					to: 'bar'
+				},
+				{
+					from: 'hello',
+					to: 'world'
+				},
+				{
+					from: 'property.eins',
+					to: 'aField.dis'
+				},
+				{
+					from: 'property.zwei',
+					to: 'aField.dat'
+				}
+			]);
+		});
 
 		it('should read correctly', function () {
 			expect(
@@ -110,26 +115,30 @@ describe('@bmoor/path - mapping', function () {
 	});
 
 	describe('single dimensional arrays', function () {
-		const mappings = new Mapping([
-			{
-				from: 'foo[].bar',
-				to: 'hello[].world'
-			},
-			{
-				from: 'foo[].eins',
-				to: 'hello[].zwei'
-			},
-			// I'm not supporting merging arrays right now
-			// from: foo[].dis
-			// to: world[].some
-			// ,
-			// from: bar[].dat
-			// to: world[].thing
-			{
-				from: 'bar[]',
-				to: 'world[].value'
-			}
-		]);
+		let mappings = null;
+
+		beforeEach(function(){
+			mappings = new Mapping([
+				{
+					from: 'foo[].bar',
+					to: 'hello[].world'
+				},
+				{
+					from: 'foo[].eins',
+					to: 'hello[].zwei'
+				},
+				// I'm not supporting merging arrays right now
+				// from: foo[].dis
+				// to: world[].some
+				// ,
+				// from: bar[].dat
+				// to: world[].thing
+				{
+					from: 'bar[]',
+					to: 'world[].value'
+				}
+			]);
+		});
 
 		it('should read correctly', function () {
 			const res = mappings.read(
@@ -154,7 +163,7 @@ describe('@bmoor/path - mapping', function () {
 			);
 
 			expect(res).to.deep.equal({
-				p0_0: [
+				p0_1: [
 					{
 						p0: 'v-1-1',
 						p1: 'v-1-2'
@@ -172,11 +181,11 @@ describe('@bmoor/path - mapping', function () {
 			});
 		});
 
-		xit('should write correctly', function () {
+		it.only('should write correctly', function () {
 			const res = mappings.write(
 				{},
 				{
-					p0_1: [
+					p0_0: [
 						{
 							p0: 'v-1-1',
 							p1: 'v-1-2'
@@ -190,21 +199,49 @@ describe('@bmoor/path - mapping', function () {
 							p1: 'v-3-2'
 						}
 					],
-					p2: [1, 2, 3]
+					p2_0: [{
+						p2: 1
+					}, {
+						p2: 2
+					}, {
+						p2: 3
+					}]
 				}
 			);
 
-			expect(res).to.deep.equal({});
+			expect(res).to.deep.equal({
+				hello: [{
+					world: 'v-1-1',
+					zwei: 'v-1-2'
+				}, {
+					world: 'v-2-1',
+					zwei: 'v-2-2'
+				}, {
+					world: 'v-3-1',
+					zwei: 'v-3-2'
+				}],
+				world: [{
+					value: 1
+				}, {
+					value: 2
+				}, {
+					value: 3
+				}]
+			});
 		});
 	});
 
 	describe('single dimensional arrays', function () {
-		const mappings = new Mapping([
-			{
-				from: 'foo[].other[].value',
-				to: 'flat[][]'
-			}
-		]);
+		let mappings = null;
+
+		beforeEach(function(){
+			mappings = new Mapping([
+				{
+					from: 'foo[].other[].value',
+					to: 'flat[][]'
+				}
+			]);
+		});
 
 		xit('should read correctly', function () {
 			const res = mappings.read(

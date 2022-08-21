@@ -3,7 +3,7 @@ import {Expressable} from '@bmoor/compiler';
 import {Parser, WriterFunction, ReaderFunction} from './parser';
 import {ParserModes} from './parser.interface';
 import {mapping} from './mapping.interface';
-import {OperandIndex, indexExpressables} from './operands';
+import {OperandIndex, indexExpressables, IndexStats} from './operands';
 
 const pathParser = new Parser();
 
@@ -16,8 +16,9 @@ function addMapping(
 	const from: Expressable[] = pathParser.express(m.from, ParserModes.read);
 	const to: Expressable[] = pathParser.express(m.to, ParserModes.write);
 
-	indexExpressables(ref, from, fromMap);
-	indexExpressables(ref, to, toMap);
+	const stats = indexExpressables(ref, from, fromMap);
+	console.log('from', stats);
+	console.log('to', indexExpressables(ref, to, toMap, stats));
 }
 
 /***
@@ -47,7 +48,13 @@ function runReaderMap(dex: OperandIndex, tgt, obj) {
 			}
 		} else {
 			// if we are on a leaf, access the data and write it back
-			tgt[dexCommand.ref] = dexCommand.exp.eval(obj);
+			// TODO: if it's an array leaf it needs to be transformed
+			if (dexCommand.array){
+
+			} else {
+				tgt[dexCommand.ref] = dexCommand.exp.eval(obj);
+			}
+			
 		}
 
 		entry = it.next();
@@ -74,48 +81,34 @@ function runWriterMap(dex: OperandIndex, tgt, obj) {
 
 		// TODO: handle arrays
 		if (dexCommand.size) {
-			let nextTgt = null;
+			console.log('write parent');
 			// leaves don't have next, so this is set and run children
 			if (dexCommand.array) {
-				nextTgt = [];
+				const nextTgt = [];
 
-				/*
-				console.log('->', obj);
+				setter.eval(tgt, nextTgt);
 
 				const srcArr = obj[dexCommand.ref];
-				console.log('srcArr -->', dexCommand.ref, JSON.stringify(obj, null, 2));
-				console.log('tgt >', tgt);
-				if (!next.isArray && !next.next) {
-					srcArr.map(value => {
-						tgt.push(value);
-					});
-				} else {
-					srcArr.map((src: string, i: number) => {
-						let nextTgt = tgt[i];
-						if (!nextTgt) {
-							if (next.isArray) {
-								// the children are arrays
-								nextTgt = [];
-								tgt[i] = nextTgt;
-							} if (next.next) else {
-								// the children are objects
-								nextTgt = {};
-								tgt[i] = nextTgt;
-							}
-						}
+				console.log(dexCommand.ref, JSON.stringify(obj, null, 2));
+				srcArr.map((src: string, i: number) => {
+					let cur = nextTgt[i];
+					if (!cur) {
+						cur = {};
+						nextTgt[i] = cur;
+					}
 
-						runWriterMap(next, nextTgt, src);
-					});
-				}
-				*/
+					runWriterMap(dexCommand, cur, src);
+				});
 			} else {
-				nextTgt = {};
+				const nextTgt = {};
+
+				setter.eval(tgt, nextTgt);
+
+				runWriterMap(dexCommand, nextTgt, obj);
 			}
-
-			setter.eval(tgt, nextTgt);
-
-			runWriterMap(dexCommand, nextTgt, obj);
 		} else {
+			console.log('write leaf', dexCommand);
+			console.log('?', obj);
 			if (dexCommand.array) {
 				setter.eval(tgt, obj[dexCommand.ref].slice());
 			} else {
@@ -132,7 +125,6 @@ function runWriterMap(dex: OperandIndex, tgt, obj) {
 
 function createWriter(dex: OperandIndex): WriterFunction {
 	return function (tgt, obj) {
-		console.log('?', dex);
 		runWriterMap(dex, tgt, obj);
 
 		return tgt;

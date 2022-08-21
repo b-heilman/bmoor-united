@@ -127,8 +127,8 @@ describe('@bmoor/path - operands', function () {
 			);
 			const index = new OperandIndex('root');
 
-			indexExpressables('v1', path1, index);
-			indexExpressables('v2', path2, index);
+			const stats1 = indexExpressables('v1', path1, index);
+			const stats2 = indexExpressables('v2', path2, index);
 
 			expect(index.toJSON()).to.deep.equal({
 				ref: 'root',
@@ -139,7 +139,7 @@ describe('@bmoor/path - operands', function () {
 						array: false,
 						next: {
 							bar: {
-								ref: 'v1_1',
+								ref: 'v1_2',
 								array: true,
 								next: {
 									value1: {
@@ -158,6 +158,9 @@ describe('@bmoor/path - operands', function () {
 					}
 				}
 			});
+
+			expect(stats1.arrays).to.deep.equal(['v1_2']);
+			expect(stats2.arrays).to.deep.equal(['v1_2']);
 		});
 	});
 });

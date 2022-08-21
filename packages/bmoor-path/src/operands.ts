@@ -48,10 +48,6 @@ export class OperandIndex extends Map<string, OperandIndex> {
 	}
 }
 
-export type IndexStats = {
-	arrays: number;
-};
-
 export function containsArray(exp: Expressable): boolean {
 	return exp.token instanceof ArrayToken;
 }
@@ -94,13 +90,19 @@ export function reduceExpressables(ops: Expressable[]): Operand[] {
 	return rtn.reverse();
 }
 
+export type IndexStats = {
+	arrays: string[];
+};
+
 // reduces all Expressables to an series of property maps
 export function indexExpressables(
 	ref: string,
 	exps: Expressable[],
-	target: OperandIndex
+	target: OperandIndex,
+	stats?: IndexStats
 ): IndexStats {
-	let count = 0;
+	const arrays = [];
+	const priorArrays = stats?.arrays.slice(0) || [];
 
 	exps.reduce((prev: OperandIndex, exp: Expressable, i) => {
 		let next: OperandIndex = null;
@@ -110,31 +112,40 @@ export function indexExpressables(
 		} else {
 			const isArray = containsArray(exp);
 
-			count++;
+			if (!(isArray && prev.array)){
+				if (i < exps.length - 1) {
+					const myRef = isArray && priorArrays.length ? 
+						priorArrays.shift() : `${ref}_${i}`;
 
-			if (i < exps.length - 1) {
-				next = new OperandIndex(`${ref}_${i}`, exp);
-			} else {
-				if (isArray) {
-					prev.ref = ref;
+					next = new OperandIndex(myRef, exp);
 				} else {
-					next = new OperandIndex(ref, exp);
-				}
-			}
+					const myRef = isArray && priorArrays.length ? 
+						priorArrays.shift() : ref;
 
-			if (isArray) {
-				prev.array = exp;
-				// TODO: array operator
-				next = prev;
+					// TODO: if it's an array and a leaf, don't rename the above
+					next = new OperandIndex(myRef, exp);
+				}
+
+				if (isArray) {
+					prev.array = exp;
+					
+					arrays.push(prev.ref);
+
+					next = prev;
+				} else {
+					prev.set(exp.token.content, next);
+				}
 			} else {
-				prev.set(exp.token.content, next);
+				// TODO: maybe array merging logic needs to be added
+				arrays.push(prev.ref);
+				next = prev;
 			}
-		}
+		} 
 
 		return next;
 	}, target);
 
 	return {
-		arrays: count
+		arrays
 	};
 }
