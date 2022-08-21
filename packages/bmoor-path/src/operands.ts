@@ -11,7 +11,7 @@ export type Operand = {
 export type ArrayInfo = {
 	exp: Expressable;
 	leaf?: string;
-}
+};
 
 export class OperandIndex extends Map<string, OperandIndex> {
 	ref: string;
@@ -96,7 +96,7 @@ export function reduceExpressables(ops: Expressable[]): Operand[] {
 }
 
 export type IndexStats = {
-	ref?: string,
+	ref?: string;
 	arrays: string[];
 };
 
@@ -110,7 +110,7 @@ export function indexExpressables(
 	const last = exps.length - 1;
 	const arrays = [];
 	const priorArrays = stats.arrays.slice(0);
-	
+
 	let count = 0;
 
 	exps.reduce((prev: OperandIndex, exp: Expressable, i) => {
@@ -123,7 +123,7 @@ export function indexExpressables(
 		if (prev.has(<string>exp.token.content)) {
 			next = prev.get(exp.token.content);
 
-			if (isLeaf){
+			if (isLeaf) {
 				// this means I am duplicating the final value.  So I think
 				// the ref should be saved
 				ref = next.ref;
@@ -131,14 +131,14 @@ export function indexExpressables(
 		} else {
 			const isArray = containsArray(exp);
 
-			if (!(isArray && prev.array)){
+			if (!(isArray && prev.array)) {
 				let myRef = null;
 
 				if (isLeaf) {
 					myRef = ref;
 				} else {
 					myRef = `${ref}_${count}`;
-					
+
 					count++;
 				}
 
@@ -147,15 +147,15 @@ export function indexExpressables(
 				if (isArray) {
 					prev.array = {
 						exp,
-						leaf: isLeaf ? (stats.ref || myRef) : null 
+						leaf: isLeaf ? stats.ref || myRef : null
 					};
 
 					// if there is an array naming sequence, we want to keep the
 					// arrays in order
-					if (priorArrays.length){
+					if (priorArrays.length) {
 						prev.ref = priorArrays.shift();
 					}
-					
+
 					arrays.push(prev.ref);
 
 					next = prev;

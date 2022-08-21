@@ -47,14 +47,13 @@ function runReaderMap(dex: OperandIndex, tgt, obj) {
 		} else {
 			// if we are on a leaf, access the data and write it back
 			// TODO: if it's an array leaf it needs to be transformed
-			if (dexCommand.array){
-				tgt[dexCommand.ref] = dexCommand.exp.eval(obj).map(value => ({
+			if (dexCommand.array) {
+				tgt[dexCommand.ref] = dexCommand.exp.eval(obj).map((value) => ({
 					[dexCommand.array.leaf]: value
-				}))
+				}));
 			} else {
 				tgt[dexCommand.ref] = dexCommand.exp.eval(obj);
 			}
-			
 		}
 
 		entry = it.next();
@@ -107,9 +106,10 @@ function runWriterMap(dex: OperandIndex, tgt, obj) {
 			}
 		} else {
 			if (dexCommand.array) {
-				setter.eval(tgt, obj[dexCommand.ref].map(
-					subObj => subObj[dexCommand.array.leaf]
-				));
+				setter.eval(
+					tgt,
+					obj[dexCommand.ref].map((subObj) => subObj[dexCommand.array.leaf])
+				);
 			} else {
 				// if we are on a leaf, access the data and write it back
 				setter.eval(tgt, obj[dexCommand.ref]);

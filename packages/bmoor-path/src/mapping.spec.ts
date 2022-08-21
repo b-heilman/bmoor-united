@@ -1,5 +1,5 @@
 import {expect} from 'chai';
-import { beforeEach } from 'mocha';
+import {beforeEach} from 'mocha';
 
 import {Mapping} from './mapping';
 
@@ -7,7 +7,7 @@ describe('@bmoor/path - mapping', function () {
 	describe('simple object transformations', function () {
 		let mappings = null;
 
-		beforeEach(function(){
+		beforeEach(function () {
 			mappings = new Mapping([
 				{
 					from: 'foo',
@@ -117,7 +117,7 @@ describe('@bmoor/path - mapping', function () {
 	describe('single dimensional arrays', function () {
 		let mappings = null;
 
-		beforeEach(function(){
+		beforeEach(function () {
 			mappings = new Mapping([
 				{
 					from: 'foo[].bar',
@@ -181,13 +181,17 @@ describe('@bmoor/path - mapping', function () {
 						p1: 'v-3-2'
 					}
 				],
-				p3_0: [{
-					p3: 1
-				}, { 
-					p3: 2
-				}, { 
-					p3: 3
-				}]
+				p3_0: [
+					{
+						p3: 1
+					},
+					{
+						p3: 2
+					},
+					{
+						p3: 3
+					}
+				]
 			});
 		});
 
@@ -209,39 +213,47 @@ describe('@bmoor/path - mapping', function () {
 							p1: 'v-3-2'
 						}
 					],
-					p3_0: [{
-						p3: 1
-					}, {
-						p3: 2
-					}, {
-						p3: 3
-					}]
+					p3_0: [
+						{
+							p3: 1
+						},
+						{
+							p3: 2
+						},
+						{
+							p3: 3
+						}
+					]
 				}
 			);
 
 			expect(res).to.deep.equal({
-				hello: [{
-					world: 'v-1-1',
-					zwei: 'v-1-2'
-				}, {
-					world: 'v-2-1',
-					zwei: 'v-2-2'
-				}, {
-					world: 'v-3-1',
-					zwei: 'v-3-2'
-				}],
-				flat: [
-					'v-1-2',
-					'v-2-2',
-					'v-3-2'
+				hello: [
+					{
+						world: 'v-1-1',
+						zwei: 'v-1-2'
+					},
+					{
+						world: 'v-2-1',
+						zwei: 'v-2-2'
+					},
+					{
+						world: 'v-3-1',
+						zwei: 'v-3-2'
+					}
 				],
-				world: [{
-					value: 1
-				}, {
-					value: 2
-				}, {
-					value: 3
-				}]
+				flat: ['v-1-2', 'v-2-2', 'v-3-2'],
+				world: [
+					{
+						value: 1
+					},
+					{
+						value: 2
+					},
+					{
+						value: 3
+					}
+				]
 			});
 		});
 	});
@@ -249,7 +261,7 @@ describe('@bmoor/path - mapping', function () {
 	describe('single dimensional arrays', function () {
 		let mappings = null;
 
-		beforeEach(function(){
+		beforeEach(function () {
 			mappings = new Mapping([
 				{
 					from: 'foo[].other[].value',
