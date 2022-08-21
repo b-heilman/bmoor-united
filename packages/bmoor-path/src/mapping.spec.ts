@@ -127,6 +127,10 @@ describe('@bmoor/path - mapping', function () {
 					from: 'foo[].eins',
 					to: 'hello[].zwei'
 				},
+				{
+					from: 'foo[].eins',
+					to: 'flat[]'
+				},
 				// I'm not supporting merging arrays right now
 				// from: foo[].dis
 				// to: world[].some
@@ -163,7 +167,7 @@ describe('@bmoor/path - mapping', function () {
 			);
 
 			expect(res).to.deep.equal({
-				p0_1: [
+				p0_0: [
 					{
 						p0: 'v-1-1',
 						p1: 'v-1-2'
@@ -177,11 +181,17 @@ describe('@bmoor/path - mapping', function () {
 						p1: 'v-3-2'
 					}
 				],
-				p2: [1, 2, 3]
+				p3_0: [{
+					p3: 1
+				}, { 
+					p3: 2
+				}, { 
+					p3: 3
+				}]
 			});
 		});
 
-		it.only('should write correctly', function () {
+		it('should write correctly', function () {
 			const res = mappings.write(
 				{},
 				{
@@ -199,12 +209,12 @@ describe('@bmoor/path - mapping', function () {
 							p1: 'v-3-2'
 						}
 					],
-					p2_0: [{
-						p2: 1
+					p3_0: [{
+						p3: 1
 					}, {
-						p2: 2
+						p3: 2
 					}, {
-						p2: 3
+						p3: 3
 					}]
 				}
 			);
@@ -220,6 +230,11 @@ describe('@bmoor/path - mapping', function () {
 					world: 'v-3-1',
 					zwei: 'v-3-2'
 				}],
+				flat: [
+					'v-1-2',
+					'v-2-2',
+					'v-3-2'
+				],
 				world: [{
 					value: 1
 				}, {
@@ -243,7 +258,7 @@ describe('@bmoor/path - mapping', function () {
 			]);
 		});
 
-		xit('should read correctly', function () {
+		it('should read correctly', function () {
 			const res = mappings.read(
 				{},
 				{
@@ -274,23 +289,23 @@ describe('@bmoor/path - mapping', function () {
 			);
 
 			expect(res).to.deep.equal({
-				p0_1: [
+				p0_0: [
 					{
-						p0_3: [
+						p0_2: [
 							{
 								p0: 'v-1-3'
 							}
 						]
 					},
 					{
-						p0_3: [
+						p0_2: [
 							{
 								p0: 'v-2-3'
 							}
 						]
 					},
 					{
-						p0_3: [
+						p0_2: [
 							{
 								p0: 'v-3-3'
 							}

@@ -16,9 +16,7 @@ function addMapping(
 	const from: Expressable[] = pathParser.express(m.from, ParserModes.read);
 	const to: Expressable[] = pathParser.express(m.to, ParserModes.write);
 
-	const stats = indexExpressables(ref, from, fromMap);
-	console.log('from', stats);
-	console.log('to', indexExpressables(ref, to, toMap, stats));
+	indexExpressables(ref, to, toMap, indexExpressables(ref, from, fromMap));
 }
 
 /***
@@ -50,7 +48,9 @@ function runReaderMap(dex: OperandIndex, tgt, obj) {
 			// if we are on a leaf, access the data and write it back
 			// TODO: if it's an array leaf it needs to be transformed
 			if (dexCommand.array){
-
+				tgt[dexCommand.ref] = dexCommand.exp.eval(obj).map(value => ({
+					[dexCommand.array.leaf]: value
+				}))
 			} else {
 				tgt[dexCommand.ref] = dexCommand.exp.eval(obj);
 			}
@@ -85,11 +85,10 @@ function runWriterMap(dex: OperandIndex, tgt, obj) {
 			// leaves don't have next, so this is set and run children
 			if (dexCommand.array) {
 				const nextTgt = [];
+				const srcArr = obj[dexCommand.ref];
 
 				setter.eval(tgt, nextTgt);
 
-				const srcArr = obj[dexCommand.ref];
-				console.log(dexCommand.ref, JSON.stringify(obj, null, 2));
 				srcArr.map((src: string, i: number) => {
 					let cur = nextTgt[i];
 					if (!cur) {
@@ -107,10 +106,10 @@ function runWriterMap(dex: OperandIndex, tgt, obj) {
 				runWriterMap(dexCommand, nextTgt, obj);
 			}
 		} else {
-			console.log('write leaf', dexCommand);
-			console.log('?', obj);
 			if (dexCommand.array) {
-				setter.eval(tgt, obj[dexCommand.ref].slice());
+				setter.eval(tgt, obj[dexCommand.ref].map(
+					subObj => subObj[dexCommand.array.leaf]
+				));
 			} else {
 				// if we are on a leaf, access the data and write it back
 				setter.eval(tgt, obj[dexCommand.ref]);

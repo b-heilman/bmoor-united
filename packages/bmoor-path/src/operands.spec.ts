@@ -21,19 +21,19 @@ describe('@bmoor/path - operands', function () {
 
 			expect(index.toJSON()).to.deep.equal({
 				ref: 'root',
-				array: false,
+				array: null,
 				next: {
 					foo: {
 						ref: 'junk_0',
-						array: false,
+						array: null,
 						next: {
 							bar: {
 								ref: 'junk_1',
-								array: false,
+								array: null,
 								next: {
 									value: {
 										ref: 'junk',
-										array: false,
+										array: null,
 										next: null
 									}
 								}
@@ -60,24 +60,24 @@ describe('@bmoor/path - operands', function () {
 
 			expect(index.toJSON()).to.deep.equal({
 				ref: 'root',
-				array: false,
+				array: null,
 				next: {
 					foo: {
 						ref: 'v1_0',
-						array: false,
+						array: null,
 						next: {
 							bar: {
 								ref: 'v1_1',
-								array: false,
+								array: null,
 								next: {
 									value1: {
 										ref: 'v1',
-										array: false,
+										array: null,
 										next: null
 									},
 									value2: {
 										ref: 'v2',
-										array: false,
+										array: null,
 										next: null
 									}
 								}
@@ -99,15 +99,17 @@ describe('@bmoor/path - operands', function () {
 
 			expect(index.toJSON()).to.deep.equal({
 				ref: 'root',
-				array: false,
+				array: null,
 				next: {
 					foo: {
 						ref: 'v1_0',
-						array: false,
+						array: null,
 						next: {
 							bar: {
-								ref: 'v1',
-								array: true,
+								ref: 'v1_1',
+								array: {
+									ref: 'v1'
+								},
 								next: null
 							}
 						}
@@ -132,24 +134,26 @@ describe('@bmoor/path - operands', function () {
 
 			expect(index.toJSON()).to.deep.equal({
 				ref: 'root',
-				array: false,
+				array: null,
 				next: {
 					foo: {
 						ref: 'v1_0',
-						array: false,
+						array: null,
 						next: {
 							bar: {
-								ref: 'v1_2',
-								array: true,
+								ref: 'v1_1',
+								array: {
+									ref: null
+								},
 								next: {
 									value1: {
 										ref: 'v1',
-										array: false,
+										array: null,
 										next: null
 									},
 									value2: {
 										ref: 'v2',
-										array: false,
+										array: null,
 										next: null
 									}
 								}
@@ -159,8 +163,8 @@ describe('@bmoor/path - operands', function () {
 				}
 			});
 
-			expect(stats1.arrays).to.deep.equal(['v1_2']);
-			expect(stats2.arrays).to.deep.equal(['v1_2']);
+			expect(stats1.arrays).to.deep.equal(['v1_1']);
+			expect(stats2.arrays).to.deep.equal(['v1_1']);
 		});
 	});
 });

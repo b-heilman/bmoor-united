@@ -8,10 +8,15 @@ export type Operand = {
 	array: Expressable;
 };
 
+export type ArrayInfo = {
+	exp: Expressable;
+	leaf?: string;
+}
+
 export class OperandIndex extends Map<string, OperandIndex> {
 	ref: string;
 	exp: Expressable;
-	array: Expressable;
+	array?: ArrayInfo;
 
 	constructor(ref: string, exp: Expressable = null) {
 		super();
@@ -25,7 +30,7 @@ export class OperandIndex extends Map<string, OperandIndex> {
 		const rtn = {
 			ref: this.ref,
 			// exp: this.exp,
-			array: !!this.array,
+			array: this.array ? {ref: this.array.leaf} : null,
 			next: null
 		};
 
@@ -91,6 +96,7 @@ export function reduceExpressables(ops: Expressable[]): Operand[] {
 }
 
 export type IndexStats = {
+	ref?: string,
 	arrays: string[];
 };
 
@@ -99,35 +105,56 @@ export function indexExpressables(
 	ref: string,
 	exps: Expressable[],
 	target: OperandIndex,
-	stats?: IndexStats
+	stats: IndexStats = {arrays: []}
 ): IndexStats {
+	const last = exps.length - 1;
 	const arrays = [];
-	const priorArrays = stats?.arrays.slice(0) || [];
+	const priorArrays = stats.arrays.slice(0);
+	
+	let count = 0;
 
 	exps.reduce((prev: OperandIndex, exp: Expressable, i) => {
+		const isLeaf = i === last;
+
 		let next: OperandIndex = null;
 
+		// TODO: stats needs to return back the actual ref used, incase there's
+		//   a conflict on sources
 		if (prev.has(<string>exp.token.content)) {
 			next = prev.get(exp.token.content);
+
+			if (isLeaf){
+				// this means I am duplicating the final value.  So I think
+				// the ref should be saved
+				ref = next.ref;
+			}
 		} else {
 			const isArray = containsArray(exp);
 
 			if (!(isArray && prev.array)){
-				if (i < exps.length - 1) {
-					const myRef = isArray && priorArrays.length ? 
-						priorArrays.shift() : `${ref}_${i}`;
+				let myRef = null;
 
-					next = new OperandIndex(myRef, exp);
+				if (isLeaf) {
+					myRef = ref;
 				} else {
-					const myRef = isArray && priorArrays.length ? 
-						priorArrays.shift() : ref;
-
-					// TODO: if it's an array and a leaf, don't rename the above
-					next = new OperandIndex(myRef, exp);
+					myRef = `${ref}_${count}`;
+					
+					count++;
 				}
 
+				next = new OperandIndex(myRef, exp);
+
 				if (isArray) {
-					prev.array = exp;
+					prev.array = {
+						exp,
+						leaf: isLeaf ? (stats.ref || myRef) : null 
+					};
+
+					// if there is an array naming sequence, we want to keep the
+					// arrays in order
+					if (priorArrays.length){
+						prev.ref = priorArrays.shift();
+					}
 					
 					arrays.push(prev.ref);
 
@@ -140,12 +167,13 @@ export function indexExpressables(
 				arrays.push(prev.ref);
 				next = prev;
 			}
-		} 
+		}
 
 		return next;
 	}, target);
 
 	return {
+		ref,
 		arrays
 	};
 }
