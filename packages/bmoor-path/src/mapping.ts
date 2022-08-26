@@ -47,11 +47,11 @@ function runReaderMap(dex: OperandIndex, tgt, obj) {
 			}
 		} else {
 			// if we are on a leaf, access the data and write it back
-			// TODO: if it's an array leaf it needs to be transformed
+			// leaf array will write to _
 			if (dexCommand.array.length) {
 				const info = dexCommand.array[0];
 				tgt[info.ref] = dexCommand.exp.eval(obj).map((value) => ({
-					[info.ref]: value
+					[info.leafRef]: value
 				}));
 			} else {
 				tgt[dexCommand.ref] = dexCommand.exp.eval(obj);
@@ -110,11 +110,10 @@ function runWriterMap(dex: OperandIndex, tgt, obj) {
 		} else {
 			if (dexCommand.array.length) {
 				const info = dexCommand.array[0];
+				console.log('?', dexCommand.ref, info.ref);
 				setter.eval(
 					tgt,
-					obj[dexCommand.ref].map(
-						(subObj) => subObj[info.ref]
-					)
+					obj[info.ref].map((subObj) => subObj[info.leafRef])
 				);
 			} else {
 				// if we are on a leaf, access the data and write it back

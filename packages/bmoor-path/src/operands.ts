@@ -10,8 +10,8 @@ export type Operand = {
 
 export type ArrayInfo = {
 	exp: Expressable;
-	isLeaf: boolean;
-	ref: string
+	leafRef: string; // properto to read / write the value to
+	ref: string; // property to read / write the array from
 };
 
 export class OperandIndex extends Map<string, OperandIndex> {
@@ -31,9 +31,9 @@ export class OperandIndex extends Map<string, OperandIndex> {
 		const rtn = {
 			ref: this.ref,
 			// exp: this.exp,
-			array: this.array.map(arrayInfo => ({
+			array: this.array.map((arrayInfo) => ({
 				ref: arrayInfo.ref,
-				isLeaf: arrayInfo.isLeaf
+				leafRef: arrayInfo.leafRef
 			})),
 			next: null
 		};
@@ -114,8 +114,9 @@ export function indexExpressables(
 	const last = exps.length - 1;
 	const arrays = [];
 	const priorArrays = stats.arrays.slice(0);
-	console.log('=>', priorArrays);
+
 	let count = 0;
+	let arrPos = 0;
 
 	exps.reduce((prev: OperandIndex, exp: Expressable, i) => {
 		const isLeaf = i === last;
@@ -132,13 +133,20 @@ export function indexExpressables(
 				// the ref should be saved
 				ref = next.ref;
 			}
+
+			arrPos = 0;
 		} else {
 			const isArray = containsArray(exp);
 
-			if (!(isArray && prev.array.length)) {
+			if (isArray && arrPos < prev.array.length) {
+				// TODO: maybe array merging logic needs to be added
+				arrays.push(prev.array[arrPos].ref);
+				arrPos++;
+				next = prev;
+			} else {
 				let myRef = null;
 
-				if (isLeaf) {
+				if (isLeaf && !isArray) {
 					myRef = ref;
 				} else {
 					myRef = `${ref}_${count}`;
@@ -149,26 +157,24 @@ export function indexExpressables(
 				next = new OperandIndex(myRef, exp);
 
 				if (isArray) {
-					const arrayRef = priorArrays.length ? 
-						priorArrays.shift() : (stats.ref || myRef);
+					arrPos++;
 
-					console.log('array-push');
+					const arrayRef = priorArrays.length ? priorArrays.shift() : myRef;
+
 					prev.array.push({
 						exp,
 						ref: arrayRef,
-						isLeaf
+						leafRef: isLeaf ? stats.ref || ref : null
 					});
 
 					arrays.push(arrayRef);
 
 					next = prev;
 				} else {
+					arrPos = 0;
+
 					prev.set(exp.token.content, next);
 				}
-			} else {
-				// TODO: maybe array merging logic needs to be added
-				arrays.push(prev.array[0].ref);
-				next = prev;
 			}
 		}
 

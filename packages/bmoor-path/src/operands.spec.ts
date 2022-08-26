@@ -95,7 +95,7 @@ describe('@bmoor/path - operands', function () {
 			);
 			const index = new OperandIndex('root');
 
-			indexExpressables('v1', path1, index);
+			const stats1 = indexExpressables('v1', path1, index);
 
 			expect(index.toJSON()).to.deep.equal({
 				ref: 'root',
@@ -107,20 +107,24 @@ describe('@bmoor/path - operands', function () {
 						next: {
 							bar: {
 								ref: 'v1_1',
-								array: [{
-									isLeaf: true,
-									ref: 'v1'
-								}],
+								array: [
+									{
+										leafRef: 'v1',
+										ref: 'v1_2'
+									}
+								],
 								next: null
 							}
 						}
 					}
 				}
 			});
+
+			expect(stats1.arrays).to.deep.equal(['v1_2']);
 		});
 
 		describe('merging basic array paths', function () {
-			it('should work normal', function(){
+			it('should work normal', function () {
 				const path1: Expressable[] = pathParser.express(
 					'foo.bar[].value1',
 					ParserModes.read
@@ -130,10 +134,10 @@ describe('@bmoor/path - operands', function () {
 					ParserModes.read
 				);
 				const index = new OperandIndex('root');
-	
+
 				const stats1 = indexExpressables('v1', path1, index);
 				const stats2 = indexExpressables('v2', path2, index);
-	
+
 				expect(index.toJSON()).to.deep.equal({
 					ref: 'root',
 					array: [],
@@ -144,10 +148,12 @@ describe('@bmoor/path - operands', function () {
 							next: {
 								bar: {
 									ref: 'v1_1',
-									array: [{
-										isLeaf: false,
-										ref: 'v1_2'
-									}],
+									array: [
+										{
+											leafRef: null,
+											ref: 'v1_2'
+										}
+									],
 									next: {
 										value1: {
 											ref: 'v1',
@@ -165,12 +171,12 @@ describe('@bmoor/path - operands', function () {
 						}
 					}
 				});
-	
+
 				expect(stats1.arrays).to.deep.equal(['v1_2']);
 				expect(stats2.arrays).to.deep.equal(['v1_2']);
 			});
 
-			it('should work with arrays stats', function(){
+			it('should work with arrays stats', function () {
 				const path1: Expressable[] = pathParser.express(
 					'foo.bar[].value1',
 					ParserModes.read
@@ -180,13 +186,13 @@ describe('@bmoor/path - operands', function () {
 					ParserModes.read
 				);
 				const index = new OperandIndex('root');
-	
+
 				const info = {
 					arrays: ['key_1']
 				};
 				const stats1 = indexExpressables('v1', path1, index, info);
 				const stats2 = indexExpressables('v2', path2, index, info);
-	
+
 				expect(index.toJSON()).to.deep.equal({
 					ref: 'root',
 					array: [],
@@ -197,10 +203,12 @@ describe('@bmoor/path - operands', function () {
 							next: {
 								bar: {
 									ref: 'v1_1',
-									array: [{
-										isLeaf: false,
-										ref: 'key_1'
-									}],
+									array: [
+										{
+											leafRef: null,
+											ref: 'key_1'
+										}
+									],
 									next: {
 										value1: {
 											ref: 'v1',
@@ -218,35 +226,38 @@ describe('@bmoor/path - operands', function () {
 						}
 					}
 				});
-	
+
 				expect(stats1.arrays).to.deep.equal(['key_1']);
 				expect(stats2.arrays).to.deep.equal(['key_1']);
 			});
 		});
 
 		describe('back to back arrays', function () {
-			it.only('without and references', function(){
+			it('without and references', function () {
 				const path1: Expressable[] = pathParser.express(
 					'foo[][].bar',
 					ParserModes.read
 				);
 				const index = new OperandIndex('root');
-	
+
 				indexExpressables('v1', path1, index);
-	
+
 				expect(index.toJSON()).to.deep.equal({
 					ref: 'root',
 					array: [],
 					next: {
 						foo: {
 							ref: 'v1_0',
-							array: [{
-								ref: 'v1_1',
-								isLeaf: false
-							}, {
-								ref: 'v1_2',
-								isLeaf: false
-							}],
+							array: [
+								{
+									ref: 'v1_1',
+									leafRef: null
+								},
+								{
+									ref: 'v1_2',
+									leafRef: null
+								}
+							],
 							next: {
 								bar: {
 									ref: 'v1',
@@ -259,30 +270,33 @@ describe('@bmoor/path - operands', function () {
 				});
 			});
 
-			it.only('with references', function(){
+			it('with references', function () {
 				const path1: Expressable[] = pathParser.express(
 					'foo[][].bar',
 					ParserModes.read
 				);
 				const index = new OperandIndex('root');
-	
+
 				indexExpressables('v1', path1, index, {
 					arrays: ['arr_1', 'arr_2']
 				});
-	
+
 				expect(index.toJSON()).to.deep.equal({
 					ref: 'root',
 					array: [],
 					next: {
 						foo: {
 							ref: 'v1_0',
-							array: [{
-								ref: 'arr_1',
-								isLeaf: false
-							}, {
-								ref: 'arr_2',
-								isLeaf: false
-							}],
+							array: [
+								{
+									ref: 'arr_1',
+									leafRef: null
+								},
+								{
+									ref: 'arr_2',
+									leafRef: null
+								}
+							],
 							next: {
 								bar: {
 									ref: 'v1',
@@ -295,29 +309,79 @@ describe('@bmoor/path - operands', function () {
 				});
 			});
 
-			it.only('as a leaf', function(){
+			it('as a leaf', function () {
 				const path1: Expressable[] = pathParser.express(
 					'foo[][]',
 					ParserModes.read
 				);
 				const index = new OperandIndex('root');
-	
+
 				indexExpressables('v1', path1, index);
-	
+
 				expect(index.toJSON()).to.deep.equal({
 					ref: 'root',
 					array: [],
 					next: {
 						foo: {
 							ref: 'v1_0',
-							array: [{
-								ref: 'v1_1',
-								isLeaf: false
-							}, {
-								ref: 'v1',
-								isLeaf: true
-							}],
+							array: [
+								{
+									ref: 'v1_1',
+									leafRef: null
+								},
+								{
+									ref: 'v1_2',
+									leafRef: 'v1'
+								}
+							],
 							next: null
+						}
+					}
+				});
+			});
+
+			it('in a pair', function () {
+				const path1: Expressable[] = pathParser.express(
+					'foo[][].bar',
+					ParserModes.read
+				);
+				const path2: Expressable[] = pathParser.express(
+					'foo[][].bar2',
+					ParserModes.read
+				);
+				const index = new OperandIndex('root');
+
+				indexExpressables('v1', path1, index);
+				indexExpressables('v2', path2, index);
+
+				expect(index.toJSON()).to.deep.equal({
+					ref: 'root',
+					array: [],
+					next: {
+						foo: {
+							ref: 'v1_0',
+							array: [
+								{
+									ref: 'v1_1',
+									leafRef: null
+								},
+								{
+									ref: 'v1_2',
+									leafRef: null
+								}
+							],
+							next: {
+								bar: {
+									ref: 'v1',
+									array: [],
+									next: null
+								},
+								bar2: {
+									ref: 'v2',
+									array: [],
+									next: null
+								}
+							}
 						}
 					}
 				});
