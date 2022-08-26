@@ -10,27 +10,31 @@ export type Operand = {
 
 export type ArrayInfo = {
 	exp: Expressable;
-	leaf?: string;
+	isLeaf: boolean;
+	ref: string
 };
 
 export class OperandIndex extends Map<string, OperandIndex> {
 	ref: string;
 	exp: Expressable;
-	array?: ArrayInfo;
+	array: ArrayInfo[];
 
 	constructor(ref: string, exp: Expressable = null) {
 		super();
 
 		this.ref = ref;
 		this.exp = exp;
-		this.array = null;
+		this.array = [];
 	}
 
 	toJSON() {
 		const rtn = {
 			ref: this.ref,
 			// exp: this.exp,
-			array: this.array ? {ref: this.array.leaf} : null,
+			array: this.array.map(arrayInfo => ({
+				ref: arrayInfo.ref,
+				isLeaf: arrayInfo.isLeaf
+			})),
 			next: null
 		};
 
@@ -110,7 +114,7 @@ export function indexExpressables(
 	const last = exps.length - 1;
 	const arrays = [];
 	const priorArrays = stats.arrays.slice(0);
-
+	console.log('=>', priorArrays);
 	let count = 0;
 
 	exps.reduce((prev: OperandIndex, exp: Expressable, i) => {
@@ -131,7 +135,7 @@ export function indexExpressables(
 		} else {
 			const isArray = containsArray(exp);
 
-			if (!(isArray && prev.array)) {
+			if (!(isArray && prev.array.length)) {
 				let myRef = null;
 
 				if (isLeaf) {
@@ -145,18 +149,17 @@ export function indexExpressables(
 				next = new OperandIndex(myRef, exp);
 
 				if (isArray) {
-					prev.array = {
+					const arrayRef = priorArrays.length ? 
+						priorArrays.shift() : (stats.ref || myRef);
+
+					console.log('array-push');
+					prev.array.push({
 						exp,
-						leaf: isLeaf ? stats.ref || myRef : null
-					};
+						ref: arrayRef,
+						isLeaf
+					});
 
-					// if there is an array naming sequence, we want to keep the
-					// arrays in order
-					if (priorArrays.length) {
-						prev.ref = priorArrays.shift();
-					}
-
-					arrays.push(prev.ref);
+					arrays.push(arrayRef);
 
 					next = prev;
 				} else {
@@ -164,7 +167,7 @@ export function indexExpressables(
 				}
 			} else {
 				// TODO: maybe array merging logic needs to be added
-				arrays.push(prev.ref);
+				arrays.push(prev.array[0].ref);
 				next = prev;
 			}
 		}

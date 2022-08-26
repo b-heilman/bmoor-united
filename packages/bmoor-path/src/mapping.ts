@@ -37,8 +37,9 @@ function runReaderMap(dex: OperandIndex, tgt, obj) {
 		// TODO: handle arrays
 		if (dexCommand.size) {
 			// leaves don't have next, so this is get and run children
-			if (dexCommand.array) {
-				tgt[dexCommand.ref] = dexCommand.exp
+			if (dexCommand.array.length) {
+				const info = dexCommand.array[0];
+				tgt[info.ref] = dexCommand.exp
 					.eval(obj)
 					.map((datum) => runReaderMap(dexCommand, {}, datum));
 			} else {
@@ -47,9 +48,10 @@ function runReaderMap(dex: OperandIndex, tgt, obj) {
 		} else {
 			// if we are on a leaf, access the data and write it back
 			// TODO: if it's an array leaf it needs to be transformed
-			if (dexCommand.array) {
-				tgt[dexCommand.ref] = dexCommand.exp.eval(obj).map((value) => ({
-					[dexCommand.array.leaf]: value
+			if (dexCommand.array.length) {
+				const info = dexCommand.array[0];
+				tgt[info.ref] = dexCommand.exp.eval(obj).map((value) => ({
+					[info.ref]: value
 				}));
 			} else {
 				tgt[dexCommand.ref] = dexCommand.exp.eval(obj);
@@ -82,10 +84,11 @@ function runWriterMap(dex: OperandIndex, tgt, obj) {
 		if (dexCommand.size) {
 			console.log('write parent');
 			// leaves don't have next, so this is set and run children
-			if (dexCommand.array) {
+			if (dexCommand.array.length) {
 				const nextTgt = [];
-				const srcArr = obj[dexCommand.ref];
-
+				const info = dexCommand.array[0];
+				const srcArr = obj[info.ref];
+				console.log('->', info.ref, JSON.stringify(obj, null, 2));
 				setter.eval(tgt, nextTgt);
 
 				srcArr.map((src: string, i: number) => {
@@ -105,10 +108,13 @@ function runWriterMap(dex: OperandIndex, tgt, obj) {
 				runWriterMap(dexCommand, nextTgt, obj);
 			}
 		} else {
-			if (dexCommand.array) {
+			if (dexCommand.array.length) {
+				const info = dexCommand.array[0];
 				setter.eval(
 					tgt,
-					obj[dexCommand.ref].map((subObj) => subObj[dexCommand.array.leaf])
+					obj[dexCommand.ref].map(
+						(subObj) => subObj[info.ref]
+					)
 				);
 			} else {
 				// if we are on a leaf, access the data and write it back

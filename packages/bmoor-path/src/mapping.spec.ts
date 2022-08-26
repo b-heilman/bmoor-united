@@ -266,6 +266,10 @@ describe('@bmoor/path - mapping', function () {
 				{
 					from: 'foo[].other[].value',
 					to: 'flat[][]'
+				},
+				{
+					from: 'bar[][]',
+					to: 'hello[].world[].value'
 				}
 			]);
 		});
@@ -296,6 +300,13 @@ describe('@bmoor/path - mapping', function () {
 								}
 							]
 						}
+					],
+					bar: [
+						[
+							'eins',
+							'zwei',
+							'drei'
+						]
 					]
 				}
 			);
