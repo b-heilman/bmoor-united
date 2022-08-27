@@ -258,48 +258,50 @@ describe('@bmoor/path - mapping', function () {
 		});
 	});
 
-	describe('single dimensional arrays', function () {
+	describe('multi dimensional arrays', function () {
 		let mappings = null;
 
 		beforeEach(function () {
 			mappings = new Mapping([
 				{
-					from: 'foo[].other[].value',
+					from: 'foo[][].value',
 					to: 'flat[][]'
 				},
 				{
+					from: 'foo[][].value',
+					to: 'obj[][].attr'
+				},
+				{
 					from: 'bar[][]',
-					to: 'hello[].world[].value'
+					to: 'hello[][].value'
+				},
+				{
+					from: 'bar[][]',
+					to: 'world[][]'
 				}
 			]);
 		});
 
-		xit('should read correctly', function () {
+		it('should read correctly', function () {
 			const res = mappings.read(
 				{},
 				{
 					foo: [
-						{
-							other: [
-								{
-									value: 'v-1-3'
-								}
-							]
-						},
-						{
-							other: [
-								{
-									value: 'v-2-3'
-								}
-							]
-						},
-						{
-							other: [
-								{
-									value: 'v-3-3'
-								}
-							]
-						}
+						[
+							{
+								value: 'v-1-3'
+							}
+						],
+						[
+							{
+								value: 'v-2-3'
+							}
+						],
+						[
+							{
+								value: 'v-3-3'
+							}
+						]
 					],
 					bar: [['eins', 'zwei', 'drei']]
 				}
@@ -308,27 +310,123 @@ describe('@bmoor/path - mapping', function () {
 			expect(res).to.deep.equal({
 				p0_1: [
 					{
-						p0_3: [
+						p0_2: [
 							{
 								p0: 'v-1-3'
 							}
 						]
 					},
 					{
-						p0_3: [
+						p0_2: [
 							{
 								p0: 'v-2-3'
 							}
 						]
 					},
 					{
-						p0_3: [
+						p0_2: [
 							{
 								p0: 'v-3-3'
 							}
 						]
 					}
+				],
+				p2_1: [
+					{
+						p2_2: [
+							{
+								p2: 'eins'
+							},
+							{
+								p2: 'zwei'
+							},
+							{
+								p2: 'drei'
+							}
+						]
+					}
 				]
+			});
+		});
+
+		it('should write correctly', function () {
+			const res = mappings.write(
+				{},
+				{
+					p0_1: [
+						{
+							p0_2: [
+								{
+									p0: 'v-1-3'
+								}
+							]
+						},
+						{
+							p0_2: [
+								{
+									p0: 'v-2-3'
+								}
+							]
+						},
+						{
+							p0_2: [
+								{
+									p0: 'v-3-3'
+								}
+							]
+						}
+					],
+					p2_1: [
+						{
+							p2_2: [
+								{
+									p2: 'eins'
+								},
+								{
+									p2: 'zwei'
+								},
+								{
+									p2: 'drei'
+								}
+							]
+						}
+					]
+				}
+			);
+
+			expect(res).to.deep.equal({
+				flat: [['v-1-3'], ['v-2-3'], ['v-3-3']],
+				hello: [
+					[
+						{
+							value: 'eins'
+						},
+						{
+							value: 'zwei'
+						},
+						{
+							value: 'drei'
+						}
+					]
+				],
+				obj: [
+					[
+						{
+							attr: 'v-1-3'
+						}
+					],
+					[
+						{
+							attr: 'v-2-3'
+						}
+					],
+					[
+						{
+							attr: 'v-3-3'
+						}
+					]
+				],
+				world: [['eins', 'zwei', 'drei']]
 			});
 		});
 	});

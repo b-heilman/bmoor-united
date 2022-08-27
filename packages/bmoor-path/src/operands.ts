@@ -139,15 +139,23 @@ export function indexExpressables(
 			const isArray = containsArray(exp);
 
 			if (isArray && arrPos < prev.array.length) {
+				const myRef = prev.array[arrPos].ref;
+
+				if (isLeaf) {
+					ref = prev.array[arrPos].leafRef;
+				}
+
 				// TODO: maybe array merging logic needs to be added
-				arrays.push(prev.array[arrPos].ref);
+				arrays.push(myRef);
 				arrPos++;
 				next = prev;
 			} else {
 				let myRef = null;
 
 				if (isLeaf && !isArray) {
-					myRef = ref;
+					myRef = stats.ref || ref;
+
+					ref = myRef;
 				} else {
 					myRef = `${ref}_${count}`;
 
@@ -161,11 +169,21 @@ export function indexExpressables(
 
 					const arrayRef = priorArrays.length ? priorArrays.shift() : myRef;
 
-					prev.array.push({
-						exp,
-						ref: arrayRef,
-						leafRef: isLeaf ? stats.ref || ref : null
-					});
+					if (isLeaf) {
+						ref = stats.ref || ref;
+
+						prev.array.push({
+							exp,
+							ref: arrayRef,
+							leafRef: ref
+						});
+					} else {
+						prev.array.push({
+							exp,
+							ref: arrayRef,
+							leafRef: null
+						});
+					}
 
 					arrays.push(arrayRef);
 
