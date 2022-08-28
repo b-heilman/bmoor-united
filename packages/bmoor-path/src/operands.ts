@@ -10,8 +10,8 @@ export type Operand = {
 
 export type ArrayInfo = {
 	exp: Expressable;
-	leafRef: string; // properto to read / write the value to
 	ref: string; // property to read / write the array from
+	leafRef: string; // properto to read / write the value to
 	sources?: string[];
 };
 
@@ -19,13 +19,15 @@ export class OperandIndex extends Map<string, OperandIndex> {
 	ref: string;
 	exp: Expressable;
 	array: ArrayInfo[];
+	filter: string;
 
-	constructor(ref: string, exp: Expressable = null) {
+	constructor(ref: string, exp: Expressable = null, filter = null) {
 		super();
 
 		this.ref = ref;
 		this.exp = exp;
 		this.array = [];
+		this.filter = filter;
 	}
 
 	toJSON() {
@@ -37,7 +39,8 @@ export class OperandIndex extends Map<string, OperandIndex> {
 				leafRef: arrayInfo.leafRef,
 				sources: arrayInfo.sources
 			})),
-			next: null
+			next: null,
+			filter: null
 		};
 
 		if (this.size) {
@@ -53,6 +56,12 @@ export class OperandIndex extends Map<string, OperandIndex> {
 			}
 
 			rtn.next = next;
+		}
+
+		if (this.filter){
+			rtn.filter = this.filter;
+		} else {
+			delete rtn.filter;
 		}
 
 		return rtn;
@@ -116,10 +125,11 @@ export function indexExpressables(
 	const last = exps.length - 1;
 	const arrays = [];
 	const priorArrays = stats.arrays.slice(0);
-	const isWriting = priorArrays.length; // I think this is ok for now
+	const isWriting = !!priorArrays.length; // I think this is ok for now
 
 	let count = 0;
 	let arrPos = 0;
+	let curFilter = null;
 
 	function getNextInterstitialReference() {
 		return `${ref}_${count++}`;
@@ -134,14 +144,31 @@ export function indexExpressables(
 		if (isArray) {
 			// .foo[]
 			// [][]
+			if (curFilter === null){
+				arrPos = 0;
+			}
+
 			if (arrPos < prev.array.length) {
 				// second pass
-				const myRef = prev.array[arrPos].ref;
+				const arrayInfo = prev.array[arrPos];
 
-				if (isLeaf) {
-					ref = prev.array[arrPos].leafRef;
+				let myRef = null;
+
+				if (isWriting){
+					myRef = priorArrays.shift();
+
+					if (!arrayInfo.sources.includes(myRef)){
+						arrayInfo.sources.push(myRef);
+					}
+				} else {
+					myRef = arrayInfo.ref;
 				}
 
+				if (isLeaf) {
+					ref = arrayInfo.leafRef;
+				}
+
+				curFilter = myRef;
 				arrays.push(myRef);
 			} else {
 				// first pass
@@ -156,6 +183,7 @@ export function indexExpressables(
 					leafRef: isLeaf ? stats.ref || ref : null
 				});
 
+				curFilter = arrayRef;
 				arrays.push(arrayRef);
 			}
 
@@ -182,12 +210,12 @@ export function indexExpressables(
 					myRef = getNextInterstitialReference();
 				}
 
-				next = new OperandIndex(myRef, exp);
+				next = new OperandIndex(myRef, exp, curFilter);
 
 				prev.set(exp.token.content, next);
 			}
 
-			arrPos = 0;
+			curFilter = null;
 		}
 
 		return next;

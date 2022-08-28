@@ -447,7 +447,7 @@ describe('@bmoor/path - mapping', function () {
 			]);
 		});
 
-		xit('should write correctly', function () {
+		it('should write correctly', function () {
 			const res = mappings.transform({
 				foo: [
 					['foo-1-1', 'foo-1-2', 'foo-1-3'],
@@ -460,7 +460,6 @@ describe('@bmoor/path - mapping', function () {
 				]
 			});
 
-			console.log('=>', JSON.stringify(res, null, 2));
 			expect(res).to.deep.equal({
 				target: [
 					[

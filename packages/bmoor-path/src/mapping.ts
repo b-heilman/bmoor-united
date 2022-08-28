@@ -137,7 +137,7 @@ function writeArray(
 					tgt[i] = myTgt;
 				}
 
-				runWriterMap(dexCommand, myTgt, datum);
+				runWriterMap(dexCommand, myTgt, datum, arrayRef);
 			});
 		}
 	}
@@ -145,7 +145,7 @@ function writeArray(
 	return tgt;
 }
 
-function runWriterMap(dex: OperandIndex, tgt, obj) {
+function runWriterMap(dex: OperandIndex, tgt, obj, filter=null) {
 	const it = dex.values();
 
 	let entry = it.next();
@@ -153,23 +153,24 @@ function runWriterMap(dex: OperandIndex, tgt, obj) {
 		const dexCommand = <OperandIndex>entry.value;
 		const setter = dexCommand.exp;
 
-		// TODO: handle arrays
-		if (dexCommand.array.length) {
-			const nextTgt = [];
+		if (!filter || dexCommand.filter === filter){
+			if (dexCommand.array.length) {
+				const nextTgt = [];
 
-			writeArray(nextTgt, obj, dexCommand.array, dexCommand);
+				writeArray(nextTgt, obj, dexCommand.array, dexCommand);
 
-			setter.eval(tgt, nextTgt);
-		} else if (dexCommand.size) {
-			// leaves don't have next, so this is set and run children
-			const nextTgt = {};
+				setter.eval(tgt, nextTgt);
+			} else if (dexCommand.size) {
+				// leaves don't have next, so this is set and run children
+				const nextTgt = {};
 
-			setter.eval(tgt, nextTgt);
+				setter.eval(tgt, nextTgt);
 
-			runWriterMap(dexCommand, nextTgt, obj);
-		} else {
-			// if we are on a leaf, access the data and write it back
-			setter.eval(tgt, obj[dexCommand.ref]);
+				runWriterMap(dexCommand, nextTgt, obj);
+			} else {
+				// if we are on a leaf, access the data and write it back
+				setter.eval(tgt, obj[dexCommand.ref]);
+			}
 		}
 
 		entry = it.next();
@@ -199,17 +200,13 @@ export class Mapping {
 			addMapping(`p${i}`, fromMap, toMap, mappings[i]);
 		}
 
-		console.log('-----');
-		console.log(JSON.stringify(fromMap.toJSON(), null, 2));
-		console.log(JSON.stringify(toMap.toJSON(), null, 2));
-
 		this.read = createReader(fromMap);
 		this.write = createWriter(toMap);
 	}
 
 	map(tgt, src) {
 		const t = this.read({}, src);
-		console.log('interstitial', JSON.stringify(t, null, 2));
+		
 		return this.write(tgt, t);
 	}
 
