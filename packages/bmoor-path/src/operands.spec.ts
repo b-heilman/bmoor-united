@@ -109,8 +109,9 @@ describe('@bmoor/path - operands', function () {
 								ref: 'v1_1',
 								array: [
 									{
+										ref: 'v1_2',
 										leafRef: 'v1',
-										ref: 'v1_2'
+										sources: null
 									}
 								],
 								next: null
@@ -159,8 +160,9 @@ describe('@bmoor/path - operands', function () {
 									ref: 'v1_1',
 									array: [
 										{
+											ref: 'v1_2',
 											leafRef: null,
-											ref: 'v1_2'
+											sources: null
 										}
 									],
 									next: {
@@ -228,8 +230,9 @@ describe('@bmoor/path - operands', function () {
 									ref: 'v1_1',
 									array: [
 										{
+											ref: 'v1_2',
 											leafRef: 'v1',
-											ref: 'v1_2'
+											sources: null
 										}
 									],
 									next: null
@@ -251,8 +254,9 @@ describe('@bmoor/path - operands', function () {
 									ref: 'v3_1',
 									array: [
 										{
+											ref: 'v1_2',
 											leafRef: null,
-											ref: 'v1_2'
+											sources: ['v1_2']
 										}
 									],
 									next: {
@@ -299,7 +303,8 @@ describe('@bmoor/path - operands', function () {
 									array: [
 										{
 											leafRef: null,
-											ref: 'key_1'
+											ref: 'key_1',
+											sources: ['key_1']
 										}
 									],
 									next: {
@@ -344,11 +349,13 @@ describe('@bmoor/path - operands', function () {
 							array: [
 								{
 									ref: 'v1_1',
-									leafRef: null
+									leafRef: null,
+									sources: null
 								},
 								{
 									ref: 'v1_2',
-									leafRef: null
+									leafRef: null,
+									sources: null
 								}
 							],
 							next: {
@@ -383,11 +390,13 @@ describe('@bmoor/path - operands', function () {
 							array: [
 								{
 									ref: 'arr_1',
-									leafRef: null
+									leafRef: null,
+									sources: ['arr_1']
 								},
 								{
 									ref: 'arr_2',
-									leafRef: null
+									leafRef: null,
+									sources: ['arr_2']
 								}
 							],
 							next: {
@@ -420,11 +429,13 @@ describe('@bmoor/path - operands', function () {
 							array: [
 								{
 									ref: 'v1_1',
-									leafRef: null
+									leafRef: null,
+									sources: null
 								},
 								{
 									ref: 'v1_2',
-									leafRef: 'v1'
+									leafRef: 'v1',
+									sources: null
 								}
 							],
 							next: null
@@ -456,11 +467,13 @@ describe('@bmoor/path - operands', function () {
 							array: [
 								{
 									ref: 'v1_1',
-									leafRef: null
+									leafRef: null,
+									sources: null
 								},
 								{
 									ref: 'v1_2',
-									leafRef: null
+									leafRef: null,
+									sources: null
 								}
 							],
 							next: {

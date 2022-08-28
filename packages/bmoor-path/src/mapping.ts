@@ -91,15 +91,29 @@ function writeArray(
 	tgt,
 	src,
 	[info, ...rest]: ArrayInfo[],
-	dexCommand: OperandIndex
+	dexCommand: OperandIndex,
+	offset = -1
 ) {
+	if (offset === -1) {
+		if (info.sources.length > 1) {
+			for (let i = 0, c = info.sources.length; i < c; i++) {
+				writeArray(tgt, src, [info, ...rest], dexCommand, i);
+			}
+
+			return tgt;
+		} else {
+			offset = 0;
+		}
+	}
+
 	if (info.leafRef) {
 		// reading .foo[]
 		src[info.ref].map((datum, i) => {
 			tgt[i] = datum[info.leafRef];
 		});
 	} else {
-		const mySrc = src[info.ref];
+		const arrayRef = info.sources[offset];
+		const mySrc = src[arrayRef];
 
 		if (rest.length) {
 			// reading [][]
@@ -111,7 +125,7 @@ function writeArray(
 					tgt[i] = myTgt;
 				}
 
-				writeArray(myTgt, arr, rest, dexCommand);
+				writeArray(myTgt, arr, rest, dexCommand, offset);
 			});
 		} else {
 			// reading [].foo
@@ -131,13 +145,6 @@ function writeArray(
 	return tgt;
 }
 
-/*
-function reduceWriteArrays(tgt, obj, dexCommand: OperandIndex){
-	const base = dexCommand.exp.eval(obj);
-
-	return readArray(tgt, base, dexCommand.array, dexCommand);
-}
-*/
 function runWriterMap(dex: OperandIndex, tgt, obj) {
 	const it = dex.values();
 
@@ -201,7 +208,9 @@ export class Mapping {
 	}
 
 	map(tgt, src) {
-		return this.write(tgt, this.read({}, src));
+		const t = this.read({}, src);
+		console.log('interstitial', JSON.stringify(t, null, 2));
+		return this.write(tgt, t);
 	}
 
 	transform(src) {

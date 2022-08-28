@@ -12,6 +12,7 @@ export type ArrayInfo = {
 	exp: Expressable;
 	leafRef: string; // properto to read / write the value to
 	ref: string; // property to read / write the array from
+	sources?: string[];
 };
 
 export class OperandIndex extends Map<string, OperandIndex> {
@@ -33,7 +34,8 @@ export class OperandIndex extends Map<string, OperandIndex> {
 			// exp: this.exp,
 			array: this.array.map((arrayInfo) => ({
 				ref: arrayInfo.ref,
-				leafRef: arrayInfo.leafRef
+				leafRef: arrayInfo.leafRef,
+				sources: arrayInfo.sources
 			})),
 			next: null
 		};
@@ -114,86 +116,78 @@ export function indexExpressables(
 	const last = exps.length - 1;
 	const arrays = [];
 	const priorArrays = stats.arrays.slice(0);
+	const isWriting = priorArrays.length; // I think this is ok for now
 
 	let count = 0;
 	let arrPos = 0;
 
+	function getNextInterstitialReference() {
+		return `${ref}_${count++}`;
+	}
+
 	exps.reduce((prev: OperandIndex, exp: Expressable, i) => {
 		const isLeaf = i === last;
+		const isArray = containsArray(exp);
 
 		let next: OperandIndex = null;
 
-		// TODO: stats needs to return back the actual ref used, incase there's
-		//   a conflict on sources
-		if (prev.has(<string>exp.token.content)) {
-			next = prev.get(exp.token.content);
-
-			if (isLeaf) {
-				// this means I am duplicating the final value.  So I think
-				// the ref should be saved
-				ref = next.ref;
-			}
-
-			arrPos = 0;
-		} else {
-			const isArray = containsArray(exp);
-
-			if (isArray && arrPos < prev.array.length) {
+		if (isArray) {
+			// .foo[]
+			// [][]
+			if (arrPos < prev.array.length) {
+				// second pass
 				const myRef = prev.array[arrPos].ref;
 
 				if (isLeaf) {
 					ref = prev.array[arrPos].leafRef;
 				}
 
-				// TODO: maybe array merging logic needs to be added
 				arrays.push(myRef);
-				arrPos++;
-				next = prev;
 			} else {
+				// first pass
+				const arrayRef = priorArrays.length
+					? priorArrays.shift()
+					: getNextInterstitialReference();
+
+				prev.array.push({
+					exp,
+					ref: arrayRef,
+					sources: isWriting ? [arrayRef] : null,
+					leafRef: isLeaf ? stats.ref || ref : null
+				});
+
+				arrays.push(arrayRef);
+			}
+
+			arrPos++;
+			next = prev;
+		} else {
+			if (prev.has(<string>exp.token.content)) {
+				// .bar.eins and .bar.zwei
+				next = prev.get(exp.token.content);
+
+				if (isLeaf) {
+					// this means I am duplicating the final value.
+					ref = next.ref;
+				}
+			} else {
+				// .bar, but first pass
 				let myRef = null;
 
-				if (isLeaf && !isArray) {
+				if (isLeaf) {
 					myRef = stats.ref || ref;
 
 					ref = myRef;
 				} else {
-					myRef = `${ref}_${count}`;
-
-					count++;
+					myRef = getNextInterstitialReference();
 				}
 
 				next = new OperandIndex(myRef, exp);
 
-				if (isArray) {
-					arrPos++;
-
-					const arrayRef = priorArrays.length ? priorArrays.shift() : myRef;
-
-					if (isLeaf) {
-						ref = stats.ref || ref;
-
-						prev.array.push({
-							exp,
-							ref: arrayRef,
-							leafRef: ref
-						});
-					} else {
-						prev.array.push({
-							exp,
-							ref: arrayRef,
-							leafRef: null
-						});
-					}
-
-					arrays.push(arrayRef);
-
-					next = prev;
-				} else {
-					arrPos = 0;
-
-					prev.set(exp.token.content, next);
-				}
+				prev.set(exp.token.content, next);
 			}
+
+			arrPos = 0;
 		}
 
 		return next;

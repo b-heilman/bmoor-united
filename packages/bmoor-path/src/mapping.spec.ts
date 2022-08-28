@@ -430,4 +430,72 @@ describe('@bmoor/path - mapping', function () {
 			});
 		});
 	});
+
+	describe('array merging', function () {
+		let mappings = null;
+
+		beforeEach(function () {
+			mappings = new Mapping([
+				{
+					from: 'foo[][]',
+					to: 'target[][].foo'
+				},
+				{
+					from: 'bar[][]',
+					to: 'target[][].bar'
+				}
+			]);
+		});
+
+		xit('should write correctly', function () {
+			const res = mappings.transform({
+				foo: [
+					['foo-1-1', 'foo-1-2', 'foo-1-3'],
+					['foo-2-1', 'foo-2-2']
+				],
+				bar: [
+					['bar-1-1', 'bar-1-2'],
+					['bar-2-1', 'bar-2-2', 'bar-2-3'],
+					['bar-3-1']
+				]
+			});
+
+			console.log('=>', JSON.stringify(res, null, 2));
+			expect(res).to.deep.equal({
+				target: [
+					[
+						{
+							foo: 'foo-1-1',
+							bar: 'bar-1-1'
+						},
+						{
+							foo: 'foo-1-2',
+							bar: 'bar-1-2'
+						},
+						{
+							foo: 'foo-1-3'
+						}
+					],
+					[
+						{
+							foo: 'foo-2-1',
+							bar: 'bar-2-1'
+						},
+						{
+							foo: 'foo-2-2',
+							bar: 'bar-2-2'
+						},
+						{
+							bar: 'bar-2-3'
+						}
+					],
+					[
+						{
+							bar: 'bar-3-1'
+						}
+					]
+				]
+			});
+		});
+	});
 });
