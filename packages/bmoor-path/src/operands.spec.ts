@@ -168,13 +168,13 @@ describe('@bmoor/path - operands', function () {
 									next: {
 										value1: {
 											ref: 'v1',
-                                            filter: 'v1_2',
+											filter: 'v1_2',
 											array: [],
 											next: null
 										},
 										value2: {
 											ref: 'v2',
-                                            filter: 'v1_2',
+											filter: 'v1_2',
 											array: [],
 											next: null
 										}
@@ -187,8 +187,8 @@ describe('@bmoor/path - operands', function () {
 			});
 
 			it('should work for leaves', function () {
-                // this is a big of a non-sensical test, but it does cover
-                // a few edge cases
+				// this is a big of a non-sensical test, but it does cover
+				// a few edge cases
 
 				const path1: Expressable[] = pathParser.express(
 					'foo.bar[]',
@@ -202,15 +202,15 @@ describe('@bmoor/path - operands', function () {
 					'foo.bar[].value',
 					ParserModes.write
 				);
-                const path4: Expressable[] = pathParser.express(
+				const path4: Expressable[] = pathParser.express(
 					'foo.bar[].value2',
 					ParserModes.write
 				);
-                const path5: Expressable[] = pathParser.express(
+				const path5: Expressable[] = pathParser.express(
 					'hello[]',
 					ParserModes.read
 				);
-                const path6: Expressable[] = pathParser.express(
+				const path6: Expressable[] = pathParser.express(
 					'foo.bar[].value3',
 					ParserModes.write
 				);
@@ -221,9 +221,9 @@ describe('@bmoor/path - operands', function () {
 				const stats1 = indexExpressables('v1', path1, index);
 				const stats2 = indexExpressables('v2', path2, index);
 				const stats3 = indexExpressables('v3', path3, index2, stats1);
-                const stats4 = indexExpressables('v4', path4, index2, stats2);
-                const stats5 = indexExpressables('v5', path5, index);
-                const stats6 = indexExpressables('v6', path6, index2, stats5);
+				const stats4 = indexExpressables('v4', path4, index2, stats2);
+				const stats5 = indexExpressables('v5', path5, index);
+				const stats6 = indexExpressables('v6', path6, index2, stats5);
 
 				expect(stats1).to.deep.equal({
 					ref: 'v1',
@@ -241,11 +241,11 @@ describe('@bmoor/path - operands', function () {
 					ref: 'v1',
 					arrays: ['v1_2']
 				});
-                expect(stats5).to.deep.equal({
+				expect(stats5).to.deep.equal({
 					ref: 'v5',
 					arrays: ['v5_1']
 				});
-                expect(stats6).to.deep.equal({
+				expect(stats6).to.deep.equal({
 					ref: 'v5',
 					arrays: ['v5_1']
 				});
@@ -271,17 +271,17 @@ describe('@bmoor/path - operands', function () {
 								}
 							}
 						},
-                        hello: {
-                            ref: 'v5_0',
-                            array: [
-                                {
-                                    ref: 'v5_1',
-                                    leafRef: 'v5',
-                                    sources: null
-                                }
-                            ],
-                            next: null
-                        }
+						hello: {
+							ref: 'v5_0',
+							array: [
+								{
+									ref: 'v5_1',
+									leafRef: 'v5',
+									sources: null
+								}
+							],
+							next: null
+						}
 					}
 				});
 
@@ -299,23 +299,23 @@ describe('@bmoor/path - operands', function () {
 										{
 											ref: 'v1_2',
 											leafRef: null,
-											sources: ['v1_2','v5_1']
+											sources: ['v1_2', 'v5_1']
 										}
 									],
 									next: {
 										value: {
 											ref: 'v1',
-                                            filter: 'v1_2',
+											filter: 'v1_2',
 											array: [],
 											next: null
 										},
-                                        value2: {
+										value2: {
 											ref: 'v1',
 											filter: 'v1_2',
 											array: [],
 											next: null
 										},
-                                        value3: {
+										value3: {
 											ref: 'v5',
 											filter: 'v5_1',
 											array: [],
@@ -366,13 +366,13 @@ describe('@bmoor/path - operands', function () {
 									next: {
 										value1: {
 											ref: 'v1',
-                                            filter: 'key_1',
+											filter: 'key_1',
 											array: [],
 											next: null
 										},
 										value2: {
 											ref: 'v2',
-                                            filter: 'key_1',
+											filter: 'key_1',
 											array: [],
 											next: null
 										}
@@ -419,7 +419,7 @@ describe('@bmoor/path - operands', function () {
 							next: {
 								bar: {
 									ref: 'v1',
-                                    filter: 'v1_2',
+									filter: 'v1_2',
 									array: [],
 									next: null
 								}
@@ -461,7 +461,7 @@ describe('@bmoor/path - operands', function () {
 							next: {
 								bar: {
 									ref: 'v1',
-                                    filter: 'arr_2',
+									filter: 'arr_2',
 									array: [],
 									next: null
 								}
@@ -539,13 +539,13 @@ describe('@bmoor/path - operands', function () {
 							next: {
 								bar: {
 									ref: 'v1',
-                                    filter: 'v1_2',
+									filter: 'v1_2',
 									array: [],
 									next: null
 								},
 								bar2: {
 									ref: 'v2',
-                                    filter: 'v1_2',
+									filter: 'v1_2',
 									array: [],
 									next: null
 								}

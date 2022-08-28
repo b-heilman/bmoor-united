@@ -58,7 +58,7 @@ export class OperandIndex extends Map<string, OperandIndex> {
 			rtn.next = next;
 		}
 
-		if (this.filter){
+		if (this.filter) {
 			rtn.filter = this.filter;
 		} else {
 			delete rtn.filter;
@@ -144,7 +144,7 @@ export function indexExpressables(
 		if (isArray) {
 			// .foo[]
 			// [][]
-			if (curFilter === null){
+			if (curFilter === null) {
 				arrPos = 0;
 			}
 
@@ -154,10 +154,10 @@ export function indexExpressables(
 
 				let myRef = null;
 
-				if (isWriting){
+				if (isWriting) {
 					myRef = priorArrays.shift();
 
-					if (!arrayInfo.sources.includes(myRef)){
+					if (!arrayInfo.sources.includes(myRef)) {
 						arrayInfo.sources.push(myRef);
 					}
 				} else {

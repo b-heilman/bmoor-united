@@ -145,7 +145,7 @@ function writeArray(
 	return tgt;
 }
 
-function runWriterMap(dex: OperandIndex, tgt, obj, filter=null) {
+function runWriterMap(dex: OperandIndex, tgt, obj, filter = null) {
 	const it = dex.values();
 
 	let entry = it.next();
@@ -153,7 +153,7 @@ function runWriterMap(dex: OperandIndex, tgt, obj, filter=null) {
 		const dexCommand = <OperandIndex>entry.value;
 		const setter = dexCommand.exp;
 
-		if (!filter || dexCommand.filter === filter){
+		if (!filter || dexCommand.filter === filter) {
 			if (dexCommand.array.length) {
 				const nextTgt = [];
 
@@ -206,7 +206,7 @@ export class Mapping {
 
 	map(tgt, src) {
 		const t = this.read({}, src);
-		
+
 		return this.write(tgt, t);
 	}
 
