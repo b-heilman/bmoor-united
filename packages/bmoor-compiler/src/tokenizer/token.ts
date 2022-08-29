@@ -14,7 +14,6 @@ export type TokenConstructor = {
 	new (..._: any): Token;
 	reference: TokenReference;
 };
-
 export abstract class Token implements ExpressableToken {
 	abstract toExpressable(
 		compiler?: CompilerInterface,

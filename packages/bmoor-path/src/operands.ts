@@ -1,5 +1,4 @@
 import {Expressable} from '@bmoor/compiler';
-import {cursorTo} from 'readline';
 
 import {ArrayToken} from './token/array';
 
