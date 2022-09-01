@@ -1,9 +1,9 @@
-import { ModelFieldSettings } from "./field.interface";
+import {ModelFieldSettings} from './field.interface';
 
 export class ModelField {
-    incomingSettings: ModelFieldSettings
+	incomingSettings: ModelFieldSettings;
 
-    constructor(settings: ModelFieldSettings){
-        this.incomingSettings = settings;
-    }
+	constructor(settings: ModelFieldSettings) {
+		this.incomingSettings = settings;
+	}
 }

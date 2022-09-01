@@ -13,11 +13,20 @@ export type SearchDatum = any;
 
 export interface ModelSecurity {
 	// securing data that has been requested
-	secure(datums: ExternalDatum[], ctx: ContextSecurityInterface): ExternalDatum[];
-	
+	secure(
+		datums: ExternalDatum[],
+		ctx: ContextSecurityInterface
+	): ExternalDatum[];
+
 	// securing data that has been submitted
-	validateCreate(datums: ExternalDatum[], ctx: ContextSecurityInterface): ExternalDatum[];
-	validateUpdate(datums: ExternalDatum[], ctx: ContextSecurityInterface): ExternalDatum[];
+	validateCreate(
+		datums: ExternalDatum[],
+		ctx: ContextSecurityInterface
+	): ExternalDatum[];
+	validateUpdate(
+		datums: ExternalDatum[],
+		ctx: ContextSecurityInterface
+	): ExternalDatum[];
 }
 
 export interface ModelAccessors {
@@ -37,7 +46,10 @@ export interface ModelSettings {
 export interface ModelInterface {
 	fields: Map<string, ModelFieldInterface>;
 
-	create(content: ExternalDatum[], ctx: ContextSecurityInterface): ExternalDatum[];
+	create(
+		content: ExternalDatum[],
+		ctx: ContextSecurityInterface
+	): ExternalDatum[];
 	read(ids: string[], ctx: ContextSecurityInterface): ExternalDatum[];
 	update(
 		content: Record<string, ExternalDatum>,
@@ -47,6 +59,6 @@ export interface ModelInterface {
 	search(search: SearchDatum, ctx: ContextSecurityInterface): ExternalDatum[];
 
 	getByPath(external: string);
-	externalToInternal(content: ExternalDatum[]): InternalDatum[]
-	internalToExternal(content: InternalDatum[]): ExternalDatum[]
+	externalToInternal(content: ExternalDatum[]): InternalDatum[];
+	internalToExternal(content: InternalDatum[]): ExternalDatum[];
 }

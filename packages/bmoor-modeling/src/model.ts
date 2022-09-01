@@ -1,5 +1,5 @@
 import {ContextSecurityInterface} from '@bmoor/context';
-import { urlToHttpOptions } from 'url';
+import {urlToHttpOptions} from 'url';
 
 import {
 	InternalDatum,
@@ -17,21 +17,22 @@ export class Model implements ModelInterface {
 	fields: Map<string, ModelFieldInterface>;
 	incomingSettings: ModelSettings;
 
-	constructor(settings: ModelSettings ){
+	constructor(settings: ModelSettings) {
 		this.incomingSettings = settings;
 
-		settings.fields.map(field => {
+		settings.fields.map((field) => {
 			this.fields.set(field.settings.external, field);
 		});
 	}
 
-	create(content: ExternalDatum[], ctx: ContextSecurityInterface): ExternalDatum[] {
+	create(
+		content: ExternalDatum[],
+		ctx: ContextSecurityInterface
+	): ExternalDatum[] {
 		return this.internalToExternal(
 			this.incomingSettings.accessors.create(
 				this.externalToInternal(
-					this.incomingSettings.security.validateCreate(
-						content, ctx
-					)
+					this.incomingSettings.security.validateCreate(content, ctx)
 				)
 			)
 		);
@@ -39,9 +40,7 @@ export class Model implements ModelInterface {
 
 	read(ids: string[], ctx: ContextSecurityInterface): ExternalDatum[] {
 		return this.incomingSettings.security.secure(
-			this.internalToExternal(
-				this.incomingSettings.accessors.read(ids)
-			),
+			this.internalToExternal(this.incomingSettings.accessors.read(ids)),
 			ctx
 		);
 	}
@@ -52,7 +51,7 @@ export class Model implements ModelInterface {
 	): Record<string, ExternalDatum> {
 		const datums = [];
 		const ids = [];
-		for(const key in content){
+		for (const key in content) {
 			datums.push(content[key]);
 			ids.push(key);
 		}
@@ -64,26 +63,20 @@ export class Model implements ModelInterface {
 
 		const converted = this.externalToInternal(datums);
 		const res = this.incomingSettings.accessors.update(
-			ids.reduce(
-				(agg, key, i) => {
-					agg[key] = converted[i];
+			ids.reduce((agg, key, i) => {
+				agg[key] = converted[i];
 
-					return agg;
-				},
-				{}
-			)
+				return agg;
+			}, {})
 		);
 
 		const rtn = this.internalToExternal(Object.values(res));
 
-		return Object.keys(rtn).reduce(
-			(agg, key, i) => {
-				agg[key] = rtn[i];
+		return Object.keys(rtn).reduce((agg, key, i) => {
+			agg[key] = rtn[i];
 
-				return agg;
-			},
-			{}
-		);
+			return agg;
+		}, {});
 	}
 
 	delete(ids: string[], ctx: ContextSecurityInterface): ExternalDatum[] {
@@ -98,9 +91,7 @@ export class Model implements ModelInterface {
 
 	search(search: SearchDatum, ctx: ContextSecurityInterface): ExternalDatum[] {
 		return this.incomingSettings.security.secure(
-			this.internalToExternal(
-				this.incomingSettings.accessors.search(search)
-			),
+			this.internalToExternal(this.incomingSettings.accessors.search(search)),
 			ctx
 		);
 	}
