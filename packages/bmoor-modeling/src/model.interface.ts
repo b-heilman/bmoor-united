@@ -1,55 +1,52 @@
 import {ContextSecurityInterface} from '@bmoor/context';
 
-// eslint-disable-next-line  @typescript-eslint/no-explicit-any
-export type RawDatum = any;
+import {ModelFieldSettings, ModelFieldInterface} from './model/field.interface';
 
 // eslint-disable-next-line  @typescript-eslint/no-explicit-any
-export type ModelDatum = any;
+export type InternalDatum = any;
+
+// eslint-disable-next-line  @typescript-eslint/no-explicit-any
+export type ExternalDatum = any;
 
 // eslint-disable-next-line  @typescript-eslint/no-explicit-any
 export type SearchDatum = any;
 
 export interface ModelSecurity {
-	secure(datums: ModelDatum[], ctx: ContextSecurityInterface);
-	validate(datums: ModelDatum[], ctx: ContextSecurityInterface);
+	// securing data that has been requested
+	secure(datums: ExternalDatum[], ctx: ContextSecurityInterface): ExternalDatum[];
+	
+	// securing data that has been submitted
+	validateCreate(datums: ExternalDatum[], ctx: ContextSecurityInterface): ExternalDatum[];
+	validateUpdate(datums: ExternalDatum[], ctx: ContextSecurityInterface): ExternalDatum[];
 }
 
 export interface ModelAccessors {
-	create(content: RawDatum[]): RawDatum[];
-	read(ids: string[]): RawDatum[];
-	update(content: {string: RawDatum}): {string: RawDatum};
-	delete(ids: string[]): RawDatum[];
-	search(search: SearchDatum): RawDatum[];
-}
-
-export interface ModelFieldDisplay {
-	title: string;
-	description: string;
-}
-
-export interface ModelFieldSettings {
-	internal: string;
-	external: string;
-	type?: string;
-	jsonType?: string;
-	display: ModelFieldDisplay;
+	create(content: InternalDatum[]): InternalDatum[];
+	read(ids: string[]): InternalDatum[];
+	update(content: Record<string, InternalDatum>): Record<string, InternalDatum>;
+	delete(content: InternalDatum[]): InternalDatum[];
+	search(search: SearchDatum): InternalDatum[];
 }
 
 export interface ModelSettings {
 	security: ModelSecurity;
 	accessors: ModelAccessors;
-	fields: ModelFieldSettings[];
+	fields: ModelFieldInterface[];
 }
 
 export interface ModelInterface {
-	create(content: ModelDatum[], ctx: ContextSecurityInterface): ModelDatum[];
-	read(ids: string[], ctx: ContextSecurityInterface): ModelDatum[];
+	fields: Map<string, ModelFieldInterface>;
+
+	create(content: ExternalDatum[], ctx: ContextSecurityInterface): ExternalDatum[];
+	read(ids: string[], ctx: ContextSecurityInterface): ExternalDatum[];
 	update(
-		content: {string: ModelDatum},
+		content: Record<string, ExternalDatum>,
 		ctx: ContextSecurityInterface
-	): {string: ModelDatum};
-	delete(ids: string[], ctx: ContextSecurityInterface): ModelDatum[];
-	search(search: SearchDatum, ctx: ContextSecurityInterface): ModelDatum[];
+	): Record<string, ExternalDatum>;
+	delete(ids: string[], ctx: ContextSecurityInterface): ExternalDatum[];
+	search(search: SearchDatum, ctx: ContextSecurityInterface): ExternalDatum[];
 
 	getByPath(external: string);
+	externalToInternal(content: ExternalDatum[]): InternalDatum[]
+	internalToExternal(content: InternalDatum[]): ExternalDatum[]
 }
