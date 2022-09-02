@@ -1,12 +1,10 @@
 import {ContextSecurityInterface} from '@bmoor/context';
-import {urlToHttpOptions} from 'url';
+import {Mapping} from '@bmoor/path';
 
 import {
 	InternalDatum,
 	ExternalDatum,
 	SearchDatum,
-	ModelSecurity,
-	ModelAccessors,
 	ModelSettings,
 	ModelInterface
 } from './model.interface';
@@ -16,22 +14,38 @@ import {ModelFieldInterface} from './model/field.interface';
 export class Model implements ModelInterface {
 	fields: Map<string, ModelFieldInterface>;
 	incomingSettings: ModelSettings;
+	toInternal: Mapping;
+	toExternal: Mapping;
 
 	constructor(settings: ModelSettings) {
 		this.incomingSettings = settings;
+		this.fields = new Map<string, ModelFieldInterface>();
 
-		settings.fields.map((field) => {
-			this.fields.set(field.settings.external, field);
+		const toInternal = settings.fields.map((field) => {
+			this.fields.set(field.incomingSettings.external, field);
+
+			return {
+				from: field.incomingSettings.external,
+				to: field.incomingSettings.internal
+			};
 		});
+
+		const toExternal = toInternal.map((map) => ({
+			to: map.from,
+			from: map.to
+		}));
+
+		this.toInternal = new Mapping(toInternal);
+		this.toExternal = new Mapping(toExternal);
 	}
 
 	create(
 		content: ExternalDatum[],
 		ctx: ContextSecurityInterface
 	): ExternalDatum[] {
-		return this.internalToExternal(
+		return this.convertToExternal(
 			this.incomingSettings.accessors.create(
-				this.externalToInternal(
+				this.convertToInternal(
 					this.incomingSettings.security.validateCreate(content, ctx)
 				)
 			)
@@ -40,7 +54,7 @@ export class Model implements ModelInterface {
 
 	read(ids: string[], ctx: ContextSecurityInterface): ExternalDatum[] {
 		return this.incomingSettings.security.secure(
-			this.internalToExternal(this.incomingSettings.accessors.read(ids)),
+			this.convertToExternal(this.incomingSettings.accessors.read(ids)),
 			ctx
 		);
 	}
@@ -61,7 +75,7 @@ export class Model implements ModelInterface {
 			this.read(ids, ctx)
 		]);
 
-		const converted = this.externalToInternal(datums);
+		const converted = this.convertToInternal(datums);
 		const res = this.incomingSettings.accessors.update(
 			ids.reduce((agg, key, i) => {
 				agg[key] = converted[i];
@@ -70,7 +84,7 @@ export class Model implements ModelInterface {
 			}, {})
 		);
 
-		const rtn = this.internalToExternal(Object.values(res));
+		const rtn = this.convertToExternal(Object.values(res));
 
 		return Object.keys(rtn).reduce((agg, key, i) => {
 			agg[key] = rtn[i];
@@ -82,16 +96,16 @@ export class Model implements ModelInterface {
 	delete(ids: string[], ctx: ContextSecurityInterface): ExternalDatum[] {
 		// TODO: can I simplify this?
 		// you can only delete that which you can access
-		return this.internalToExternal(
+		return this.convertToExternal(
 			this.incomingSettings.accessors.delete(
-				this.externalToInternal(this.read(ids, ctx))
+				this.convertToInternal(this.read(ids, ctx))
 			)
 		);
 	}
 
 	search(search: SearchDatum, ctx: ContextSecurityInterface): ExternalDatum[] {
 		return this.incomingSettings.security.secure(
-			this.internalToExternal(this.incomingSettings.accessors.search(search)),
+			this.convertToExternal(this.incomingSettings.accessors.search(search)),
 			ctx
 		);
 	}
@@ -100,12 +114,11 @@ export class Model implements ModelInterface {
 		return this.fields.get(external);
 	}
 
-	externalToInternal(content: ExternalDatum[]): InternalDatum[] {
-		// TODO: use path
-		return [{}];
+	convertToInternal(content: ExternalDatum[]): InternalDatum[] {
+		return content.map((datum) => this.toInternal.transform(datum));
 	}
 
-	internalToExternal(content: InternalDatum[]): ExternalDatum[] {
-		return [{}];
+	convertToExternal(content: InternalDatum[]): ExternalDatum[] {
+		return content.map((datum) => this.toExternal.transform(datum));
 	}
 }

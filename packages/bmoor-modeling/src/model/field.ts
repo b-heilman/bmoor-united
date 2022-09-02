@@ -1,6 +1,6 @@
-import {ModelFieldSettings} from './field.interface';
+import {ModelFieldInterface, ModelFieldSettings} from './field.interface';
 
-export class ModelField {
+export class ModelField implements ModelFieldInterface {
 	incomingSettings: ModelFieldSettings;
 
 	constructor(settings: ModelFieldSettings) {

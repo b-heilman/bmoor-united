@@ -1,13 +1,25 @@
 import {expect} from 'chai';
 
-import {Path} from './index';
+import {Mapping} from './index';
 
 describe('@bmoor/path', function () {
 	describe('path', function () {
-		xit('should work', function () {
-			const path = new Path();
+		it('should work', function () {
+			const mapping = new Mapping([
+				{
+					from: 'eins',
+					to: 'field1'
+				},
+				{
+					from: 'zwei',
+					to: 'field2'
+				}
+			]);
 
-			expect(path).to.equal(false);
+			expect(mapping.transform({eins: 1, zwei: 2})).to.deep.equal({
+				field1: 1,
+				field2: 2
+			});
 		});
 	});
 });

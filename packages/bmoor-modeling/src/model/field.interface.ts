@@ -8,9 +8,9 @@ export interface ModelFieldSettings {
 	external: string;
 	type?: string;
 	jsonType?: string;
-	display: ModelFieldDisplay;
+	display?: ModelFieldDisplay;
 }
 
 export interface ModelFieldInterface {
-	settings: ModelFieldSettings;
+	incomingSettings: ModelFieldSettings;
 }

@@ -1,6 +1,6 @@
 import {ContextSecurityInterface} from '@bmoor/context';
 
-import {ModelFieldSettings, ModelFieldInterface} from './model/field.interface';
+import {ModelFieldInterface} from './model/field.interface';
 
 // eslint-disable-next-line  @typescript-eslint/no-explicit-any
 export type InternalDatum = any;
@@ -23,6 +23,7 @@ export interface ModelSecurity {
 		datums: ExternalDatum[],
 		ctx: ContextSecurityInterface
 	): ExternalDatum[];
+
 	validateUpdate(
 		datums: ExternalDatum[],
 		ctx: ContextSecurityInterface
@@ -59,6 +60,6 @@ export interface ModelInterface {
 	search(search: SearchDatum, ctx: ContextSecurityInterface): ExternalDatum[];
 
 	getByPath(external: string);
-	externalToInternal(content: ExternalDatum[]): InternalDatum[];
-	internalToExternal(content: InternalDatum[]): ExternalDatum[];
+	convertToInternal(content: ExternalDatum[]): InternalDatum[];
+	convertToExternal(content: InternalDatum[]): ExternalDatum[];
 }
