@@ -12,7 +12,7 @@ describe('@bmoor-modeling', function () {
 		accessors = {};
 	});
 
-	describe('loading a model', function () {
+	describe('model', function () {
 		it('should properly translate from internal to external and back', function () {
 			const model = new Model({
 				security,

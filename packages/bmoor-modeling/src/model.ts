@@ -1,13 +1,9 @@
 import {ContextSecurityInterface} from '@bmoor/context';
 import {Mapping} from '@bmoor/path';
 
-import {
-	InternalDatum,
-	ExternalDatum,
-	SearchDatum,
-	ModelSettings,
-	ModelInterface
-} from './model.interface';
+import {InternalDatum, ExternalDatum, SearchDatum} from './datum.interface';
+
+import {ModelSettings, ModelInterface} from './model.interface';
 
 import {ModelFieldInterface} from './model/field.interface';
 
@@ -46,14 +42,14 @@ export class Model implements ModelInterface {
 		return this.convertToExternal(
 			this.incomingSettings.accessors.create(
 				this.convertToInternal(
-					this.incomingSettings.security.validateCreate(content, ctx)
+					this.incomingSettings.security.canCreate(content, ctx)
 				)
 			)
 		);
 	}
 
 	read(ids: string[], ctx: ContextSecurityInterface): ExternalDatum[] {
-		return this.incomingSettings.security.secure(
+		return this.incomingSettings.security.canRead(
 			this.convertToExternal(this.incomingSettings.accessors.read(ids)),
 			ctx
 		);
@@ -71,7 +67,7 @@ export class Model implements ModelInterface {
 		}
 
 		Promise.all([
-			this.incomingSettings.security.validateUpdate(datums, ctx),
+			this.incomingSettings.security.canUpdate(datums, ctx),
 			this.read(ids, ctx)
 		]);
 
@@ -104,7 +100,7 @@ export class Model implements ModelInterface {
 	}
 
 	search(search: SearchDatum, ctx: ContextSecurityInterface): ExternalDatum[] {
-		return this.incomingSettings.security.secure(
+		return this.incomingSettings.security.canRead(
 			this.convertToExternal(this.incomingSettings.accessors.search(search)),
 			ctx
 		);

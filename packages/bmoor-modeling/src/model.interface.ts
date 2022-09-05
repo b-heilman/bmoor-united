@@ -1,36 +1,10 @@
 import {ContextSecurityInterface} from '@bmoor/context';
 
+import {SecurityInterface, SecuritySettings} from './security.interface';
 import {ModelFieldInterface} from './model/field.interface';
+import {InternalDatum, SearchDatum, ExternalDatum} from './datum.interface';
 
-// eslint-disable-next-line  @typescript-eslint/no-explicit-any
-export type InternalDatum = any;
-
-// eslint-disable-next-line  @typescript-eslint/no-explicit-any
-export type ExternalDatum = any;
-
-// eslint-disable-next-line  @typescript-eslint/no-explicit-any
-export type SearchDatum = any;
-
-export interface ModelSecurity {
-	// securing data that has been requested
-	secure(
-		datums: ExternalDatum[],
-		ctx: ContextSecurityInterface
-	): ExternalDatum[];
-
-	// securing data that has been submitted
-	validateCreate(
-		datums: ExternalDatum[],
-		ctx: ContextSecurityInterface
-	): ExternalDatum[];
-
-	validateUpdate(
-		datums: ExternalDatum[],
-		ctx: ContextSecurityInterface
-	): ExternalDatum[];
-}
-
-export interface ModelAccessors {
+export interface ModelAccessorsInterface {
 	create(content: InternalDatum[]): InternalDatum[];
 	read(ids: string[]): InternalDatum[];
 	update(content: Record<string, InternalDatum>): Record<string, InternalDatum>;
@@ -39,8 +13,8 @@ export interface ModelAccessors {
 }
 
 export interface ModelSettings {
-	security: ModelSecurity;
-	accessors: ModelAccessors;
+	security: SecurityInterface;
+	accessors: ModelAccessorsInterface;
 	fields: ModelFieldInterface[];
 }
 
