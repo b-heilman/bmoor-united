@@ -39,12 +39,12 @@ export class Model implements ModelInterface {
 		this.toExternal = new Mapping(toExternal);
 	}
 
-	create(
+	async create(
 		content: ExternalDatum[],
 		ctx: ContextSecurityInterface
-	): ExternalDatum[] {
+	): Promise<ExternalDatum[]> {
 		return this.convertToExternal(
-			this.incomingSettings.accessors.create(
+			await this.incomingSettings.accessors.create(
 				this.convertToInternal(
 					this.incomingSettings.security.validateCreate(content, ctx)
 				)
@@ -52,17 +52,22 @@ export class Model implements ModelInterface {
 		);
 	}
 
-	read(ids: string[], ctx: ContextSecurityInterface): ExternalDatum[] {
+	async read(
+		ids: string[], 
+		ctx: ContextSecurityInterface
+	): Promise<ExternalDatum[]> {
 		return this.incomingSettings.security.secure(
-			this.convertToExternal(this.incomingSettings.accessors.read(ids)),
+			this.convertToExternal(
+				await this.incomingSettings.accessors.read(ids)
+			),
 			ctx
 		);
 	}
 
-	update(
+	async update(
 		content: Record<string, ExternalDatum>,
 		ctx: ContextSecurityInterface
-	): Record<string, ExternalDatum> {
+	): Promise<Record<string, ExternalDatum>> {
 		const datums = [];
 		const ids = [];
 		for (const key in content) {
@@ -70,7 +75,7 @@ export class Model implements ModelInterface {
 			ids.push(key);
 		}
 
-		Promise.all([
+		await Promise.all([
 			this.incomingSettings.security.validateUpdate(datums, ctx),
 			this.read(ids, ctx)
 		]);
@@ -93,19 +98,27 @@ export class Model implements ModelInterface {
 		}, {});
 	}
 
-	delete(ids: string[], ctx: ContextSecurityInterface): ExternalDatum[] {
+	async delete(
+		ids: string[], 
+		ctx: ContextSecurityInterface
+	): Promise<ExternalDatum[]> {
 		// TODO: can I simplify this?
 		// you can only delete that which you can access
 		return this.convertToExternal(
-			this.incomingSettings.accessors.delete(
-				this.convertToInternal(this.read(ids, ctx))
+			await this.incomingSettings.accessors.delete(
+				this.convertToInternal(await this.read(ids, ctx))
 			)
 		);
 	}
 
-	search(search: SearchDatum, ctx: ContextSecurityInterface): ExternalDatum[] {
+	async search(
+		search: SearchDatum, 
+		ctx: ContextSecurityInterface
+	): Promise<ExternalDatum[]> {
 		return this.incomingSettings.security.secure(
-			this.convertToExternal(this.incomingSettings.accessors.search(search)),
+			this.convertToExternal(
+				await this.incomingSettings.accessors.search(search)
+			),
 			ctx
 		);
 	}

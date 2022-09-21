@@ -31,11 +31,11 @@ export interface ModelSecurity {
 }
 
 export interface ModelAccessors {
-	create(content: InternalDatum[]): InternalDatum[];
-	read(ids: string[]): InternalDatum[];
-	update(content: Record<string, InternalDatum>): Record<string, InternalDatum>;
-	delete(content: InternalDatum[]): InternalDatum[];
-	search(search: SearchDatum): InternalDatum[];
+	create(content: InternalDatum[]): Promise<InternalDatum[]>;
+	read(ids: string[]): Promise<InternalDatum[]>;
+	update(content: Record<string, InternalDatum>): Promise<Record<string, InternalDatum>>;
+	delete(content: InternalDatum[]):  Promise<InternalDatum[]>;
+	search(search: SearchDatum):  Promise<InternalDatum[]>;
 }
 
 export interface ModelSettings {
@@ -50,14 +50,23 @@ export interface ModelInterface {
 	create(
 		content: ExternalDatum[],
 		ctx: ContextSecurityInterface
-	): ExternalDatum[];
-	read(ids: string[], ctx: ContextSecurityInterface): ExternalDatum[];
+	): Promise<ExternalDatum[]>;
+	read(
+		ids: string[], 
+		ctx: ContextSecurityInterface
+	): Promise<ExternalDatum[]>;
 	update(
 		content: Record<string, ExternalDatum>,
 		ctx: ContextSecurityInterface
-	): Record<string, ExternalDatum>;
-	delete(ids: string[], ctx: ContextSecurityInterface): ExternalDatum[];
-	search(search: SearchDatum, ctx: ContextSecurityInterface): ExternalDatum[];
+	): Promise<Record<string, ExternalDatum>>;
+	delete(
+		ids: string[], 
+		ctx: ContextSecurityInterface
+	): Promise<ExternalDatum[]>;
+	search(
+		search: SearchDatum, 
+		ctx: ContextSecurityInterface
+	): Promise<ExternalDatum[]>;
 
 	getByPath(external: string);
 	convertToInternal(content: ExternalDatum[]): InternalDatum[];
