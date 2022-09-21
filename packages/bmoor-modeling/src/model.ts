@@ -46,14 +46,14 @@ export class Model implements ModelInterface {
 		return this.convertToExternal(
 			await this.incomingSettings.accessors.create(
 				this.convertToInternal(
-					this.incomingSettings.security.validateCreate(content, ctx)
+					await this.incomingSettings.security.validateCreate(content, ctx)
 				)
 			)
 		);
 	}
 
 	async read(
-		ids: string[], 
+		ids: string[],
 		ctx: ContextSecurityInterface
 	): Promise<ExternalDatum[]> {
 		return this.incomingSettings.security.secure(
@@ -99,7 +99,7 @@ export class Model implements ModelInterface {
 	}
 
 	async delete(
-		ids: string[], 
+		ids: string[],
 		ctx: ContextSecurityInterface
 	): Promise<ExternalDatum[]> {
 		// TODO: can I simplify this?
@@ -112,7 +112,7 @@ export class Model implements ModelInterface {
 	}
 
 	async search(
-		search: SearchDatum, 
+		search: SearchDatum,
 		ctx: ContextSecurityInterface
 	): Promise<ExternalDatum[]> {
 		return this.incomingSettings.security.secure(

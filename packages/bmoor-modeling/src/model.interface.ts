@@ -16,26 +16,28 @@ export interface ModelSecurity {
 	secure(
 		datums: ExternalDatum[],
 		ctx: ContextSecurityInterface
-	): ExternalDatum[];
+	): Promise<ExternalDatum[]>;
 
 	// securing data that has been submitted
 	validateCreate(
 		datums: ExternalDatum[],
 		ctx: ContextSecurityInterface
-	): ExternalDatum[];
+	): Promise<ExternalDatum[]>;
 
 	validateUpdate(
 		datums: ExternalDatum[],
 		ctx: ContextSecurityInterface
-	): ExternalDatum[];
+	): Promise<ExternalDatum[]>;
 }
 
 export interface ModelAccessors {
 	create(content: InternalDatum[]): Promise<InternalDatum[]>;
 	read(ids: string[]): Promise<InternalDatum[]>;
-	update(content: Record<string, InternalDatum>): Promise<Record<string, InternalDatum>>;
-	delete(content: InternalDatum[]):  Promise<InternalDatum[]>;
-	search(search: SearchDatum):  Promise<InternalDatum[]>;
+	update(
+		content: Record<string, InternalDatum>
+	): Promise<Record<string, InternalDatum>>;
+	delete(content: InternalDatum[]): Promise<InternalDatum[]>;
+	search(search: SearchDatum): Promise<InternalDatum[]>;
 }
 
 export interface ModelSettings {
@@ -52,7 +54,7 @@ export interface ModelInterface {
 		ctx: ContextSecurityInterface
 	): Promise<ExternalDatum[]>;
 	read(
-		ids: string[], 
+		ids: string[],
 		ctx: ContextSecurityInterface
 	): Promise<ExternalDatum[]>;
 	update(
@@ -60,11 +62,11 @@ export interface ModelInterface {
 		ctx: ContextSecurityInterface
 	): Promise<Record<string, ExternalDatum>>;
 	delete(
-		ids: string[], 
+		ids: string[],
 		ctx: ContextSecurityInterface
 	): Promise<ExternalDatum[]>;
 	search(
-		search: SearchDatum, 
+		search: SearchDatum,
 		ctx: ContextSecurityInterface
 	): Promise<ExternalDatum[]>;
 

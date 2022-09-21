@@ -95,7 +95,14 @@ describe('@bmoor/compiler', function () {
 		it('properly handle back to back', async function () {
 			const reducer = new Reducer([Statement1, Statement2, Statement3]);
 
-			const tokens = reducer.reduce([eins, zwei, otherEins, zwei, drei, fier]);
+			const tokens = reducer.reduce([
+				eins,
+				zwei,
+				otherEins,
+				zwei,
+				drei,
+				fier
+			]);
 
 			expect(tokens.map((token) => token.getReference())).to.deep.equal([
 				'compound:eins-zwei',

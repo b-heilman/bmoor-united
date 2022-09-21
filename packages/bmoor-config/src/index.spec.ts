@@ -18,7 +18,9 @@ describe('@bmoor/config', function () {
 				foo: 'bar'
 			});
 			expect(cfg.get('hello')).to.equal('world');
-			expect((<Config<ConfigValue>>cfg.get('eins')).get('zwei')).to.equal(2);
+			expect((<Config<ConfigValue>>cfg.get('eins')).get('zwei')).to.equal(
+				2
+			);
 		});
 
 		describe('::override', function () {
@@ -48,14 +50,18 @@ describe('@bmoor/config', function () {
 				});
 				expect(other.get('hello')).to.equal('world2');
 				expect(other.get('junk')).to.equal('value');
-				expect((<Config<ConfigValue>>cfg.get('eins')).get('zwei')).to.equal(2);
-				expect((<Config<ConfigValue>>other.get('eins')).get('one')).to.equal(1);
-				expect((<Config<ConfigValue>>other.get('eins')).get('zwei')).to.equal(
-					22
-				);
-				expect((<Config<ConfigValue>>other.get('eins')).get('blah')).to.equal(
-					':-('
-				);
+				expect(
+					(<Config<ConfigValue>>cfg.get('eins')).get('zwei')
+				).to.equal(2);
+				expect(
+					(<Config<ConfigValue>>other.get('eins')).get('one')
+				).to.equal(1);
+				expect(
+					(<Config<ConfigValue>>other.get('eins')).get('zwei')
+				).to.equal(22);
+				expect(
+					(<Config<ConfigValue>>other.get('eins')).get('blah')
+				).to.equal(':-(');
 			});
 		});
 	});

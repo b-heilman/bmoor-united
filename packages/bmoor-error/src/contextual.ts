@@ -41,7 +41,9 @@ export class ContextualError {
 	toString() {
 		const builder = [];
 		if (this.invocation) {
-			builder.push('> info: ' + JSON.stringify(this.invocation, null, '\t'));
+			builder.push(
+				'> info: ' + JSON.stringify(this.invocation, null, '\t')
+			);
 		}
 
 		if (this.parent.message) {
@@ -89,7 +91,9 @@ export function assignError(
 }
 
 export function wrapError(ex: Error | ContextualError): ContextualError {
-	return ex instanceof ContextualError ? ex : new ContextualError(<Error>ex);
+	return ex instanceof ContextualError
+		? ex
+		: new ContextualError(<Error>ex);
 }
 
 export function create(

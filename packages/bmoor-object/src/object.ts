@@ -105,7 +105,10 @@ function _makeSetter<T>(property: string, next: SetterFn<T>): SetterFn<T> {
 	}
 
 	if (next) {
-		return function setter(root: DynamicObject<T>, value: T): DynamicObject<T> {
+		return function setter(
+			root: DynamicObject<T>,
+			value: T
+		): DynamicObject<T> {
 			let t = <DynamicObject<T>>root[property];
 
 			if (!t) {

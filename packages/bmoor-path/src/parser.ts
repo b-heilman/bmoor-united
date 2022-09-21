@@ -46,7 +46,8 @@ function createReader(ops: Expressable[]): ReaderFunction {
 	const chunks = reduceExpressables(ops);
 
 	if (chunks.length > 1) {
-		const [first, ...fns]: ReaderFunction[] = chunks.map(createArrayReader);
+		const [first, ...fns]: ReaderFunction[] =
+			chunks.map(createArrayReader);
 
 		return function (obj) {
 			return readArray(first(obj), fns);
@@ -126,12 +127,18 @@ function createWriter(ops: Expressable[]): WriterFunction {
 	const chunks = reduceExpressables(ops);
 
 	if (chunks.length > 1) {
-		const [first, ...fns]: WriterFunction[] = chunks.map((op, pos, arr) => {
-			const final = arr.length - 1;
+		const [first, ...fns]: WriterFunction[] = chunks.map(
+			(op, pos, arr) => {
+				const final = arr.length - 1;
 
-			// null > 0 === false ... it won't matter because final will be true
-			return createArrayWriter(op, pos === final, arr[pos + 1]?.ops.length > 0);
-		});
+				// null > 0 === false ... it won't matter because final will be true
+				return createArrayWriter(
+					op,
+					pos === final,
+					arr[pos + 1]?.ops.length > 0
+				);
+			}
+		);
 
 		return function (obj, value: PathContent[]) {
 			return writeArray(first(obj, value), value, fns);
@@ -149,7 +156,10 @@ export class Parser extends Compiler {
 		});
 	}
 
-	express(str: string, mode: ParserModes = ParserModes.read): Expressable[] {
+	express(
+		str: string,
+		mode: ParserModes = ParserModes.read
+	): Expressable[] {
 		return this.expressor.express(this.parse(str), ExpressorModes.infix, <
 			ParserSettings
 		>{
@@ -163,7 +173,9 @@ export class Parser extends Compiler {
 	): ReaderFunction | WriterFunction {
 		const ops: Expressable[] = this.express(str, mode);
 
-		return mode === ParserModes.read ? createReader(ops) : createWriter(ops);
+		return mode === ParserModes.read
+			? createReader(ops)
+			: createWriter(ops);
 	}
 
 	getReader(str: string): ReaderFunction {
