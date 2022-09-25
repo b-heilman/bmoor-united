@@ -1,36 +1,62 @@
 import {expect} from 'chai';
 
 import {Model} from './model';
-import {ModelField} from './model/field';
+import {
+	ModelController,
+	ModelAdapter,
+	InternalDatum,
+	ExternalDatum
+} from './model.interface';
+import {factory} from './model/field/set';
 
 describe('@bmoor-modeling', function () {
-	let security = null;
-	let accessors = null;
+	let controller: ModelController<ExternalDatum> = null;
+	let adapter: ModelAdapter<InternalDatum> = null;
 
 	beforeEach(function () {
-		security = {};
-		accessors = {};
+		controller = {
+			async canRead(datums) {
+				return datums;
+			},
+			async canCreate(datums) {
+				return datums;
+			},
+			async canUpdate(datums) {
+				return datums;
+			}
+		};
+		adapter = {
+			async create(content) {
+				return content;
+			},
+			async read(content) {
+				return content;
+			},
+			async update(content) {
+				return content;
+			}
+		};
 	});
 
 	describe('loading a model', function () {
 		it('should properly translate from internal to external and back', function () {
 			const model = new Model({
-				security,
-				accessors,
-				fields: [
-					new ModelField({
+				controller,
+				adapter,
+				fields: factory(
+					{
 						internal: 'field.eins',
 						external: 'value1'
-					}),
-					new ModelField({
+					},
+					{
 						internal: 'field.zwei',
 						external: 'other.value2'
-					}),
-					new ModelField({
+					},
+					{
 						internal: 'value',
 						external: 'other.thing'
-					})
-				]
+					}
+				)
 			});
 
 			const original = [

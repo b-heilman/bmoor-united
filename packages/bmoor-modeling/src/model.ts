@@ -11,13 +11,15 @@ import {
 
 import {ModelFieldInterface} from './model/field.interface';
 
-export class Model implements ModelInterface {
+export class Model<External, Internal>
+	implements ModelInterface<External, Internal>
+{
 	fields: Map<string, ModelFieldInterface>;
-	incomingSettings: ModelSettings;
+	incomingSettings: ModelSettings<External, Internal>;
 	toInternal: Mapping;
 	toExternal: Mapping;
 
-	constructor(settings: ModelSettings) {
+	constructor(settings: ModelSettings<External, Internal>) {
 		this.incomingSettings = settings;
 		this.fields = new Map<string, ModelFieldInterface>();
 
@@ -44,9 +46,9 @@ export class Model implements ModelInterface {
 		ctx: ContextSecurityInterface
 	): Promise<ExternalDatum[]> {
 		return this.convertToExternal(
-			await this.incomingSettings.accessors.create(
+			await this.incomingSettings.adapter.create(
 				this.convertToInternal(
-					await this.incomingSettings.security.validateCreate(content, ctx)
+					await this.incomingSettings.controller.canCreate(content, ctx)
 				)
 			)
 		);
@@ -56,9 +58,9 @@ export class Model implements ModelInterface {
 		ids: string[],
 		ctx: ContextSecurityInterface
 	): Promise<ExternalDatum[]> {
-		return this.incomingSettings.security.secure(
+		return this.incomingSettings.controller.canRead(
 			this.convertToExternal(
-				await this.incomingSettings.accessors.read(ids)
+				await this.incomingSettings.adapter.read(ids)
 			),
 			ctx
 		);
@@ -76,12 +78,12 @@ export class Model implements ModelInterface {
 		}
 
 		await Promise.all([
-			this.incomingSettings.security.validateUpdate(datums, ctx),
+			this.incomingSettings.controller.canUpdate(datums, ctx),
 			this.read(ids, ctx)
 		]);
 
 		const converted = this.convertToInternal(datums);
-		const res = this.incomingSettings.accessors.update(
+		const res = this.incomingSettings.adapter.update(
 			ids.reduce((agg, key, i) => {
 				agg[key] = converted[i];
 
@@ -105,7 +107,7 @@ export class Model implements ModelInterface {
 		// TODO: can I simplify this?
 		// you can only delete that which you can access
 		return this.convertToExternal(
-			await this.incomingSettings.accessors.delete(
+			await this.incomingSettings.adapter.delete(
 				this.convertToInternal(await this.read(ids, ctx))
 			)
 		);
@@ -115,9 +117,9 @@ export class Model implements ModelInterface {
 		search: SearchDatum,
 		ctx: ContextSecurityInterface
 	): Promise<ExternalDatum[]> {
-		return this.incomingSettings.security.secure(
+		return this.incomingSettings.controller.canRead(
 			this.convertToExternal(
-				await this.incomingSettings.accessors.search(search)
+				await this.incomingSettings.adapter.search(search)
 			),
 			ctx
 		);

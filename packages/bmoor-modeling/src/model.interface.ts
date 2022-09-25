@@ -1,6 +1,7 @@
 import {ContextSecurityInterface} from '@bmoor/context';
 
 import {ModelFieldInterface} from './model/field.interface';
+import {ModelFieldSet} from './model/field/set';
 
 // eslint-disable-next-line  @typescript-eslint/no-explicit-any
 export type InternalDatum = any;
@@ -11,66 +12,63 @@ export type ExternalDatum = any;
 // eslint-disable-next-line  @typescript-eslint/no-explicit-any
 export type SearchDatum = any;
 
-export interface ModelSecurity {
+export interface ModelController<External> {
 	// securing data that has been requested
-	secure(
-		datums: ExternalDatum[],
+	canRead(
+		datums: External[],
 		ctx: ContextSecurityInterface
-	): Promise<ExternalDatum[]>;
+	): Promise<External[]>;
 
 	// securing data that has been submitted
-	validateCreate(
-		datums: ExternalDatum[],
+	canCreate(
+		datums: External[],
 		ctx: ContextSecurityInterface
-	): Promise<ExternalDatum[]>;
+	): Promise<External[]>;
 
-	validateUpdate(
-		datums: ExternalDatum[],
+	canUpdate(
+		datums: External[],
 		ctx: ContextSecurityInterface
-	): Promise<ExternalDatum[]>;
+	): Promise<External[]>;
 }
 
-export interface ModelAccessors {
-	create(content: InternalDatum[]): Promise<InternalDatum[]>;
-	read(ids: string[]): Promise<InternalDatum[]>;
+export interface ModelAdapter<Internal> {
+	create(content: Internal[]): Promise<Internal[]>;
+	read(ids: string[]): Promise<Internal[]>;
 	update(
-		content: Record<string, InternalDatum>
-	): Promise<Record<string, InternalDatum>>;
-	delete(content: InternalDatum[]): Promise<InternalDatum[]>;
-	search(search: SearchDatum): Promise<InternalDatum[]>;
+		content: Record<string, Internal>
+	): Promise<Record<string, Internal>>;
+	delete?(content: Internal[]): Promise<Internal[]>;
+	search?(search: SearchDatum): Promise<Internal[]>;
 }
 
-export interface ModelSettings {
-	security: ModelSecurity;
-	accessors: ModelAccessors;
-	fields: ModelFieldInterface[];
+export interface ModelSettings<External, Internal> {
+	adapter: ModelAdapter<Internal>;
+	controller: ModelController<External>;
+	fields: ModelFieldSet;
 }
 
-export interface ModelInterface {
+export interface ModelInterface<External, Internal> {
 	fields: Map<string, ModelFieldInterface>;
 
 	create(
-		content: ExternalDatum[],
+		content: External[],
 		ctx: ContextSecurityInterface
-	): Promise<ExternalDatum[]>;
-	read(
-		ids: string[],
-		ctx: ContextSecurityInterface
-	): Promise<ExternalDatum[]>;
+	): Promise<External[]>;
+	read(ids: string[], ctx: ContextSecurityInterface): Promise<External[]>;
 	update(
-		content: Record<string, ExternalDatum>,
+		content: Record<string, External>,
 		ctx: ContextSecurityInterface
-	): Promise<Record<string, ExternalDatum>>;
+	): Promise<Record<string, External>>;
 	delete(
 		ids: string[],
 		ctx: ContextSecurityInterface
-	): Promise<ExternalDatum[]>;
+	): Promise<External[]>;
 	search(
 		search: SearchDatum,
 		ctx: ContextSecurityInterface
-	): Promise<ExternalDatum[]>;
+	): Promise<External[]>;
 
 	getByPath(external: string);
-	convertToInternal(content: ExternalDatum[]): InternalDatum[];
-	convertToExternal(content: InternalDatum[]): ExternalDatum[];
+	convertToInternal(content: External[]): Internal[];
+	convertToExternal(content: Internal[]): External[];
 }

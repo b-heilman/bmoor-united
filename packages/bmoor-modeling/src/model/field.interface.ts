@@ -11,6 +11,20 @@ export interface ModelFieldSettings {
 	display?: ModelFieldDisplay;
 }
 
+export type ModelFieldTypescript = {
+	internal: {
+		path: string;
+		format: string;
+	};
+	external: {
+		path: string;
+		format: string;
+	};
+};
+
 export interface ModelFieldInterface {
 	incomingSettings: ModelFieldSettings;
+	toTypescript(): ModelFieldTypescript;
 }
+
+export type ModelFieldSet = ModelFieldInterface[];
