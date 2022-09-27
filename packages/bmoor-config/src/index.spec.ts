@@ -23,6 +23,31 @@ describe('@bmoor/config', function () {
 			);
 		});
 
+		it('should handle a complex interface', function () {
+			type foo = {
+				fn(str: string, val: number): string;
+				fOther(str: string, val: number): string;
+			};
+
+			const cfg = new Config({
+				obj: new ConfigObject<foo>({
+					fn: (str: string, val: number) => {
+						console.log(str + val);
+
+						return 'foo';
+					},
+					fOther: (str: string, val: number) => {
+						console.log(str + val);
+
+						return 'bar';
+					}
+				})
+			});
+
+			expect(cfg.get('obj').fn()).to.equal('foo');
+			expect(cfg.get('obj').fOther()).to.equal('bar');
+		});
+
 		describe('::override', function () {
 			it('should basic construction', function () {
 				const cfg = new Config<ConfigValue>({

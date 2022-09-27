@@ -38,6 +38,32 @@ describe('@bmoor-modeling', function () {
 		};
 	});
 
+	describe('crud actions', function () {
+		describe('create', function () {
+			xit('should work', function () {
+				throw new Error('boo');
+			});
+		});
+
+		describe('read', function () {
+			xit('should work', function () {
+				throw new Error('boo');
+			});
+		});
+
+		describe('update', function () {
+			xit('should work', function () {
+				throw new Error('boo');
+			});
+		});
+
+		describe('delete', function () {
+			xit('should work', function () {
+				throw new Error('boo');
+			});
+		});
+	});
+
 	describe('loading a model', function () {
 		it('should properly translate from internal to external and back', function () {
 			const model = new Model({

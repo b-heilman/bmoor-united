@@ -5,7 +5,7 @@ import {implode, MappedObject, DynamicObject} from '@bmoor/object';
 export type ConfigValue = any;
 
 export class ConfigObject<T> extends Object {
-	constructor(settings: DynamicObject<T>) {
+	constructor(settings: T) {
 		super();
 
 		if (settings) {
