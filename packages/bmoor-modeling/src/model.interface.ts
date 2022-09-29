@@ -46,13 +46,13 @@ export interface ModelSettings<External, Internal> {
 }
 
 export type ModelActions = {
-	create?(datum, ctx?): void,
-	read?(datum, ctx?): void,
-	update?(datum, ctx?): void,
-	delele?(datum, ctx?): void,
-	inflate?(datum, ctx?): void,
-	deflate?(datum, ctx?): void
-}
+	create?(datum, ctx?): void;
+	read?(datum, ctx?): void;
+	update?(datum, ctx?): void;
+	delele?(datum, ctx?): void;
+	inflate?(datum, ctx?): void;
+	deflate?(datum, ctx?): void;
+};
 
 export interface ModelInterface<External, Internal> {
 	fields: Map<string, ModelFieldInterface>;

@@ -1,4 +1,3 @@
-
 import {makeGetter} from '@bmoor/object';
 import {ContextSecurityInterface} from '@bmoor/context';
 import {Mapping} from '@bmoor/path';
@@ -18,7 +17,13 @@ import {
 	ModelFieldSettings
 } from './model/field.interface';
 
-function actionExtend(old, op, getter, setter, fieldCtx: ModelFieldContext) {
+function actionExtend(
+	old,
+	op,
+	getter,
+	setter,
+	fieldCtx: ModelFieldContext
+) {
 	if (old) {
 		return function (datum, ctx) {
 			op(old(datum, ctx), setter, getter, fieldCtx, ctx);
@@ -35,12 +40,12 @@ function actionExtend(old, op, getter, setter, fieldCtx: ModelFieldContext) {
 }
 
 function buildActions(
-	actions: ModelActions, 
+	actions: ModelActions,
 	field: ModelFieldInterface
 ): void {
 	const settings: ModelFieldSettings = field.settings;
 
-	let ctx: ModelFieldContext = {};
+	const ctx: ModelFieldContext = {};
 
 	if (settings.config) {
 		const cfg = settings.config;
@@ -113,11 +118,11 @@ export class Model<External, Internal>
 			buildActions(this.actions, field);
 		});
 
-		/***  
+		/***
 		 * I am building more efficient accessors that
 		 * work together rather than each field doing the
 		 * full path of access.  It also allows me to support
-		 * arrays 
+		 * arrays
 		 ***/
 		// TODO: isFlat support
 		const toInternal = settings.fields.map((field) => {
@@ -225,7 +230,7 @@ export class Model<External, Internal>
 
 	convertToInternal(content: ExternalDatum[]): InternalDatum[] {
 		return content.map((datum) => {
-			if (this.actions.deflate){
+			if (this.actions.deflate) {
 				this.actions.deflate(datum);
 			}
 
@@ -237,7 +242,7 @@ export class Model<External, Internal>
 		return content.map((datum) => {
 			const rtn = this.inflate.transform(datum);
 
-			if (this.actions.inflate){
+			if (this.actions.inflate) {
 				this.actions.inflate(rtn);
 			}
 

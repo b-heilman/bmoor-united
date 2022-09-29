@@ -55,7 +55,7 @@ export type ModelFieldUsage = {
 };
 
 export type ModelFieldConfig = {
-	target: string
+	target: string;
 };
 
 export type ModelFieldContext = {
@@ -86,7 +86,7 @@ export type ModelFieldTypescript = {
 
 export interface ModelFieldInterface {
 	settings: ModelFieldSettings;
-	
+
 	externalGetter: ModelFieldGetter;
 	externalSetter: ModelFieldSetter;
 	internalGetter: ModelFieldGetter;
