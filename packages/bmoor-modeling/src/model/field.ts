@@ -1,10 +1,13 @@
 import {Config, ConfigObject} from '@bmoor/config';
+import {makeSetter, makeGetter} from '@bmoor/object';
 
 import {
 	ModelFieldInterface,
 	ModelFieldSettings,
 	ModelFieldUsage,
-	ModelFieldTypescript
+	ModelFieldTypescript,
+	ModelFieldSetter,
+	ModelFieldGetter
 } from './field.interface';
 
 export const usages = new Config({
@@ -43,14 +46,42 @@ export const usages = new Config({
 });
 
 export class ModelField implements ModelFieldInterface {
-	incomingSettings: ModelFieldSettings;
+	settings: ModelFieldSettings;
+	externalGetter: ModelFieldGetter;
+	externalSetter: ModelFieldSetter;
+	internalGetter: ModelFieldGetter;
+	internalSetter: ModelFieldSetter;
 
 	constructor(settings: ModelFieldSettings) {
 		if (!settings.internal) {
 			settings.internal = settings.external;
 		}
 
-		this.incomingSettings = settings;
+		if (!settings.storage) {
+			settings.storage = settings.internal;
+		}
+
+		if (settings.usage) {
+			// TODO: if unknown usage, toss an error
+			Object.assign(settings, usages.get(settings.usage) || {});
+		}
+
+		this.settings = settings;
+
+		this.externalGetter = makeGetter(settings.external);
+		this.externalSetter = makeSetter(settings.external);
+
+		const isFlat = settings.isFlat;
+		this.internalGetter = isFlat
+			? function (datum) {
+					return datum[settings.internal];
+			  }
+			: makeGetter(settings.internal);
+		this.internalSetter = isFlat
+			? function (datum, value) {
+					datum[settings.storage] = value;
+			  }
+			: makeSetter(settings.storage);
 	}
 
 	toTypescript(): ModelFieldTypescript {
