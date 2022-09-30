@@ -1,3 +1,7 @@
+import {ContextSecurityInterface} from '@bmoor/context';
+
+import {ExternalDatum} from '../model.interface';
+
 // TODO: does this really need to be here?
 export interface ModelFieldDisplay {
 	title: string;
@@ -5,52 +9,56 @@ export interface ModelFieldDisplay {
 }
 
 // eslint-disable-next-line  @typescript-eslint/no-explicit-any
-export type ModelDatum = any;
-// eslint-disable-next-line  @typescript-eslint/no-explicit-any
 export type ModelFieldValue = any;
 
 export type ModelFieldSetter = (
-	datum: ModelDatum,
+	datum: ExternalDatum,
 	value: ModelFieldValue
 ) => void;
-export type ModelFieldGetter = (datum: ModelDatum) => ModelFieldValue;
+export type ModelFieldGetter = (datum: ExternalDatum) => ModelFieldValue;
 
 export type ModelFieldUsage = {
 	onInflate?(
-		datum: ModelDatum,
+		datum: ExternalDatum,
 		setter: ModelFieldSetter,
-		getter?: ModelFieldGetter,
-		ctx?: ModelFieldContext
+		getter: ModelFieldGetter,
+		ctx?: ContextSecurityInterface,
+		fieldCtx?: ModelFieldContext
 	): void;
 	onDeflate?(
-		datum: ModelDatum,
+		datum: ExternalDatum,
 		setter: ModelFieldSetter,
 		getter: ModelFieldGetter,
-		ctx: ModelFieldContext
+		ctx?: ContextSecurityInterface,
+		fieldCtx?: ModelFieldContext
 	): void;
 	onCreate?(
-		datum: ModelDatum,
+		datum: ExternalDatum,
 		setter: ModelFieldSetter,
 		getter: ModelFieldGetter,
-		ctx: ModelFieldContext
+		ctx?: ContextSecurityInterface,
+		fieldCtx?: ModelFieldContext
 	): void;
 	onRead?(
-		datum: ModelDatum,
+		datum: ExternalDatum,
 		setter: ModelFieldSetter,
 		getter: ModelFieldGetter,
-		ctx: ModelFieldContext
+		ctx?: ContextSecurityInterface,
+		fieldCtx?: ModelFieldContext
 	): void;
 	onUpdate?(
-		datum: ModelDatum,
+		datum: ExternalDatum,
 		setter: ModelFieldSetter,
 		getter: ModelFieldGetter,
-		ctx: ModelFieldContext
+		ctx?: ContextSecurityInterface,
+		fieldCtx?: ModelFieldContext
 	): void;
 	onDelete?(
-		datum: ModelDatum,
+		datum: ExternalDatum,
 		setter: ModelFieldSetter,
 		getter: ModelFieldGetter,
-		ctx: ModelFieldContext
+		ctx?: ContextSecurityInterface,
+		fieldCtx?: ModelFieldContext
 	): void;
 };
 
@@ -59,7 +67,7 @@ export type ModelFieldConfig = {
 };
 
 export type ModelFieldContext = {
-	getTarget?(datum: ModelDatum): ModelFieldValue;
+	getTarget?(datum: ExternalDatum): ModelFieldValue;
 };
 
 export interface ModelFieldSettings extends ModelFieldUsage {
@@ -72,6 +80,33 @@ export interface ModelFieldSettings extends ModelFieldUsage {
 	display?: ModelFieldDisplay; // display settings, if needed
 	config?: ModelFieldConfig;
 }
+
+export type ModelFieldActions = {
+	create?(
+		datum: ExternalDatum,
+		ctx?: ContextSecurityInterface
+	): ExternalDatum;
+	read?(
+		datum: ExternalDatum,
+		ctx?: ContextSecurityInterface
+	): ExternalDatum;
+	update?(
+		datum: ExternalDatum,
+		ctx?: ContextSecurityInterface
+	): ExternalDatum;
+	delete?(
+		datum: ExternalDatum,
+		ctx?: ContextSecurityInterface
+	): ExternalDatum;
+	inflate?(
+		datum: ExternalDatum,
+		ctx?: ContextSecurityInterface
+	): ExternalDatum;
+	deflate?(
+		datum: ExternalDatum,
+		ctx?: ContextSecurityInterface
+	): ExternalDatum;
+};
 
 export type ModelFieldTypescript = {
 	internal: {
@@ -86,6 +121,7 @@ export type ModelFieldTypescript = {
 
 export interface ModelFieldInterface {
 	settings: ModelFieldSettings;
+	actions: ModelFieldActions;
 
 	externalGetter: ModelFieldGetter;
 	externalSetter: ModelFieldSetter;

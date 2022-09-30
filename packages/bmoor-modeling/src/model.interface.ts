@@ -46,12 +46,12 @@ export interface ModelSettings<External, Internal> {
 }
 
 export type ModelActions = {
-	create?(datum, ctx?): void;
-	read?(datum, ctx?): void;
-	update?(datum, ctx?): void;
-	delele?(datum, ctx?): void;
-	inflate?(datum, ctx?): void;
-	deflate?(datum, ctx?): void;
+	create?(datum: ExternalDatum, ctx?: ContextSecurityInterface): void;
+	read?(datum: ExternalDatum, ctx?: ContextSecurityInterface): void;
+	update?(datum: ExternalDatum, ctx?: ContextSecurityInterface): void;
+	delete?(datum: ExternalDatum, ctx?: ContextSecurityInterface): void;
+	inflate?(datum: ExternalDatum, ctx?: ContextSecurityInterface): void;
+	deflate?(datum: ExternalDatum, ctx?: ContextSecurityInterface): void;
 };
 
 export interface ModelInterface<External, Internal> {

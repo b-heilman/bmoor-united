@@ -17,25 +17,13 @@ import {
 	ModelFieldSettings
 } from './model/field.interface';
 
-function actionExtend(
-	old,
-	op,
-	getter,
-	setter,
-	fieldCtx: ModelFieldContext
-) {
+function actionExtend(old, action) {
 	if (old) {
 		return function (datum, ctx) {
-			op(old(datum, ctx), setter, getter, fieldCtx, ctx);
-
-			return datum;
+			return action(old(datum, ctx), ctx);
 		};
 	} else {
-		return function (datum, ctx) {
-			op(datum, setter, getter, fieldCtx, ctx);
-
-			return datum;
-		};
+		return action;
 	}
 }
 
@@ -45,56 +33,30 @@ function buildActions(
 ): void {
 	const settings: ModelFieldSettings = field.settings;
 
-	const ctx: ModelFieldContext = {};
-
-	if (settings.config) {
-		const cfg = settings.config;
-		// this is to allow one field type to watch another field type
-		if (cfg.target) {
-			ctx.getTarget = makeGetter(cfg.target);
-		}
+	if (field.actions.create) {
+		actions.create = actionExtend(actions.create, field.actions.create);
 	}
 
-	if (settings.onCreate) {
-		actions.create = actionExtend(
-			actions.create,
-			settings.onCreate,
-			field.externalGetter,
-			field.externalSetter,
-			ctx
-		);
+	if (field.actions.read) {
+		actions.read = actionExtend(actions.read, field.actions.read);
 	}
 
-	if (settings.onUpdate) {
-		actions.update = actionExtend(
-			actions.update,
-			settings.onUpdate,
-			field.externalGetter,
-			field.externalSetter,
-			ctx
-		);
+	if (field.actions.update) {
+		actions.update = actionExtend(actions.update, field.actions.update);
+	}
+
+	if (field.actions.delete) {
+		actions.delete = actionExtend(actions.delete, field.actions.delete);
 	}
 
 	// inflate are changes out of the database
-	if (settings.onInflate) {
-		actions.inflate = actionExtend(
-			actions.inflate,
-			settings.onInflate,
-			field.externalGetter,
-			field.externalSetter,
-			ctx
-		);
+	if (field.actions.inflate) {
+		actions.inflate = actionExtend(actions.inflate, field.actions.inflate);
 	}
 
 	// deflate are changes into the database
-	if (settings.onDeflate) {
-		actions.deflate = actionExtend(
-			actions.deflate,
-			settings.onDeflate,
-			field.externalGetter,
-			field.externalSetter,
-			ctx
-		);
+	if (field.actions.deflate) {
+		actions.deflate = actionExtend(actions.deflate, field.actions.deflate);
 	}
 }
 
@@ -228,22 +190,28 @@ export class Model<External, Internal>
 		return this.fields.get(external);
 	}
 
-	convertToInternal(content: ExternalDatum[]): InternalDatum[] {
+	convertToInternal(
+		content: ExternalDatum[],
+		ctx?: ContextSecurityInterface
+	): InternalDatum[] {
 		return content.map((datum) => {
 			if (this.actions.deflate) {
-				this.actions.deflate(datum);
+				this.actions.deflate(datum, ctx);
 			}
 
 			return this.deflate.transform(datum);
 		});
 	}
 
-	convertToExternal(content: InternalDatum[]): ExternalDatum[] {
+	convertToExternal(
+		content: InternalDatum[],
+		ctx?: ContextSecurityInterface
+	): ExternalDatum[] {
 		return content.map((datum) => {
 			const rtn = this.inflate.transform(datum);
 
 			if (this.actions.inflate) {
-				this.actions.inflate(rtn);
+				this.actions.inflate(rtn, ctx);
 			}
 
 			return rtn;

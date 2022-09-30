@@ -1,5 +1,6 @@
 import {Config, ConfigObject} from '@bmoor/config';
 import {makeSetter, makeGetter} from '@bmoor/object';
+import {ContextSecurityInterface} from '@bmoor/context';
 
 import {
 	ModelFieldInterface,
@@ -7,7 +8,9 @@ import {
 	ModelFieldUsage,
 	ModelFieldTypescript,
 	ModelFieldSetter,
-	ModelFieldGetter
+	ModelFieldGetter,
+	ModelFieldActions,
+	ModelFieldContext
 } from './field.interface';
 
 export const usages = new Config({
@@ -28,14 +31,7 @@ export const usages = new Config({
 		}
 	}),
 	monitor: new ConfigObject<ModelFieldUsage>({
-		onCreate: function (datum, setter, getter, cfg) {
-			const target = cfg.getTarget(datum);
-
-			if (target !== undefined) {
-				setter(datum, Date.now());
-			}
-		},
-		onUpdate: function (datum, setter, getter, cfg) {
+		onDeflate: function (datum, setter, getter, ctx, cfg) {
 			const target = cfg.getTarget(datum);
 
 			if (target !== undefined) {
@@ -45,8 +41,75 @@ export const usages = new Config({
 	})
 });
 
+function buildActions(field: ModelField): ModelFieldActions {
+	const rtn: ModelFieldActions = {};
+	const getter = field.externalGetter;
+	const setter = field.externalSetter;
+	const callCtx: ModelFieldContext = {};
+	const settings = field.settings;
+
+	if (settings.config) {
+		const cfg = settings.config;
+		// this is to allow one field type to watch another field type
+		if (cfg.target) {
+			callCtx.getTarget = makeGetter(cfg.target);
+		}
+	}
+
+	if (settings.onInflate) {
+		rtn.inflate = function (datum, ctx: ContextSecurityInterface) {
+			settings.onInflate(datum, setter, getter, ctx, callCtx);
+
+			return datum;
+		};
+	}
+
+	if (settings.onDeflate) {
+		rtn.deflate = function (datum, ctx: ContextSecurityInterface) {
+			settings.onDeflate(datum, setter, getter, ctx, callCtx);
+
+			return datum;
+		};
+	}
+
+	if (settings.onCreate) {
+		rtn.create = function (datum, ctx: ContextSecurityInterface) {
+			settings.onCreate(datum, setter, getter, ctx, callCtx);
+
+			return datum;
+		};
+	}
+
+	if (settings.onRead) {
+		rtn.read = function (datum, ctx: ContextSecurityInterface) {
+			settings.onRead(datum, setter, getter, ctx, callCtx);
+
+			return datum;
+		};
+	}
+
+	if (settings.onUpdate) {
+		rtn.update = function (datum, ctx: ContextSecurityInterface) {
+			settings.onUpdate(datum, setter, getter, ctx, callCtx);
+
+			return datum;
+		};
+	}
+
+	if (settings.onDelete) {
+		rtn.delete = function (datum, ctx: ContextSecurityInterface) {
+			settings.onDelete(datum, setter, getter, ctx, callCtx);
+
+			return datum;
+		};
+	}
+
+	return rtn;
+}
+
 export class ModelField implements ModelFieldInterface {
 	settings: ModelFieldSettings;
+	actions: ModelFieldActions;
 	externalGetter: ModelFieldGetter;
 	externalSetter: ModelFieldSetter;
 	internalGetter: ModelFieldGetter;
@@ -63,7 +126,7 @@ export class ModelField implements ModelFieldInterface {
 
 		if (settings.usage) {
 			// TODO: if unknown usage, toss an error
-			Object.assign(settings, usages.get(settings.usage) || {});
+			settings = Object.assign({}, usages.get(settings.usage), settings);
 		}
 
 		this.settings = settings;
@@ -82,6 +145,8 @@ export class ModelField implements ModelFieldInterface {
 					datum[settings.storage] = value;
 			  }
 			: makeSetter(settings.storage);
+
+		this.actions = buildActions(this);
 	}
 
 	toTypescript(): ModelFieldTypescript {
