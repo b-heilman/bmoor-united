@@ -1,7 +1,7 @@
 import {expect} from 'chai';
 
 import {Model} from './model';
-import {ControllerInterface} from './controller.interface';
+import {ModelControllerInterface} from './model/controller.interface';
 
 import {ModelAdapter} from './model.interface';
 
@@ -10,7 +10,7 @@ import {InternalDatum, ExternalDatum} from './datum.interface';
 import {factory} from './model/field/set';
 
 describe('@bmoor-modeling', function () {
-	let controller: ControllerInterface<ExternalDatum> = null;
+	let controller: ModelControllerInterface<ExternalDatum> = null;
 	let adapter: ModelAdapter<InternalDatum> = null;
 
 	beforeEach(function () {

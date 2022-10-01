@@ -1,7 +1,7 @@
 import {ContextSecurityInterface} from '@bmoor/context';
 
-import {ControllerInterface} from './controller.interface';
-import {ValidatorInterface} from './validator.interface';
+import {ModelControllerInterface} from './model/controller.interface';
+import {ValidatorInterface} from './model/validator.interface';
 import {ModelFieldInterface} from './model/field.interface';
 import {SearchDatum, ExternalDatum} from './datum.interface';
 import {ModelFieldSet} from './model/field/set';
@@ -18,7 +18,7 @@ export interface ModelAdapter<Internal> {
 
 export interface ModelSettings<External, Internal> {
 	adapter: ModelAdapter<Internal>;
-	controller: ControllerInterface<External>;
+	controller: ModelControllerInterface<External>;
 	validator?: ValidatorInterface<External>;
 	fields: ModelFieldSet;
 }

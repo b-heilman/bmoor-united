@@ -56,6 +56,7 @@ function buildActions(field: ModelField): ModelFieldActions {
 		}
 	}
 
+	// TODO: make sure these are compatible with arrays
 	if (settings.onInflate) {
 		rtn.inflate = function (datum, ctx: ContextSecurityInterface) {
 			settings.onInflate(datum, setter, getter, ctx, callCtx);

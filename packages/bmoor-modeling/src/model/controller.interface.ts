@@ -1,13 +1,19 @@
 import {ContextSecurityInterface} from '@bmoor/context';
 
-import {ModelFieldInterface} from './model/field.interface';
+import {ModelFieldInterface} from './field.interface';
 
-export interface ControllerSettings {
-	permission?: string;
+
+export interface ModelControllerSettings {
+	permission?: {
+		create?: string;
+		read?: string;
+		update?: string;
+		delete?: string;
+	},	
 	fields?: ModelFieldInterface[];
 }
 
-export interface ControllerInterface<External> {
+export interface ModelControllerInterface<External> {
 	// securing data that has been requested
 	canRead(
 		datums: External[],

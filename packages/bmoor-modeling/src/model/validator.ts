@@ -1,11 +1,13 @@
-import {ExternalDatum} from './datum.interface';
+import {ExternalDatum} from '../datum.interface';
 import {
 	ValidatorInterface,
 	ValidatorInvalidation,
 	ValidatorSettings
 } from './validator.interface';
 
-class Validator implements ValidatorInterface {
+export class ModelValidator<External>
+	implements ValidatorInterface<External>
+{
 	incomingSettings: ValidatorSettings;
 
 	constructor(settings: ValidatorSettings) {
