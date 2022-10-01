@@ -104,6 +104,15 @@ export class Model<External, Internal>
 		content: ExternalDatum[],
 		ctx: ContextSecurityInterface
 	): Promise<ExternalDatum[]> {
+		if (this.settings.validator) {
+			// TODO: I need the concept of a compound error
+			const error = this.settings.validator.validateCreate(content);
+
+			if (error) {
+				throw error;
+			}
+		}
+
 		return this.convertToExternal(
 			await this.settings.adapter.create(
 				this.convertToInternal(
@@ -132,6 +141,15 @@ export class Model<External, Internal>
 		for (const key in content) {
 			datums.push(content[key]);
 			ids.push(key);
+		}
+
+		if (this.settings.validator) {
+			// TODO: I need the concept of a compound error
+			const error = this.settings.validator.validateUpdate(datums);
+
+			if (error) {
+				throw error;
+			}
 		}
 
 		await Promise.all([

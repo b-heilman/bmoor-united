@@ -37,7 +37,7 @@ export class Controller<External>
 		if (!permission || ctx.hasPermission(permission)) {
 			return datums;
 		} else {
-			throw new Error('can not read');
+			throw new Error('can not create');
 		}
 	}
 
@@ -50,7 +50,7 @@ export class Controller<External>
 		if (!permission || ctx.hasPermission(permission)) {
 			return datums;
 		} else {
-			throw new Error('can not read');
+			throw new Error('can not update');
 		}
 	}
 }
