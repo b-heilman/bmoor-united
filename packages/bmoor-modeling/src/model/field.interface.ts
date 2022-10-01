@@ -1,6 +1,6 @@
 import {ContextSecurityInterface} from '@bmoor/context';
 
-import {ExternalDatum} from '../model.interface';
+import {ExternalDatum} from '../datum.interface';
 
 // TODO: does this really need to be here?
 export interface ModelFieldDisplay {

@@ -1,14 +1,17 @@
-import {makeGetter} from '@bmoor/object';
 import {ContextSecurityInterface} from '@bmoor/context';
 import {Mapping} from '@bmoor/path';
 
-import {InternalDatum, ExternalDatum, SearchDatum} from './datum.interface';
-import {ModelSettings, ModelInterface, ModelActions} from './model.interface';
 import {
-	ModelFieldInterface,
-	ModelFieldContext,
-	ModelFieldSettings
-} from './model/field.interface';
+	InternalDatum,
+	ExternalDatum,
+	SearchDatum
+} from './datum.interface';
+import {
+	ModelSettings,
+	ModelInterface,
+	ModelActions
+} from './model.interface';
+import {ModelFieldInterface} from './model/field.interface';
 
 function actionExtend(old, action) {
 	if (old) {
@@ -24,8 +27,6 @@ function buildActions(
 	actions: ModelActions,
 	field: ModelFieldInterface
 ): void {
-	const settings: ModelFieldSettings = field.settings;
-
 	if (field.actions.create) {
 		actions.create = actionExtend(actions.create, field.actions.create);
 	}

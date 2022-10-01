@@ -1,26 +1,24 @@
 import {ContextSecurityInterface} from '@bmoor/context';
 
-import {ExternalDatum} from './datum.interface';
-
-export interface SecuritySettings {
+export interface ControllerSettings {
 	permission?: string;
 }
 
-export interface SecurityInterface {
+export interface ControllerInterface<External> {
 	// securing data that has been requested
 	canRead(
-		datums: ExternalDatum[],
+		datums: External[],
 		ctx: ContextSecurityInterface
-	): ExternalDatum[];
+	): Promise<External[]>;
 
 	// securing data that has been submitted
 	canCreate(
-		datums: ExternalDatum[],
+		datums: External[],
 		ctx: ContextSecurityInterface
-	): ExternalDatum[];
+	): Promise<External[]>;
 
 	canUpdate(
-		datums: ExternalDatum[],
+		datums: External[],
 		ctx: ContextSecurityInterface
-	): ExternalDatum[];
+	): Promise<External[]>;
 }

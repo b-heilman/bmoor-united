@@ -1,19 +1,23 @@
 import {ContextSecurityInterface} from '@bmoor/context';
 
-import {SecurityInterface, SecuritySettings} from './security.interface';
-import {ExternalDatum} from './datum.interface';
+import {
+	ControllerInterface,
+	ControllerSettings
+} from './controller.interface';
 
-export class Security implements SecurityInterface {
-	incomingSettings: SecuritySettings;
+export class Controller<External>
+	implements ControllerInterface<External>
+{
+	incomingSettings: ControllerSettings;
 
-	constructor(settings: SecuritySettings) {
+	constructor(settings: ControllerSettings) {
 		this.incomingSettings = settings;
 	}
 
-	canRead(
-		datums: ExternalDatum[],
+	async canRead(
+		datums: External[],
 		ctx: ContextSecurityInterface
-	): ExternalDatum[] {
+	): Promise<External[]> {
 		const permission = this.incomingSettings.permission;
 
 		if (!permission || ctx.hasPermission(permission)) {
@@ -24,10 +28,10 @@ export class Security implements SecurityInterface {
 	}
 
 	// securing data that has been submitted
-	canCreate(
-		datums: ExternalDatum[],
+	async canCreate(
+		datums: External[],
 		ctx: ContextSecurityInterface
-	): ExternalDatum[] {
+	): Promise<External[]> {
 		const permission = this.incomingSettings.permission;
 
 		if (!permission || ctx.hasPermission(permission)) {
@@ -37,10 +41,10 @@ export class Security implements SecurityInterface {
 		}
 	}
 
-	canUpdate(
-		datums: ExternalDatum[],
+	async canUpdate(
+		datums: External[],
 		ctx: ContextSecurityInterface
-	): ExternalDatum[] {
+	): Promise<External[]> {
 		const permission = this.incomingSettings.permission;
 
 		if (!permission || ctx.hasPermission(permission)) {

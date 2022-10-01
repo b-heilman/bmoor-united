@@ -1,28 +1,9 @@
 import {ContextSecurityInterface} from '@bmoor/context';
 
-import {SecurityInterface, SecuritySettings} from './security.interface';
+import {ControllerInterface} from './controller.interface';
 import {ModelFieldInterface} from './model/field.interface';
-import {InternalDatum, SearchDatum, ExternalDatum} from './datum.interface';
+import {SearchDatum, ExternalDatum} from './datum.interface';
 import {ModelFieldSet} from './model/field/set';
-
-export interface ModelController<External> {
-	// securing data that has been requested
-	canRead(
-		datums: External[],
-		ctx: ContextSecurityInterface
-	): Promise<External[]>;
-
-	// securing data that has been submitted
-	canCreate(
-		datums: External[],
-		ctx: ContextSecurityInterface
-	): Promise<External[]>;
-
-	canUpdate(
-		datums: External[],
-		ctx: ContextSecurityInterface
-	): Promise<External[]>;
-}
 
 export interface ModelAdapter<Internal> {
 	create(content: Internal[]): Promise<Internal[]>;
@@ -36,7 +17,7 @@ export interface ModelAdapter<Internal> {
 
 export interface ModelSettings<External, Internal> {
 	adapter: ModelAdapter<Internal>;
-	controller: ModelController<External>;
+	controller: ControllerInterface<External>;
 	fields: ModelFieldSet;
 }
 
