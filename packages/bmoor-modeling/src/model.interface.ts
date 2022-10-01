@@ -3,37 +3,74 @@ import {ContextSecurityInterface} from '@bmoor/context';
 import {SecurityInterface, SecuritySettings} from './security.interface';
 import {ModelFieldInterface} from './model/field.interface';
 import {InternalDatum, SearchDatum, ExternalDatum} from './datum.interface';
+import {ModelFieldSet} from './model/field/set';
 
-export interface ModelAccessorsInterface {
-	create(content: InternalDatum[]): InternalDatum[];
-	read(ids: string[]): InternalDatum[];
-	update(content: Record<string, InternalDatum>): Record<string, InternalDatum>;
-	delete(content: InternalDatum[]): InternalDatum[];
-	search(search: SearchDatum): InternalDatum[];
+export interface ModelController<External> {
+	// securing data that has been requested
+	canRead(
+		datums: External[],
+		ctx: ContextSecurityInterface
+	): Promise<External[]>;
+
+	// securing data that has been submitted
+	canCreate(
+		datums: External[],
+		ctx: ContextSecurityInterface
+	): Promise<External[]>;
+
+	canUpdate(
+		datums: External[],
+		ctx: ContextSecurityInterface
+	): Promise<External[]>;
 }
 
-export interface ModelSettings {
-	security: SecurityInterface;
-	accessors: ModelAccessorsInterface;
-	fields: ModelFieldInterface[];
+export interface ModelAdapter<Internal> {
+	create(content: Internal[]): Promise<Internal[]>;
+	read(ids: string[]): Promise<Internal[]>;
+	update(
+		content: Record<string, Internal>
+	): Promise<Record<string, Internal>>;
+	delete?(content: Internal[]): Promise<Internal[]>;
+	search?(search: SearchDatum): Promise<Internal[]>;
 }
 
-export interface ModelInterface {
+export interface ModelSettings<External, Internal> {
+	adapter: ModelAdapter<Internal>;
+	controller: ModelController<External>;
+	fields: ModelFieldSet;
+}
+
+export type ModelActions = {
+	create?(datum: ExternalDatum, ctx?: ContextSecurityInterface): void;
+	read?(datum: ExternalDatum, ctx?: ContextSecurityInterface): void;
+	update?(datum: ExternalDatum, ctx?: ContextSecurityInterface): void;
+	delete?(datum: ExternalDatum, ctx?: ContextSecurityInterface): void;
+	inflate?(datum: ExternalDatum, ctx?: ContextSecurityInterface): void;
+	deflate?(datum: ExternalDatum, ctx?: ContextSecurityInterface): void;
+};
+
+export interface ModelInterface<External, Internal> {
 	fields: Map<string, ModelFieldInterface>;
 
 	create(
-		content: ExternalDatum[],
+		content: External[],
 		ctx: ContextSecurityInterface
-	): ExternalDatum[];
-	read(ids: string[], ctx: ContextSecurityInterface): ExternalDatum[];
+	): Promise<External[]>;
+	read(ids: string[], ctx: ContextSecurityInterface): Promise<External[]>;
 	update(
-		content: Record<string, ExternalDatum>,
+		content: Record<string, External>,
 		ctx: ContextSecurityInterface
-	): Record<string, ExternalDatum>;
-	delete(ids: string[], ctx: ContextSecurityInterface): ExternalDatum[];
-	search(search: SearchDatum, ctx: ContextSecurityInterface): ExternalDatum[];
+	): Promise<Record<string, External>>;
+	delete(
+		ids: string[],
+		ctx: ContextSecurityInterface
+	): Promise<External[]>;
+	search(
+		search: SearchDatum,
+		ctx: ContextSecurityInterface
+	): Promise<External[]>;
 
 	getByPath(external: string);
-	convertToInternal(content: ExternalDatum[]): InternalDatum[];
-	convertToExternal(content: InternalDatum[]): ExternalDatum[];
+	convertToInternal(content: External[]): Internal[];
+	convertToExternal(content: Internal[]): External[];
 }

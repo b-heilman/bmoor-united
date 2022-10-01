@@ -53,6 +53,9 @@ export class BlockPattern extends Pattern {
 	}
 
 	toToken(base: string, state: TokenizerState) {
-		return new BlockToken(base.substring(state.begin, state.end + 1), state);
+		return new BlockToken(
+			base.substring(state.begin, state.end + 1),
+			state
+		);
 	}
 }

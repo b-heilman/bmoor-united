@@ -35,7 +35,9 @@ function readArray(
 		tgt[info.ref] = src.map((arr) => readArray({}, arr, rest, dexCommand));
 	} else {
 		// reading [].foo
-		tgt[info.ref] = src.map((datum) => runReaderMap(dexCommand, {}, datum));
+		tgt[info.ref] = src.map((datum) =>
+			runReaderMap(dexCommand, {}, datum)
+		);
 	}
 
 	return tgt;

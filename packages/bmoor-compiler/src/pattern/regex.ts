@@ -11,7 +11,11 @@ export class ValueToken extends Token {
 	static reference = 'value';
 
 	toExpressable() {
-		return new Expressable(this, ExpressableUsages.value, () => this.content);
+		return new Expressable(
+			this,
+			ExpressableUsages.value,
+			() => this.content
+		);
 	}
 }
 
@@ -20,7 +24,11 @@ export class RegexValuePattern extends Pattern {
 	subType: string;
 	parser: ExpressableFunction;
 
-	constructor(pattern: RegExp, parser: ExpressableFunction, subType: string) {
+	constructor(
+		pattern: RegExp,
+		parser: ExpressableFunction,
+		subType: string
+	) {
 		super();
 
 		this.pattern = pattern;

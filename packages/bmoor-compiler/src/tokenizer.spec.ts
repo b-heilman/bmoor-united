@@ -29,7 +29,10 @@ describe('@bmoor/compiler', function () {
 			}
 
 			open(str: string, pos: number) {
-				const compare = str.substring(pos - this.begin.length + 1, pos + 1);
+				const compare = str.substring(
+					pos - this.begin.length + 1,
+					pos + 1
+				);
 
 				if (compare === this.begin) {
 					return new TokenizerState(pos + 1);

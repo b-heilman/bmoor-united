@@ -90,9 +90,9 @@ describe('@bmoor/compiler', function () {
 				'operation'
 			]);
 
-			expect(ex.makeExecutable([eins, add, zwei, sub, drei])()).to.deep.equal(
-				0
-			);
+			expect(
+				ex.makeExecutable([eins, add, zwei, sub, drei])()
+			).to.deep.equal(0);
 		});
 
 		it('should consider rank', function () {

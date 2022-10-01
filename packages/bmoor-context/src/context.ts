@@ -1,4 +1,7 @@
-import {ContextSecurityInterface, ContextSettings} from './context.interface';
+import {
+	ContextSecurityInterface,
+	ContextSettings
+} from './context.interface';
 
 export class Context implements ContextSecurityInterface {
 	settings: ContextSettings;

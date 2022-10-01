@@ -75,19 +75,22 @@ export class Expressor {
 	}
 
 	makeExecutable(tokens: ExpressableToken[]): ExecutableFunction {
-		return this.express(tokens, ExpressorModes.postfix).reduce((stack, exp) => {
-			if (exp.usage === ExpressableUsages.value) {
-				stack.push(exp.prepare());
-			} else {
-				const right = stack.pop();
-				const left = stack.pop();
+		return this.express(tokens, ExpressorModes.postfix).reduce(
+			(stack, exp) => {
+				if (exp.usage === ExpressableUsages.value) {
+					stack.push(exp.prepare());
+				} else {
+					const right = stack.pop();
+					const left = stack.pop();
 
-				stack.push(function preparedBlock(ctx) {
-					return exp.eval(left(ctx), right(ctx));
-				});
-			}
+					stack.push(function preparedBlock(ctx) {
+						return exp.eval(left(ctx), right(ctx));
+					});
+				}
 
-			return stack;
-		}, [])[0];
+				return stack;
+			},
+			[]
+		)[0];
 	}
 }

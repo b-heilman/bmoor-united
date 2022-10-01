@@ -23,6 +23,8 @@ export abstract class Statement implements ExpressableToken {
 	}
 
 	getReference() {
-		return 'compound:' + this.tokens.map((p) => p.getReference()).join('-');
+		return (
+			'compound:' + this.tokens.map((p) => p.getReference()).join('-')
+		);
 	}
 }
