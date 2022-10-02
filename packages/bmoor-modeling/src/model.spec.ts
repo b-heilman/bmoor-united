@@ -313,15 +313,19 @@ describe('@bmoor-modeling', function () {
 					ctx
 				);
 
-				expect(res).to.deep.equal([{
-					f1: 'foo',
-					f2: 'bar'
-				}]);
+				expect(res).to.deep.equal([
+					{
+						f1: 'foo',
+						f2: 'bar'
+					}
+				]);
 
-				expect(myStub.getCall(0).args[0]).to.deep.equal([{
-					f1: 'val-1',
-					f3: 'val-2'
-				}]);
+				expect(myStub.getCall(0).args[0]).to.deep.equal([
+					{
+						f1: 'val-1',
+						f3: 'val-2'
+					}
+				]);
 			});
 
 			xit('should work with a validator', function () {
