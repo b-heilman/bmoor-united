@@ -1,23 +1,30 @@
 import {
-	ValidatorInterface,
-	ValidatorInvalidation,
-	ValidatorSettings
+	ModelValidatorInterface,
+	ModelValidatorInvalidation,
+	ModelValidatorSettings
 } from './validator.interface';
 
-export class ModelValidator<External>
-	implements ValidatorInterface<External>
-{
-	incomingSettings: ValidatorSettings;
+import {DeltaKeyReader} from './properties.interface';
 
-	constructor(settings: ValidatorSettings) {
+export class ModelValidator<External, Delta>
+	implements ModelValidatorInterface<External, Delta>
+{
+	incomingSettings: ModelValidatorSettings;
+
+	constructor(settings: ModelValidatorSettings) {
 		this.incomingSettings = settings;
 	}
 
-	validateCreate(/*datums: External[]*/): ValidatorInvalidation {
+	validateCreate(datums: External[]): ModelValidatorInvalidation {
+		console.log(datums);
 		return null;
 	}
 
-	validateUpdate(/*datums: External[]*/): ValidatorInvalidation {
+	validateUpdate(
+		datums: Delta[],
+		fn: DeltaKeyReader<Delta>
+	): ModelValidatorInvalidation {
+		console.log(datums.map(fn));
 		return null;
 	}
 }

@@ -1,39 +1,34 @@
 import {ContextSecurityInterface} from '@bmoor/context';
 
 import {ModelControllerInterface} from './model/controller.interface';
-import {ValidatorInterface} from './model/validator.interface';
+import {ModelValidatorInterface} from './model/validator.interface';
+import {ModelAdapterInterface} from './model/adapter.interface';
 import {ModelFieldInterface} from './model/field.interface';
-import {SearchDatum, ExternalDatum} from './datum.interface';
+import {ModelAccessorInterface} from './model/accessor.interface';
+import {SearchDatum} from './datum.interface';
 import {ModelFieldSet} from './model/field/set';
 
-export interface ModelAdapter<Internal> {
-	create(content: Internal[]): Promise<Internal[]>;
-	read(ids: string[]): Promise<Internal[]>;
-	update(
-		content: Record<string, Internal>
-	): Promise<Record<string, Internal>>;
-	delete?(content: Internal[]): Promise<Internal[]>;
-	search?(search: SearchDatum): Promise<Internal[]>;
-}
-
-export interface ModelSettings<External, Internal> {
-	adapter: ModelAdapter<Internal>;
-	controller: ModelControllerInterface<External>;
-	validator?: ValidatorInterface<External>;
+export interface ModelSettings<External, Delta, Internal> {
+	adapter: ModelAdapterInterface<Delta, Internal>;
+	accessor: ModelAccessorInterface<External, Delta, Internal>;
+	controller: ModelControllerInterface<External, Delta>;
+	validator?: ModelValidatorInterface<External, Delta>;
 	fields: ModelFieldSet;
 }
 
-export type ModelActions = {
-	create?(datum: ExternalDatum, ctx?: ContextSecurityInterface): void;
-	read?(datum: ExternalDatum, ctx?: ContextSecurityInterface): void;
-	update?(datum: ExternalDatum, ctx?: ContextSecurityInterface): void;
-	delete?(datum: ExternalDatum, ctx?: ContextSecurityInterface): void;
-	inflate?(datum: ExternalDatum, ctx?: ContextSecurityInterface): void;
-	deflate?(datum: ExternalDatum, ctx?: ContextSecurityInterface): void;
+export type ModelActions<External, Delta> = {
+	create?(datum: External, ctx?: ContextSecurityInterface): void;
+	read?(datum: External, ctx?: ContextSecurityInterface): void;
+	update?(datum: Delta, ctx?: ContextSecurityInterface): void;
+	delete?(datum: External, ctx?: ContextSecurityInterface): void;
+	inflate?(datum: External, ctx?: ContextSecurityInterface): void;
+	deflate?(datum: External, ctx?: ContextSecurityInterface): void;
 };
 
-export interface ModelInterface<External, Internal> {
+export interface ModelInterface<External, Delta, Internal> {
 	fields: Map<string, ModelFieldInterface>;
+	settings: ModelSettings<External, Delta, Internal>;
+	actions: ModelActions<External, Delta>;
 
 	create(
 		content: External[],
@@ -41,9 +36,9 @@ export interface ModelInterface<External, Internal> {
 	): Promise<External[]>;
 	read(ids: string[], ctx: ContextSecurityInterface): Promise<External[]>;
 	update(
-		content: Record<string, External>,
+		content: Delta[],
 		ctx: ContextSecurityInterface
-	): Promise<Record<string, External>>;
+	): Promise<External[]>;
 	delete(
 		ids: string[],
 		ctx: ContextSecurityInterface

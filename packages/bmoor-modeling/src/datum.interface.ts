@@ -5,4 +5,7 @@ export type InternalDatum = any;
 export type ExternalDatum = any;
 
 // eslint-disable-next-line  @typescript-eslint/no-explicit-any
+export type DeltaDatum = any;
+
+// eslint-disable-next-line  @typescript-eslint/no-explicit-any
 export type SearchDatum = any;

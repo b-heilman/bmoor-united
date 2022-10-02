@@ -23,8 +23,8 @@ function actionExtend(old, action) {
 	}
 }
 
-function buildActions(
-	actions: ModelActions,
+function buildActions<External, Delta>(
+	actions: ModelActions<External, Delta>,
 	field: ModelFieldInterface
 ): void {
 	if (field.actions.create) {
@@ -54,16 +54,16 @@ function buildActions(
 	}
 }
 
-export class Model<External, Internal>
-	implements ModelInterface<External, Internal>
+export class Model<External, Delta, Internal>
+	implements ModelInterface<External, Delta, Internal>
 {
 	fields: Map<string, ModelFieldInterface>;
-	settings: ModelSettings<External, Internal>;
-	actions: ModelActions;
+	settings: ModelSettings<External, Delta, Internal>;
+	actions: ModelActions<External, Delta>;
 	deflate: Mapping;
 	inflate: Mapping;
 
-	constructor(settings: ModelSettings<External, Internal>) {
+	constructor(settings: ModelSettings<External, Delta, Internal>) {
 		this.settings = settings;
 		this.fields = new Map<string, ModelFieldInterface>();
 		this.actions = {};
@@ -71,7 +71,7 @@ export class Model<External, Internal>
 		settings.fields.map((field) => {
 			this.fields.set(field.settings.external, field);
 
-			buildActions(this.actions, field);
+			buildActions<External, Delta>(this.actions, field);
 		});
 
 		/***
@@ -101,9 +101,9 @@ export class Model<External, Internal>
 	}
 
 	async create(
-		content: ExternalDatum[],
+		content: External[],
 		ctx: ContextSecurityInterface
-	): Promise<ExternalDatum[]> {
+	): Promise<External[]> {
 		if (this.settings.validator) {
 			// TODO: I need the concept of a compound error
 			const error = this.settings.validator.validateCreate(content);
@@ -112,6 +112,8 @@ export class Model<External, Internal>
 				throw error;
 			}
 		}
+
+		// TODO: apply actions
 
 		return this.convertToExternal(
 			await this.settings.adapter.create(
@@ -125,59 +127,42 @@ export class Model<External, Internal>
 	async read(
 		ids: string[],
 		ctx: ContextSecurityInterface
-	): Promise<ExternalDatum[]> {
+	): Promise<External[]> {
 		return this.settings.controller.canRead(
 			this.convertToExternal(await this.settings.adapter.read(ids)),
+			this.settings.accessor.getExternalKey,
 			ctx
 		);
 	}
 
 	async update(
-		content: Record<string, ExternalDatum>,
+		content: Delta[],
 		ctx: ContextSecurityInterface
-	): Promise<Record<string, ExternalDatum>> {
-		const datums = [];
-		const ids = [];
-		for (const key in content) {
-			datums.push(content[key]);
-			ids.push(key);
-		}
-
+	): Promise<External[]> {
 		if (this.settings.validator) {
 			// TODO: I need the concept of a compound error
-			const error = this.settings.validator.validateUpdate(datums);
+			const error = this.settings.validator.validateUpdate(
+				content,
+				this.settings.accessor.getDeltaKey
+			);
 
 			if (error) {
 				throw error;
 			}
 		}
 
-		// TODO: I gotta rethink through this logic...
-		//   canX is supposed to govern what you can update,
-		//   how does that mix with an id.  I might need to add
-		//   the key concept, and the update always needs to
-		//   supply the key in the payload...
-		await Promise.all([
-			this.settings.controller.canUpdate(datums, ctx),
-			this.read(ids, ctx)
-		]);
-
-		const converted = this.convertToInternal(datums);
-		const res = this.settings.adapter.update(
-			ids.reduce((agg, key, i) => {
-				agg[key] = converted[i];
-
-				return agg;
-			}, {})
+		return this.convertToExternal(
+			await this.settings.adapter.update(
+				this.convertToInternal(
+					await this.settings.controller.canUpdate(
+						content,
+						this.settings.accessor.getDeltaKey,
+						ctx
+					)
+				),
+				this.settings.accessor.getDeltaKey
+			)
 		);
-
-		const rtn = this.convertToExternal(Object.values(res));
-
-		return Object.keys(rtn).reduce((agg, key, i) => {
-			agg[key] = rtn[i];
-
-			return agg;
-		}, {});
 	}
 
 	async delete(
@@ -199,6 +184,7 @@ export class Model<External, Internal>
 	): Promise<ExternalDatum[]> {
 		return this.settings.controller.canRead(
 			this.convertToExternal(await this.settings.adapter.search(search)),
+			this.settings.accessor.getExternalKey,
 			ctx
 		);
 	}

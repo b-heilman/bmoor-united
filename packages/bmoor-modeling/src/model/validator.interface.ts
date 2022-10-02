@@ -1,12 +1,17 @@
 import {ModelFieldInterface} from './field.interface';
 
-export interface ValidatorSettings {
+import {DeltaKeyReader} from './properties.interface';
+
+export interface ModelValidatorSettings {
 	fields?: ModelFieldInterface[];
 }
 
-export class ValidatorInvalidation extends Error {}
+export class ModelValidatorInvalidation extends Error {}
 
-export interface ValidatorInterface<External> {
-	validateCreate(datums: External[]): ValidatorInvalidation;
-	validateUpdate(datums: External[]): ValidatorInvalidation;
+export interface ModelValidatorInterface<External, Delta> {
+	validateCreate(datums: External[]): ModelValidatorInvalidation;
+	validateUpdate(
+		datums: Delta[],
+		fn: DeltaKeyReader<Delta>
+	): ModelValidatorInvalidation;
 }

@@ -73,6 +73,7 @@ export type ModelFieldContext = {
 export interface ModelFieldSettings extends ModelFieldUsage {
 	external: string; // path to be positioned externall
 	internal?: string; // path to be read from the source
+	isKey?: boolean;
 	isFlat?: boolean; // is the storage flat or structured (sql vs doc)
 	storage?: string; // path the written to the source
 	usage?: string; // how is this field used?  Allows pre defined

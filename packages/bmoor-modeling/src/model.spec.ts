@@ -1,19 +1,36 @@
 import {expect} from 'chai';
+import {stub} from 'sinon';
+
+import {ContextSecurityInterface} from '@bmoor/context';
 
 import {Model} from './model';
 import {ModelControllerInterface} from './model/controller.interface';
-
-import {ModelAdapter} from './model.interface';
-
-import {InternalDatum, ExternalDatum} from './datum.interface';
-
+import {ModelAdapterInterface} from './model/adapter.interface';
+import {InternalDatum, ExternalDatum, DeltaDatum} from './datum.interface';
 import {factory} from './model/field/set';
+import {ModelAccessorInterface} from './model/accessor.interface';
 
 describe('@bmoor-modeling', function () {
-	let controller: ModelControllerInterface<ExternalDatum> = null;
-	let adapter: ModelAdapter<InternalDatum> = null;
+	let controller: ModelControllerInterface<ExternalDatum, DeltaDatum> =
+		null;
+	let adapter: ModelAdapterInterface<DeltaDatum, InternalDatum> = null;
+	let accessor: ModelAccessorInterface<
+		ExternalDatum,
+		DeltaDatum,
+		InternalDatum
+	> = null;
+	let ctx: ContextSecurityInterface = null;
 
 	beforeEach(function () {
+		ctx = {
+			hasPermission() {
+				return true;
+			},
+			async hasClaim() {
+				return true;
+			}
+		};
+
 		controller = {
 			async canRead(datums) {
 				return datums;
@@ -36,6 +53,17 @@ describe('@bmoor-modeling', function () {
 				return content;
 			}
 		};
+		accessor = {
+			getInternalKey() {
+				return 'ok';
+			},
+			getExternalKey() {
+				return 'ok';
+			},
+			getDeltaKey() {
+				return 'ok';
+			}
+		};
 	});
 
 	describe('actions', function () {
@@ -44,6 +72,7 @@ describe('@bmoor-modeling', function () {
 				const model = new Model({
 					controller,
 					adapter,
+					accessor,
 					fields: factory(
 						{
 							external: 'f1',
@@ -78,6 +107,7 @@ describe('@bmoor-modeling', function () {
 				const model = new Model({
 					controller,
 					adapter,
+					accessor,
 					fields: factory(
 						{
 							external: 'f1',
@@ -112,6 +142,7 @@ describe('@bmoor-modeling', function () {
 				const model = new Model({
 					controller,
 					adapter,
+					accessor,
 					fields: factory(
 						{
 							external: 'f1',
@@ -146,6 +177,7 @@ describe('@bmoor-modeling', function () {
 				const model = new Model({
 					controller,
 					adapter,
+					accessor,
 					fields: factory(
 						{
 							external: 'f1',
@@ -180,6 +212,7 @@ describe('@bmoor-modeling', function () {
 				const model = new Model({
 					controller,
 					adapter,
+					accessor,
 					fields: factory(
 						{
 							external: 'f1',
@@ -214,6 +247,7 @@ describe('@bmoor-modeling', function () {
 				const model = new Model({
 					controller,
 					adapter,
+					accessor,
 					fields: factory(
 						{
 							external: 'f1',
@@ -246,7 +280,51 @@ describe('@bmoor-modeling', function () {
 
 	describe('crud actions', function () {
 		describe('create', function () {
-			xit('should work', function () {
+			it('should work without a validator', async function () {
+				const model = new Model({
+					controller,
+					adapter,
+					accessor,
+					fields: factory(
+						{
+							external: 'f1'
+						},
+						{
+							external: 'f2',
+							internal: 'f3'
+						}
+					)
+				});
+
+				const myStub = stub(adapter, 'create').resolves([
+					{
+						f1: 'foo',
+						f3: 'bar'
+					}
+				]);
+
+				const res = await model.create(
+					[
+						{
+							f1: 'val-1',
+							f2: 'val-2'
+						}
+					],
+					ctx
+				);
+
+				expect(res).to.deep.equal([{
+					f1: 'foo',
+					f2: 'bar'
+				}]);
+
+				expect(myStub.getCall(0).args[0]).to.deep.equal([{
+					f1: 'val-1',
+					f3: 'val-2'
+				}]);
+			});
+
+			xit('should work with a validator', function () {
 				throw new Error('boo');
 			});
 		});
@@ -275,6 +353,7 @@ describe('@bmoor-modeling', function () {
 			const model = new Model({
 				controller,
 				adapter,
+				accessor,
 				fields: factory(
 					{
 						internal: 'field.eins',
