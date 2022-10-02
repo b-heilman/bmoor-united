@@ -53,7 +53,7 @@ export class ModelController<External>
 			throw new Error('can not update');
 		}
 	}
-	
+
 	async canDelete(
 		datums: External[],
 		ctx: ContextSecurityInterface

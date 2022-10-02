@@ -152,6 +152,11 @@ export class Model<External, Internal>
 			}
 		}
 
+		// TODO: I gotta rethink through this logic...
+		//   canX is supposed to govern what you can update,
+		//   how does that mix with an id.  I might need to add
+		//   the key concept, and the update always needs to
+		//   supply the key in the payload...
 		await Promise.all([
 			this.settings.controller.canUpdate(datums, ctx),
 			this.read(ids, ctx)

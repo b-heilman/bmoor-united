@@ -2,14 +2,13 @@ import {ContextSecurityInterface} from '@bmoor/context';
 
 import {ModelFieldInterface} from './field.interface';
 
-
 export interface ModelControllerSettings {
 	permission?: {
 		create?: string;
 		read?: string;
 		update?: string;
 		delete?: string;
-	},	
+	};
 	fields?: ModelFieldInterface[];
 }
 

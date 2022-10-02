@@ -1,7 +1,5 @@
 import {ModelFieldInterface} from './field.interface';
 
-import {ExternalDatum} from '../datum.interface';
-
 export interface ValidatorSettings {
 	fields?: ModelFieldInterface[];
 }

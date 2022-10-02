@@ -1,4 +1,3 @@
-import {ExternalDatum} from '../datum.interface';
 import {
 	ValidatorInterface,
 	ValidatorInvalidation,
@@ -14,11 +13,11 @@ export class ModelValidator<External>
 		this.incomingSettings = settings;
 	}
 
-	validateCreate(datums: ExternalDatum[]): ValidatorInvalidation {
+	validateCreate(/*datums: External[]*/): ValidatorInvalidation {
 		return null;
 	}
 
-	validateUpdate(datums: ExternalDatum[]): ValidatorInvalidation {
+	validateUpdate(/*datums: External[]*/): ValidatorInvalidation {
 		return null;
 	}
 }
