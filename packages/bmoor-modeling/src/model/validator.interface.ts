@@ -9,9 +9,9 @@ export interface ModelValidatorSettings {
 export class ModelValidatorInvalidation extends Error {}
 
 export interface ModelValidatorInterface<External, Delta> {
-	validateCreate(datums: External[]): ModelValidatorInvalidation;
-	validateUpdate(
+	validateCreate?(datums: External[]): Promise<Error>;
+	validateUpdate?(
 		datums: Delta[],
 		fn: DeltaKeyReader<Delta>
-	): ModelValidatorInvalidation;
+	): Promise<Error>;
 }

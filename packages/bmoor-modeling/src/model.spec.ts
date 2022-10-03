@@ -9,6 +9,7 @@ import {ModelAdapterInterface} from './model/adapter.interface';
 import {InternalDatum, ExternalDatum, DeltaDatum} from './datum.interface';
 import {factory} from './model/field/set';
 import {ModelAccessorInterface} from './model/accessor.interface';
+import {ModelValidatorInterface} from './model/validator.interface';
 
 describe('@bmoor-modeling', function () {
 	let controller: ModelControllerInterface<ExternalDatum, DeltaDatum> =
@@ -20,6 +21,7 @@ describe('@bmoor-modeling', function () {
 		InternalDatum
 	> = null;
 	let ctx: ContextSecurityInterface = null;
+	let validator: ModelValidatorInterface<ExternalDatum, DeltaDatum> = null;
 
 	beforeEach(function () {
 		ctx = {
@@ -30,7 +32,6 @@ describe('@bmoor-modeling', function () {
 				return true;
 			}
 		};
-
 		controller = {
 			async canRead(datums) {
 				return datums;
@@ -54,6 +55,14 @@ describe('@bmoor-modeling', function () {
 			},
 			async delete(ids) {
 				return ids.length;
+			}
+		};
+		validator = {
+			validateCreate() {
+				return null;
+			},
+			validateUpdate() {
+				return null;
 			}
 		};
 		accessor = {
@@ -281,13 +290,14 @@ describe('@bmoor-modeling', function () {
 		});
 	});
 
-	describe('crud actions', function () {
+	describe('crud methods', function () {
 		describe('create', function () {
 			it('should work without a validator', async function () {
 				const model = new Model({
 					controller,
 					adapter,
 					accessor,
+					validator,
 					fields: factory(
 						{
 							external: 'f1'
@@ -331,7 +341,54 @@ describe('@bmoor-modeling', function () {
 				]);
 			});
 
-			xit('should work with a validator', function () {
+			it('should work with a validator', async function () {
+				const model = new Model({
+					controller,
+					adapter,
+					accessor,
+					validator,
+					fields: factory(
+						{
+							external: 'f1'
+						},
+						{
+							external: 'f2',
+							internal: 'f3'
+						}
+					)
+				});
+
+				const myStub = stub(validator, 'validateCreate').resolves(
+					new Error('fail-whale')
+				);
+
+				let failed = false;
+				try {
+					const res = await model.create(
+						[
+							{
+								f1: 'val-1',
+								f2: 'val-2'
+							}
+						],
+						ctx
+					);
+				} catch (ex) {
+					failed = true;
+					expect(ex.message).to.equal('fail-whale');
+				}
+
+				expect(failed).to.equal(true);
+
+				expect(myStub.getCall(0).args[0]).to.deep.equal([
+					{
+						f1: 'val-1',
+						f2: 'val-2'
+					}
+				]);
+			});
+
+			xit('should work with actions', function () {
 				throw new Error('boo');
 			});
 		});
@@ -342,6 +399,7 @@ describe('@bmoor-modeling', function () {
 					controller,
 					adapter,
 					accessor,
+					validator,
 					fields: factory(
 						{
 							external: 'f1'
@@ -372,7 +430,7 @@ describe('@bmoor-modeling', function () {
 				expect(myStub.getCall(0).args[0]).to.deep.equal([12]);
 			});
 
-			xit('should work with a validator', function () {
+			xit('should work with actions', function () {
 				throw new Error('boo');
 			});
 		});
@@ -383,6 +441,7 @@ describe('@bmoor-modeling', function () {
 					controller,
 					adapter,
 					accessor,
+					validator,
 					fields: factory(
 						{
 							external: 'f1'
@@ -426,7 +485,54 @@ describe('@bmoor-modeling', function () {
 				]);
 			});
 
-			xit('should work with a validator', function () {
+			it('should work with a validator', async function () {
+				const model = new Model({
+					controller,
+					adapter,
+					accessor,
+					validator,
+					fields: factory(
+						{
+							external: 'f1'
+						},
+						{
+							external: 'f2',
+							internal: 'f3'
+						}
+					)
+				});
+
+				const myStub = stub(validator, 'validateUpdate').resolves(
+					new Error('fail-whale')
+				);
+
+				let failed = false;
+				try {
+					const res = await model.update(
+						[
+							{
+								f1: 'val-1',
+								f2: 'val-2'
+							}
+						],
+						ctx
+					);
+				} catch (ex) {
+					failed = true;
+					expect(ex.message).to.equal('fail-whale');
+				}
+
+				expect(failed).to.equal(true);
+
+				expect(myStub.getCall(0).args[0]).to.deep.equal([
+					{
+						f1: 'val-1',
+						f2: 'val-2'
+					}
+				]);
+			});
+
+			xit('should work with actions', function () {
 				throw new Error('boo');
 			});
 		});
@@ -437,6 +543,7 @@ describe('@bmoor-modeling', function () {
 					controller,
 					adapter,
 					accessor,
+					validator,
 					fields: factory(
 						{
 							external: 'f1'
@@ -474,7 +581,7 @@ describe('@bmoor-modeling', function () {
 				]);
 			});
 
-			xit('should work with a validator', function () {
+			xit('should work with actions', function () {
 				throw new Error('boo');
 			});
 		});
@@ -486,6 +593,7 @@ describe('@bmoor-modeling', function () {
 				controller,
 				adapter,
 				accessor,
+				validator,
 				fields: factory(
 					{
 						internal: 'field.eins',

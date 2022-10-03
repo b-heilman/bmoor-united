@@ -105,16 +105,18 @@ export class Model<External, Delta, Internal>
 		content: External[],
 		ctx: ContextSecurityInterface
 	): Promise<External[]> {
-		if (this.settings.validator) {
+		if (this.settings.validator?.validateCreate) {
 			// TODO: I need the concept of a compound error
-			const error = this.settings.validator.validateCreate(content);
+			const error = await this.settings.validator.validateCreate(content);
 
 			if (error) {
 				throw error;
 			}
 		}
 
-		// TODO: apply actions
+		if (this.actions.create) {
+			content.map((datum) => this.actions.create(datum, ctx));
+		}
 
 		return this.convertToExternal(
 			await this.settings.adapter.create(
@@ -129,20 +131,26 @@ export class Model<External, Delta, Internal>
 		ids: ModelKey[],
 		ctx: ContextSecurityInterface
 	): Promise<External[]> {
-		return this.settings.controller.canRead(
+		const rtn = await this.settings.controller.canRead(
 			this.convertToExternal(await this.settings.adapter.read(ids)),
 			this.settings.accessor.getExternalKey,
 			ctx
 		);
+
+		if (this.actions.read) {
+			rtn.map((datum) => this.actions.read(datum, ctx));
+		}
+
+		return rtn;
 	}
 
 	async update(
 		content: Delta[],
 		ctx: ContextSecurityInterface
 	): Promise<External[]> {
-		if (this.settings.validator) {
+		if (this.settings.validator?.validateUpdate) {
 			// TODO: I need the concept of a compound error
-			const error = this.settings.validator.validateUpdate(
+			const error = await this.settings.validator.validateUpdate(
 				content,
 				this.settings.accessor.getDeltaKey
 			);
@@ -150,6 +158,10 @@ export class Model<External, Delta, Internal>
 			if (error) {
 				throw error;
 			}
+		}
+
+		if (this.actions.update) {
+			content.map((delta) => this.actions.update(delta, ctx));
 		}
 
 		return this.convertToExternal(
@@ -173,6 +185,11 @@ export class Model<External, Delta, Internal>
 		// TODO: can I simplify this?
 		// you can only delete that which you can access
 		const datums = await this.read(ids, ctx);
+
+		if (this.actions.delete) {
+			datums.map((datum) => this.actions.delete(datum, ctx));
+		}
+
 		const count = await this.settings.adapter.delete(
 			this.convertToInternal(datums)
 		);
