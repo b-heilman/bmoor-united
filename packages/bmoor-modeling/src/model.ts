@@ -4,7 +4,8 @@ import {Mapping} from '@bmoor/path';
 import {
 	InternalDatum,
 	ExternalDatum,
-	SearchDatum
+	SearchDatum,
+	ModelKey
 } from './datum.interface';
 import {
 	ModelSettings,
@@ -125,7 +126,7 @@ export class Model<External, Delta, Internal>
 	}
 
 	async read(
-		ids: string[],
+		ids: ModelKey[],
 		ctx: ContextSecurityInterface
 	): Promise<External[]> {
 		return this.settings.controller.canRead(
@@ -166,16 +167,21 @@ export class Model<External, Delta, Internal>
 	}
 
 	async delete(
-		ids: string[],
+		ids: ModelKey[],
 		ctx: ContextSecurityInterface
 	): Promise<ExternalDatum[]> {
 		// TODO: can I simplify this?
 		// you can only delete that which you can access
-		return this.convertToExternal(
-			await this.settings.adapter.delete(
-				this.convertToInternal(await this.read(ids, ctx))
-			)
+		const datums = await this.read(ids, ctx);
+		const count = await this.settings.adapter.delete(
+			this.convertToInternal(datums)
 		);
+
+		if (count !== datums.length) {
+			// TODO: do i care?
+		}
+
+		return datums;
 	}
 
 	async search(

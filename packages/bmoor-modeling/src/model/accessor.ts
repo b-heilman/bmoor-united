@@ -1,3 +1,4 @@
+import {ModelKey} from '../datum.interface';
 import {
 	ModelAccessorInterface,
 	ModelAccessorSettings,
@@ -17,13 +18,13 @@ export class ModelAccessor<External, Delta, Internal>
 	constructor(settings: ModelAccessorSettings) {
 		this.settings = settings;
 
-		this.getInternalKey = function (/*datum: Internal*/) {
+		this.getInternalKey = function (/*datum: Internal*/): ModelKey {
 			return 'ok';
 		};
-		this.getExternalKey = function (/*datum: External*/) {
+		this.getExternalKey = function (/*datum: External*/): ModelKey {
 			return '';
 		};
-		this.getDeltaKey = function (/*datum: Delta*/) {
+		this.getDeltaKey = function (/*datum: Delta*/): ModelKey {
 			return '';
 		};
 	}

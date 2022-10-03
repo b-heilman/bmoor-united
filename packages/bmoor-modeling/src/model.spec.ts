@@ -51,6 +51,9 @@ describe('@bmoor-modeling', function () {
 			},
 			async update(content) {
 				return content;
+			},
+			async delete(ids) {
+				return ids.length;
 			}
 		};
 		accessor = {
@@ -334,19 +337,144 @@ describe('@bmoor-modeling', function () {
 		});
 
 		describe('read', function () {
-			xit('should work', function () {
+			it('should work without a validator', async function () {
+				const model = new Model({
+					controller,
+					adapter,
+					accessor,
+					fields: factory(
+						{
+							external: 'f1'
+						},
+						{
+							external: 'f2',
+							internal: 'f3'
+						}
+					)
+				});
+
+				const myStub = stub(adapter, 'read').resolves([
+					{
+						f1: 'foo',
+						f3: 'bar'
+					}
+				]);
+
+				const res = await model.read([12], ctx);
+
+				expect(res).to.deep.equal([
+					{
+						f1: 'foo',
+						f2: 'bar'
+					}
+				]);
+
+				expect(myStub.getCall(0).args[0]).to.deep.equal([12]);
+			});
+
+			xit('should work with a validator', function () {
 				throw new Error('boo');
 			});
 		});
 
 		describe('update', function () {
-			xit('should work', function () {
+			it('should work without a validator', async function () {
+				const model = new Model({
+					controller,
+					adapter,
+					accessor,
+					fields: factory(
+						{
+							external: 'f1'
+						},
+						{
+							external: 'f2',
+							internal: 'f3'
+						}
+					)
+				});
+
+				const myStub = stub(adapter, 'update').resolves([
+					{
+						f1: 'foo',
+						f3: 'bar'
+					}
+				]);
+
+				const res = await model.update(
+					[
+						{
+							f1: 'val-1',
+							f2: 'val-2'
+						}
+					],
+					ctx
+				);
+
+				expect(res).to.deep.equal([
+					{
+						f1: 'foo',
+						f2: 'bar'
+					}
+				]);
+
+				expect(myStub.getCall(0).args[0]).to.deep.equal([
+					{
+						f1: 'val-1',
+						f3: 'val-2'
+					}
+				]);
+			});
+
+			xit('should work with a validator', function () {
 				throw new Error('boo');
 			});
 		});
 
 		describe('delete', function () {
-			xit('should work', function () {
+			it('should work without a validator', async function () {
+				const model = new Model({
+					controller,
+					adapter,
+					accessor,
+					fields: factory(
+						{
+							external: 'f1'
+						},
+						{
+							external: 'f2',
+							internal: 'f3'
+						}
+					)
+				});
+
+				const myStub = stub(adapter, 'delete').resolves(true);
+
+				stub(model, 'read').resolves([
+					{
+						f1: 'foo',
+						f2: 'bar'
+					}
+				]);
+
+				const res = await model.delete([123], ctx);
+
+				expect(res).to.deep.equal([
+					{
+						f1: 'foo',
+						f2: 'bar'
+					}
+				]);
+
+				expect(myStub.getCall(0).args[0]).to.deep.equal([
+					{
+						f1: 'foo',
+						f3: 'bar'
+					}
+				]);
+			});
+
+			xit('should work with a validator', function () {
 				throw new Error('boo');
 			});
 		});

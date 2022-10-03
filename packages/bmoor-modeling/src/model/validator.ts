@@ -4,7 +4,7 @@ import {
 	ModelValidatorSettings
 } from './validator.interface';
 
-import {DeltaKeyReader} from './properties.interface';
+import {DeltaKeyReader} from './accessor.interface';
 
 export class ModelValidator<External, Delta>
 	implements ModelValidatorInterface<External, Delta>

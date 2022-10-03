@@ -1,6 +1,6 @@
 import {ModelFieldInterface} from './field.interface';
 
-import {DeltaKeyReader} from './properties.interface';
+import {DeltaKeyReader} from './accessor.interface';
 
 export interface ModelValidatorSettings {
 	fields?: ModelFieldInterface[];

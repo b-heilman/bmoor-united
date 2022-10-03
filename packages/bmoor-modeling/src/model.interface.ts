@@ -5,7 +5,7 @@ import {ModelValidatorInterface} from './model/validator.interface';
 import {ModelAdapterInterface} from './model/adapter.interface';
 import {ModelFieldInterface} from './model/field.interface';
 import {ModelAccessorInterface} from './model/accessor.interface';
-import {SearchDatum} from './datum.interface';
+import {SearchDatum, ModelKey} from './datum.interface';
 import {ModelFieldSet} from './model/field/set';
 
 export interface ModelSettings<External, Delta, Internal> {
@@ -34,13 +34,16 @@ export interface ModelInterface<External, Delta, Internal> {
 		content: External[],
 		ctx: ContextSecurityInterface
 	): Promise<External[]>;
-	read(ids: string[], ctx: ContextSecurityInterface): Promise<External[]>;
+	read(
+		ids: ModelKey[],
+		ctx: ContextSecurityInterface
+	): Promise<External[]>;
 	update(
 		content: Delta[],
 		ctx: ContextSecurityInterface
 	): Promise<External[]>;
 	delete(
-		ids: string[],
+		ids: ModelKey[],
 		ctx: ContextSecurityInterface
 	): Promise<External[]>;
 	search(
