@@ -105,6 +105,10 @@ export class Model<External, Delta, Internal>
 		content: External[],
 		ctx: ContextSecurityInterface
 	): Promise<External[]> {
+		if (this.actions.create) {
+			content.map((datum) => this.actions.create(datum, ctx));
+		}
+
 		if (this.settings.validator?.validateCreate) {
 			// TODO: I need the concept of a compound error
 			const error = await this.settings.validator.validateCreate(content);
@@ -112,10 +116,6 @@ export class Model<External, Delta, Internal>
 			if (error) {
 				throw error;
 			}
-		}
-
-		if (this.actions.create) {
-			content.map((datum) => this.actions.create(datum, ctx));
 		}
 
 		return this.convertToExternal(
@@ -148,6 +148,10 @@ export class Model<External, Delta, Internal>
 		content: Delta[],
 		ctx: ContextSecurityInterface
 	): Promise<External[]> {
+		if (this.actions.update) {
+			content.map((delta) => this.actions.update(delta, ctx));
+		}
+
 		if (this.settings.validator?.validateUpdate) {
 			// TODO: I need the concept of a compound error
 			const error = await this.settings.validator.validateUpdate(
@@ -158,10 +162,6 @@ export class Model<External, Delta, Internal>
 			if (error) {
 				throw error;
 			}
-		}
-
-		if (this.actions.update) {
-			content.map((delta) => this.actions.update(delta, ctx));
 		}
 
 		return this.convertToExternal(

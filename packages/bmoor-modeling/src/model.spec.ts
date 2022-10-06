@@ -388,8 +388,60 @@ describe('@bmoor-modeling', function () {
 				]);
 			});
 
-			xit('should work with actions', function () {
-				throw new Error('boo');
+			it('should work with actions', async function () {
+				const model = new Model({
+					controller,
+					adapter,
+					accessor,
+					validator,
+					fields: factory(
+						{
+							external: 'f1',
+							onCreate: (datum, setter) => {
+								setter(datum, 'value');
+							}
+						},
+						{
+							external: 'f2',
+							internal: 'f3',
+							usage: 'json'
+						}
+					)
+				});
+
+				const myStub = stub(adapter, 'create').resolves([
+					{
+						f1: 'foo',
+						f3: '{"a":"value"}'
+					}
+				]);
+
+				const res = await model.create(
+					[
+						{
+							f2: {
+								foo: 'bar'
+							}
+						}
+					],
+					ctx
+				);
+
+				expect(res).to.deep.equal([
+					{
+						f1: 'foo',
+						f2: {
+							a: 'value'
+						}
+					}
+				]);
+
+				expect(myStub.getCall(0).args[0]).to.deep.equal([
+					{
+						f1: 'value',
+						f3: '{"foo":"bar"}'
+					}
+				]);
 			});
 		});
 
@@ -532,8 +584,60 @@ describe('@bmoor-modeling', function () {
 				]);
 			});
 
-			xit('should work with actions', function () {
-				throw new Error('boo');
+			it('should work with actions', async function () {
+				const model = new Model({
+					controller,
+					adapter,
+					accessor,
+					validator,
+					fields: factory(
+						{
+							external: 'f1',
+							onUpdate: (datum, setter) => {
+								setter(datum, 'value');
+							}
+						},
+						{
+							external: 'f2',
+							internal: 'f3',
+							usage: 'json'
+						}
+					)
+				});
+
+				const myStub = stub(adapter, 'update').resolves([
+					{
+						f1: 'foo',
+						f3: '{"a":"value"}'
+					}
+				]);
+
+				const res = await model.update(
+					[
+						{
+							f2: {
+								foo: 'bar'
+							}
+						}
+					],
+					ctx
+				);
+
+				expect(res).to.deep.equal([
+					{
+						f1: 'foo',
+						f2: {
+							a: 'value'
+						}
+					}
+				]);
+
+				expect(myStub.getCall(0).args[0]).to.deep.equal([
+					{
+						f1: 'value',
+						f3: '{"foo":"bar"}'
+					}
+				]);
 			});
 		});
 
