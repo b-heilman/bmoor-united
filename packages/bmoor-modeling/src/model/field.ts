@@ -151,14 +151,17 @@ export class ModelField implements ModelFieldInterface {
 	}
 
 	toTypescript(): ModelFieldTypescript {
+		const format = this.settings.jsonType;
+
+		// TODO: how many types do I really need?
 		return {
 			internal: {
-				path: '',
-				format: ''
+				path: this.settings.internal,
+				format
 			},
 			external: {
-				path: '',
-				format: ''
+				path: this.settings.external,
+				format
 			}
 		};
 	}

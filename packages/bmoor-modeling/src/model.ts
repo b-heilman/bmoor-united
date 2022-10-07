@@ -243,4 +243,8 @@ export class Model<External, Delta, Internal>
 			return rtn;
 		});
 	}
+
+	toTypescript() {
+		return this.settings.fields.toTypescript();
+	}
 }
