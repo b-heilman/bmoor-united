@@ -4,8 +4,7 @@ import {Mapping} from '@bmoor/path';
 import {
 	InternalDatum,
 	ExternalDatum,
-	SearchDatum,
-	ModelKey
+	SearchDatum
 } from './datum.interface';
 import {
 	ModelSettings,
@@ -55,16 +54,18 @@ function buildActions<External, Delta>(
 	}
 }
 
-export class Model<External, Delta, Internal>
-	implements ModelInterface<External, Delta, Internal>
+export class Model<External, Reference, Delta, Search, Internal>
+	implements ModelInterface<External, Reference, Delta, Search, Internal>
 {
 	fields: Map<string, ModelFieldInterface>;
-	settings: ModelSettings<External, Delta, Internal>;
+	settings: ModelSettings<External, Reference, Delta, Internal>;
 	actions: ModelActions<External, Delta>;
 	deflate: Mapping;
 	inflate: Mapping;
 
-	constructor(settings: ModelSettings<External, Delta, Internal>) {
+	constructor(
+		settings: ModelSettings<External, Reference, Delta, Internal>
+	) {
 		this.settings = settings;
 		this.fields = new Map<string, ModelFieldInterface>();
 		this.actions = {};
@@ -128,7 +129,7 @@ export class Model<External, Delta, Internal>
 	}
 
 	async read(
-		ids: ModelKey[],
+		ids: Reference[],
 		ctx: ContextSecurityInterface
 	): Promise<External[]> {
 		const rtn = await this.settings.controller.canRead(
@@ -179,7 +180,7 @@ export class Model<External, Delta, Internal>
 	}
 
 	async delete(
-		ids: ModelKey[],
+		ids: Reference[],
 		ctx: ContextSecurityInterface
 	): Promise<ExternalDatum[]> {
 		// TODO: can I simplify this?

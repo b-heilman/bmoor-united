@@ -6,7 +6,12 @@ import {ContextSecurityInterface} from '@bmoor/context';
 import {Model} from './model';
 import {ModelControllerInterface} from './model/controller.interface';
 import {ModelAdapterInterface} from './model/adapter.interface';
-import {InternalDatum, ExternalDatum, DeltaDatum} from './datum.interface';
+import {
+	InternalDatum,
+	ExternalDatum,
+	DeltaDatum,
+	ModelKey
+} from './datum.interface';
 import {factory} from './model/field/set';
 import {ModelAccessorInterface} from './model/accessor.interface';
 import {ModelValidatorInterface} from './model/validator.interface';
@@ -14,7 +19,8 @@ import {ModelValidatorInterface} from './model/validator.interface';
 describe('@bmoor-modeling', function () {
 	let controller: ModelControllerInterface<ExternalDatum, DeltaDatum> =
 		null;
-	let adapter: ModelAdapterInterface<DeltaDatum, InternalDatum> = null;
+	let adapter: ModelAdapterInterface<ModelKey, DeltaDatum, InternalDatum> =
+		null;
 	let accessor: ModelAccessorInterface<
 		ExternalDatum,
 		DeltaDatum,
@@ -364,7 +370,7 @@ describe('@bmoor-modeling', function () {
 
 				let failed = false;
 				try {
-					const res = await model.create(
+					await model.create(
 						[
 							{
 								f1: 'val-1',
@@ -560,7 +566,7 @@ describe('@bmoor-modeling', function () {
 
 				let failed = false;
 				try {
-					const res = await model.update(
+					await model.update(
 						[
 							{
 								f1: 'val-1',

@@ -5,11 +5,10 @@ import {ModelValidatorInterface} from './model/validator.interface';
 import {ModelAdapterInterface} from './model/adapter.interface';
 import {ModelFieldInterface} from './model/field.interface';
 import {ModelAccessorInterface} from './model/accessor.interface';
-import {SearchDatum, ModelKey} from './datum.interface';
 import {ModelFieldSet} from './model/field/set';
 
-export interface ModelSettings<External, Delta, Internal> {
-	adapter: ModelAdapterInterface<Delta, Internal>;
+export interface ModelSettings<External, Reference, Delta, Internal> {
+	adapter: ModelAdapterInterface<Reference, Delta, Internal>;
 	accessor: ModelAccessorInterface<External, Delta, Internal>;
 	controller: ModelControllerInterface<External, Delta>;
 	validator?: ModelValidatorInterface<External, Delta>;
@@ -25,9 +24,15 @@ export type ModelActions<External, Delta> = {
 	deflate?(datum: External, ctx?: ContextSecurityInterface): void;
 };
 
-export interface ModelInterface<External, Delta, Internal> {
+export interface ModelInterface<
+	External,
+	Reference,
+	Delta,
+	Search,
+	Internal
+> {
 	fields: Map<string, ModelFieldInterface>;
-	settings: ModelSettings<External, Delta, Internal>;
+	settings: ModelSettings<External, Reference, Delta, Internal>;
 	actions: ModelActions<External, Delta>;
 
 	create(
@@ -35,7 +40,7 @@ export interface ModelInterface<External, Delta, Internal> {
 		ctx: ContextSecurityInterface
 	): Promise<External[]>;
 	read(
-		ids: ModelKey[],
+		ids: Reference[],
 		ctx: ContextSecurityInterface
 	): Promise<External[]>;
 	update(
@@ -43,11 +48,11 @@ export interface ModelInterface<External, Delta, Internal> {
 		ctx: ContextSecurityInterface
 	): Promise<External[]>;
 	delete(
-		ids: ModelKey[],
+		ids: Reference[],
 		ctx: ContextSecurityInterface
 	): Promise<External[]>;
 	search(
-		search: SearchDatum,
+		search: Search,
 		ctx: ContextSecurityInterface
 	): Promise<External[]>;
 
