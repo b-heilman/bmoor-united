@@ -14,6 +14,10 @@ import {
 } from './field.interface';
 
 export const usages = new Config({
+	key: new ConfigObject<ModelFieldUsage>({
+		isKey: true,
+		canUpdate: false
+	}),
 	json: new ConfigObject<ModelFieldUsage>({
 		onInflate: function (datum, setter, getter) {
 			const value = getter(datum);
@@ -154,15 +158,38 @@ export class ModelField implements ModelFieldInterface {
 		const format = this.settings.jsonType;
 
 		// TODO: how many types do I really need?
-		return {
-			internal: {
-				path: this.settings.internal,
-				format
-			},
+		const rtn = <ModelFieldTypescript>{
 			external: {
 				path: this.settings.external,
 				format
+			},
+			internal: {
+				path: this.settings.internal,
+				format
 			}
 		};
+
+		if (this.settings.isKey) {
+			rtn.reference = {
+				path: this.settings.internal,
+				format
+			};
+		}
+
+		if (!('canUpdate' in this.settings) || this.settings.canUpdate) {
+			rtn.delta = {
+				path: this.settings.external,
+				format
+			};
+		}
+
+		if (this.settings.canSearch) {
+			rtn.search = {
+				path: this.settings.external,
+				format
+			};
+		}
+
+		return rtn;
 	}
 }

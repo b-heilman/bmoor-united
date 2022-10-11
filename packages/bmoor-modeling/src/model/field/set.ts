@@ -1,8 +1,43 @@
-import {implode} from '@bmoor/object';
+import {explode} from '@bmoor/object';
+import {info} from 'console';
 import {ModelField} from '../field';
 
-import {ModelFieldInterface, ModelFieldSettings} from '../field.interface';
+import {
+	ModelFieldTypescriptInfo,
+	ModelFieldInterface,
+	ModelFieldSettings
+} from '../field.interface';
 import {ModelFieldSetTypescript} from './set.interface';
+
+function dumpObject(obj, depth = 0) {
+	const rtn = [];
+
+	for (const key in obj) {
+		const value = obj[key];
+
+		if (typeof value === 'object') {
+			rtn.push(key + ': ' + dumpObject(value, depth + 1));
+		} else {
+			rtn.push(key + ': ' + value + ';');
+		}
+	}
+
+	const tabs = '\t'.repeat(depth);
+
+	return '{\n\t' + tabs + rtn.join('\n\t' + tabs) + '\n' + tabs + '}';
+}
+
+function typescriptify(infos: ModelFieldTypescriptInfo[]): string {
+	const style = explode(
+		infos.reduce((agg, info) => {
+			agg[info.path] = info.format;
+
+			return agg;
+		}, {})
+	);
+
+	return dumpObject(style);
+}
 
 export class ModelFieldSet extends Array {
 	constructor(...fields: ModelFieldInterface[]) {
@@ -14,22 +49,42 @@ export class ModelFieldSet extends Array {
 	toTypescript(): ModelFieldSetTypescript {
 		const res = this.reduce(
 			(agg, field) => {
-				const {internal, external} = field.toTypescript();
+				const {internal, reference, delta, search, external} =
+					field.toTypescript();
 
-				agg.internal[internal.path] = internal.format;
-				agg.external[external.path] = external.format;
+				agg.external.push(external);
+
+				if (reference) {
+					agg.reference.push(reference);
+				}
+
+				if (delta) {
+					agg.delta.push(delta);
+				}
+
+				if (search) {
+					agg.search.push(search);
+				}
+
+				agg.internal.push(internal);
 
 				return agg;
 			},
 			{
-				internal: {},
-				external: {}
+				external: [],
+				reference: [],
+				delta: [],
+				search: [],
+				internal: []
 			}
 		);
 
 		return {
-			internal: JSON.stringify(implode(res.internal), null, '\t'),
-			external: JSON.stringify(implode(res.external), null, '\t')
+			external: typescriptify(res.external),
+			reference: typescriptify(res.reference),
+			delta: typescriptify(res.delta),
+			search: typescriptify(res.search),
+			internal: typescriptify(res.internal)
 		};
 	}
 }

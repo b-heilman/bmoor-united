@@ -1,7 +1,8 @@
 import {ContextSecurityInterface} from '@bmoor/context';
 
 import {ModelFieldInterface} from './field.interface';
-import {ExternalKeyReader, DeltaKeyReader} from './properties.interface';
+import {ExternalKeyReader} from './accessor.interface';
+import {ModelUpdate} from '../datum.interface';
 
 export interface ModelControllerSettings {
 	permission?: {
@@ -13,23 +14,27 @@ export interface ModelControllerSettings {
 	fields?: ModelFieldInterface[];
 }
 
-export interface ModelControllerInterface<External, Delta> {
+export interface ModelControllerInterface<
+	ExternalRead,
+	ExternalReference,
+	ExternalCreate,
+	ExternalUpdate
+> {
 	// securing data that has been requested
 	canRead(
-		datums: External[],
-		fn: ExternalKeyReader<External>,
+		datums: ExternalRead[],
+		fn: ExternalKeyReader<ExternalRead, ExternalReference>,
 		ctx: ContextSecurityInterface
-	): Promise<External[]>;
+	): Promise<ExternalRead[]>;
 
 	// securing data that has been submitted
 	canCreate(
-		datums: External[],
+		datums: ExternalCreate[],
 		ctx: ContextSecurityInterface
-	): Promise<External[]>;
+	): Promise<ExternalCreate[]>;
 
 	canUpdate(
-		datums: Delta[],
-		fn: DeltaKeyReader<Delta>,
+		content: ModelUpdate<ExternalReference, ExternalUpdate>[],
 		ctx: ContextSecurityInterface
-	): Promise<Delta[]>;
+	): Promise<ModelUpdate<ExternalReference, ExternalUpdate>[]>;
 }

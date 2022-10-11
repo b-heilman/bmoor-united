@@ -1,6 +1,5 @@
 import {ModelFieldInterface} from './field.interface';
-
-import {DeltaKeyReader} from './accessor.interface';
+import {ModelUpdate} from '../datum.interface';
 
 export interface ModelValidatorSettings {
 	fields?: ModelFieldInterface[];
@@ -8,10 +7,13 @@ export interface ModelValidatorSettings {
 
 export class ModelValidatorInvalidation extends Error {}
 
-export interface ModelValidatorInterface<External, Delta> {
-	validateCreate?(datums: External[]): Promise<Error>;
+export interface ModelValidatorInterface<
+	ExternalReference,
+	ExternalCreate,
+	ExternalUpdate
+> {
+	validateCreate?(datums: ExternalCreate[]): Promise<Error>;
 	validateUpdate?(
-		datums: Delta[],
-		fn: DeltaKeyReader<Delta>
+		content: ModelUpdate<ExternalReference, ExternalUpdate>[]
 	): Promise<Error>;
 }

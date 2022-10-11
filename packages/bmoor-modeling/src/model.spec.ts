@@ -4,30 +4,68 @@ import {stub} from 'sinon';
 import {ContextSecurityInterface} from '@bmoor/context';
 
 import {Model} from './model';
+import {factory} from './model/field/set';
 import {ModelControllerInterface} from './model/controller.interface';
 import {ModelAdapterInterface} from './model/adapter.interface';
-import {
-	InternalDatum,
-	ExternalDatum,
-	DeltaDatum,
-	ModelKey
-} from './datum.interface';
-import {factory} from './model/field/set';
 import {ModelAccessorInterface} from './model/accessor.interface';
 import {ModelValidatorInterface} from './model/validator.interface';
 
+// eslint-disable-next-line  @typescript-eslint/no-explicit-any
+export type ExternalRead = any;
+
+// eslint-disable-next-line  @typescript-eslint/no-explicit-any
+export type ExternalReference = any;
+
+// eslint-disable-next-line  @typescript-eslint/no-explicit-any
+export type ExternalCreate = any;
+
+// eslint-disable-next-line  @typescript-eslint/no-explicit-any
+export type ExternalUpdate = any;
+
+// eslint-disable-next-line  @typescript-eslint/no-explicit-any
+export type ExternalSearch = any;
+
+// eslint-disable-next-line  @typescript-eslint/no-explicit-any
+export type InternalRead = any;
+
+// eslint-disable-next-line  @typescript-eslint/no-explicit-any
+export type InternalReference = any;
+
+// eslint-disable-next-line  @typescript-eslint/no-explicit-any
+export type InternalCreate = any;
+
+// eslint-disable-next-line  @typescript-eslint/no-explicit-any
+export type InternalUpdate = any;
+
+// eslint-disable-next-line  @typescript-eslint/no-explicit-any
+export type InternalSearch = any;
+
 describe('@bmoor-modeling', function () {
-	let controller: ModelControllerInterface<ExternalDatum, DeltaDatum> =
-		null;
-	let adapter: ModelAdapterInterface<ModelKey, DeltaDatum, InternalDatum> =
-		null;
+	let controller: ModelControllerInterface<
+		ExternalRead,
+		ExternalReference,
+		ExternalCreate,
+		ExternalUpdate
+	> = null;
+	let adapter: ModelAdapterInterface<
+		InternalReference,
+		InternalRead,
+		InternalCreate,
+		InternalUpdate,
+		InternalSearch
+	> = null;
 	let accessor: ModelAccessorInterface<
-		ExternalDatum,
-		DeltaDatum,
-		InternalDatum
+		ExternalRead,
+		ExternalReference,
+		InternalRead,
+		InternalReference
+	> = null;
+	let validator: ModelValidatorInterface<
+		ExternalReference,
+		ExternalCreate,
+		ExternalUpdate
 	> = null;
 	let ctx: ContextSecurityInterface = null;
-	let validator: ModelValidatorInterface<ExternalDatum, DeltaDatum> = null;
 
 	beforeEach(function () {
 		ctx = {
@@ -77,9 +115,6 @@ describe('@bmoor-modeling', function () {
 			},
 			getExternalKey() {
 				return 'ok';
-			},
-			getDeltaKey() {
-				return 'ok';
 			}
 		};
 	});
@@ -88,6 +123,7 @@ describe('@bmoor-modeling', function () {
 		describe('create', function () {
 			it('should work', function () {
 				const model = new Model({
+					name: 'junk',
 					controller,
 					adapter,
 					accessor,
@@ -123,6 +159,7 @@ describe('@bmoor-modeling', function () {
 		describe('read', function () {
 			it('should work', function () {
 				const model = new Model({
+					name: 'junk',
 					controller,
 					adapter,
 					accessor,
@@ -158,6 +195,7 @@ describe('@bmoor-modeling', function () {
 		describe('update', function () {
 			it('should work', function () {
 				const model = new Model({
+					name: 'junk',
 					controller,
 					adapter,
 					accessor,
@@ -190,44 +228,10 @@ describe('@bmoor-modeling', function () {
 			});
 		});
 
-		describe('delete', function () {
-			it('should work', function () {
-				const model = new Model({
-					controller,
-					adapter,
-					accessor,
-					fields: factory(
-						{
-							external: 'f1',
-							onDelete(datum) {
-								datum.v = 1;
-							}
-						},
-						{
-							external: 'f2',
-							onDelete(datum, setter, getter) {
-								setter(datum, getter(datum) + '-2');
-							}
-						}
-					)
-				});
-
-				const res = model.actions.delete({
-					f1: 'v-1',
-					f2: 'v-2'
-				});
-
-				expect(res).to.deep.equal({
-					f1: 'v-1',
-					f2: 'v-2-2',
-					v: 1
-				});
-			});
-		});
-
 		describe('inflate', function () {
 			it('should work', function () {
 				const model = new Model({
+					name: 'junk',
 					controller,
 					adapter,
 					accessor,
@@ -263,6 +267,7 @@ describe('@bmoor-modeling', function () {
 		describe('deflate', function () {
 			it('should work', function () {
 				const model = new Model({
+					name: 'junk',
 					controller,
 					adapter,
 					accessor,
@@ -300,6 +305,7 @@ describe('@bmoor-modeling', function () {
 		describe('create', function () {
 			it('should work without a validator', async function () {
 				const model = new Model({
+					name: 'junk',
 					controller,
 					adapter,
 					accessor,
@@ -349,6 +355,7 @@ describe('@bmoor-modeling', function () {
 
 			it('should work with a validator', async function () {
 				const model = new Model({
+					name: 'junk',
 					controller,
 					adapter,
 					accessor,
@@ -396,6 +403,7 @@ describe('@bmoor-modeling', function () {
 
 			it('should work with actions', async function () {
 				const model = new Model({
+					name: 'junk',
 					controller,
 					adapter,
 					accessor,
@@ -454,6 +462,7 @@ describe('@bmoor-modeling', function () {
 		describe('read', function () {
 			it('should work without a validator', async function () {
 				const model = new Model({
+					name: 'junk',
 					controller,
 					adapter,
 					accessor,
@@ -496,6 +505,7 @@ describe('@bmoor-modeling', function () {
 		describe('update', function () {
 			it('should work without a validator', async function () {
 				const model = new Model({
+					name: 'junk',
 					controller,
 					adapter,
 					accessor,
@@ -545,6 +555,7 @@ describe('@bmoor-modeling', function () {
 
 			it('should work with a validator', async function () {
 				const model = new Model({
+					name: 'junk',
 					controller,
 					adapter,
 					accessor,
@@ -592,6 +603,7 @@ describe('@bmoor-modeling', function () {
 
 			it('should work with actions', async function () {
 				const model = new Model({
+					name: 'junk',
 					controller,
 					adapter,
 					accessor,
@@ -650,6 +662,7 @@ describe('@bmoor-modeling', function () {
 		describe('delete', function () {
 			it('should work without a validator', async function () {
 				const model = new Model({
+					name: 'junk',
 					controller,
 					adapter,
 					accessor,
@@ -700,6 +713,7 @@ describe('@bmoor-modeling', function () {
 	describe('model', function () {
 		it('should properly translate from internal to external and back', function () {
 			const model = new Model({
+				name: 'junk',
 				controller,
 				adapter,
 				accessor,
@@ -730,9 +744,9 @@ describe('@bmoor-modeling', function () {
 				}
 			];
 
-			const external = model.convertToExternal(original);
+			const external = model.convertToExternal(original, ctx);
 
-			const internal = model.convertToInternal(external);
+			const internal = model.convertToInternal(external, ctx);
 
 			expect(external).to.deep.equal([
 				{

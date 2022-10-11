@@ -18,6 +18,9 @@ export type ModelFieldSetter = (
 export type ModelFieldGetter = (datum: ExternalDatum) => ModelFieldValue;
 
 export type ModelFieldUsage = {
+	isKey?: boolean;
+	canUpdate?: boolean;
+	canSearch?: boolean;
 	onInflate?(
 		datum: ExternalDatum,
 		setter: ModelFieldSetter,
@@ -73,11 +76,10 @@ export type ModelFieldContext = {
 export interface ModelFieldSettings extends ModelFieldUsage {
 	external: string; // path to be positioned externall
 	internal?: string; // path to be read from the source
-	isKey?: boolean;
-	isFlat?: boolean; // is the storage flat or structured (sql vs doc)
 	storage?: string; // path the written to the source
-	usage?: string; // how is this field used?  Allows pre defined
 	jsonType?: string;
+	isFlat?: boolean; // is the storage flat or structured (sql vs doc)
+	usage?: string; // how is this field used?  Allows pre defined
 	display?: ModelFieldDisplay; // display settings, if needed
 	config?: ModelFieldConfig;
 }
@@ -109,15 +111,17 @@ export type ModelFieldActions = {
 	): ExternalDatum;
 };
 
+export type ModelFieldTypescriptInfo = {
+	path: string;
+	format: string;
+};
+
 export type ModelFieldTypescript = {
-	internal: {
-		path: string;
-		format: string;
-	};
-	external: {
-		path: string;
-		format: string;
-	};
+	external: ModelFieldTypescriptInfo;
+	reference?: ModelFieldTypescriptInfo;
+	delta?: ModelFieldTypescriptInfo;
+	search?: ModelFieldTypescriptInfo;
+	internal: ModelFieldTypescriptInfo;
 };
 
 export interface ModelFieldInterface {

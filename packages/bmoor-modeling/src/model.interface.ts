@@ -6,57 +6,136 @@ import {ModelAdapterInterface} from './model/adapter.interface';
 import {ModelFieldInterface} from './model/field.interface';
 import {ModelAccessorInterface} from './model/accessor.interface';
 import {ModelFieldSet} from './model/field/set';
+import {ModelUpdate} from './datum.interface';
 
-export interface ModelSettings<External, Reference, Delta, Internal> {
-	adapter: ModelAdapterInterface<Reference, Delta, Internal>;
-	accessor: ModelAccessorInterface<External, Delta, Internal>;
-	controller: ModelControllerInterface<External, Delta>;
-	validator?: ModelValidatorInterface<External, Delta>;
+export interface ModelSettings<
+	ExternalRead,
+	ExternalReference,
+	ExternalCreate,
+	ExternalUpdate,
+	InternalRead,
+	InternalReference,
+	InternalCreate,
+	InternalUpdate,
+	InternalSearch
+> {
+	name: string;
+	adapter: ModelAdapterInterface<
+		InternalRead,
+		InternalReference,
+		InternalCreate,
+		InternalUpdate,
+		InternalSearch
+	>;
+	accessor: ModelAccessorInterface<
+		ExternalRead,
+		ExternalReference,
+		InternalRead,
+		InternalReference
+	>;
+	controller: ModelControllerInterface<
+		ExternalRead,
+		ExternalReference,
+		ExternalCreate,
+		ExternalUpdate
+	>;
+	validator?: ModelValidatorInterface<
+		ExternalReference,
+		ExternalCreate,
+		ExternalUpdate
+	>;
 	fields: ModelFieldSet;
 }
 
-export type ModelActions<External, Delta> = {
-	create?(datum: External, ctx?: ContextSecurityInterface): void;
-	read?(datum: External, ctx?: ContextSecurityInterface): void;
-	update?(datum: Delta, ctx?: ContextSecurityInterface): void;
-	delete?(datum: External, ctx?: ContextSecurityInterface): void;
-	inflate?(datum: External, ctx?: ContextSecurityInterface): void;
-	deflate?(datum: External, ctx?: ContextSecurityInterface): void;
+export type ModelActions<
+	ExternalRead,
+	ExternalReference,
+	ExternalCreate,
+	ExternalUpdate,
+	ExternalSearch
+> = {
+	create?(
+		datum: ExternalCreate, 
+		ctx?: ContextSecurityInterface
+	): void;
+	read?(
+		datum: ExternalRead, 
+		ctx?: ContextSecurityInterface
+	): void;
+	update?(
+		change: ModelUpdate<ExternalReference, ExternalUpdate>,
+		ctx?: ContextSecurityInterface
+	): void;
+	inflate?(
+		datum: ExternalRead, 
+		ctx?: ContextSecurityInterface
+	): void;
+	deflate?(
+		datum: ExternalRead | ExternalReference | ExternalCreate | ExternalUpdate | ExternalSearch, 
+		ctx?: ContextSecurityInterface
+	): void;
 };
 
 export interface ModelInterface<
-	External,
-	Reference,
-	Delta,
-	Search,
-	Internal
+	ExternalRead,
+	ExternalReference,
+	ExternalCreate,
+	ExternalUpdate,
+	ExternalSearch,
+	InternalRead,
+	InternalReference,
+	InternalCreate,
+	InternalUpdate,
+	InternalSearch
 > {
 	fields: Map<string, ModelFieldInterface>;
-	settings: ModelSettings<External, Reference, Delta, Internal>;
-	actions: ModelActions<External, Delta>;
+	settings: ModelSettings<
+		ExternalRead,
+		ExternalReference,
+		ExternalCreate,
+		ExternalUpdate,
+		InternalRead,
+		InternalReference,
+		InternalCreate,
+		InternalUpdate,
+		InternalSearch
+	>;
+	actions: ModelActions<
+		ExternalRead,
+		ExternalReference,
+		ExternalCreate,
+		ExternalUpdate,
+		ExternalSearch
+	>;
 
 	create(
-		content: External[],
+		content: ExternalCreate[],
 		ctx: ContextSecurityInterface
-	): Promise<External[]>;
+	): Promise<ExternalRead[]>;
 	read(
-		ids: Reference[],
+		ids: ExternalReference[],
 		ctx: ContextSecurityInterface
-	): Promise<External[]>;
+	): Promise<ExternalRead[]>;
 	update(
-		content: Delta[],
+		content: ModelUpdate<ExternalReference, ExternalUpdate>[],
 		ctx: ContextSecurityInterface
-	): Promise<External[]>;
+	): Promise<ExternalRead[]>;
 	delete(
-		ids: Reference[],
+		ids: ExternalReference[],
 		ctx: ContextSecurityInterface
-	): Promise<External[]>;
+	): Promise<ExternalRead[]>;
 	search(
-		search: Search,
+		search: ExternalSearch,
 		ctx: ContextSecurityInterface
-	): Promise<External[]>;
+	): Promise<ExternalRead[]>;
 
-	getByPath(external: string);
-	convertToInternal(content: External[]): Internal[];
-	convertToExternal(content: Internal[]): External[];
+	getByPath(path: string): ModelFieldInterface;
+	convertToInternal(
+		content: ExternalReference | ExternalCreate | ExternalCreate | ExternalUpdate | ExternalSearch,
+		ctx: ContextSecurityInterface
+	): InternalReference | InternalCreate | InternalUpdate | InternalSearch;
+	convertToExternal(
+		content: InternalRead,
+		ctx: ContextSecurityInterface
+	): ExternalRead;
 }

@@ -15,6 +15,15 @@ describe('@bmoor-modeling.ModelField', function () {
 		clock.restore();
 	});
 
+	describe('toTypescript', function () {
+		it('should simply work', function () {
+			field = new ModelField({
+				external: 'path',
+				usage: 'json'
+			});
+		});
+	});
+
 	describe('usages', function () {
 		it('should work as json', function () {
 			field = new ModelField({

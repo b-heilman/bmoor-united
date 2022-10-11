@@ -1,19 +1,23 @@
 import {ModelFieldSet} from './field/set';
 
-export type InternalKeyReader<Internal> = (
-	datum: Internal
+export type InternalKeyReader<InternalRead, InternalReference> = (
+	datum: InternalRead | InternalReference
 ) => string | number;
-export type DeltaKeyReader<Delta> = (datum: Delta) => string | number;
-export type ExternalKeyReader<External> = (
-	datum: External
+
+export type ExternalKeyReader<ExternalRead, ExternalReference> = (
+	datum: ExternalRead | ExternalReference
 ) => string | number;
 
 export interface ModelAccessorSettings {
 	fields: ModelFieldSet;
 }
 
-export interface ModelAccessorInterface<External, Delta, Internal> {
-	getInternalKey: InternalKeyReader<Internal>;
-	getExternalKey: ExternalKeyReader<External>;
-	getDeltaKey: DeltaKeyReader<Delta>;
+export interface ModelAccessorInterface<
+	ExternalRead,
+	ExternalReference,
+	InternalRead,
+	InternalReference
+> {
+	getInternalKey: InternalKeyReader<InternalRead, InternalReference>;
+	getExternalKey: ExternalKeyReader<ExternalRead, ExternalReference>;
 }

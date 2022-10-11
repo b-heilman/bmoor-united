@@ -1,10 +1,21 @@
-import {SearchDatum} from '../datum.interface';
-import {DeltaKeyReader} from './accessor.interface';
+import {ModelUpdate} from '../datum.interface';
 
-export interface ModelAdapterInterface<Reference, Delta, Internal> {
-	create(content: Internal[]): Promise<Internal[]>;
-	read(ids: Reference[]): Promise<Internal[]>;
-	update(content: Delta[], fn: DeltaKeyReader<Delta>): Promise<Internal[]>;
-	delete?(ids: Reference[]): Promise<number>; // return the rows deleted
-	search?(search: SearchDatum): Promise<Internal[]>;
+export interface ModelAdapterInterface<
+	InternalRead,
+	InternalReference,
+	InternalCreate,
+	InternalUpdate,
+	InternalSearch
+> {
+	// TODO: make sure these are right? Seed and Delta are
+	//   generally external
+	create(content: InternalCreate[]): Promise<InternalRead[]>;
+	read(ids: InternalReference[]): Promise<InternalRead[]>;
+	update(
+		content: ModelUpdate<InternalReference, InternalUpdate>[]
+	): Promise<InternalRead[]>;
+	delete?(
+		ids: InternalReference[]
+	): Promise<number>; // return the rows deleted
+	search?(search: InternalSearch): Promise<InternalRead[]>;
 }

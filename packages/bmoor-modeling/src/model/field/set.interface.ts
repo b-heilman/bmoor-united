@@ -1,4 +1,7 @@
 export type ModelFieldSetTypescript = {
-	internal: string;
 	external: string;
+	reference: string;
+	delta: string;
+	search: string;
+	internal: string;
 };
