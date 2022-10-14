@@ -7,6 +7,8 @@ import {
 	ModelFieldSettings,
 	ModelFieldUsage,
 	ModelFieldTypescript,
+	TypescriptUsage,
+	ModelFieldTypescriptInfo,
 	ModelFieldSetter,
 	ModelFieldGetter,
 	ModelFieldActions,
@@ -158,36 +160,41 @@ export class ModelField implements ModelFieldInterface {
 		const format = this.settings.jsonType;
 
 		// TODO: how many types do I really need?
-		const rtn = <ModelFieldTypescript>{
-			external: {
-				path: this.settings.external,
-				format
+		const external = <ModelFieldTypescriptInfo>{
+			path: this.settings.external,
+			format
+		};
+
+		const internal = <ModelFieldTypescriptInfo>{
+			path: this.settings.internal,
+			format
+		};
+
+		const rtn = {
+			external: <TypescriptUsage>{
+				read: external,
+				// TODO: might not want everything in create?
+				create: external
 			},
-			internal: {
-				path: this.settings.internal,
-				format
+			internal: <TypescriptUsage>{
+				read: internal,
+				create: internal
 			}
 		};
 
 		if (this.settings.isKey) {
-			rtn.reference = {
-				path: this.settings.internal,
-				format
-			};
+			rtn.external.reference = external;
+			rtn.internal.reference = internal;
 		}
 
 		if (!('canUpdate' in this.settings) || this.settings.canUpdate) {
-			rtn.delta = {
-				path: this.settings.external,
-				format
-			};
+			rtn.external.update = external;
+			rtn.internal.update = internal;
 		}
 
 		if (this.settings.canSearch) {
-			rtn.search = {
-				path: this.settings.external,
-				format
-			};
+			rtn.external.search = external;
+			rtn.internal.search = internal;
 		}
 
 		return rtn;

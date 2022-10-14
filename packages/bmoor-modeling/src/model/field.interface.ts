@@ -1,12 +1,13 @@
 import {ContextSecurityInterface} from '@bmoor/context';
 
-import {ExternalDatum} from '../datum.interface';
-
 // TODO: does this really need to be here?
 export interface ModelFieldDisplay {
 	title: string;
 	description: string;
 }
+
+// eslint-disable-next-line  @typescript-eslint/no-explicit-any
+export type ExternalDatum = any;
 
 // eslint-disable-next-line  @typescript-eslint/no-explicit-any
 export type ModelFieldValue = any;
@@ -116,12 +117,17 @@ export type ModelFieldTypescriptInfo = {
 	format: string;
 };
 
-export type ModelFieldTypescript = {
-	external: ModelFieldTypescriptInfo;
+export type TypescriptUsage = {
+	read: ModelFieldTypescriptInfo;
 	reference?: ModelFieldTypescriptInfo;
-	delta?: ModelFieldTypescriptInfo;
+	create?: ModelFieldTypescriptInfo;
+	update?: ModelFieldTypescriptInfo;
 	search?: ModelFieldTypescriptInfo;
-	internal: ModelFieldTypescriptInfo;
+};
+
+export type ModelFieldTypescript = {
+	external: TypescriptUsage;
+	internal: TypescriptUsage;
 };
 
 export interface ModelFieldInterface {

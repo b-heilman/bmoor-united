@@ -37,34 +37,66 @@ describe('@bmoor-modeling.ModelFieldSet', function () {
 			const res = fieldSet.toTypescript();
 
 			for (const key in res) {
-				res[key] = res[key].replace(/\s/g, '');
+				const base = res[key];
+
+				for (const k2 in base) {
+					base[k2] = base[k2].replace(/\s/g, '');
+				}
 			}
 
 			expect(res).to.deep.equal({
-				external: `{
-					root: string;
-					path: {
-						eins: string;
-						zwei: number;
-					}
-				}`.replace(/\s/g, ''),
-				reference: `{
-					root: string;
-				}`.replace(/\s/g, ''),
-				delta: `{
-					path: {
-						eins: string;
-						zwei: number;
-					}
-				}`.replace(/\s/g, ''),
-				search: '{}',
-				internal: `{
-					root: string;
-					path: {
-						eins: string;
-					}
-					p2: number;
-				}`.replace(/\s/g, '')
+				external: {
+					read: `{
+						root: string,
+						path: {
+							eins: string,
+							zwei: number
+						}
+					}`.replace(/\s/g, ''),
+					create: `{
+						root: string,
+						path: {
+							eins: string,
+							zwei: number
+						}
+					}`.replace(/\s/g, ''),
+					reference: `{
+						root: string
+					}`.replace(/\s/g, ''),
+					update: `{
+						path: {
+							eins: string,
+							zwei: number
+						}
+					}`.replace(/\s/g, ''),
+					search: '{}'
+				},
+				internal: {
+					read: `{
+						root: string,
+						path: {
+							eins: string
+						},
+						p2: number
+					}`.replace(/\s/g, ''),
+					create: `{
+						root: string,
+						path: {
+							eins: string
+						},
+						p2: number
+					}`.replace(/\s/g, ''),
+					reference: `{
+						root: string
+					}`.replace(/\s/g, ''),
+					update: `{
+						path: {
+							eins: string
+						},
+						p2: number
+					}`.replace(/\s/g, ''),
+					search: '{}'
+				}
 			});
 		});
 	});

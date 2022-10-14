@@ -1,7 +1,12 @@
-export type ModelFieldSetTypescript = {
-	external: string;
+export type TypescriptUsage = {
+	read: string;
 	reference: string;
-	delta: string;
+	create: string;
+	update: string;
 	search: string;
-	internal: string;
+};
+
+export type ModelFieldSetTypescript = {
+	external: TypescriptUsage;
+	internal: TypescriptUsage;
 };

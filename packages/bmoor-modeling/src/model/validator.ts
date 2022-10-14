@@ -26,12 +26,14 @@ export class ModelValidator<
 	validateCreate(
 		datums: ExternalCreate[]
 	): Promise<ModelValidatorInvalidation> {
+		console.log(datums);
 		return null;
 	}
 
 	validateUpdate(
 		content: ModelUpdate<ExternalReference, ExternalUpdate>[]
 	): Promise<ModelValidatorInvalidation> {
+		console.log(content);
 		return null;
 	}
 }
