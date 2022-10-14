@@ -70,6 +70,23 @@ describe('@bmoor/path - mapping', function () {
 			});
 		});
 
+		it('should not write undefineds', function () {
+			expect(
+				mappings.write(
+					{},
+					{
+						p0: 1,
+						p3: 4
+					}
+				)
+			).to.deep.equal({
+				bar: 1,
+				aField: {
+					dat: 4
+				}
+			});
+		});
+
 		it('should map correctly', function () {
 			expect(
 				mappings.map(

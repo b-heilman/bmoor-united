@@ -74,6 +74,12 @@ describe('@bmoor/path', function () {
 				expect(fn({foo: {bar: {value: 'ok'}}})).to.equal('ok');
 			});
 
+			it('should handle an undefined read', function () {
+				const fn = parser.compile('foo["bar"].value');
+
+				expect(fn({})).to.equal(undefined);
+			});
+
 			describe('simple array', function () {
 				it('should work with an array', function () {
 					const fn = parser.compile('foo[]');
@@ -150,6 +156,15 @@ describe('@bmoor/path', function () {
 				fn(tgt, 'ok');
 
 				expect(tgt).to.deep.equal({foo: {bar: {value: 'ok'}}});
+			});
+
+			it('should not copy undefined', function () {
+				const fn = parser.compile('foo["bar"].value', ParserModes.write);
+				const tgt = {};
+
+				fn(tgt, undefined);
+
+				expect(tgt).to.deep.equal({});
 			});
 
 			describe('simple array', function () {

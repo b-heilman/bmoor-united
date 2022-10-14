@@ -171,7 +171,9 @@ function runWriterMap(dex: OperandIndex, tgt, obj, filter = null) {
 				runWriterMap(dexCommand, nextTgt, obj);
 			} else {
 				// if we are on a leaf, access the data and write it back
-				setter.eval(tgt, obj[dexCommand.ref]);
+				if (obj[dexCommand.ref] !== undefined) {
+					setter.eval(tgt, obj[dexCommand.ref]);
+				}
 			}
 		}
 

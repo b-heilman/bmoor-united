@@ -469,6 +469,10 @@ describe('@bmoor-modeling', function () {
 					validator,
 					fields: factory(
 						{
+							external: 'key',
+							internal: 'id'
+						},
+						{
 							external: 'f1'
 						},
 						{
@@ -481,20 +485,26 @@ describe('@bmoor-modeling', function () {
 				const myStub = stub(adapter, 'read').resolves([
 					{
 						f1: 'foo',
-						f3: 'bar'
+						f3: 'bar',
+						id: 123
 					}
 				]);
 
-				const res = await model.read([12], ctx);
+				const res = await model.read([{key: 12}], ctx);
 
 				expect(res).to.deep.equal([
 					{
 						f1: 'foo',
-						f2: 'bar'
+						f2: 'bar',
+						key: 123
 					}
 				]);
 
-				expect(myStub.getCall(0).args[0]).to.deep.equal([12]);
+				expect(myStub.getCall(0).args[0]).to.deep.equal([
+					{
+						id: 12
+					}
+				]);
 			});
 
 			xit('should work with actions', function () {
@@ -511,6 +521,10 @@ describe('@bmoor-modeling', function () {
 					accessor,
 					validator,
 					fields: factory(
+						{
+							external: 'key',
+							internal: 'id'
+						},
 						{
 							external: 'f1'
 						},
@@ -531,8 +545,13 @@ describe('@bmoor-modeling', function () {
 				const res = await model.update(
 					[
 						{
-							f1: 'val-1',
-							f2: 'val-2'
+							ref: {
+								key: 123
+							},
+							delta: {
+								f1: 'val-1',
+								f2: 'val-2'
+							}
 						}
 					],
 					ctx
@@ -547,8 +566,13 @@ describe('@bmoor-modeling', function () {
 
 				expect(myStub.getCall(0).args[0]).to.deep.equal([
 					{
-						f1: 'val-1',
-						f3: 'val-2'
+						ref: {
+							id: 123
+						},
+						delta: {
+							f1: 'val-1',
+							f3: 'val-2'
+						}
 					}
 				]);
 			});
@@ -561,6 +585,10 @@ describe('@bmoor-modeling', function () {
 					accessor,
 					validator,
 					fields: factory(
+						{
+							external: 'key',
+							internal: 'id'
+						},
 						{
 							external: 'f1'
 						},
@@ -580,8 +608,13 @@ describe('@bmoor-modeling', function () {
 					await model.update(
 						[
 							{
-								f1: 'val-1',
-								f2: 'val-2'
+								ref: {
+									key: 123
+								},
+								delta: {
+									f1: 'val-1',
+									f2: 'val-2'
+								}
 							}
 						],
 						ctx
@@ -595,8 +628,13 @@ describe('@bmoor-modeling', function () {
 
 				expect(myStub.getCall(0).args[0]).to.deep.equal([
 					{
-						f1: 'val-1',
-						f2: 'val-2'
+						ref: {
+							key: 123
+						},
+						delta: {
+							f1: 'val-1',
+							f2: 'val-2'
+						}
 					}
 				]);
 			});
@@ -609,6 +647,9 @@ describe('@bmoor-modeling', function () {
 					accessor,
 					validator,
 					fields: factory(
+						{
+							external: 'key'
+						},
 						{
 							external: 'f1',
 							onUpdate: (datum, setter) => {
@@ -633,8 +674,13 @@ describe('@bmoor-modeling', function () {
 				const res = await model.update(
 					[
 						{
-							f2: {
-								foo: 'bar'
+							ref: {
+								key: 123
+							},
+							delta: {
+								f2: {
+									foo: 'bar'
+								}
 							}
 						}
 					],
@@ -652,8 +698,13 @@ describe('@bmoor-modeling', function () {
 
 				expect(myStub.getCall(0).args[0]).to.deep.equal([
 					{
-						f1: 'value',
-						f3: '{"foo":"bar"}'
+						ref: {
+							key: 123
+						},
+						delta: {
+							f1: 'value',
+							f3: '{"foo":"bar"}'
+						}
 					}
 				]);
 			});
@@ -668,6 +719,10 @@ describe('@bmoor-modeling', function () {
 					accessor,
 					validator,
 					fields: factory(
+						{
+							external: 'key',
+							internal: 'id'
+						},
 						{
 							external: 'f1'
 						},
@@ -687,7 +742,14 @@ describe('@bmoor-modeling', function () {
 					}
 				]);
 
-				const res = await model.delete([123], ctx);
+				const res = await model.delete(
+					[
+						{
+							key: 123
+						}
+					],
+					ctx
+				);
 
 				expect(res).to.deep.equal([
 					{
@@ -698,8 +760,7 @@ describe('@bmoor-modeling', function () {
 
 				expect(myStub.getCall(0).args[0]).to.deep.equal([
 					{
-						f1: 'foo',
-						f3: 'bar'
+						id: 123
 					}
 				]);
 			});
@@ -734,29 +795,25 @@ describe('@bmoor-modeling', function () {
 				)
 			});
 
-			const original = [
-				{
-					field: {
-						eins: 1,
-						zwei: 2
-					},
-					value: 'foo-bar'
-				}
-			];
+			const original = {
+				field: {
+					eins: 1,
+					zwei: 2
+				},
+				value: 'foo-bar'
+			};
 
 			const external = model.convertToExternal(original, ctx);
 
 			const internal = model.convertToInternal(external, ctx);
 
-			expect(external).to.deep.equal([
-				{
-					value1: 1,
-					other: {
-						value2: 2,
-						thing: 'foo-bar'
-					}
+			expect(external).to.deep.equal({
+				value1: 1,
+				other: {
+					value2: 2,
+					thing: 'foo-bar'
 				}
-			]);
+			});
 
 			expect(internal).to.deep.equal(original);
 		});

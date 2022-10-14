@@ -4,10 +4,18 @@ import {
 	ModelValidatorSettings
 } from './validator.interface';
 
-import {DeltaKeyReader} from './accessor.interface';
+import {ModelUpdate} from '../datum.interface';
 
-export class ModelValidator<External, Delta>
-	implements ModelValidatorInterface<External, Delta>
+export class ModelValidator<
+	ExternalReference,
+	ExternalCreate,
+	ExternalUpdate
+> implements
+		ModelValidatorInterface<
+			ExternalReference,
+			ExternalCreate,
+			ExternalUpdate
+		>
 {
 	incomingSettings: ModelValidatorSettings;
 
@@ -15,16 +23,15 @@ export class ModelValidator<External, Delta>
 		this.incomingSettings = settings;
 	}
 
-	validateCreate(datums: External[]): ModelValidatorInvalidation {
-		console.log(datums);
+	validateCreate(
+		datums: ExternalCreate[]
+	): Promise<ModelValidatorInvalidation> {
 		return null;
 	}
 
 	validateUpdate(
-		datums: Delta[],
-		fn: DeltaKeyReader<Delta>
-	): ModelValidatorInvalidation {
-		console.log(datums.map(fn));
+		content: ModelUpdate<ExternalReference, ExternalUpdate>[]
+	): Promise<ModelValidatorInvalidation> {
 		return null;
 	}
 }

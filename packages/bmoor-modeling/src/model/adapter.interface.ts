@@ -14,8 +14,6 @@ export interface ModelAdapterInterface<
 	update(
 		content: ModelUpdate<InternalReference, InternalUpdate>[]
 	): Promise<InternalRead[]>;
-	delete?(
-		ids: InternalReference[]
-	): Promise<number>; // return the rows deleted
+	delete?(ids: InternalReference[]): Promise<number>; // return the rows deleted
 	search?(search: InternalSearch): Promise<InternalRead[]>;
 }

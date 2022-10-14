@@ -1,9 +1,7 @@
 import {ContextSecurityInterface} from '@bmoor/context';
 import {Mapping} from '@bmoor/path';
 
-import {
-	ModelUpdate
-} from './datum.interface';
+import {ModelUpdate} from './datum.interface';
 import {
 	ModelSettings,
 	ModelInterface,
@@ -182,12 +180,12 @@ export class Model<
 		const allowed = await this.settings.controller.canCreate(content, ctx);
 
 		const rtn = await this.settings.adapter.create(
-			<InternalCreate[]>allowed.map(
-				datum => this.convertToInternal(datum, ctx)
+			<InternalCreate[]>(
+				allowed.map((datum) => this.convertToInternal(datum, ctx))
 			)
 		);
 
-		return rtn.map(datum => this.convertToExternal(datum, ctx));
+		return rtn.map((datum) => this.convertToExternal(datum, ctx));
 	}
 
 	async read(
@@ -195,13 +193,13 @@ export class Model<
 		ctx: ContextSecurityInterface
 	): Promise<ExternalRead[]> {
 		const res = await this.settings.adapter.read(
-			<InternalReference[]>ids.map(
-				ref => this.convertToInternal(ref, ctx)
+			<InternalReference[]>(
+				ids.map((ref) => this.convertToInternal(ref, ctx))
 			)
 		);
 
 		const rtn = await this.settings.controller.canRead(
-			res.map(datum => this.convertToExternal(datum, ctx)),
+			res.map((datum) => this.convertToExternal(datum, ctx)),
 			this.settings.accessor.getExternalKey,
 			ctx
 		);
@@ -218,7 +216,7 @@ export class Model<
 		ctx: ContextSecurityInterface
 	): Promise<ExternalRead[]> {
 		if (this.actions.update) {
-			content.map((delta) => this.actions.update(delta, ctx));
+			content.map(({delta}) => this.actions.update(delta, ctx));
 		}
 
 		if (this.settings.validator?.validateUpdate) {
@@ -231,16 +229,15 @@ export class Model<
 		}
 
 		const send = await this.settings.controller.canUpdate(content, ctx);
-		const converted: ModelUpdate<InternalReference, InternalUpdate>[] = send.map(
-			change => ({
+		const converted: ModelUpdate<InternalReference, InternalUpdate>[] =
+			send.map((change) => ({
 				ref: <InternalReference>this.convertToInternal(change.ref, ctx),
 				delta: <InternalUpdate>this.convertToInternal(change.delta, ctx)
-			})
-		);
+			}));
 
 		const rtn = await this.settings.adapter.update(converted);
 
-		return rtn.map(datum => this.convertToExternal(datum, ctx));
+		return rtn.map((datum) => this.convertToExternal(datum, ctx));
 	}
 
 	async delete(
@@ -248,12 +245,12 @@ export class Model<
 		ctx: ContextSecurityInterface
 	): Promise<ExternalRead[]> {
 		// TODO: canDelete
-		
+
 		const datums = await this.read(ids, ctx);
 
 		const count = await this.settings.adapter.delete(
-			<InternalReference[]>ids.map(
-				ref => this.convertToInternal(ref, ctx)
+			<InternalReference[]>(
+				ids.map((ref) => this.convertToInternal(ref, ctx))
 			)
 		);
 
@@ -273,7 +270,7 @@ export class Model<
 		);
 
 		const rtn = await this.settings.controller.canRead(
-			res.map(datum => this.convertToExternal(datum, ctx)),
+			res.map((datum) => this.convertToExternal(datum, ctx)),
 			this.settings.accessor.getExternalKey,
 			ctx
 		);
@@ -290,9 +287,14 @@ export class Model<
 	}
 
 	convertToInternal(
-		datum: ExternalReference | ExternalCreate | ExternalCreate | ExternalUpdate | ExternalSearch,
+		datum:
+			| ExternalReference
+			| ExternalCreate
+			| ExternalCreate
+			| ExternalUpdate
+			| ExternalSearch,
 		ctx: ContextSecurityInterface
-	): InternalReference | InternalCreate | InternalUpdate | InternalSearch{
+	): InternalReference | InternalCreate | InternalUpdate | InternalSearch {
 		if (this.actions.deflate) {
 			this.actions.deflate(datum, ctx);
 		}

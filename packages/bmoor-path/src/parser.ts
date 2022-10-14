@@ -24,9 +24,21 @@ type ArrayOperations = {
 
 function createArrayReader(cur: ArrayOperations): ReaderFunction {
 	return function (obj): PathContent {
-		const rtn = cur.ops.reduce((agg, exp) => exp.eval(agg), obj);
+		let rtn = obj;
+		for (let i = 0, c = cur.ops.length; i < c; i++) {
+			const val = cur.ops[i].eval(rtn);
 
-		if (cur.array) {
+			if (val === undefined) {
+				rtn = undefined;
+				i = c;
+			} else {
+				rtn = val;
+			}
+		}
+
+		if (rtn == undefined) {
+			return rtn;
+		} else if (cur.array) {
 			return cur.array.eval(rtn);
 		} else {
 			return rtn;
@@ -36,7 +48,19 @@ function createArrayReader(cur: ArrayOperations): ReaderFunction {
 
 function readArray(arr, [fn, ...rest]: ReaderFunction[]) {
 	if (rest.length) {
-		return arr.map((datum) => readArray(fn(datum), rest));
+		const rtn = [];
+		for (let i = 0, c = arr.length; i < c; i++) {
+			const datum = arr[i];
+			const val = fn(datum);
+
+			if (val == undefined) {
+				rtn.push(val);
+			} else {
+				rtn.push(readArray(val, rest));
+			}
+		}
+
+		return rtn;
 	} else {
 		return arr.map(fn);
 	}
@@ -65,6 +89,10 @@ function createArrayWriter(
 	const setter = cur.ops.length ? cur.ops.pop() : null;
 
 	return function (obj, value: PathContent) {
+		if (value === undefined) {
+			return undefined;
+		}
+
 		const root = cur.ops.reduce((agg, exp) => exp.eval(agg), obj);
 
 		if (cur.array) {

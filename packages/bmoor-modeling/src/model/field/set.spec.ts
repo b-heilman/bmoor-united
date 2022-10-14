@@ -37,7 +37,6 @@ describe('@bmoor-modeling.ModelFieldSet', function () {
 			const res = fieldSet.toTypescript();
 
 			for (const key in res) {
-				console.log(key, res[key]);
 				res[key] = res[key].replace(/\s/g, '');
 			}
 

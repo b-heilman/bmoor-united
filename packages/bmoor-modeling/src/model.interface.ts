@@ -54,24 +54,17 @@ export type ModelActions<
 	ExternalUpdate,
 	ExternalSearch
 > = {
-	create?(
-		datum: ExternalCreate, 
-		ctx?: ContextSecurityInterface
-	): void;
-	read?(
-		datum: ExternalRead, 
-		ctx?: ContextSecurityInterface
-	): void;
-	update?(
-		change: ModelUpdate<ExternalReference, ExternalUpdate>,
-		ctx?: ContextSecurityInterface
-	): void;
-	inflate?(
-		datum: ExternalRead, 
-		ctx?: ContextSecurityInterface
-	): void;
+	create?(datum: ExternalCreate, ctx?: ContextSecurityInterface): void;
+	read?(datum: ExternalRead, ctx?: ContextSecurityInterface): void;
+	update?(change: ExternalUpdate, ctx?: ContextSecurityInterface): void;
+	inflate?(datum: ExternalRead, ctx?: ContextSecurityInterface): void;
 	deflate?(
-		datum: ExternalRead | ExternalReference | ExternalCreate | ExternalUpdate | ExternalSearch, 
+		datum:
+			| ExternalRead
+			| ExternalReference
+			| ExternalCreate
+			| ExternalUpdate
+			| ExternalSearch,
 		ctx?: ContextSecurityInterface
 	): void;
 };
@@ -131,7 +124,12 @@ export interface ModelInterface<
 
 	getByPath(path: string): ModelFieldInterface;
 	convertToInternal(
-		content: ExternalReference | ExternalCreate | ExternalCreate | ExternalUpdate | ExternalSearch,
+		content:
+			| ExternalReference
+			| ExternalCreate
+			| ExternalCreate
+			| ExternalUpdate
+			| ExternalSearch,
 		ctx: ContextSecurityInterface
 	): InternalReference | InternalCreate | InternalUpdate | InternalSearch;
 	convertToExternal(
