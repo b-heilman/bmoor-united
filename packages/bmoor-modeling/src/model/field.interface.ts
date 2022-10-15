@@ -20,6 +20,7 @@ export type ModelFieldGetter = (datum: ExternalDatum) => ModelFieldValue;
 
 export type ModelFieldUsage = {
 	isKey?: boolean;
+	canCreate?: boolean;
 	canUpdate?: boolean;
 	canSearch?: boolean;
 	onInflate?(

@@ -18,6 +18,7 @@ import {
 export const usages = new Config({
 	key: new ConfigObject<ModelFieldUsage>({
 		isKey: true,
+		canCreate: false,
 		canUpdate: false
 	}),
 	json: new ConfigObject<ModelFieldUsage>({
@@ -172,19 +173,21 @@ export class ModelField implements ModelFieldInterface {
 
 		const rtn = {
 			external: <TypescriptUsage>{
-				read: external,
-				// TODO: might not want everything in create?
-				create: external
+				read: external
 			},
 			internal: <TypescriptUsage>{
-				read: internal,
-				create: internal
+				read: internal
 			}
 		};
 
 		if (this.settings.isKey) {
 			rtn.external.reference = external;
 			rtn.internal.reference = internal;
+		}
+
+		if (!('canCreate' in this.settings) || this.settings.canCreate) {
+			rtn.external.create = external;
+			rtn.internal.create = internal;
 		}
 
 		if (!('canUpdate' in this.settings) || this.settings.canUpdate) {

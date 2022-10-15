@@ -54,7 +54,6 @@ describe('@bmoor-modeling.ModelFieldSet', function () {
 						}
 					}`.replace(/\s/g, ''),
 					create: `{
-						root: string,
 						path: {
 							eins: string,
 							zwei: number
@@ -80,7 +79,6 @@ describe('@bmoor-modeling.ModelFieldSet', function () {
 						p2: number
 					}`.replace(/\s/g, ''),
 					create: `{
-						root: string,
 						path: {
 							eins: string
 						},
