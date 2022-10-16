@@ -818,4 +818,82 @@ describe('@bmoor-modeling', function () {
 			expect(internal).to.deep.equal(original);
 		});
 	});
+
+	describe('with generics', function () {
+		interface ExternalReferenceGeneric {
+			key: number;
+		}
+
+		interface ExternalReadGeneric extends ExternalReferenceGeneric {
+			field1: string;
+			other: {
+				field2: number;
+			};
+		}
+
+		interface InternalReferenceGeneric {
+			id: number;
+		}
+
+		interface InternalReadGeneric extends InternalReferenceGeneric {
+			field1: string;
+			field2: number;
+		}
+
+		it('should allow correct invocation', function () {
+			const model = new Model<
+				ExternalReadGeneric,
+				ExternalReferenceGeneric,
+				ExternalCreate,
+				ExternalUpdate,
+				ExternalSearch,
+				InternalReadGeneric,
+				InternalReferenceGeneric,
+				InternalCreate,
+				InternalUpdate,
+				InternalSearch
+			>({
+				name: 'junk',
+				controller,
+				adapter,
+				accessor,
+				validator,
+				fields: factory(
+					{
+						external: 'key',
+						internal: 'id',
+						usage: 'key'
+					},
+					{
+						external: 'field1',
+						internal: 'field1'
+					},
+					{
+						external: 'other.field2',
+						internal: 'field2'
+					}
+				)
+			});
+
+			const original = {
+				id: 123,
+				field1: 'string',
+				field2: 456
+			};
+
+			const external = model.convertToExternal(original, ctx);
+
+			const internal = model.convertToInternal(external, ctx);
+
+			expect(external).to.deep.equal({
+				key: 123,
+				field1: 'string',
+				other: {
+					field2: 456
+				}
+			});
+
+			expect(internal).to.deep.equal(original);
+		});
+	});
 });
