@@ -64,8 +64,8 @@ describe('@bmoor-modeling.ModelFieldSet', function () {
 					}`.replace(/\s/g, ''),
 					update: `{
 						path: {
-							eins: string,
-							zwei: number
+							eins?: string,
+							zwei?: number
 						}
 					}`.replace(/\s/g, ''),
 					search: '{}'
@@ -89,9 +89,9 @@ describe('@bmoor-modeling.ModelFieldSet', function () {
 					}`.replace(/\s/g, ''),
 					update: `{
 						path: {
-							eins: string
+							eins?: string
 						},
-						p2: number
+						p2?: number
 					}`.replace(/\s/g, ''),
 					search: '{}'
 				}

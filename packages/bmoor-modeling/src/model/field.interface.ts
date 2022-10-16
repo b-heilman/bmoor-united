@@ -19,10 +19,10 @@ export type ModelFieldSetter = (
 export type ModelFieldGetter = (datum: ExternalDatum) => ModelFieldValue;
 
 export type ModelFieldUsage = {
-	isKey?: boolean;
-	canCreate?: boolean;
-	canUpdate?: boolean;
-	canSearch?: boolean;
+	forKey?: boolean;
+	forCreate?: boolean;
+	forUpdate?: boolean;
+	forSearch?: boolean;
 	onInflate?(
 		datum: ExternalDatum,
 		setter: ModelFieldSetter,

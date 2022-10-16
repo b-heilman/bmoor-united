@@ -17,9 +17,9 @@ import {
 
 export const usages = new Config({
 	key: new ConfigObject<ModelFieldUsage>({
-		isKey: true,
-		canCreate: false,
-		canUpdate: false
+		forKey: true,
+		forCreate: false,
+		forUpdate: false
 	}),
 	json: new ConfigObject<ModelFieldUsage>({
 		onInflate: function (datum, setter, getter) {
@@ -180,24 +180,37 @@ export class ModelField implements ModelFieldInterface {
 			}
 		};
 
-		if (this.settings.isKey) {
+		if (this.settings.forKey) {
 			rtn.external.reference = external;
 			rtn.internal.reference = internal;
 		}
 
-		if (!('canCreate' in this.settings) || this.settings.canCreate) {
+		if (!('forCreate' in this.settings) || this.settings.forCreate) {
+			// TODO: what is optional for a create?
 			rtn.external.create = external;
 			rtn.internal.create = internal;
 		}
 
-		if (!('canUpdate' in this.settings) || this.settings.canUpdate) {
-			rtn.external.update = external;
-			rtn.internal.update = internal;
+		if (!('forUpdate' in this.settings) || this.settings.forUpdate) {
+			rtn.external.update = {
+				path: external.path + '?',
+				format: external.format
+			};
+			rtn.internal.update = {
+				path: internal.path + '?',
+				format: internal.format
+			};
 		}
 
-		if (this.settings.canSearch) {
-			rtn.external.search = external;
-			rtn.internal.search = internal;
+		if (this.settings.forSearch) {
+			rtn.external.search = {
+				path: external.path + '?',
+				format: external.format
+			};
+			rtn.internal.search = {
+				path: internal.path + '?',
+				format: internal.format
+			};
 		}
 
 		return rtn;
