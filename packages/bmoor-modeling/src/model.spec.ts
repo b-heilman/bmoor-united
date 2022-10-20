@@ -840,7 +840,7 @@ describe('@bmoor-modeling', function () {
 			field2: number;
 		}
 
-		it('should allow correct invocation', function () {
+		it.only('should allow correct invocation', async function () {
 			const model = new Model<
 				ExternalReadGeneric,
 				ExternalReferenceGeneric,
@@ -862,38 +862,82 @@ describe('@bmoor-modeling', function () {
 					{
 						external: 'key',
 						internal: 'id',
-						usage: 'key'
+						usage: 'key',
+						jsonType: 'number'
 					},
 					{
 						external: 'field1',
-						internal: 'field1'
+						internal: 'field1',
+						jsonType: 'string'
 					},
 					{
 						external: 'other.field2',
-						internal: 'field2'
+						internal: 'field2',
+						jsonType: 'number'
 					}
 				)
 			});
 
-			const original = {
-				id: 123,
-				field1: 'string',
-				field2: 456
+			adapter.read = async function (): Promise<InternalReadGeneric[]> {
+				return [
+					{
+						id: 123,
+						field1: 'hello-world',
+						field2: 789
+					}
+				];
 			};
 
-			const external = model.convertToExternal(original, ctx);
-
-			const internal = model.convertToInternal(external, ctx);
-
-			expect(external).to.deep.equal({
-				key: 123,
-				field1: 'string',
-				other: {
-					field2: 456
+			const res1 = await model.read([], ctx);
+			expect(res1).to.deep.equal([
+				{
+					key: 123,
+					field1: 'hello-world',
+					other: {
+						field2: 789
+					}
 				}
-			});
+			]);
 
-			expect(internal).to.deep.equal(original);
+			const myStub = stub();
+
+			myStub.resolves([
+				{
+					id: 1233,
+					field1: 'hello-world-3',
+					field2: 7893
+				}
+			]);
+
+			adapter.create = myStub;
+
+			const res2 = await model.create(
+				[
+					{
+						field1: 'hello-world-2',
+						other: {
+							field2: 7892
+						}
+					}
+				],
+				ctx
+			);
+			expect(res2).to.deep.equal([
+				{
+					key: 1233,
+					field1: 'hello-world-3',
+					other: {
+						field2: 7893
+					}
+				}
+			]);
+
+			expect(myStub.getCall(0).args[0]).to.deep.equal([
+				{
+					field1: 'hello-world-2',
+					field2: 7892
+				}
+			]);
 		});
 	});
 });
