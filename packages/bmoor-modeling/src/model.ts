@@ -1,5 +1,6 @@
 import {ContextSecurityInterface} from '@bmoor/context';
 import {Mapping} from '@bmoor/path';
+import {toProperCase} from '@bmoor/string';
 
 import {ModelUpdate} from './datum.interface';
 import {
@@ -315,7 +316,17 @@ export class Model<
 		return rtn;
 	}
 
-	toTypescript() {
-		return this.settings.fields.toTypescript();
+	toTypescript(): string {
+		const res = this.settings.fields.toTypescript();
+		const title = toProperCase(this.settings.name);
+
+		return Object.keys(res).flatMap(key => {
+			const group = toProperCase(key);
+			return Object.keys(res[key]).map(
+				usage => 'export interface '+
+					title+group+toProperCase(usage)+
+					res[key][usage]
+			);
+		}).join('\n');
 	}
 }

@@ -819,6 +819,87 @@ describe('@bmoor-modeling', function () {
 		});
 	});
 
+	describe('::toTypeScript()', function(){
+		it.only('should correctly create a typescript format', function(){
+			const model = new Model({
+				name: 'junk',
+				controller,
+				adapter,
+				accessor,
+				validator,
+				fields: factory(
+					{
+						external: 'key',
+						internal: 'id',
+						usage: 'key',
+						jsonType: 'number'
+					},
+					{
+						external: 'field1',
+						internal: 'field1',
+						jsonType: 'string'
+					},
+					{
+						external: 'other.field2',
+						internal: 'field2',
+						jsonType: 'number'
+					}
+				)
+			});
+
+			const ts = model.toTypescript();
+			const expected = `
+				export interface JunkExternalRead{
+					key: number,
+					field1: string,
+					other: {
+							field2: number
+					}
+				}
+				export interface JunkExternalReference{
+						key: number
+				}
+				export interface JunkExternalCreate{
+						field1: string,
+						other: {
+								field2: number
+						}
+				}
+				export interface JunkExternalUpdate{
+						field1?: string,
+						other: {
+								field2?: number
+						}
+				}
+				export interface JunkExternalSearch{
+				
+				}
+				export interface JunkInternalRead{
+						id: number,
+						field1: string,
+						field2: number
+				}
+				export interface JunkInternalReference{
+						id: number
+				}
+				export interface JunkInternalCreate{
+						field1: string,
+						field2: number
+				}
+				export interface JunkInternalUpdate{
+						field1?: string,
+						field2?: number
+				}
+				export interface JunkInternalSearch{
+				
+				}
+			`;
+			
+			expect(ts.replace(/\s+/g, ''))
+				.to.equal(expected.replace(/\s+/g, ''));
+		});
+	});
+
 	describe('with generics', function () {
 		interface ExternalReferenceGeneric {
 			key: number;
@@ -840,7 +921,7 @@ describe('@bmoor-modeling', function () {
 			field2: number;
 		}
 
-		it.only('should allow correct invocation', async function () {
+		it('should allow correct invocation', async function () {
 			const model = new Model<
 				ExternalReadGeneric,
 				ExternalReferenceGeneric,
@@ -939,5 +1020,7 @@ describe('@bmoor-modeling', function () {
 				}
 			]);
 		});
+
+
 	});
 });
