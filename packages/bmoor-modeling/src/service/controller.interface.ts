@@ -1,20 +1,20 @@
 import {ContextSecurityInterface} from '@bmoor/context';
 
-import {ModelFieldInterface} from './field.interface';
+import {Model} from '../model';
 import {ExternalKeyReader} from './accessor.interface';
-import {ModelUpdate} from '../datum.interface';
+import {UpdateDelta} from '../datum.interface';
 
-export interface ModelControllerSettings {
+export interface ServiceControllerSettings {
 	permission?: {
 		create?: string;
 		read?: string;
 		update?: string;
 		delete?: string;
 	};
-	fields?: ModelFieldInterface[];
+	model: Model;
 }
 
-export interface ModelControllerInterface<
+export interface ServiceControllerInterface<
 	ExternalRead,
 	ExternalReference,
 	ExternalCreate,
@@ -34,7 +34,12 @@ export interface ModelControllerInterface<
 	): Promise<ExternalCreate[]>;
 
 	canUpdate(
-		content: ModelUpdate<ExternalReference, ExternalUpdate>[],
+		content: UpdateDelta<ExternalReference, ExternalUpdate>[],
 		ctx: ContextSecurityInterface
-	): Promise<ModelUpdate<ExternalReference, ExternalUpdate>[]>;
+	): Promise<UpdateDelta<ExternalReference, ExternalUpdate>[]>;
+
+	canDelete(
+		content: ExternalReference[],
+		ctx: ContextSecurityInterface
+	): Promise<ExternalReference[]>;
 }

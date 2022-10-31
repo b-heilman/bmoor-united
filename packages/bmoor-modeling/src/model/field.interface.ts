@@ -1,11 +1,5 @@
 import {ContextSecurityInterface} from '@bmoor/context';
 
-// TODO: does this really need to be here?
-export interface ModelFieldDisplay {
-	title: string;
-	description: string;
-}
-
 // eslint-disable-next-line  @typescript-eslint/no-explicit-any
 export type ExternalDatum = any;
 
@@ -18,11 +12,32 @@ export type ModelFieldSetter = (
 ) => void;
 export type ModelFieldGetter = (datum: ExternalDatum) => ModelFieldValue;
 
-export type ModelFieldUsage = {
+export interface ModelFieldUsage {
+	jsonType?: string;
 	forKey?: boolean;
 	forCreate?: boolean;
 	forUpdate?: boolean;
 	forSearch?: boolean;
+}
+
+export type ModelFieldConfig = {
+	target: string;
+};
+
+export type ModelFieldContext = {
+	getTarget?(datum: ExternalDatum): ModelFieldValue;
+};
+
+export interface ModelFieldStructure {
+	storage?: string; // path the written to the source
+	external: string; // path to be positioned externall
+	internal?: string; // path to be read from the source
+	isFlat?: boolean; // is the storage flat or structured (sql vs doc)
+	usage?: string; // how is this field used?  Allows pre defined
+	config?: ModelFieldConfig;
+}
+
+export interface ModelFieldMethods {
 	onInflate?(
 		datum: ExternalDatum,
 		setter: ModelFieldSetter,
@@ -65,26 +80,12 @@ export type ModelFieldUsage = {
 		ctx?: ContextSecurityInterface,
 		fieldCtx?: ModelFieldContext
 	): void;
-};
-
-export type ModelFieldConfig = {
-	target: string;
-};
-
-export type ModelFieldContext = {
-	getTarget?(datum: ExternalDatum): ModelFieldValue;
-};
-
-export interface ModelFieldSettings extends ModelFieldUsage {
-	external: string; // path to be positioned externall
-	internal?: string; // path to be read from the source
-	storage?: string; // path the written to the source
-	jsonType?: string;
-	isFlat?: boolean; // is the storage flat or structured (sql vs doc)
-	usage?: string; // how is this field used?  Allows pre defined
-	display?: ModelFieldDisplay; // display settings, if needed
-	config?: ModelFieldConfig;
 }
+
+export interface ModelFieldSettings
+	extends ModelFieldUsage,
+		ModelFieldStructure,
+		ModelFieldMethods {}
 
 export type ModelFieldActions = {
 	create?(

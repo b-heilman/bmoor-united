@@ -6,6 +6,7 @@ import {
 	ModelFieldInterface,
 	ModelFieldSettings,
 	ModelFieldUsage,
+	ModelFieldMethods,
 	ModelFieldTypescript,
 	TypescriptUsage,
 	ModelFieldTypescriptInfo,
@@ -21,7 +22,7 @@ export const usages = new Config({
 		forCreate: false,
 		forUpdate: false
 	}),
-	json: new ConfigObject<ModelFieldUsage>({
+	json: new ConfigObject<ModelFieldMethods>({
 		onInflate: function (datum, setter, getter) {
 			const value = getter(datum);
 
@@ -37,7 +38,7 @@ export const usages = new Config({
 			}
 		}
 	}),
-	monitor: new ConfigObject<ModelFieldUsage>({
+	monitor: new ConfigObject<ModelFieldMethods>({
 		onDeflate: function (datum, setter, getter, ctx, cfg) {
 			const target = cfg.getTarget(datum);
 
