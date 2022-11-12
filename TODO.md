@@ -5,11 +5,12 @@
   - [x] Compressor
   - [x] Expressor
   - [x] Compiler Settings
-- [ ] bmoor/path (need compiler)
-- [ ] bmoor/modeling (need path)
-  - [ ] modeling.field
-  - [ ] modeling.model
-  - [ ] develop way to visualize relationships
+- [x] bmoor/path (need compiler)
+- [x] bmoor/modeling (need path)
+  - [x] modeling.field
+  - [x] modeling.model
+  - [x] develop way to visualize relationships
+- [ ] Create sub readme / todo
 
 # CI Work
 - [x] versioning

@@ -1,0 +1,19 @@
+- [ ] Improve ReadMe
+- [ ] Split structure / model / service
+  - [ ] structure: allows you to understand what data looks like what it means
+  - [ ] model: allows you to say where this data is, and allows you to remap it to a better shape
+  - [ ] service: allow you to access the data
+- [ ] bmoor/modeling (structure)
+  - [ ] allow models to be described via class
+  - [ ] allow models to be created via schema
+  - [ ] allow for normalization through tagging
+  - [ ] allow desciptions for data understanding
+- [ ] bmoor/modeling (model)
+  - [ ] allow for model linking
+- [ ] Rewrite operation schema from bmoor-crud
+  - [ ] This is what all adapters have to interpret for create / update / delete
+- [ ] bmoor/modeling (service)
+  - [ ] update service to allow for access information from schema
+  - [ ] ??????
+  - [ ] security?
+  - [ ] profit
