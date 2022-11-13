@@ -41,8 +41,12 @@ fieldServiceMethods extends fieldModelMethods {
   onDelete?
 }
 
+// will need to extend typescript for read
 fieldServiceInfo extends fieldModelInfo {
   methods: fieldServiceMethods
+  forCreate
+  forUpdate
+  forSearch
 }
 
 fieldServiceInterface extends fieldServiceInfo {

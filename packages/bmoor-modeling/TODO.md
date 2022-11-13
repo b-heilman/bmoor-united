@@ -17,3 +17,5 @@
   - [ ] ??????
   - [ ] security?
   - [ ] profit
+  - [ ] factory pattern, develop schema for external definition
+    - [ ] define nexus interface
