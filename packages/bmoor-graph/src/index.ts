@@ -1,25 +1,45 @@
-export class Node {
+export interface NodeInterface {
 	ref: string;
-	weight: number;
-
-	constructor(ref: string) {
-		this.ref = ref;
-		this.weight = 0;
-	}
+	weights?: Record<string, number>;
 }
 
 export class Edge {
-	from: Node;
-	to: Node;
-	directed: boolean;
+	from: NodeInterface;
+	to: NodeInterface;
 
 	weights?: Record<string, number>;
-	metadata?: Record<string, string>;
 
-	constructor(from: Node, to: Node, directed: boolean) {
+	constructor(from: NodeInterface, to: NodeInterface) {
 		this.from = from;
 		this.to = to;
-		this.directed = directed;
+	}
+}
+
+export class Event {
+	to: NodeInterface;
+
+	weights?: Record<string, number>;
+
+	constructor(to: NodeInterface) {
+		this.to = to;
+	}
+}
+
+export class Node {
+	ref: string;
+	events: Record<string, Event>;
+	weights: Record<string, number>;
+
+	constructor(ref: string) {
+		this.ref = ref;
+		this.weights = {
+			connections: 0
+		};
+		this.events = {};
+	}
+
+	addEvent(ref: string, event: Event) {
+		this.events[ref] = event;
 	}
 }
 
@@ -48,7 +68,7 @@ export class Graph {
 		}
 	}
 
-	addEdge(fromRef: string, toRef: string, directed: boolean): Edge {
+	addEdge(fromRef: string, toRef: string): Edge {
 		const from = this.getNode(fromRef);
 		const to = this.getNode(toRef);
 
@@ -56,7 +76,9 @@ export class Graph {
 		let rtn = map?.get(to);
 
 		if (!rtn) {
-			from.weight++;
+			rtn = new Edge(from, to);
+
+			from.weights.connections++;
 
 			if (!map) {
 				map = new Map();
@@ -64,27 +86,33 @@ export class Graph {
 				this.map.set(from, map);
 			}
 
-			rtn = new Edge(from, to, directed);
-
 			map.set(to, rtn);
+			//---------
+			to.weights.connections++;
 
-			if (!directed) {
-				to.weight++;
+			map = this.map.get(to);
 
-				map = this.map.get(to);
+			if (!map) {
+				map = new Map();
 
-				if (!map) {
-					map = new Map();
-
-					this.map.set(to, map);
-				}
-
-				// if it already exists, I'm dropping it.  Is that a problem?
-				map.set(from, rtn);
+				this.map.set(to, map);
 			}
+
+			map.set(from, rtn);
 		}
 
 		return rtn;
+	}
+
+	addEvent(ref: string, fromRef: string, toRef: string): Event {
+		const from = this.getNode(fromRef);
+		const to = this.getNode(toRef);
+
+		const event = new Event(to);
+
+		from.addEvent(ref, event);
+
+		return event;
 	}
 
 	has(fromRef: string, toRef: string) {
@@ -94,8 +122,39 @@ export class Graph {
 		return !!this.map.get(from)?.get(to);
 	}
 
+	rank(
+		mount: string,
+		rankFn: (event: Event, node: NodeInterface) => number,
+		dexs: string[] = null
+	) {
+		if (!dexs) {
+			dexs = Object.keys(this.index);
+		}
+
+		const ranking = dexs.map((dex) => {
+			const nodeA = this.index[dex];
+
+			return {
+				node: nodeA,
+				value: Object.keys(nodeA.events).reduce((value, key) => {
+					const event = nodeA.events[key];
+
+					return value + rankFn(event, nodeA);
+				}, 0)
+			};
+		});
+
+		ranking.sort((a, b) => b.value - a.value);
+
+		ranking.map(({node}, i) => {
+			node.weights[mount] = i + 1;
+		});
+
+		return ranking;
+	}
+
 	sort(
-		sortFn: (e: Edge, b: Node, a: Node) => number,
+		sortFn: (e: Edge, b: NodeInterface, a: NodeInterface) => number,
 		dexs: string[] = null
 	) {
 		if (!dexs) {
@@ -117,7 +176,7 @@ export class Graph {
 							if (sortFn(edge, nodeA, nodeB) > 0) {
 								return sum + 1;
 							}
-						} else if (edge.directed === false) {
+						} else {
 							if (sortFn(edge, nodeA, nodeB) < 0) {
 								return sum + 1;
 							}
@@ -148,7 +207,7 @@ export class Graph {
 					if (edge) {
 						if (edge.from === nodeA) {
 							return sortFn(edge, nodeA, nodeB);
-						} else if (edge.directed === false) {
+						} else {
 							return sortFn(edge, nodeA, nodeB) * -1;
 						}
 					}
