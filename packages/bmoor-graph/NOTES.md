@@ -1,1 +1,3 @@
 https://www.seas.upenn.edu/~ese3030/block_2_markov_chains/slides/280_ranking_nodes_in_graphs.pdf
+
+I wanted to encode 'iterations' as a first class concept in the graph, where you could say 'run these stats with only the data before this iteration.  For now, I'll just expect a graph to be written for each iteration, I'll work on making if a first class later.  It feels like too much for little gain when the same functionality can be duplicated in a combersome, but simple way.

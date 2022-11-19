@@ -152,7 +152,7 @@ export function get<T>(root: DynamicObject<T>, path: IncomingPathType): T {
 	let rtnValue = null;
 	let nextSpace = null;
 
-	for (let i = 0, c = space.length - 1; !rtnValue; i++) {
+	for (let i = 0, c = space.length - 1; i <= c; i++) {
 		nextSpace = space[i];
 
 		if (
@@ -160,7 +160,8 @@ export function get<T>(root: DynamicObject<T>, path: IncomingPathType): T {
 			nextSpace === 'constructor' ||
 			nextSpace === 'prototype'
 		) {
-			return rtnValue;
+			i = c;
+			continue;
 		}
 
 		if (nextSpace in curSpace) {
@@ -170,7 +171,8 @@ export function get<T>(root: DynamicObject<T>, path: IncomingPathType): T {
 				curSpace = <DynamicObject<T>>curSpace[nextSpace];
 			}
 		} else {
-			return null;
+			i = c;
+			continue;
 		}
 	}
 

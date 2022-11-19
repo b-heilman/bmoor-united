@@ -1,0 +1,19 @@
+{
+  "name": "nfl_analysis",
+  "version": "1.0.0",
+  "description": "",
+  "main": "loader.js",
+  "scripts": {
+    "load": "npx ts-node --esm src/loader.js",
+    "stats": "npx ts-node --esm src/stats.js",
+    "frame": "npx ts-node --esm src/frame.js",
+    "show": "npx ts-node --esm src/show.js",
+    "test": "npm run load; npm run stats; npm run frame"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "csv-parse": "^5.3.2",
+    "simple-statistics": "^7.8.0"
+  }
+}

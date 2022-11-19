@@ -24,6 +24,6 @@
     "publish": "echo \"graph publishing...\""
   },
   "keywords": [],
-  "devDependencies": {
+  "dependencies": {
   }
 }
