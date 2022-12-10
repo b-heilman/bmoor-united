@@ -1,13 +1,19 @@
-import {Weights} from './weights.interface';
+import {Weights} from './weighted.interface';
 import {Event} from './event';
 import {Edge} from './edge';
 import {Node} from './node';
 import {List} from './list';
-import {Connector} from './connector';
+import {GraphJSON} from './graph.iterface';
+
+type NodeMap = Record<string, Node>;
+type EventMap = Record<string, Event>;
+type PartionMap = Record<number, EventMap>;
+
+const DEFAULT_PARTITION = 'None';
 
 export class Graph {
-	nodes: Record<string, Node>;
-	events: Record<string, Event>;
+	nodes: NodeMap;
+	events: PartionMap;
 	weights: Weights;
 
 	constructor() {
@@ -36,21 +42,27 @@ export class Graph {
 		return this.nodes[ref];
 	}
 
-	addEvent(ref: string): Event {
+	addEvent(ref: string, partition = DEFAULT_PARTITION): Event {
 		const event = new Event(ref);
 
-		this.events[ref] = event;
+		let section = this.events[partition];
+		if (!section) {
+			section = {};
+			this.events[partition] = section;
+		}
+
+		section[ref] = event;
 
 		return event;
 	}
 
-	getEvent(ref: string): Event {
-		const event = this.events[ref];
+	getEvent(ref: string, partition = DEFAULT_PARTITION): Event {
+		const event = this.events[partition]?.[ref];
 
 		if (event) {
 			return event;
 		} else {
-			return this.addEvent(ref);
+			return this.addEvent(ref, partition);
 		}
 	}
 
@@ -58,22 +70,53 @@ export class Graph {
 		Object.assign(this.weights, weights);
 	}
 
-	connect(eventRef: string, fromRef: string, toRef: string): Connector {
-		const event = this.getEvent(eventRef);
-		const from = this.getNode(fromRef);
+	connect(
+		partition: string,
+		eventRef: string,
+		fromRef: string,
+		toRef: string
+	): {event: Event; node: Node; edge: Edge} {
+		const event = this.getEvent(eventRef, partition);
+		const node = this.getNode(fromRef);
 		const to = this.getNode(toRef);
-		const edgeF = new Edge(from, to, event);
-		const edgeT = new Edge(to, from, event);
 
-		from.addEdge(edgeF);
-		to.addEdge(edgeT);
+		const edge = new Edge(node, to);
 
-		return new Connector({
-			[fromRef]: edgeF,
-			[toRef]: edgeT
-		});
+		event.addEdge(edge);
+
+		node.addEvent(event);
+
+		return {
+			event,
+			node,
+			edge
+		};
 	}
 
+	pair(
+		partition: string,
+		eventRef: string,
+		fromRef: string,
+		fromWeight: Weights,
+		toRef: string,
+		toWeight: Weights
+	) {
+		this.connect(partition, eventRef, fromRef, toRef).edge.addWeights(
+			fromWeight
+		);
+
+		this.connect(partition, eventRef, toRef, fromRef).edge.addWeights(
+			toWeight
+		);
+	}
+
+	/***
+	 *
+	 * @param mount
+	 * @param evaluator
+	 * @param settings
+	 * @returns
+	 ***/
 	calculateGraphWeight(
 		mount: string,
 		evaluator: (edgeA: Edge, edgeB: Edge) => number,
@@ -87,8 +130,9 @@ export class Graph {
 
 		this.weights[mount] = summarizer(
 			Object.values(this.nodes).flatMap((node: Node) =>
-				Object.values(node.byEvent).map((edgeA: Edge) => {
-					const edgeB = (<Node>edgeA.to).getEdge(edgeA.event);
+				node.getEvents().map((event: Event) => {
+					const edgeA = event.getEdge(node);
+					const edgeB = event.getOtherEdge(node);
 
 					return evaluator(edgeA, edgeB);
 				})
@@ -112,13 +156,15 @@ export class Graph {
 			((values) => values.reduce((agg, val) => agg + val, 0));
 
 		for (const dex of dexs) {
-			const nodeA = this.nodes[dex];
+			const node = this.nodes[dex];
 
-			nodeA.setWeight(
+			const events = node.getEvents();
+			node.setWeight(
 				mount,
 				summarizer(
-					Object.values(nodeA.byEvent).map((edgeA: Edge) => {
-						const edgeB = (<Node>edgeA.to).getEdge(edgeA.event);
+					events.map((event: Event) => {
+						const edgeA = event.getEdge(node);
+						const edgeB = event.getOtherEdge(node);
 
 						return evaluator(edgeA, edgeB);
 					})
@@ -158,26 +204,25 @@ export class Graph {
 		const ranking = dexs
 			.map((dex) => this.nodes[dex])
 			.sort((nodeB, nodeA) => {
-				const rankA = nodeA.getWeight(mount);
-				const rankB = nodeB.getWeight(mount);
-
-				const edges = nodeA.getEdges(nodeB);
-
 				let sum = 0;
-				if (edges.length) {
-					for (const edgeA of edges) {
-						const edgeB = (<Node>edgeA.to).getEdge(edgeA.event);
 
-						if (rankFn(edgeA, edgeB) > 0) {
-							sum += 1;
-						} else {
-							sum -= 1;
-						}
+				const events = nodeA.getEvents(nodeB);
+				for (const event of events) {
+					const edgeA = event.getEdge(nodeA);
+					const edgeB = event.getEdge(nodeB);
+
+					if (rankFn(edgeA, edgeB) > 0) {
+						sum += 1;
+					} else {
+						sum -= 1;
 					}
 				}
 
 				// if there's no connections or do direct diff, use the ranks
 				if (sum === 0) {
+					const rankA = nodeA.getWeight(mount);
+					const rankB = nodeB.getWeight(mount);
+
 					if (rankA > rankB) {
 						return 1;
 					} else if (rankA < rankB) {
@@ -195,6 +240,52 @@ export class Graph {
 		});
 
 		return ranking;
+	}
+
+	getFeatures(full = false): {
+		node: string[];
+		event: string[];
+		edge: string[];
+	} {
+		let nodeFeatures = null;
+		let eventFeatures = null;
+		let edgeFeatures = null;
+
+		if (full) {
+			nodeFeatures = new Set();
+			eventFeatures = new Set();
+			edgeFeatures = new Set();
+
+			Object.values(this.nodes).forEach((node) => {
+				node.getFeaures().forEach((feature) => nodeFeatures.add(feature));
+
+				Object.values(node.events).forEach((event) => {
+					event
+						.getFeaures()
+						.forEach((feature) => edgeFeatures.add(feature));
+
+					const edge = event.getEdge(node);
+					edge
+						.getFeaures()
+						.forEach((feature) => nodeFeatures.add(feature));
+				});
+			});
+		} else {
+			const node = Object.values(this.nodes)[0];
+			nodeFeatures = new Set(node.getFeaures());
+
+			const event = node.events.values().next().value[0];
+			eventFeatures = new Set(event.getFeaures());
+
+			const edge = event.edges.values().next().value;
+			edgeFeatures = new Set(edge.getFeaures());
+		}
+
+		return {
+			node: Array.from(nodeFeatures),
+			event: Array.from(eventFeatures),
+			edge: Array.from(edgeFeatures)
+		};
 	}
 
 	sort(
@@ -218,71 +309,66 @@ export class Graph {
 	}
 
 	computeDataFrame(
-		compute: (edgeA: Edge, edgeB: Edge) => Weights,
+		compute: (
+			nodeA: Node,
+			nodeB: Node,
+			edgeA: Edge,
+			edgeB: Edge
+		) => Weights,
 		settings: {
 			labeler?: (edgeA, edgeB) => number;
 			labelMount?: string;
 		} = {}
 	) {
-		return Object.values(this.nodes).flatMap((nodeA: Node) => {
-			return Object.values(nodeA.byEvent).map((edgeA: Edge) => {
-				// TODO: edges should have from
-				const edgeB = (<Node>edgeA.to).getEdge(edgeA.event);
-
-				const weights = compute(edgeA, edgeB);
-
-				if (settings.labeler) {
-					weights[weights?.labelMount || 'label'] = settings.labeler(
-						edgeA,
-						edgeB
-					);
-				}
-
-				return weights;
-			});
+		return Object.values(this.events).flatMap((events) => {
+			return Object.values(events).flatMap((event) =>
+				event.computeDataFrame(compute, settings)
+			);
 		});
 	}
 
 	toArray(field: string = null) {
-		if (field){
-			return Object.values(this.nodes)
-				.sort((nodeA, nodeB) => {
-					return nodeB.getWeight(field) - nodeA.getWeight(field);
-				})
+		if (field) {
+			return Object.values(this.nodes).sort((nodeA, nodeB) => {
+				return nodeB.getWeight(field) - nodeA.getWeight(field);
+			});
 		} else {
 			return Object.values(this.nodes);
 		}
 	}
 
-	toJSON() {
+	toJSON(): GraphJSON {
 		return {
-			events: Object.values(this.events).map((event) => event.toJSON()),
-			nodes: Object.values(this.nodes).map((node) => node.toJSON())
+			nodes: Object.values(this.nodes).map((node) => node.toJSON()),
+			events: Object.entries(this.events).reduce(
+				(agg, [partition, events]) => {
+					agg[partition] = Object.values(events).map((event) =>
+						event.toJSON()
+					);
+
+					return agg;
+				},
+				{}
+			)
 		};
 	}
 }
 
 export function load(source: string): Graph {
-	const schema = JSON.parse(source);
+	const schema = <GraphJSON>JSON.parse(source);
 	const graph = new Graph();
 
-	schema.events.map(({ref, weights}) => {
-		graph.addEvent(ref).addWeights(weights);
+	schema.nodes.map(({ref, weights}) => {
+		graph.getNode(ref).addWeights(weights);
 	});
 
-	schema.nodes.map(({ref, weights, edges}) => {
-		const node = graph.getNode(ref).addWeights(weights);
+	Object.entries(schema.events).forEach(([partition, events]) => {
+		events.map(({ref, weights, edges}) => {
+			graph.addEvent(ref, partition).addWeights(weights);
 
-		edges.map(({to, event, weights}) => {
-			const edge = new Edge(
-				node,
-				graph.getNode(to),
-				graph.getEvent(event)
-			);
-
-			edge.addWeights(weights);
-
-			node.addEdge(edge);
+			edges.forEach(({from, to, weights}) => {
+				graph.connect(partition, ref, from, to).edge.addWeights(weights);
+			});
 		});
 	});
 

@@ -1,3 +1,7 @@
 https://www.seas.upenn.edu/~ese3030/block_2_markov_chains/slides/280_ranking_nodes_in_graphs.pdf
 
-I wanted to encode 'iterations' as a first class concept in the graph, where you could say 'run these stats with only the data before this iteration.  For now, I'll just expect a graph to be written for each iteration, I'll work on making if a first class later.  It feels like too much for little gain when the same functionality can be duplicated in a combersome, but simple way.
+Using football as a working example:
+- I want to be able to order the games (events) and calculate estimates for nodes as the season moves forward
+- I want to be able to roll player positions into node weights for each week, so they can be used for pregame comparisons
+- Pregame comparisons will be done via event + nodes.  Event will give weather and condition variables, nodes with give comparable weights.
+- Postgame results go on the edges, to be used in future calculations

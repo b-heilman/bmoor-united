@@ -7,41 +7,57 @@ describe('@bmoor/graph', function () {
 		it('should properly rank', function () {
 			const graph = new Graph();
 
-			graph
-				.connect('game-1-w1', 'team-1', 'team-2')
-				.addEdgeWeight('team-1', {
+			graph.pair(
+				'w1',
+				'game-1',
+				'team-1',
+				{
 					running: 100
-				})
-				.addEdgeWeight('team-2', {
+				},
+				'team-2',
+				{
 					running: 65
-				});
+				}
+			);
 
-			graph
-				.connect('game-1-w2', 'team-1', 'team-2')
-				.addEdgeWeight('team-1', {
+			graph.pair(
+				'w2',
+				'game-1',
+				'team-1',
+				{
 					running: 80
-				})
-				.addEdgeWeight('team-2', {
+				},
+				'team-2',
+				{
 					running: 120
-				});
+				}
+			);
 
-			graph
-				.connect('game-2-w1', 'team-3', 'team-4')
-				.addEdgeWeight('team-3', {
+			graph.pair(
+				'w1',
+				'game-2',
+				'team-3',
+				{
 					running: 80
-				})
-				.addEdgeWeight('team-4', {
+				},
+				'team-4',
+				{
 					running: 70
-				});
+				}
+			);
 
-			graph
-				.connect('game-2-w2', 'team-3', 'team-4')
-				.addEdgeWeight('team-3', {
+			graph.pair(
+				'w2',
+				'game-2',
+				'team-3',
+				{
 					running: 80
-				})
-				.addEdgeWeight('team-4', {
+				},
+				'team-4',
+				{
 					running: 70
-				});
+				}
+			);
 
 			function ranker(edgeA, edgeB) {
 				return edgeA.weights.running - edgeB.weights.running;
@@ -53,191 +69,227 @@ describe('@bmoor/graph', function () {
 			).to.deep.equal(['team-3', 'team-2', 'team-1', 'team-4']);
 
 			expect(graph.toJSON()).to.deep.equal({
-				events: [
-					{
-						ref: 'game-1-w1',
-						weights: {}
-					},
-					{
-						ref: 'game-1-w2',
-						weights: {}
-					},
-					{
-						ref: 'game-2-w1',
-						weights: {}
-					},
-					{
-						ref: 'game-2-w2',
-						weights: {}
-					}
-				],
 				nodes: [
 					{
 						ref: 'team-1',
 						weights: {
 							'best-offense': 2
-						},
-						edges: [
-							{
-								to: 'team-2',
-								event: 'game-1-w1',
-								weights: {
-									running: 100
-								}
-							},
-							{
-								to: 'team-2',
-								event: 'game-1-w2',
-								weights: {
-									running: 80
-								}
-							}
-						]
+						}
 					},
 					{
 						ref: 'team-2',
 						weights: {
 							'best-offense': 3
-						},
-						edges: [
-							{
-								to: 'team-1',
-								event: 'game-1-w1',
-								weights: {
-									running: 65
-								}
-							},
-							{
-								to: 'team-1',
-								event: 'game-1-w2',
-								weights: {
-									running: 120
-								}
-							}
-						]
+						}
 					},
 					{
 						ref: 'team-3',
 						weights: {
 							'best-offense': 4
-						},
-						edges: [
-							{
-								to: 'team-4',
-								event: 'game-2-w1',
-								weights: {
-									running: 80
-								}
-							},
-							{
-								to: 'team-4',
-								event: 'game-2-w2',
-								weights: {
-									running: 80
-								}
-							}
-						]
+						}
 					},
 					{
 						ref: 'team-4',
 						weights: {
 							'best-offense': 1
-						},
-						edges: [
-							{
-								to: 'team-3',
-								event: 'game-2-w1',
-								weights: {
-									running: 70
-								}
-							},
-							{
-								to: 'team-3',
-								event: 'game-2-w2',
-								weights: {
-									running: 70
-								}
-							}
-						]
+						}
 					}
-				]
+				],
+				events: {
+					w1: [
+						{
+							ref: 'game-1',
+							weights: {},
+							edges: [
+								{
+									from: 'team-1',
+									to: 'team-2',
+									weights: {
+										running: 100
+									}
+								},
+								{
+									from: 'team-2',
+									to: 'team-1',
+									weights: {
+										running: 65
+									}
+								}
+							]
+						},
+						{
+							ref: 'game-2',
+							weights: {},
+							edges: [
+								{
+									from: 'team-3',
+									to: 'team-4',
+									weights: {
+										running: 80
+									}
+								},
+								{
+									from: 'team-4',
+									to: 'team-3',
+									weights: {
+										running: 70
+									}
+								}
+							]
+						}
+					],
+					w2: [
+						{
+							ref: 'game-1',
+							weights: {},
+							edges: [
+								{
+									from: 'team-1',
+									to: 'team-2',
+									weights: {
+										running: 80
+									}
+								},
+								{
+									from: 'team-2',
+									to: 'team-1',
+									weights: {
+										running: 120
+									}
+								}
+							]
+						},
+						{
+							ref: 'game-2',
+							weights: {},
+							edges: [
+								{
+									from: 'team-3',
+									to: 'team-4',
+									weights: {
+										running: 80
+									}
+								},
+								{
+									from: 'team-4',
+									to: 'team-3',
+									weights: {
+										running: 70
+									}
+								}
+							]
+						}
+					]
+				}
 			});
 		});
 
 		it('should properly compare', function () {
 			const graph = new Graph();
 
-			graph
-				.connect('game-1', 'team-1', 'team-2')
-				.addEdgeWeight('team-1', {
+			graph.pair(
+				'w1',
+				'game-1',
+				'team-1',
+				{
 					score: 21
-				})
-				.addEdgeWeight('team-2', {
+				},
+				'team-2',
+				{
 					score: 10
-				});
+				}
+			);
 
-			graph
-				.connect('game-2', 'team-1', 'team-3')
-				.addEdgeWeight('team-1', {
+			graph.pair(
+				'w1',
+				'game-2',
+				'team-1',
+				{
 					score: 21
-				})
-				.addEdgeWeight('team-3', {
+				},
+				'team-3',
+				{
 					score: 10
-				});
+				}
+			);
 
-			graph
-				.connect('game-3', 'team-1', 'team-4')
-				.addEdgeWeight('team-1', {
+			graph.pair(
+				'w1',
+				'game-3',
+				'team-1',
+				{
 					score: 21
-				})
-				.addEdgeWeight('team-4', {
+				},
+				'team-4',
+				{
 					score: 10
-				});
+				}
+			);
 
-			graph
-				.connect('game-4', 'team-2', 'team-3')
-				.addEdgeWeight('team-2', {
+			graph.pair(
+				'w1',
+				'game-4',
+				'team-2',
+				{
 					score: 21
-				})
-				.addEdgeWeight('team-3', {
+				},
+				'team-3',
+				{
 					score: 10
-				});
+				}
+			);
 
-			graph
-				.connect('game-5', 'team-2', 'team-4')
-				.addEdgeWeight('team-2', {
+			graph.pair(
+				'w1',
+				'game-5',
+				'team-2',
+				{
 					score: 21
-				})
-				.addEdgeWeight('team-4', {
+				},
+				'team-4',
+				{
 					score: 10
-				});
+				}
+			);
 
-			graph
-				.connect('game-6', 'team-3', 'team-4')
-				.addEdgeWeight('team-3', {
+			graph.pair(
+				'w1',
+				'game-6',
+				'team-3',
+				{
 					score: 21
-				})
-				.addEdgeWeight('team-4', {
+				},
+				'team-4',
+				{
 					score: 10
-				});
+				}
+			);
 
-			graph
-				.connect('game-7', 'team-3', 'team-5')
-				.addEdgeWeight('team-5', {
-					score: 21
-				})
-				.addEdgeWeight('team-3', {
+			graph.pair(
+				'w1',
+				'game-7',
+				'team-3',
+				{
 					score: 10
-				});
+				},
+				'team-5',
+				{
+					score: 21
+				}
+			);
 
-			graph
-				.connect('game-8', 'team-4', 'team-5')
-				.addEdgeWeight('team-5', {
-					score: 21
-				})
-				.addEdgeWeight('team-4', {
+			graph.pair(
+				'w1',
+				'game-8',
+				'team-4',
+				{
 					score: 10
-				});
+				},
+				'team-5',
+				{
+					score: 21
+				}
+			);
 
 			function sorter(edgeA, edgeB) {
 				if (edgeA) {
@@ -302,41 +354,57 @@ describe('@bmoor/graph', function () {
 		it('should properly work', function () {
 			const graph = new Graph();
 
-			graph
-				.connect('game-1-w1', 'team-1', 'team-2')
-				.addEdgeWeight('team-1', {
+			graph.pair(
+				'w1',
+				'game-1',
+				'team-1',
+				{
 					running: 100
-				})
-				.addEdgeWeight('team-2', {
+				},
+				'team-2',
+				{
 					running: 65
-				});
+				}
+			);
 
-			graph
-				.connect('game-1-w2', 'team-1', 'team-2')
-				.addEdgeWeight('team-1', {
+			graph.pair(
+				'w2',
+				'game-1',
+				'team-1',
+				{
 					running: 80
-				})
-				.addEdgeWeight('team-2', {
+				},
+				'team-2',
+				{
 					running: 120
-				});
+				}
+			);
 
-			graph
-				.connect('game-2-w1', 'team-3', 'team-4')
-				.addEdgeWeight('team-3', {
+			graph.pair(
+				'w1',
+				'game-2',
+				'team-3',
+				{
 					running: 80
-				})
-				.addEdgeWeight('team-4', {
+				},
+				'team-4',
+				{
 					running: 70
-				});
+				}
+			);
 
-			graph
-				.connect('game-2-w2', 'team-3', 'team-4')
-				.addEdgeWeight('team-3', {
+			graph.pair(
+				'w2',
+				'game-2',
+				'team-3',
+				{
 					running: 80
-				})
-				.addEdgeWeight('team-4', {
+				},
+				'team-4',
+				{
 					running: 70
-				});
+				}
+			);
 
 			graph.calculateNodeWeight(
 				'running-average',
@@ -348,114 +416,118 @@ describe('@bmoor/graph', function () {
 			);
 
 			expect(graph.toJSON()).to.deep.equal({
-				events: [
-					{
-						ref: 'game-1-w1',
-						weights: {}
-					},
-					{
-						ref: 'game-1-w2',
-						weights: {}
-					},
-					{
-						ref: 'game-2-w1',
-						weights: {}
-					},
-					{
-						ref: 'game-2-w2',
-						weights: {}
-					}
-				],
 				nodes: [
 					{
 						ref: 'team-1',
 						weights: {
 							'running-average': 90
-						},
-						edges: [
-							{
-								to: 'team-2',
-								event: 'game-1-w1',
-								weights: {
-									running: 100
-								}
-							},
-							{
-								to: 'team-2',
-								event: 'game-1-w2',
-								weights: {
-									running: 80
-								}
-							}
-						]
+						}
 					},
 					{
 						ref: 'team-2',
 						weights: {
 							'running-average': 92.5
-						},
-						edges: [
-							{
-								to: 'team-1',
-								event: 'game-1-w1',
-								weights: {
-									running: 65
-								}
-							},
-							{
-								to: 'team-1',
-								event: 'game-1-w2',
-								weights: {
-									running: 120
-								}
-							}
-						]
+						}
 					},
 					{
 						ref: 'team-3',
 						weights: {
 							'running-average': 80
-						},
-						edges: [
-							{
-								to: 'team-4',
-								event: 'game-2-w1',
-								weights: {
-									running: 80
-								}
-							},
-							{
-								to: 'team-4',
-								event: 'game-2-w2',
-								weights: {
-									running: 80
-								}
-							}
-						]
+						}
 					},
 					{
 						ref: 'team-4',
 						weights: {
 							'running-average': 70
-						},
-						edges: [
-							{
-								to: 'team-3',
-								event: 'game-2-w1',
-								weights: {
-									running: 70
-								}
-							},
-							{
-								to: 'team-3',
-								event: 'game-2-w2',
-								weights: {
-									running: 70
-								}
-							}
-						]
+						}
 					}
-				]
+				],
+				events: {
+					w1: [
+						{
+							ref: 'game-1',
+							weights: {},
+							edges: [
+								{
+									from: 'team-1',
+									to: 'team-2',
+									weights: {
+										running: 100
+									}
+								},
+								{
+									from: 'team-2',
+									to: 'team-1',
+									weights: {
+										running: 65
+									}
+								}
+							]
+						},
+						{
+							ref: 'game-2',
+							weights: {},
+							edges: [
+								{
+									from: 'team-3',
+									to: 'team-4',
+									weights: {
+										running: 80
+									}
+								},
+								{
+									from: 'team-4',
+									to: 'team-3',
+									weights: {
+										running: 70
+									}
+								}
+							]
+						}
+					],
+					w2: [
+						{
+							ref: 'game-1',
+							weights: {},
+							edges: [
+								{
+									from: 'team-1',
+									to: 'team-2',
+									weights: {
+										running: 80
+									}
+								},
+								{
+									from: 'team-2',
+									to: 'team-1',
+									weights: {
+										running: 120
+									}
+								}
+							]
+						},
+						{
+							ref: 'game-2',
+							weights: {},
+							edges: [
+								{
+									from: 'team-3',
+									to: 'team-4',
+									weights: {
+										running: 80
+									}
+								},
+								{
+									from: 'team-4',
+									to: 'team-3',
+									weights: {
+										running: 70
+									}
+								}
+							]
+						}
+					]
+				}
 			});
 		});
 	});
@@ -495,41 +567,57 @@ describe('@bmoor/graph', function () {
 		it('should properly work', function () {
 			const graph = new Graph();
 
-			graph
-				.connect('game-1-w1', 'team-1', 'team-2')
-				.addEdgeWeight('team-1', {
+			graph.pair(
+				'w1',
+				'game-1',
+				'team-1',
+				{
 					running: 100
-				})
-				.addEdgeWeight('team-2', {
+				},
+				'team-2',
+				{
 					running: 65
-				});
+				}
+			);
 
-			graph
-				.connect('game-1-w2', 'team-1', 'team-2')
-				.addEdgeWeight('team-1', {
+			graph.pair(
+				'w2',
+				'game-1',
+				'team-1',
+				{
 					running: 80
-				})
-				.addEdgeWeight('team-2', {
+				},
+				'team-2',
+				{
 					running: 120
-				});
+				}
+			);
 
-			graph
-				.connect('game-2-w1', 'team-3', 'team-4')
-				.addEdgeWeight('team-3', {
+			graph.pair(
+				'w1',
+				'game-2',
+				'team-3',
+				{
 					running: 80
-				})
-				.addEdgeWeight('team-4', {
+				},
+				'team-4',
+				{
 					running: 70
-				});
+				}
+			);
 
-			graph
-				.connect('game-2-w2', 'team-3', 'team-4')
-				.addEdgeWeight('team-3', {
+			graph.pair(
+				'w2',
+				'game-2',
+				'team-3',
+				{
 					running: 80
-				})
-				.addEdgeWeight('team-4', {
+				},
+				'team-4',
+				{
 					running: 70
-				});
+				}
+			);
 
 			graph.calculateGraphWeight(
 				'running-average',
@@ -548,77 +636,109 @@ describe('@bmoor/graph', function () {
 		it('should work', function () {
 			const graph = new Graph();
 
-			graph
-				.connect('game-1', 'team-1', 'team-2')
-				.addEdgeWeight('team-1', {
+			graph.pair(
+				'w1',
+				'game-1',
+				'team-1',
+				{
 					score: 21
-				})
-				.addEdgeWeight('team-2', {
+				},
+				'team-2',
+				{
 					score: 10
-				});
+				}
+			);
 
-			graph
-				.connect('game-2', 'team-1', 'team-3')
-				.addEdgeWeight('team-1', {
+			graph.pair(
+				'w1',
+				'game-2',
+				'team-1',
+				{
 					score: 21
-				})
-				.addEdgeWeight('team-3', {
+				},
+				'team-3',
+				{
 					score: 10
-				});
+				}
+			);
 
-			graph
-				.connect('game-3', 'team-1', 'team-4')
-				.addEdgeWeight('team-1', {
+			graph.pair(
+				'w1',
+				'game-3',
+				'team-1',
+				{
 					score: 21
-				})
-				.addEdgeWeight('team-4', {
+				},
+				'team-4',
+				{
 					score: 10
-				});
+				}
+			);
 
-			graph
-				.connect('game-4', 'team-2', 'team-3')
-				.addEdgeWeight('team-2', {
+			graph.pair(
+				'w1',
+				'game-4',
+				'team-2',
+				{
 					score: 21
-				})
-				.addEdgeWeight('team-3', {
+				},
+				'team-3',
+				{
 					score: 10
-				});
+				}
+			);
 
-			graph
-				.connect('game-5', 'team-2', 'team-4')
-				.addEdgeWeight('team-2', {
+			graph.pair(
+				'w1',
+				'game-5',
+				'team-2',
+				{
 					score: 21
-				})
-				.addEdgeWeight('team-4', {
+				},
+				'team-4',
+				{
 					score: 10
-				});
+				}
+			);
 
-			graph
-				.connect('game-6', 'team-3', 'team-4')
-				.addEdgeWeight('team-3', {
+			graph.pair(
+				'w1',
+				'game-6',
+				'team-3',
+				{
 					score: 21
-				})
-				.addEdgeWeight('team-4', {
+				},
+				'team-4',
+				{
 					score: 10
-				});
+				}
+			);
 
-			graph
-				.connect('game-7', 'team-3', 'team-5')
-				.addEdgeWeight('team-5', {
-					score: 21
-				})
-				.addEdgeWeight('team-3', {
+			graph.pair(
+				'w1',
+				'game-7',
+				'team-3',
+				{
 					score: 10
-				});
+				},
+				'team-5',
+				{
+					score: 21
+				}
+			);
 
-			graph
-				.connect('game-8', 'team-4', 'team-5')
-				.addEdgeWeight('team-5', {
-					score: 21
-				})
-				.addEdgeWeight('team-4', {
+			graph.pair(
+				'w1',
+				'game-8',
+				'team-4',
+				{
 					score: 10
-				});
+				},
+				'team-5',
+				{
+					score: 21
+				}
+			);
 
 			const oGraph = load(dump(graph));
 

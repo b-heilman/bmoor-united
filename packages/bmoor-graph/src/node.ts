@@ -1,62 +1,59 @@
-import {Weights} from './weights.interface';
-import {Edge} from './edge';
+import {Weighted} from './weighted';
 import {Event} from './event';
+import {NodeInterface, NodeJSON} from './node.interface';
 
-export class Node {
+/**
+ * TODO: I want to allow different types of nodes to exist on a graph all tied to the same event with their own weights.
+ *   - Nodes need to get a type ('team', 'player')
+ *   - When adding player data, you assign as an edge to the game <event> from the player to the team
+ *   - Able to do calculations for all 'players'
+ *   - Use players to calculate position scores for teams
+ */
+export class Node extends Weighted implements NodeInterface {
 	ref: string;
-	byNode: Record<string, Edge[]>;
-	byEvent: Record<string, Edge>;
-	weights: Record<string, number>;
+	events: Map<NodeInterface, Event[]>;
 
 	constructor(ref: string) {
+		super();
+
 		this.ref = ref;
-		this.byNode = {};
-		this.byEvent = {};
-		this.weights = {};
+		this.events = new Map();
 	}
 
-	addEdge(edge: Edge) {
-		this.byEvent[edge.event.ref] = edge;
+	addEvent(event: Event) {
+		const other = event.getOther(this);
+		const collection = this.events.get(other);
 
-		const arr = this.byNode[edge.to.ref];
-		if (arr) {
-			this.byNode[edge.to.ref].push(edge);
+		if (collection) {
+			collection.push(event);
 		} else {
-			this.byNode[edge.to.ref] = [edge];
+			this.events.set(other, [event]);
 		}
 	}
-
+	/*
 	getEdge(check: Event): Edge {
 		return this.byEvent[check.ref];
 	}
-
-	getEdges(check: Node): Edge[] {
-		return this.byNode[check.ref] || [];
+	*/
+	getEvents(check: Node = null): Event[] {
+		if (check) {
+			return this.events.get(check) || [];
+		} else {
+			return Array.from(this.events.values()).flat();
+		}
 	}
 
-	getEdgeCount() {
-		return Object.keys(this.byNode).length;
+	getEventCount() {
+		return Object.values(this.events).reduce(
+			(agg, events) => agg + events.length,
+			0
+		);
 	}
 
-	setWeight(mount: string, value: number) {
-		this.weights[mount] = value;
-	}
-
-	addWeights(weights: Weights) {
-		Object.assign(this.weights, weights);
-
-		return this;
-	}
-
-	getWeight(mount: string, value: number = null): number {
-		return mount in this.weights ? this.weights[mount] : value;
-	}
-
-	toJSON() {
+	toJSON(): NodeJSON {
 		return {
 			ref: this.ref,
-			weights: this.weights,
-			edges: Object.values(this.byEvent).map((edge) => edge.toJSON())
+			weights: this.weights
 		};
 	}
 }
