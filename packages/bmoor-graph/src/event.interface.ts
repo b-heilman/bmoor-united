@@ -1,8 +1,13 @@
-import {Weights} from './weighted.interface';
+import {WeightedInterface, Weights} from './weighted.interface';
 import {EdgeJSON} from './edge.iterface';
+import { Interval } from './interval.interface';
 
-export interface EventJSON {
+export interface EventJSON extends WeightedInterface {
 	ref: string;
-	weights: Weights;
 	edges: EdgeJSON[];
 }
+
+export interface EventOrder extends Interval {
+}
+
+export type EventReference = string;

@@ -8,7 +8,7 @@ const seasons = ['2019', '2020', '2021', '2022'];
 for(const year of seasons){
     const graph = load(
         fs.readFileSync(
-            path.join(__dirname, `../data/seasons/${year}.json`)
+            path.join(__dirname, `../../data/seasons/${year}.json`)
         )
     );
 
@@ -201,7 +201,7 @@ for(const year of seasons){
         }
     }).sort('schedule-weighted-rank', 'schedule-weighted');
 
-    const dir = path.join(__dirname, `../data/stats`);
+    const dir = path.join(__dirname, `../../data/stats`);
     if (!fs.existsSync(dir)){
         fs.mkdirSync(dir);
     }

@@ -1,41 +1,55 @@
-import {get, set, implode} from '@bmoor/object';
+import {get, set, keys} from '@bmoor/object';
 
-import {Weights} from './weighted.interface';
+import { Weights } from './weights';
+import {IntervaledWeights, WeightedInterface} from './weighted.interface';
+import { Interval } from './interval.interface';
 
-export class Weighted {
-	weights: Weights;
+export class Weighted implements WeightedInterface {
+	intervals: IntervaledWeights;
 
 	constructor() {
-		this.weights = {};
+		this.intervals = new Map();
 	}
 
-	addWeights(weights: Weights) {
-		Object.assign(this.weights, weights);
+	getWeights(interval: Interval): Weights{
+		let weights = this.intervals.get(interval);
+
+		if (!weights){
+			weights = new Weights();
+
+			this.intervals.set(interval, weights);
+		}
+
+		return weights;
+	}
+	/* TODO: do I really want this anymore?
+	addWeights(interval: Interval, weights: Weights) {
+		Object.assign(this.intervals, weights);
+
+		return this;
+	}
+	*/
+	setWeight(interval: Interval, mount: string, value: number) {
+		this.getWeights(interval).set(mount, value);
 
 		return this;
 	}
 
-	setWeight(mount: string, value: number) {
-		set(this.weights, mount, value);
-	}
+	getWeight(interval: Interval, mount: string): number {
+		const weights = this.intervals.get(interval);
 
-	getWeight(mount: string): number {
-		return get(this.weights, mount);
+		if (weights){
+			return weights.get(mount);
+		}
+
+		return null;
 	}
 
 	getFeaures(): string[] {
-		return Object.keys(implode(this.weights));
-	}
-
-	compareWeight(other: Weighted, mount: string): number {
-		return this.getWeight(mount) - other.getWeight(mount);
-	}
-
-	compareWeights(other: Weighted, mounts: string[]): Weights {
-		return mounts.reduce((agg, mount) => {
-			agg[mount] = this.compareWeight(other, mount);
-
-			return agg;
-		}, {});
+		return Array.from(
+			new Set(
+				Array.from(this.intervals).flatMap(([interval, weights]) => weights.keys())
+			)
+		);
 	}
 }

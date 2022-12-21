@@ -1,21 +1,19 @@
+import { EdgeJSON } from './edge.iterface';
 import {NodeInterface} from './node.interface';
 import {Weighted} from './weighted';
 
 export class Edge extends Weighted {
-	to: NodeInterface;
-	from: NodeInterface;
+	node: NodeInterface;
 
-	constructor(from: NodeInterface, to: NodeInterface) {
+	constructor(node: NodeInterface) {
 		super();
 
-		this.to = to;
-		this.from = from;
+		this.node = node;
 	}
 
-	toJSON() {
+	toJSON(): EdgeJSON {
 		return {
-			from: this.from.ref,
-			to: this.to.ref,
+			node: this.node.ref,
 			weights: this.weights
 		};
 	}

@@ -1,11 +1,22 @@
-import {Weights} from './weighted.interface';
+import {Weights} from './weights'
+import {WeightedInterface} from './weighted.interface';
+import { EventOrder } from './event.interface';
 
-export interface NodeJSON {
+export interface NodeJSON extends WeightedInterface {
 	ref: string;
-	weights: Weights;
+	type: string;
 }
 
 export interface NodeInterface extends NodeJSON {
-	ref: string;
-	weights: Weights;
 }
+
+export type NodeOperator = (
+	targetWeights: Weights,
+	sourceWeights: Weights
+) => void;
+
+export type NodeReference = string;
+
+export type NodeType = string;
+
+export const NODE_DEFAULT_TYPE = '__DEFAULT__';

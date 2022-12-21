@@ -355,6 +355,76 @@ export function implode<T>(
 	return rtn;
 }
 
+// Pulls out all the paths of the object.  There are places where Object.keys(implode) are being run, this should be
+// much more efficient
+export function keys<T>(
+	obj: DynamicObject<T>,
+	settings: ImplodeSettings = {}
+): string[] {
+	let rtn = [];
+
+	let ignore = <IgnoreSettings>{};
+	if (settings.ignore) {
+		ignore = settings.ignore;
+	}
+
+	let format = null;
+
+	if (isArray(obj)) {
+		// array support will go into path operators
+		throw create('unable to process arrays', {
+			code: 'BM_OB_IMPLODE_1'
+		});
+	} else {
+		format = function fn2(key: string, next: string = null): string {
+			if (next) {
+				if (next[0] === '[') {
+					return key + next;
+				} else {
+					return key + '.' + next;
+				}
+			} else {
+				return key;
+			}
+		};
+	}
+
+	for (const key in obj) {
+		const val = obj[key];
+		const t = ignore[key];
+
+		if (t !== true) {
+			if (isArray(val)) {
+				throw create('unable to process arrays', {
+					code: 'BM_OB_IMPLODE_2'
+				});
+			} else if (
+				isObject(val) &&
+				(!settings.skipInstanceOf ||
+					// eslint-disable-next-line  @typescript-eslint/no-explicit-any
+					!settings.skipInstanceOf.reduce((agg: boolean, type: any) => {
+						if (agg) {
+							return true;
+						} else {
+							return val instanceof type;
+						}
+					}, false))
+			) {
+				const subs = keys(
+					<MappedObject<T>>val,
+					Object.assign({}, settings, {ignore: t})
+				);
+
+				rtn = rtn.concat(subs.map(sub => format(key, sub)));
+			} else {
+				rtn.push(format(key));
+			}
+		}
+	}
+
+	return rtn;
+}
+
 export function merge<T>(
 	to: DynamicObject<T>,
 	...args: DynamicObject<T>[]

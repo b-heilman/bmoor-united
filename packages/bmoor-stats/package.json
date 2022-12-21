@@ -1,7 +1,7 @@
 {
-  "name": "@bmoor/graph",
+  "name": "@bmoor/stats",
   "version": "0.0.1",
-  "description": "Ways to work with graphs of objects",
+  "description": "Better ways to work with objects",
   "main": "src/index.ts",
   "files": [
     "src/*[!.spec].js",
@@ -16,15 +16,14 @@
   "bugs": {
     "url": "https://github.com/b-heilman/bmoor-united/issues"
   },
-  "homepage": "https://github.com/b-heilman/bmoor-united/blob/main/packages/bmoor-graph/README.md",
+  "homepage": "https://github.com/b-heilman/bmoor-united/blob/main/packages/bmoor-stats/README.md",
   "scripts": {
     "build": "mkdir dist/; cp -r src/ dist/src;  cp package.json dist/package.json",
     "lint": "eslint ./src",
     "test": "mocha -r ts-node/register --recursive \"./src/**/*.spec.ts\"",
-    "test:file": "mocha -r ts-node/register",
-    "publish": "echo \"graph publishing...\""
+    "publish": "echo \"streaming publishing...\""
   },
   "keywords": [],
-  "dependencies": {
+  "devDependencies": {
   }
 }

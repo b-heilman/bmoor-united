@@ -12,5 +12,6 @@ export {
 	MappedObject,
 	explode,
 	implode,
+	keys,
 	merge
 } from './object';

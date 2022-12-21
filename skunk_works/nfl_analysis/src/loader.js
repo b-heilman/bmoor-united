@@ -35,7 +35,7 @@ async function run(){
     */
     
     const reader = await parquet.ParquetReader.openFile(
-        path.join(__dirname, '../../data/parquet/teams.parquet')
+        path.join(__dirname, '../data/parquet/teams.parquet')
     )
     const cursor = reader.getCursor();
     

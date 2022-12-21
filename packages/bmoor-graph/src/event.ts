@@ -2,34 +2,38 @@ import {Weights} from './weighted.interface';
 import {Weighted} from './weighted';
 import {Edge} from './edge';
 import {NodeInterface} from './node.interface';
+import { EventJSON, EventOrder, EventReference } from './event.interface';
 
 export class Event extends Weighted {
-	ref: string;
-	edges: Map<NodeInterface, Edge>;
+	ref: EventReference;
+	order: EventOrder;
+	edges: Map<string, Map<NodeInterface, Edge>>;
 
-	constructor(ref: string) {
+	constructor(ref: EventReference, order: EventOrder) {
 		super();
 
 		this.ref = ref;
+		this.order = order;
 		this.edges = new Map();
 	}
 
 	addEdge(edge: Edge) {
-		this.edges.set(edge.from, edge);
+		const node = edge.node;
+
+		const types = this.edges.get(node.type);
+
+		if (types){
+			types.set(node, edge);
+		} else {
+			this.edges.set(node.type, (new Map()).set(node, edge))
+		}
 	}
 
-	getEdge(from: NodeInterface) {
-		return this.edges.get(from);
+	getEdge(node: NodeInterface) {
+		return this.edges.get(node.type).get(node);
 	}
 
-	getOther(from: NodeInterface) {
-		return this.edges.get(from).to;
-	}
-
-	getOtherEdge(from: NodeInterface) {
-		return this.edges.get(this.getOther(from));
-	}
-
+	// TODO: toDateFrame
 	computeDataFrame(
 		compute: (
 			nodeA: NodeInterface,
@@ -38,8 +42,7 @@ export class Event extends Weighted {
 			edgeB: Edge
 		) => Weights,
 		settings: {
-			labeler?: (edgeA, edgeB) => number;
-			labelMount?: string;
+			labeler?: (edgeA: Edge, edgeB: Edge) => Weights;
 		} = {}
 	): Weights[] {
 		// TODO: make this do proper permutations?
@@ -62,9 +65,12 @@ export class Event extends Weighted {
 			const weights = compute(from.from, to.from, from, to);
 
 			if (settings.labeler) {
-				weights[weights?.labelMount || 'label'] = settings.labeler(
-					from,
-					to
+				Object.assign(
+					weights, 
+					settings.labeler(
+						from,
+						to
+					)
 				);
 			}
 
@@ -72,11 +78,13 @@ export class Event extends Weighted {
 		});
 	}
 
-	toJSON() {
+	toJSON(): EventJSON {
 		return {
 			ref: this.ref,
 			weights: this.weights,
-			edges: Array.from(this.edges.values()).map((edge) => edge.toJSON())
+			edges: Array.from(this.edges).flatMap(
+				([key, edgeMap]) => Array.from(edgeMap).map(([ley, edge]) => edge.toJSON())
+			)
 		};
 	}
 }

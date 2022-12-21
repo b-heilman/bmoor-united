@@ -20,7 +20,10 @@ def load_training_data(season):
         f'../data/frames/{season}.json'
     )))
 
-    return pd.DataFrame(incoming)
+    return pd.DataFrame(
+        np.array(incoming['values']), 
+        columns=incoming['columns']
+    )
 
 def create_training_info(training_df):
     # Split the
