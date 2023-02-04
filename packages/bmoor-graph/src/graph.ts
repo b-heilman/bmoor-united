@@ -1,36 +1,36 @@
-import { Weights } from './weighted.interface';
-import { Event } from './event';
-import { Edge } from './edge';
-import { Node } from './node';
-import { NodeReference, NodeType } from './node.interface';
-import { List } from './list';
-import { GraphJSON } from './graph.iterface';
-import { EventOrder, EventReference } from './event.interface';
+import {Event} from './event';
+import {Node} from './node';
+import {NodeReference, NodeType} from './node.interface';
+import {GraphJSON} from './graph.interface';
+import {EventReference} from './event.interface';
+import {Interval, IntervalReference} from './interval.interface';
 
 export class Graph {
 	nodes: Map<NodeReference, Node>;
 	nodesByType: Map<NodeType, Node[]>;
 	events: Map<EventReference, Event>;
-	eventsByOrder: Map<EventOrder, Event[]>;
-	eventOrders: EventOrder[];
+	eventsByInterval: Map<Interval, Event[]>;
+	intervals: Set<Interval>;
+	sortedIntervals: Interval[];
 
 	constructor() {
 		this.nodes = new Map();
-		this.nodesByType = new Map()
+		this.nodesByType = new Map();
 		this.events = new Map();
-		this.eventsByOrder = new Map();
-		this.eventOrders = null;
+		this.eventsByInterval = new Map();
+		this.intervals = new Set();
+		this.sortedIntervals = null;
 	}
 
 	addNode(node: Node) {
 		const hasNode = this.nodes.has(node.ref);
 
-		if (!hasNode){
+		if (!hasNode) {
 			this.nodes.set(node.ref, node);
 
 			const list = this.nodesByType.get(node.type);
 
-			if (list){
+			if (list) {
 				list.push(node);
 			} else {
 				this.nodesByType.set(node.type, [node]);
@@ -42,26 +42,29 @@ export class Graph {
 		return this;
 	}
 
-	getNode(ref: NodeReference) {
+	getNode(ref: NodeReference): Node {
 		return this.nodes.get(ref);
 	}
 
-	getNodesByType(type: NodeType) {
+	getNodesByType(type: NodeType): Node[] {
 		return this.nodesByType.get(type);
 	}
 
 	addEvent(event: Event) {
 		const hasEvent = this.events.has(event.ref);
 
-		if (!hasEvent){
+		if (!hasEvent) {
 			this.events.set(event.ref, event);
 
-			const list = this.eventsByOrder.get(event.order);
+			const list = this.eventsByInterval.get(event.interval);
 
-			if (list){
+			this.intervals.add(event.interval);
+			this.sortedIntervals = null;
+
+			if (list) {
 				list.push(event);
 			} else {
-				this.eventsByOrder.set(event.order, [event]);
+				this.eventsByInterval.set(event.interval, [event]);
 			}
 		} else {
 			// TODO: throw an exception?
@@ -70,50 +73,90 @@ export class Graph {
 		return this;
 	}
 
-	getEvent(ref: NodeReference) {
+	getEvent(ref: NodeReference): Event {
 		return this.events.get(ref);
 	}
 
-	setEventOrder(orders: EventOrder[]){
-		// If the order is timestamps, I want the oldest at the top
-		this.eventOrders = orders.sort((a, b) => a.order - b.order);
-	}
-
-	getEventsByOrder(order: EventOrder) {
-		return this.eventsByOrder.get(order);
-	}
-
-	getEventsInOrder(until: EventOrder = null, from: EventOrder = null): Event[][] {
-		let orders = null;
-
-		if (until){
-			const fromPos = from ? this.eventOrders.indexOf(from) : 0;
-
-			const untilPos = this.eventOrders.indexOf(until, fromPos);
-
-			orders = this.eventOrders.slice(fromPos, untilPos);
-		} else {
-			orders = this.eventOrders;
+	getIntervalsInOrder(
+		until: Interval = null,
+		from: Interval = null
+	): Interval[] {
+		if (!this.sortedIntervals) {
+			this.sortedIntervals = Array.from(this.intervals).sort(
+				(a, b) => a.ref - b.ref
+			);
 		}
 
-		return orders.map(order => this.getEventsByOrder(order));
+		let intervals = this.sortedIntervals;
+
+		if (until) {
+			const fromPos = from ? intervals.indexOf(from) : 0;
+
+			const untilPos = intervals.indexOf(until, fromPos) + 1;
+
+			intervals = intervals.slice(fromPos, untilPos);
+		}
+
+		return intervals;
 	}
 
-	toArray(field: string = null) {
-		if (field) {
-			return Object.values(this.nodes).sort((nodeA, nodeB) => {
-				return nodeB.getWeight(field) - nodeA.getWeight(field);
-			});
-		} else {
-			// TODO: This isn't right
-			return Object.values(this.nodes);
+	getInterval(ref: IntervalReference): Interval {
+		const intervals = this.getIntervalsInOrder();
+
+		let rtn = null;
+
+		for (let i = 0, c = intervals.length; i < c; i++) {
+			if (intervals[i].ref === ref) {
+				rtn = intervals[i];
+				i = c;
+			}
 		}
+
+		return rtn;
+	}
+
+	getIntervalBefore(interval: Interval): Interval {
+		const intervals = this.getIntervalsInOrder();
+		const pos = intervals.indexOf(interval);
+
+		if (pos < 1) {
+			return null;
+		} else {
+			return intervals[pos - 1];
+		}
+	}
+
+	getIntervalAfter(interval: Interval): Interval {
+		const intervals = this.getIntervalsInOrder();
+		const pos = intervals.indexOf(interval);
+		const max = intervals.length - 1;
+
+		if (pos === -1 || pos === max) {
+			return null;
+		} else {
+			return intervals[pos + 1];
+		}
+	}
+
+	getEventsInOrder(
+		until: Interval = null,
+		from: Interval = null
+	): Event[][] {
+		const intervals = this.getIntervalsInOrder(until, from);
+
+		return intervals.map((interval) =>
+			this.eventsByInterval.get(interval)
+		);
 	}
 
 	toJSON(): GraphJSON {
 		return {
-			nodes: Array.from(this.nodes).map(([key, node]) => node.toJSON()),
-			events: Array.from(this.events).map(([key, event]) => event.toJSON())
+			nodes: Array.from(this.nodes).map((nodeInfo) =>
+				nodeInfo[1].toJSON()
+			),
+			events: Array.from(this.events).map((eventInfo) =>
+				eventInfo[1].toJSON()
+			)
 		};
 	}
 }

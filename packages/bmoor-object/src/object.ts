@@ -415,7 +415,7 @@ export function keys<T>(
 					Object.assign({}, settings, {ignore: t})
 				);
 
-				rtn = rtn.concat(subs.map(sub => format(key, sub)));
+				rtn = rtn.concat(subs.map((sub) => format(key, sub)));
 			} else {
 				rtn.push(format(key));
 			}

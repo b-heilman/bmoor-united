@@ -26,14 +26,12 @@ export class ServiceValidator<
 	validateCreate(
 		datums: ExternalCreate[]
 	): Promise<ServiceValidatorInvalidation> {
-		console.log(datums);
 		return null;
 	}
 
 	validateUpdate(
 		content: UpdateDelta<ExternalReference, ExternalUpdate>[]
 	): Promise<ServiceValidatorInvalidation> {
-		console.log(content);
 		return null;
 	}
 }

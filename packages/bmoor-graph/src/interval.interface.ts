@@ -1,5 +1,6 @@
+export type IntervalReference = number;
 
 export interface Interval {
-	order: number;
+	ref: IntervalReference;
 	label: string;
 }

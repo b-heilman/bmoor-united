@@ -1,20 +1,20 @@
-import {Weights} from './weighted.interface';
-import {Weighted} from './weighted';
+import {Weights} from './weights';
 import {Edge} from './edge';
 import {NodeInterface} from './node.interface';
-import { EventJSON, EventOrder, EventReference } from './event.interface';
+import {EventJson, EventReference, EventNodeEdge} from './event.interface';
+import {Interval} from './interval.interface';
 
-export class Event extends Weighted {
+export class Event {
 	ref: EventReference;
-	order: EventOrder;
-	edges: Map<string, Map<NodeInterface, Edge>>;
+	interval: Interval;
+	weights: Weights;
+	edges: EventNodeEdge;
 
-	constructor(ref: EventReference, order: EventOrder) {
-		super();
-
+	constructor(ref: EventReference, interval: Interval) {
 		this.ref = ref;
-		this.order = order;
 		this.edges = new Map();
+		this.weights = new Weights();
+		this.interval = interval;
 	}
 
 	addEdge(edge: Edge) {
@@ -22,10 +22,10 @@ export class Event extends Weighted {
 
 		const types = this.edges.get(node.type);
 
-		if (types){
+		if (types) {
 			types.set(node, edge);
 		} else {
-			this.edges.set(node.type, (new Map()).set(node, edge))
+			this.edges.set(node.type, new Map().set(node, edge));
 		}
 	}
 
@@ -65,25 +65,20 @@ export class Event extends Weighted {
 			const weights = compute(from.from, to.from, from, to);
 
 			if (settings.labeler) {
-				Object.assign(
-					weights, 
-					settings.labeler(
-						from,
-						to
-					)
-				);
+				Object.assign(weights, settings.labeler(from, to));
 			}
 
 			return weights;
 		});
 	}
 
-	toJSON(): EventJSON {
+	toJSON(): EventJson {
 		return {
 			ref: this.ref,
-			weights: this.weights,
-			edges: Array.from(this.edges).flatMap(
-				([key, edgeMap]) => Array.from(edgeMap).map(([ley, edge]) => edge.toJSON())
+			interval: this.interval.ref,
+			weights: this.weights.data,
+			edges: Array.from(this.edges).flatMap((edgeMap) =>
+				Array.from(edgeMap[1]).map((edge) => (<Edge>edge[1]).toJSON())
 			)
 		};
 	}

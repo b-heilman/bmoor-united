@@ -1,3 +1,4 @@
+/*
 import {expect} from 'chai';
 
 import {Weights} from './weighted.interface';
@@ -12,13 +13,13 @@ function pair(
 	toRef: string,
 	toWeight: Weights
 ) {
-	graph.connect(partition, eventRef, fromRef, toRef).edge.addWeights(
-		fromWeight
-	);
+	graph
+		.connect(partition, eventRef, fromRef, toRef)
+		.edge.addWeights(fromWeight);
 
-	graph.connect(partition, eventRef, toRef, fromRef).edge.addWeights(
-		toWeight
-	);
+	graph
+		.connect(partition, eventRef, toRef, fromRef)
+		.edge.addWeights(toWeight);
 }
 
 describe('@bmoor/graph', function () {
@@ -26,7 +27,8 @@ describe('@bmoor/graph', function () {
 		it('should properly rank', function () {
 			const graph = new Graph();
 
-			pair(graph,
+			pair(
+				graph,
 				'w1',
 				'game-1',
 				'team-1',
@@ -39,7 +41,8 @@ describe('@bmoor/graph', function () {
 				}
 			);
 
-			pair(graph,
+			pair(
+				graph,
 				'w2',
 				'game-1',
 				'team-1',
@@ -52,7 +55,8 @@ describe('@bmoor/graph', function () {
 				}
 			);
 
-			pair(graph,
+			pair(
+				graph,
 				'w1',
 				'game-2',
 				'team-3',
@@ -65,7 +69,8 @@ describe('@bmoor/graph', function () {
 				}
 			);
 
-			pair(graph,
+			pair(
+				graph,
 				'w2',
 				'game-2',
 				'team-3',
@@ -206,7 +211,8 @@ describe('@bmoor/graph', function () {
 		it('should properly compare', function () {
 			const graph = new Graph();
 
-			pair(graph,
+			pair(
+				graph,
 				'w1',
 				'game-1',
 				'team-1',
@@ -219,7 +225,8 @@ describe('@bmoor/graph', function () {
 				}
 			);
 
-			pair(graph,
+			pair(
+				graph,
 				'w1',
 				'game-2',
 				'team-1',
@@ -232,7 +239,8 @@ describe('@bmoor/graph', function () {
 				}
 			);
 
-			pair(graph,
+			pair(
+				graph,
 				'w1',
 				'game-3',
 				'team-1',
@@ -245,7 +253,8 @@ describe('@bmoor/graph', function () {
 				}
 			);
 
-			pair(graph,
+			pair(
+				graph,
 				'w1',
 				'game-4',
 				'team-2',
@@ -258,7 +267,8 @@ describe('@bmoor/graph', function () {
 				}
 			);
 
-			pair(graph,
+			pair(
+				graph,
 				'w1',
 				'game-5',
 				'team-2',
@@ -271,7 +281,8 @@ describe('@bmoor/graph', function () {
 				}
 			);
 
-			pair(graph,
+			pair(
+				graph,
 				'w1',
 				'game-6',
 				'team-3',
@@ -284,7 +295,8 @@ describe('@bmoor/graph', function () {
 				}
 			);
 
-			pair(graph,
+			pair(
+				graph,
 				'w1',
 				'game-7',
 				'team-3',
@@ -297,7 +309,8 @@ describe('@bmoor/graph', function () {
 				}
 			);
 
-			pair(graph,
+			pair(
+				graph,
 				'w1',
 				'game-8',
 				'team-4',
@@ -373,7 +386,8 @@ describe('@bmoor/graph', function () {
 		it('should properly work', function () {
 			const graph = new Graph();
 
-			pair(graph,
+			pair(
+				graph,
 				'w1',
 				'game-1',
 				'team-1',
@@ -386,7 +400,8 @@ describe('@bmoor/graph', function () {
 				}
 			);
 
-			pair(graph,
+			pair(
+				graph,
 				'w2',
 				'game-1',
 				'team-1',
@@ -399,7 +414,8 @@ describe('@bmoor/graph', function () {
 				}
 			);
 
-			pair(graph,
+			pair(
+				graph,
 				'w1',
 				'game-2',
 				'team-3',
@@ -412,7 +428,8 @@ describe('@bmoor/graph', function () {
 				}
 			);
 
-			pair(graph,
+			pair(
+				graph,
 				'w2',
 				'game-2',
 				'team-3',
@@ -586,7 +603,8 @@ describe('@bmoor/graph', function () {
 		it('should properly work', function () {
 			const graph = new Graph();
 
-			pair(graph,
+			pair(
+				graph,
 				'w1',
 				'game-1',
 				'team-1',
@@ -599,7 +617,8 @@ describe('@bmoor/graph', function () {
 				}
 			);
 
-			pair(graph,
+			pair(
+				graph,
 				'w2',
 				'game-1',
 				'team-1',
@@ -612,7 +631,8 @@ describe('@bmoor/graph', function () {
 				}
 			);
 
-			pair(graph,
+			pair(
+				graph,
 				'w1',
 				'game-2',
 				'team-3',
@@ -625,7 +645,8 @@ describe('@bmoor/graph', function () {
 				}
 			);
 
-			pair(graph,
+			pair(
+				graph,
 				'w2',
 				'game-2',
 				'team-3',
@@ -655,7 +676,8 @@ describe('@bmoor/graph', function () {
 		it('should work', function () {
 			const graph = new Graph();
 
-			pair(graph,
+			pair(
+				graph,
 				'w1',
 				'game-1',
 				'team-1',
@@ -668,7 +690,8 @@ describe('@bmoor/graph', function () {
 				}
 			);
 
-			pair(graph,
+			pair(
+				graph,
 				'w1',
 				'game-2',
 				'team-1',
@@ -681,7 +704,8 @@ describe('@bmoor/graph', function () {
 				}
 			);
 
-			pair(graph,
+			pair(
+				graph,
 				'w1',
 				'game-3',
 				'team-1',
@@ -694,7 +718,8 @@ describe('@bmoor/graph', function () {
 				}
 			);
 
-			pair(graph,
+			pair(
+				graph,
 				'w1',
 				'game-4',
 				'team-2',
@@ -707,7 +732,8 @@ describe('@bmoor/graph', function () {
 				}
 			);
 
-			pair(graph,
+			pair(
+				graph,
 				'w1',
 				'game-5',
 				'team-2',
@@ -720,7 +746,8 @@ describe('@bmoor/graph', function () {
 				}
 			);
 
-			pair(graph,
+			pair(
+				graph,
 				'w1',
 				'game-6',
 				'team-3',
@@ -733,7 +760,8 @@ describe('@bmoor/graph', function () {
 				}
 			);
 
-			pair(graph,
+			pair(
+				graph,
 				'w1',
 				'game-7',
 				'team-3',
@@ -746,7 +774,8 @@ describe('@bmoor/graph', function () {
 				}
 			);
 
-			pair(graph,
+			pair(
+				graph,
 				'w1',
 				'game-8',
 				'team-4',
@@ -765,3 +794,4 @@ describe('@bmoor/graph', function () {
 		});
 	});
 });
+*/

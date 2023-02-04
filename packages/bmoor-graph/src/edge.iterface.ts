@@ -1,6 +1,13 @@
-import {Weights} from './weighted.interface';
+import {Weights} from './weights';
+import {WeightData} from './weights.interface';
+import {NodeInterface, NodeReference} from './node.interface';
 
-export interface EdgeJSON {
-	node: string;
+export interface EdgeJson {
+	node: NodeReference;
+	weights: WeightData;
+}
+
+export interface EdgeInterface {
+	node: NodeInterface;
 	weights: Weights;
 }

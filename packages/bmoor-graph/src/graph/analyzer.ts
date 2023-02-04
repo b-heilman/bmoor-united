@@ -1,15 +1,14 @@
-import { Edge } from "../edge";
-import { Event } from "../event";
-import { Graph } from "../graph";
+import {Graph} from '../graph';
 
- class GraphCalculator {
-    graph: Graph;
+export class GraphCalculator {
+	graph: Graph;
 
-    constructor(graph: Graph){
-        this.graph = graph;
-    }
+	constructor(graph: Graph) {
+		this.graph = graph;
+	}
 
-    getFeatures(full = false): {
+	/*
+	getFeatures(full = false): {
 		node: string[];
 		event: string[];
 		edge: string[];
@@ -54,4 +53,5 @@ import { Graph } from "../graph";
 			edge: Array.from(edgeFeatures)
 		};
 	}
- }
+	*/
+}
