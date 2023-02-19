@@ -1,16 +1,16 @@
 import {ModelKey} from '../datum.interface';
 import {
+	ExternalKeyReader,
+	InternalKeyReader,
 	ServiceAccessorInterface,
 	ServiceAccessorSettings,
-	InternalKeyReader,
-	ExternalKeyReader
 } from './accessor.interface';
 
 export class ServiceAccessor<
 	ExternalRead,
 	ExternalReference,
 	InternalRead,
-	InternalReference
+	InternalReference,
 > implements
 		ServiceAccessorInterface<
 			ExternalRead,

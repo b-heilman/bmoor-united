@@ -26,6 +26,6 @@ export function batch<T>(limit = 10, settings = {objectMode: true}) {
 			}
 
 			callback();
-		}
+		},
 	});
 }

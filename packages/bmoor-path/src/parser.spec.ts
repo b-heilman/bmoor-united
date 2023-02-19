@@ -7,49 +7,49 @@ describe('@bmoor/path', function () {
 	describe('Parser', function () {
 		it('should tokenize correctly', function () {
 			const tokens = parser.tokenizer.tokenize(
-				'hello.world["ok"].foo[1:2].bar[]'
+				'hello.world["ok"].foo[1:2].bar[]',
 			);
 
 			expect(tokens.map((token) => token.toJSON())).to.deep.equal([
 				{
 					content: 'hello',
 					settings: {},
-					reference: 'accessor-token'
+					reference: 'accessor-token',
 				},
 				{
 					content: 'world',
 					settings: {},
-					reference: 'accessor-token'
+					reference: 'accessor-token',
 				},
 				{
 					content: 'ok',
 					settings: {},
-					reference: 'accessor-token'
+					reference: 'accessor-token',
 				},
 				{
 					content: 'foo',
 					settings: {},
-					reference: 'accessor-token'
+					reference: 'accessor-token',
 				},
 				{
 					content: '1:2',
 					settings: {
-						subType: 'object'
+						subType: 'object',
 					},
-					reference: 'array-token'
+					reference: 'array-token',
 				},
 				{
 					content: 'bar',
 					settings: {},
-					reference: 'accessor-token'
+					reference: 'accessor-token',
 				},
 				{
 					content: '',
 					settings: {
-						subType: 'object'
+						subType: 'object',
 					},
-					reference: 'array-token'
-				}
+					reference: 'array-token',
+				},
 			]);
 		});
 	});
@@ -112,8 +112,8 @@ describe('@bmoor/path', function () {
 						{bar: [1.1, 1.2, 1.3]},
 						{bar: [2.1, 2.2, 2.3]},
 						{bar: [3.1, 3.2, 3.3]},
-						{bar: [4.1, 4.2, 4.3, 4.4]}
-					]
+						{bar: [4.1, 4.2, 4.3, 4.4]},
+					],
 				};
 
 				it('should work with an array ', function () {
@@ -175,7 +175,7 @@ describe('@bmoor/path', function () {
 					fn(tgt, [1, 2, 3]);
 
 					expect(tgt).to.deep.equal({
-						foo: [1, 2, 3]
+						foo: [1, 2, 3],
 					});
 				});
 
@@ -187,7 +187,7 @@ describe('@bmoor/path', function () {
 					fn(tgt, [1, 2, 3]);
 
 					expect(tgt).to.deep.equal({
-						foo: [1, 2, 3, 6]
+						foo: [1, 2, 3, 6],
 					});
 				});
 
@@ -198,7 +198,7 @@ describe('@bmoor/path', function () {
 					fn(tgt, [1, 2, 3]);
 
 					expect(tgt).to.deep.equal({
-						foo: [1, 2, 3]
+						foo: [1, 2, 3],
 					});
 				});
 			});
@@ -211,21 +211,21 @@ describe('@bmoor/path', function () {
 					fn(tgt, [
 						[1, 1.1],
 						[2, 2.1],
-						[3, 3.1]
+						[3, 3.1],
 					]);
 
 					expect(tgt).to.deep.equal({
 						foo: [
 							{
-								bar: [1, 1.1]
+								bar: [1, 1.1],
 							},
 							{
-								bar: [2, 2.1]
+								bar: [2, 2.1],
 							},
 							{
-								bar: [3, 3.1]
-							}
-						]
+								bar: [3, 3.1],
+							},
+						],
 					});
 				});
 
@@ -236,15 +236,15 @@ describe('@bmoor/path', function () {
 					fn(tgt, [
 						[1, 1.1],
 						[2, 2.1],
-						[3, 3.1]
+						[3, 3.1],
 					]);
 
 					expect(tgt).to.deep.equal({
 						foo: [
 							[1, 1.1],
 							[2, 2.1],
-							[3, 3.1]
-						]
+							[3, 3.1],
+						],
 					});
 				});
 
@@ -255,19 +255,19 @@ describe('@bmoor/path', function () {
 					fn(tgt, [
 						[1, 1.1],
 						[2, 2.1],
-						[3, 3.1]
+						[3, 3.1],
 					]);
 
 					expect(tgt).to.deep.equal([
 						{
-							bar: [1, 1.1]
+							bar: [1, 1.1],
 						},
 						{
-							bar: [2, 2.1]
+							bar: [2, 2.1],
 						},
 						{
-							bar: [3, 3.1]
-						}
+							bar: [3, 3.1],
+						},
 					]);
 				});
 
@@ -278,9 +278,9 @@ describe('@bmoor/path', function () {
 					fn(tgt, [
 						[
 							[1, 1.1],
-							[2, 2.1]
+							[2, 2.1],
 						],
-						[[3, 3.1]]
+						[[3, 3.1]],
 					]);
 
 					expect(tgt).to.deep.equal({
@@ -288,21 +288,21 @@ describe('@bmoor/path', function () {
 							{
 								bar: [
 									{
-										helloWorld: [1, 1.1]
+										helloWorld: [1, 1.1],
 									},
 									{
-										helloWorld: [2, 2.1]
-									}
-								]
+										helloWorld: [2, 2.1],
+									},
+								],
 							},
 							{
 								bar: [
 									{
-										helloWorld: [3, 3.1]
-									}
-								]
-							}
-						]
+										helloWorld: [3, 3.1],
+									},
+								],
+							},
+						],
 					});
 				});
 			});
@@ -320,13 +320,13 @@ describe('@bmoor/path', function () {
 					root: [
 						{
 							foo: 1,
-							bar: 10
+							bar: 10,
 						},
 						{
 							foo: 2,
-							bar: 20
-						}
-					]
+							bar: 20,
+						},
+					],
 				});
 			});
 		});

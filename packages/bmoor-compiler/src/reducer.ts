@@ -2,7 +2,7 @@ import {StatementConstructor} from './reducer/statement';
 import {Token} from './tokenizer/token';
 import {
 	ExpressableToken,
-	TokenReference
+	TokenReference,
 } from './tokenizer/token.interface';
 
 type TreeBranch = {
@@ -13,7 +13,7 @@ type TreeBranch = {
 function treeBuilder(arr: StatementConstructor[]): TreeBranch {
 	const root: TreeBranch = {
 		value: null,
-		next: new Map<TokenReference, TreeBranch>()
+		next: new Map<TokenReference, TreeBranch>(),
 	};
 
 	for (let i = 0, c = arr.length; i < c; i++) {
@@ -34,7 +34,7 @@ function treeBuilder(arr: StatementConstructor[]): TreeBranch {
 			if (!cur) {
 				cur = {
 					value: null,
-					next: new Map<TokenReference, TreeBranch>()
+					next: new Map<TokenReference, TreeBranch>(),
 				};
 
 				next.set(tokenRef, cur);
@@ -91,7 +91,7 @@ export class Reducer {
 
 				history.push({
 					token,
-					value: cursor.value
+					value: cursor.value,
 				});
 			} else if (history.length) {
 				// we will need to try the token again

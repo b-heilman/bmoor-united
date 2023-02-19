@@ -10,7 +10,7 @@ export type StatementConstructor = {
 
 export abstract class Statement implements ExpressableToken {
 	// https://github.com/microsoft/TypeScript/issues/34516
-	static pieces: typeof Token[] = [];
+	static pieces: (typeof Token)[] = [];
 
 	abstract toExpressable(): Expressable;
 

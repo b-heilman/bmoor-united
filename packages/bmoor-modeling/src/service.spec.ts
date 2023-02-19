@@ -4,11 +4,11 @@ import {stub} from 'sinon';
 import {ContextSecurityInterface} from '@bmoor/context';
 
 import {Model} from './model';
-import {Service} from './service';
 import {factory} from './model/field/set';
-import {ServiceControllerInterface} from './service/controller.interface';
-import {ServiceAdapterInterface} from './service/adapter.interface';
+import {Service} from './service';
 import {ServiceAccessorInterface} from './service/accessor.interface';
+import {ServiceAdapterInterface} from './service/adapter.interface';
+import {ServiceControllerInterface} from './service/controller.interface';
 import {ServiceValidatorInterface} from './service/validator.interface';
 
 // eslint-disable-next-line  @typescript-eslint/no-explicit-any
@@ -75,7 +75,7 @@ describe('@bmoor-modeling::Service', function () {
 			},
 			async hasClaim() {
 				return true;
-			}
+			},
 		};
 		controller = {
 			async canRead(datums) {
@@ -89,7 +89,7 @@ describe('@bmoor-modeling::Service', function () {
 			},
 			async canDelete(datums) {
 				return datums;
-			}
+			},
 		};
 		adapter = {
 			async create(content) {
@@ -103,7 +103,7 @@ describe('@bmoor-modeling::Service', function () {
 			},
 			async delete(ids) {
 				return ids.length;
-			}
+			},
 		};
 		validator = {
 			validateCreate() {
@@ -111,7 +111,7 @@ describe('@bmoor-modeling::Service', function () {
 			},
 			validateUpdate() {
 				return null;
-			}
+			},
 		};
 		accessor = {
 			getInternalKey() {
@@ -119,7 +119,7 @@ describe('@bmoor-modeling::Service', function () {
 			},
 			getExternalKey() {
 				return 'ok';
-			}
+			},
 		};
 	});
 
@@ -137,27 +137,27 @@ describe('@bmoor-modeling::Service', function () {
 								external: 'f1',
 								onCreate(datum) {
 									datum.v = 1;
-								}
+								},
 							},
 							{
 								external: 'f2',
 								onCreate(datum, setter, getter) {
 									setter(datum, getter(datum) + '-2');
-								}
-							}
-						)
-					})
+								},
+							},
+						),
+					}),
 				});
 
 				const res = service.actions.create({
 					f1: 'v-1',
-					f2: 'v-2'
+					f2: 'v-2',
 				});
 
 				expect(res).to.deep.equal({
 					f1: 'v-1',
 					f2: 'v-2-2',
-					v: 1
+					v: 1,
 				});
 			});
 		});
@@ -175,27 +175,27 @@ describe('@bmoor-modeling::Service', function () {
 								external: 'f1',
 								onRead(datum) {
 									datum.v = 1;
-								}
+								},
 							},
 							{
 								external: 'f2',
 								onRead(datum, setter, getter) {
 									setter(datum, getter(datum) + '-2');
-								}
-							}
-						)
-					})
+								},
+							},
+						),
+					}),
 				});
 
 				const res = service.actions.read({
 					f1: 'v-1',
-					f2: 'v-2'
+					f2: 'v-2',
 				});
 
 				expect(res).to.deep.equal({
 					f1: 'v-1',
 					f2: 'v-2-2',
-					v: 1
+					v: 1,
 				});
 			});
 		});
@@ -213,27 +213,27 @@ describe('@bmoor-modeling::Service', function () {
 								external: 'f1',
 								onUpdate(datum) {
 									datum.v = 1;
-								}
+								},
 							},
 							{
 								external: 'f2',
 								onUpdate(datum, setter, getter) {
 									setter(datum, getter(datum) + '-2');
-								}
-							}
-						)
-					})
+								},
+							},
+						),
+					}),
 				});
 
 				const res = model.actions.update({
 					f1: 'v-1',
-					f2: 'v-2'
+					f2: 'v-2',
 				});
 
 				expect(res).to.deep.equal({
 					f1: 'v-1',
 					f2: 'v-2-2',
-					v: 1
+					v: 1,
 				});
 			});
 		});
@@ -251,27 +251,27 @@ describe('@bmoor-modeling::Service', function () {
 								external: 'f1',
 								onInflate(datum) {
 									datum.v = 1;
-								}
+								},
 							},
 							{
 								external: 'f2',
 								onInflate(datum, setter, getter) {
 									setter(datum, getter(datum) + '-2');
-								}
-							}
-						)
-					})
+								},
+							},
+						),
+					}),
 				});
 
 				const res = model.actions.inflate({
 					f1: 'v-1',
-					f2: 'v-2'
+					f2: 'v-2',
 				});
 
 				expect(res).to.deep.equal({
 					f1: 'v-1',
 					f2: 'v-2-2',
-					v: 1
+					v: 1,
 				});
 			});
 		});
@@ -289,27 +289,27 @@ describe('@bmoor-modeling::Service', function () {
 								external: 'f1',
 								onDeflate(datum) {
 									datum.v = 1;
-								}
+								},
 							},
 							{
 								external: 'f2',
 								onDeflate(datum, setter, getter) {
 									setter(datum, getter(datum) + '-2');
-								}
-							}
-						)
-					})
+								},
+							},
+						),
+					}),
 				});
 
 				const res = model.actions.deflate({
 					f1: 'v-1',
-					f2: 'v-2'
+					f2: 'v-2',
 				});
 
 				expect(res).to.deep.equal({
 					f1: 'v-1',
 					f2: 'v-2-2',
-					v: 1
+					v: 1,
 				});
 			});
 		});
@@ -327,45 +327,45 @@ describe('@bmoor-modeling::Service', function () {
 						ref: 'junk',
 						fields: factory(
 							{
-								external: 'f1'
+								external: 'f1',
 							},
 							{
 								external: 'f2',
-								internal: 'f3'
-							}
-						)
-					})
+								internal: 'f3',
+							},
+						),
+					}),
 				});
 
 				const myStub = stub(adapter, 'create').resolves([
 					{
 						f1: 'foo',
-						f3: 'bar'
-					}
+						f3: 'bar',
+					},
 				]);
 
 				const res = await service.create(
 					[
 						{
 							f1: 'val-1',
-							f2: 'val-2'
-						}
+							f2: 'val-2',
+						},
 					],
-					ctx
+					ctx,
 				);
 
 				expect(res).to.deep.equal([
 					{
 						f1: 'foo',
-						f2: 'bar'
-					}
+						f2: 'bar',
+					},
 				]);
 
 				expect(myStub.getCall(0).args[0]).to.deep.equal([
 					{
 						f1: 'val-1',
-						f3: 'val-2'
-					}
+						f3: 'val-2',
+					},
 				]);
 			});
 
@@ -379,18 +379,18 @@ describe('@bmoor-modeling::Service', function () {
 						ref: 'junk',
 						fields: factory(
 							{
-								external: 'f1'
+								external: 'f1',
 							},
 							{
 								external: 'f2',
-								internal: 'f3'
-							}
-						)
-					})
+								internal: 'f3',
+							},
+						),
+					}),
 				});
 
 				const myStub = stub(validator, 'validateCreate').resolves(
-					new Error('fail-whale')
+					new Error('fail-whale'),
 				);
 
 				let failed = false;
@@ -399,10 +399,10 @@ describe('@bmoor-modeling::Service', function () {
 						[
 							{
 								f1: 'val-1',
-								f2: 'val-2'
-							}
+								f2: 'val-2',
+							},
 						],
-						ctx
+						ctx,
 					);
 				} catch (ex) {
 					failed = true;
@@ -414,8 +414,8 @@ describe('@bmoor-modeling::Service', function () {
 				expect(myStub.getCall(0).args[0]).to.deep.equal([
 					{
 						f1: 'val-1',
-						f2: 'val-2'
-					}
+						f2: 'val-2',
+					},
 				]);
 			});
 
@@ -432,49 +432,49 @@ describe('@bmoor-modeling::Service', function () {
 								external: 'f1',
 								onCreate: (datum, setter) => {
 									setter(datum, 'value');
-								}
+								},
 							},
 							{
 								external: 'f2',
 								internal: 'f3',
-								usage: 'json'
-							}
-						)
-					})
+								usage: 'json',
+							},
+						),
+					}),
 				});
 
 				const myStub = stub(adapter, 'create').resolves([
 					{
 						f1: 'foo',
-						f3: '{"a":"value"}'
-					}
+						f3: '{"a":"value"}',
+					},
 				]);
 
 				const res = await service.create(
 					[
 						{
 							f2: {
-								foo: 'bar'
-							}
-						}
+								foo: 'bar',
+							},
+						},
 					],
-					ctx
+					ctx,
 				);
 
 				expect(res).to.deep.equal([
 					{
 						f1: 'foo',
 						f2: {
-							a: 'value'
-						}
-					}
+							a: 'value',
+						},
+					},
 				]);
 
 				expect(myStub.getCall(0).args[0]).to.deep.equal([
 					{
 						f1: 'value',
-						f3: '{"foo":"bar"}'
-					}
+						f3: '{"foo":"bar"}',
+					},
 				]);
 			});
 		});
@@ -491,25 +491,25 @@ describe('@bmoor-modeling::Service', function () {
 						fields: factory(
 							{
 								external: 'key',
-								internal: 'id'
+								internal: 'id',
 							},
 							{
-								external: 'f1'
+								external: 'f1',
 							},
 							{
 								external: 'f2',
-								internal: 'f3'
-							}
-						)
-					})
+								internal: 'f3',
+							},
+						),
+					}),
 				});
 
 				const myStub = stub(adapter, 'read').resolves([
 					{
 						f1: 'foo',
 						f3: 'bar',
-						id: 123
-					}
+						id: 123,
+					},
 				]);
 
 				const res = await service.read([{key: 12}], ctx);
@@ -518,14 +518,14 @@ describe('@bmoor-modeling::Service', function () {
 					{
 						f1: 'foo',
 						f2: 'bar',
-						key: 123
-					}
+						key: 123,
+					},
 				]);
 
 				expect(myStub.getCall(0).args[0]).to.deep.equal([
 					{
-						id: 12
-					}
+						id: 12,
+					},
 				]);
 			});
 
@@ -546,58 +546,58 @@ describe('@bmoor-modeling::Service', function () {
 						fields: factory(
 							{
 								external: 'key',
-								internal: 'id'
+								internal: 'id',
 							},
 							{
-								external: 'f1'
+								external: 'f1',
 							},
 							{
 								external: 'f2',
-								internal: 'f3'
-							}
-						)
-					})
+								internal: 'f3',
+							},
+						),
+					}),
 				});
 
 				const myStub = stub(adapter, 'update').resolves([
 					{
 						f1: 'foo',
-						f3: 'bar'
-					}
+						f3: 'bar',
+					},
 				]);
 
 				const res = await service.update(
 					[
 						{
 							ref: {
-								key: 123
+								key: 123,
 							},
 							delta: {
 								f1: 'val-1',
-								f2: 'val-2'
-							}
-						}
+								f2: 'val-2',
+							},
+						},
 					],
-					ctx
+					ctx,
 				);
 
 				expect(res).to.deep.equal([
 					{
 						f1: 'foo',
-						f2: 'bar'
-					}
+						f2: 'bar',
+					},
 				]);
 
 				expect(myStub.getCall(0).args[0]).to.deep.equal([
 					{
 						ref: {
-							id: 123
+							id: 123,
 						},
 						delta: {
 							f1: 'val-1',
-							f3: 'val-2'
-						}
-					}
+							f3: 'val-2',
+						},
+					},
 				]);
 			});
 
@@ -612,21 +612,21 @@ describe('@bmoor-modeling::Service', function () {
 						fields: factory(
 							{
 								external: 'key',
-								internal: 'id'
+								internal: 'id',
 							},
 							{
-								external: 'f1'
+								external: 'f1',
 							},
 							{
 								external: 'f2',
-								internal: 'f3'
-							}
-						)
-					})
+								internal: 'f3',
+							},
+						),
+					}),
 				});
 
 				const myStub = stub(validator, 'validateUpdate').resolves(
-					new Error('fail-whale')
+					new Error('fail-whale'),
 				);
 
 				let failed = false;
@@ -635,15 +635,15 @@ describe('@bmoor-modeling::Service', function () {
 						[
 							{
 								ref: {
-									key: 123
+									key: 123,
 								},
 								delta: {
 									f1: 'val-1',
-									f2: 'val-2'
-								}
-							}
+									f2: 'val-2',
+								},
+							},
 						],
-						ctx
+						ctx,
 					);
 				} catch (ex) {
 					failed = true;
@@ -655,13 +655,13 @@ describe('@bmoor-modeling::Service', function () {
 				expect(myStub.getCall(0).args[0]).to.deep.equal([
 					{
 						ref: {
-							key: 123
+							key: 123,
 						},
 						delta: {
 							f1: 'val-1',
-							f2: 'val-2'
-						}
-					}
+							f2: 'val-2',
+						},
+					},
 				]);
 			});
 
@@ -675,65 +675,65 @@ describe('@bmoor-modeling::Service', function () {
 						ref: 'junk',
 						fields: factory(
 							{
-								external: 'key'
+								external: 'key',
 							},
 							{
 								external: 'f1',
 								onUpdate: (datum, setter) => {
 									setter(datum, 'value');
-								}
+								},
 							},
 							{
 								external: 'f2',
 								internal: 'f3',
-								usage: 'json'
-							}
-						)
-					})
+								usage: 'json',
+							},
+						),
+					}),
 				});
 
 				const myStub = stub(adapter, 'update').resolves([
 					{
 						f1: 'foo',
-						f3: '{"a":"value"}'
-					}
+						f3: '{"a":"value"}',
+					},
 				]);
 
 				const res = await service.update(
 					[
 						{
 							ref: {
-								key: 123
+								key: 123,
 							},
 							delta: {
 								f2: {
-									foo: 'bar'
-								}
-							}
-						}
+									foo: 'bar',
+								},
+							},
+						},
 					],
-					ctx
+					ctx,
 				);
 
 				expect(res).to.deep.equal([
 					{
 						f1: 'foo',
 						f2: {
-							a: 'value'
-						}
-					}
+							a: 'value',
+						},
+					},
 				]);
 
 				expect(myStub.getCall(0).args[0]).to.deep.equal([
 					{
 						ref: {
-							key: 123
+							key: 123,
 						},
 						delta: {
 							f1: 'value',
-							f3: '{"foo":"bar"}'
-						}
-					}
+							f3: '{"foo":"bar"}',
+						},
+					},
 				]);
 			});
 		});
@@ -750,17 +750,17 @@ describe('@bmoor-modeling::Service', function () {
 						fields: factory(
 							{
 								external: 'key',
-								internal: 'id'
+								internal: 'id',
 							},
 							{
-								external: 'f1'
+								external: 'f1',
 							},
 							{
 								external: 'f2',
-								internal: 'f3'
-							}
-						)
-					})
+								internal: 'f3',
+							},
+						),
+					}),
 				});
 
 				const myStub = stub(adapter, 'delete').resolves(true);
@@ -768,30 +768,30 @@ describe('@bmoor-modeling::Service', function () {
 				stub(service, 'read').resolves([
 					{
 						f1: 'foo',
-						f2: 'bar'
-					}
+						f2: 'bar',
+					},
 				]);
 
 				const res = await service.delete(
 					[
 						{
-							key: 123
-						}
+							key: 123,
+						},
 					],
-					ctx
+					ctx,
 				);
 
 				expect(res).to.deep.equal([
 					{
 						f1: 'foo',
-						f2: 'bar'
-					}
+						f2: 'bar',
+					},
 				]);
 
 				expect(myStub.getCall(0).args[0]).to.deep.equal([
 					{
-						id: 123
-					}
+						id: 123,
+					},
 				]);
 			});
 
@@ -813,26 +813,26 @@ describe('@bmoor-modeling::Service', function () {
 					fields: factory(
 						{
 							internal: 'field.eins',
-							external: 'value1'
+							external: 'value1',
 						},
 						{
 							internal: 'field.zwei',
-							external: 'other.value2'
+							external: 'other.value2',
 						},
 						{
 							internal: 'value',
-							external: 'other.thing'
-						}
-					)
-				})
+							external: 'other.thing',
+						},
+					),
+				}),
 			});
 
 			const original = {
 				field: {
 					eins: 1,
-					zwei: 2
+					zwei: 2,
 				},
-				value: 'foo-bar'
+				value: 'foo-bar',
 			};
 
 			const external = service.convertToExternal(original, ctx);
@@ -843,8 +843,8 @@ describe('@bmoor-modeling::Service', function () {
 				value1: 1,
 				other: {
 					value2: 2,
-					thing: 'foo-bar'
-				}
+					thing: 'foo-bar',
+				},
 			});
 
 			expect(internal).to.deep.equal(original);
@@ -896,20 +896,20 @@ describe('@bmoor-modeling::Service', function () {
 							external: 'key',
 							internal: 'id',
 							usage: 'key',
-							jsonType: 'number'
+							jsonType: 'number',
 						},
 						{
 							external: 'field1',
 							internal: 'field1',
-							jsonType: 'string'
+							jsonType: 'string',
 						},
 						{
 							external: 'other.field2',
 							internal: 'field2',
-							jsonType: 'number'
-						}
-					)
-				})
+							jsonType: 'number',
+						},
+					),
+				}),
 			});
 
 			adapter.read = async function (): Promise<InternalReadGeneric[]> {
@@ -917,8 +917,8 @@ describe('@bmoor-modeling::Service', function () {
 					{
 						id: 123,
 						field1: 'hello-world',
-						field2: 789
-					}
+						field2: 789,
+					},
 				];
 			};
 
@@ -928,9 +928,9 @@ describe('@bmoor-modeling::Service', function () {
 					key: 123,
 					field1: 'hello-world',
 					other: {
-						field2: 789
-					}
-				}
+						field2: 789,
+					},
+				},
 			]);
 
 			const myStub = stub();
@@ -939,8 +939,8 @@ describe('@bmoor-modeling::Service', function () {
 				{
 					id: 1233,
 					field1: 'hello-world-3',
-					field2: 7893
-				}
+					field2: 7893,
+				},
 			]);
 
 			adapter.create = myStub;
@@ -950,27 +950,27 @@ describe('@bmoor-modeling::Service', function () {
 					{
 						field1: 'hello-world-2',
 						other: {
-							field2: 7892
-						}
-					}
+							field2: 7892,
+						},
+					},
 				],
-				ctx
+				ctx,
 			);
 			expect(res2).to.deep.equal([
 				{
 					key: 1233,
 					field1: 'hello-world-3',
 					other: {
-						field2: 7893
-					}
-				}
+						field2: 7893,
+					},
+				},
 			]);
 
 			expect(myStub.getCall(0).args[0]).to.deep.equal([
 				{
 					field1: 'hello-world-2',
-					field2: 7892
-				}
+					field2: 7892,
+				},
 			]);
 		});
 	});

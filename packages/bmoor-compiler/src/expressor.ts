@@ -1,16 +1,16 @@
-import {ExpressableToken} from './tokenizer/token.interface';
-import {Expressable} from './expressor/expressable';
-import {ExpressableUsages} from './expressor/expressable.interface';
+import {CompilerInterface} from './compiler.interface';
 import {
 	ExpressorExpressPosition,
-	ExpressorExpressSettings
+	ExpressorExpressSettings,
 } from './expressor.interface';
 import {ExecutableFunction} from './expressor/executable';
-import {CompilerInterface} from './compiler.interface';
+import {Expressable} from './expressor/expressable';
+import {ExpressableUsages} from './expressor/expressable.interface';
+import {ExpressableToken} from './tokenizer/token.interface';
 
 export enum ExpressorModes {
 	infix = 'infix',
-	postfix = 'postfix'
+	postfix = 'postfix',
 }
 
 export class Expressor {
@@ -22,7 +22,7 @@ export class Expressor {
 
 	toExpressables(
 		tokens: ExpressableToken[],
-		settings: ExpressorExpressSettings = {}
+		settings: ExpressorExpressSettings = {},
 	): Expressable[] {
 		return tokens.map((token, pos) => {
 			settings.position =
@@ -39,7 +39,7 @@ export class Expressor {
 	express(
 		tokens: ExpressableToken[],
 		mode: ExpressorModes,
-		settings: ExpressorExpressSettings = {}
+		settings: ExpressorExpressSettings = {},
 	): Expressable[] {
 		const infix: Expressable[] = this.toExpressables(tokens, settings);
 
@@ -63,7 +63,7 @@ export class Expressor {
 
 					return state;
 				},
-				{postfix: [], ops: []}
+				{postfix: [], ops: []},
 			);
 
 			return processed.ops.reduce((agg, op) => {
@@ -90,7 +90,7 @@ export class Expressor {
 
 				return stack;
 			},
-			[]
+			[],
 		)[0];
 	}
 }

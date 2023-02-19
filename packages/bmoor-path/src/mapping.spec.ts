@@ -11,20 +11,20 @@ describe('@bmoor/path - mapping', function () {
 			mappings = new Mapping([
 				{
 					from: 'foo',
-					to: 'bar'
+					to: 'bar',
 				},
 				{
 					from: 'hello',
-					to: 'world'
+					to: 'world',
 				},
 				{
 					from: 'property.eins',
-					to: 'aField.dis'
+					to: 'aField.dis',
 				},
 				{
 					from: 'property.zwei',
-					to: 'aField.dat'
-				}
+					to: 'aField.dat',
+				},
 			]);
 		});
 
@@ -37,15 +37,15 @@ describe('@bmoor/path - mapping', function () {
 						hello: '2',
 						property: {
 							eins: 3,
-							zwei: 4
-						}
-					}
-				)
+							zwei: 4,
+						},
+					},
+				),
 			).to.deep.equal({
 				p0: 1,
 				p1: '2',
 				p2: 3,
-				p3: 4
+				p3: 4,
 			});
 		});
 
@@ -57,16 +57,16 @@ describe('@bmoor/path - mapping', function () {
 						p0: 1,
 						p1: '2',
 						p2: 3,
-						p3: 4
-					}
-				)
+						p3: 4,
+					},
+				),
 			).to.deep.equal({
 				bar: 1,
 				world: '2',
 				aField: {
 					dis: 3,
-					dat: 4
-				}
+					dat: 4,
+				},
 			});
 		});
 
@@ -76,14 +76,14 @@ describe('@bmoor/path - mapping', function () {
 					{},
 					{
 						p0: 1,
-						p3: 4
-					}
-				)
+						p3: 4,
+					},
+				),
 			).to.deep.equal({
 				bar: 1,
 				aField: {
-					dat: 4
-				}
+					dat: 4,
+				},
 			});
 		});
 
@@ -96,17 +96,17 @@ describe('@bmoor/path - mapping', function () {
 						hello: '2',
 						property: {
 							eins: 3,
-							zwei: 4
-						}
-					}
-				)
+							zwei: 4,
+						},
+					},
+				),
 			).to.deep.equal({
 				bar: 1,
 				world: '2',
 				aField: {
 					dis: 3,
-					dat: 4
-				}
+					dat: 4,
+				},
 			});
 		});
 
@@ -117,16 +117,16 @@ describe('@bmoor/path - mapping', function () {
 					hello: '2',
 					property: {
 						eins: 3,
-						zwei: 4
-					}
-				})
+						zwei: 4,
+					},
+				}),
 			).to.deep.equal({
 				bar: 1,
 				world: '2',
 				aField: {
 					dis: 3,
-					dat: 4
-				}
+					dat: 4,
+				},
 			});
 		});
 	});
@@ -138,15 +138,15 @@ describe('@bmoor/path - mapping', function () {
 			mappings = new Mapping([
 				{
 					from: 'foo[].bar',
-					to: 'hello[].world'
+					to: 'hello[].world',
 				},
 				{
 					from: 'foo[].eins',
-					to: 'hello[].zwei'
+					to: 'hello[].zwei',
 				},
 				{
 					from: 'foo[].eins',
-					to: 'flat[]'
+					to: 'flat[]',
 				},
 				// I'm not supporting merging arrays right now
 				// from: foo[].dis
@@ -156,8 +156,8 @@ describe('@bmoor/path - mapping', function () {
 				// to: world[].thing
 				{
 					from: 'bar[]',
-					to: 'world[].value'
-				}
+					to: 'world[].value',
+				},
 			]);
 		});
 
@@ -168,47 +168,47 @@ describe('@bmoor/path - mapping', function () {
 					foo: [
 						{
 							bar: 'v-1-1',
-							eins: 'v-1-2'
+							eins: 'v-1-2',
 						},
 						{
 							bar: 'v-2-1',
-							eins: 'v-2-2'
+							eins: 'v-2-2',
 						},
 						{
 							bar: 'v-3-1',
-							eins: 'v-3-2'
-						}
+							eins: 'v-3-2',
+						},
 					],
-					bar: [1, 2, 3]
-				}
+					bar: [1, 2, 3],
+				},
 			);
 
 			expect(res).to.deep.equal({
 				p0_1: [
 					{
 						p0: 'v-1-1',
-						p1: 'v-1-2'
+						p1: 'v-1-2',
 					},
 					{
 						p0: 'v-2-1',
-						p1: 'v-2-2'
+						p1: 'v-2-2',
 					},
 					{
 						p0: 'v-3-1',
-						p1: 'v-3-2'
-					}
+						p1: 'v-3-2',
+					},
 				],
 				p3_1: [
 					{
-						p3: 1
+						p3: 1,
 					},
 					{
-						p3: 2
+						p3: 2,
 					},
 					{
-						p3: 3
-					}
-				]
+						p3: 3,
+					},
+				],
 			});
 		});
 
@@ -219,58 +219,58 @@ describe('@bmoor/path - mapping', function () {
 					p0_1: [
 						{
 							p0: 'v-1-1',
-							p1: 'v-1-2'
+							p1: 'v-1-2',
 						},
 						{
 							p0: 'v-2-1',
-							p1: 'v-2-2'
+							p1: 'v-2-2',
 						},
 						{
 							p0: 'v-3-1',
-							p1: 'v-3-2'
-						}
+							p1: 'v-3-2',
+						},
 					],
 					p3_1: [
 						{
-							p3: 1
+							p3: 1,
 						},
 						{
-							p3: 2
+							p3: 2,
 						},
 						{
-							p3: 3
-						}
-					]
-				}
+							p3: 3,
+						},
+					],
+				},
 			);
 
 			expect(res).to.deep.equal({
 				hello: [
 					{
 						world: 'v-1-1',
-						zwei: 'v-1-2'
+						zwei: 'v-1-2',
 					},
 					{
 						world: 'v-2-1',
-						zwei: 'v-2-2'
+						zwei: 'v-2-2',
 					},
 					{
 						world: 'v-3-1',
-						zwei: 'v-3-2'
-					}
+						zwei: 'v-3-2',
+					},
 				],
 				flat: ['v-1-2', 'v-2-2', 'v-3-2'],
 				world: [
 					{
-						value: 1
+						value: 1,
 					},
 					{
-						value: 2
+						value: 2,
 					},
 					{
-						value: 3
-					}
-				]
+						value: 3,
+					},
+				],
 			});
 		});
 	});
@@ -282,20 +282,20 @@ describe('@bmoor/path - mapping', function () {
 			mappings = new Mapping([
 				{
 					from: 'foo[][].value',
-					to: 'flat[][]'
+					to: 'flat[][]',
 				},
 				{
 					from: 'foo[][].value',
-					to: 'obj[][].attr'
+					to: 'obj[][].attr',
 				},
 				{
 					from: 'bar[][]',
-					to: 'hello[][].value'
+					to: 'hello[][].value',
 				},
 				{
 					from: 'bar[][]',
-					to: 'world[][]'
-				}
+					to: 'world[][]',
+				},
 			]);
 		});
 
@@ -306,22 +306,22 @@ describe('@bmoor/path - mapping', function () {
 					foo: [
 						[
 							{
-								value: 'v-1-3'
-							}
+								value: 'v-1-3',
+							},
 						],
 						[
 							{
-								value: 'v-2-3'
-							}
+								value: 'v-2-3',
+							},
 						],
 						[
 							{
-								value: 'v-3-3'
-							}
-						]
+								value: 'v-3-3',
+							},
+						],
 					],
-					bar: [['eins', 'zwei', 'drei']]
-				}
+					bar: [['eins', 'zwei', 'drei']],
+				},
 			);
 
 			expect(res).to.deep.equal({
@@ -329,40 +329,40 @@ describe('@bmoor/path - mapping', function () {
 					{
 						p0_2: [
 							{
-								p0: 'v-1-3'
-							}
-						]
+								p0: 'v-1-3',
+							},
+						],
 					},
 					{
 						p0_2: [
 							{
-								p0: 'v-2-3'
-							}
-						]
+								p0: 'v-2-3',
+							},
+						],
 					},
 					{
 						p0_2: [
 							{
-								p0: 'v-3-3'
-							}
-						]
-					}
+								p0: 'v-3-3',
+							},
+						],
+					},
 				],
 				p2_1: [
 					{
 						p2_2: [
 							{
-								p2: 'eins'
+								p2: 'eins',
 							},
 							{
-								p2: 'zwei'
+								p2: 'zwei',
 							},
 							{
-								p2: 'drei'
-							}
-						]
-					}
-				]
+								p2: 'drei',
+							},
+						],
+					},
+				],
 			});
 		});
 
@@ -374,41 +374,41 @@ describe('@bmoor/path - mapping', function () {
 						{
 							p0_2: [
 								{
-									p0: 'v-1-3'
-								}
-							]
+									p0: 'v-1-3',
+								},
+							],
 						},
 						{
 							p0_2: [
 								{
-									p0: 'v-2-3'
-								}
-							]
+									p0: 'v-2-3',
+								},
+							],
 						},
 						{
 							p0_2: [
 								{
-									p0: 'v-3-3'
-								}
-							]
-						}
+									p0: 'v-3-3',
+								},
+							],
+						},
 					],
 					p2_1: [
 						{
 							p2_2: [
 								{
-									p2: 'eins'
+									p2: 'eins',
 								},
 								{
-									p2: 'zwei'
+									p2: 'zwei',
 								},
 								{
-									p2: 'drei'
-								}
-							]
-						}
-					]
-				}
+									p2: 'drei',
+								},
+							],
+						},
+					],
+				},
 			);
 
 			expect(res).to.deep.equal({
@@ -416,34 +416,34 @@ describe('@bmoor/path - mapping', function () {
 				hello: [
 					[
 						{
-							value: 'eins'
+							value: 'eins',
 						},
 						{
-							value: 'zwei'
+							value: 'zwei',
 						},
 						{
-							value: 'drei'
-						}
-					]
+							value: 'drei',
+						},
+					],
 				],
 				obj: [
 					[
 						{
-							attr: 'v-1-3'
-						}
+							attr: 'v-1-3',
+						},
 					],
 					[
 						{
-							attr: 'v-2-3'
-						}
+							attr: 'v-2-3',
+						},
 					],
 					[
 						{
-							attr: 'v-3-3'
-						}
-					]
+							attr: 'v-3-3',
+						},
+					],
 				],
-				world: [['eins', 'zwei', 'drei']]
+				world: [['eins', 'zwei', 'drei']],
 			});
 		});
 	});
@@ -455,12 +455,12 @@ describe('@bmoor/path - mapping', function () {
 			mappings = new Mapping([
 				{
 					from: 'foo[][]',
-					to: 'target[][].foo'
+					to: 'target[][].foo',
 				},
 				{
 					from: 'bar[][]',
-					to: 'target[][].bar'
-				}
+					to: 'target[][].bar',
+				},
 			]);
 		});
 
@@ -468,13 +468,13 @@ describe('@bmoor/path - mapping', function () {
 			const res = mappings.transform({
 				foo: [
 					['foo-1-1', 'foo-1-2', 'foo-1-3'],
-					['foo-2-1', 'foo-2-2']
+					['foo-2-1', 'foo-2-2'],
 				],
 				bar: [
 					['bar-1-1', 'bar-1-2'],
 					['bar-2-1', 'bar-2-2', 'bar-2-3'],
-					['bar-3-1']
-				]
+					['bar-3-1'],
+				],
 			});
 
 			expect(res).to.deep.equal({
@@ -482,35 +482,35 @@ describe('@bmoor/path - mapping', function () {
 					[
 						{
 							foo: 'foo-1-1',
-							bar: 'bar-1-1'
+							bar: 'bar-1-1',
 						},
 						{
 							foo: 'foo-1-2',
-							bar: 'bar-1-2'
+							bar: 'bar-1-2',
 						},
 						{
-							foo: 'foo-1-3'
-						}
+							foo: 'foo-1-3',
+						},
 					],
 					[
 						{
 							foo: 'foo-2-1',
-							bar: 'bar-2-1'
+							bar: 'bar-2-1',
 						},
 						{
 							foo: 'foo-2-2',
-							bar: 'bar-2-2'
+							bar: 'bar-2-2',
 						},
 						{
-							bar: 'bar-2-3'
-						}
+							bar: 'bar-2-3',
+						},
 					],
 					[
 						{
-							bar: 'bar-3-1'
-						}
-					]
-				]
+							bar: 'bar-3-1',
+						},
+					],
+				],
 			});
 		});
 	});

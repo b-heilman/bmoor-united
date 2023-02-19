@@ -1,17 +1,23 @@
-import {Edge} from './edge';
+import {Tags} from '@bmoor/tagging';
+
 import {Event} from './event';
+import {Interval} from './interval';
 import {
+	NODE_DEFAULT_TYPE,
 	NodeInterface,
+	NodeIntervalData,
+	NodeIntervalJson,
 	NodeJson,
 	NodeOperator,
-	NODE_DEFAULT_TYPE,
-	NodeType,
+	NodePullSettings,
 	NodeReference,
 	NodeSettings,
-	NodeTag
+	NodeTag,
+	NodeType,
 } from './node.interface';
-import {Interval} from './interval.interface';
 import {Weights} from './weights';
+import {WeightData} from './weights.interface';
+
 /**
  * TODO: I want to allow different types of nodes to exist on a graph all tied to the same event with their own weights.
  *   - Nodes need to get a type ('team', 'player')
@@ -19,35 +25,93 @@ import {Weights} from './weights';
  *   - Able to do calculations for all 'players'
  *   - Use players to calculate position scores for teams-
  */
+function addEvent(node: Node, event: Event) {
+	const intervalData = node.getIntervalData(event.interval);
+
+	// and event should be added to the lowest child, it will be
+	// bubbled up to all the parent nodes.  I want to make sure
+	// I protect from event collisions.
+	if (intervalData.event) {
+		if (intervalData.event !== event) {
+			console.log(
+				'existing:',
+				node.ref,
+				JSON.stringify(intervalData.event),
+			);
+			throw new Error('interval collision: ' + JSON.stringify(event));
+		}
+	} else {
+		intervalData.event = event;
+
+		event.addNode(node);
+
+		if (intervalData.parent) {
+			// TODO: define the interface properly so I don't need to do this
+			addEvent(<Node>intervalData.parent, event);
+		}
+	}
+
+	return intervalData;
+}
+
 export class Node implements NodeInterface {
 	ref: NodeReference;
 	type: NodeType;
-	tag: NodeTag;
-	parent: Node;
-	events: Map<Interval, Event>;
-	intervals: Map<Interval, Weights>;
-	children: Node[];
+	tags: Tags;
+	intervals: Map<Interval, NodeIntervalData>;
 
 	constructor(
 		ref: string,
 		type: string = NODE_DEFAULT_TYPE,
-		settings?: NodeSettings
+		settings?: NodeSettings,
 	) {
 		this.ref = ref;
 		this.type = type;
-		this.tag = settings?.tag;
-		this.events = new Map();
-		this.parent = <Node>settings?.parent;
-		this.children = [];
+		this.tags = settings?.tags || [];
 		this.intervals = new Map();
-
-		if (this.parent) {
-			this.parent.addChild(this);
-		}
 	}
 
-	addChild(child: Node) {
-		this.children.push(child);
+	hasIntervalData(interval: Interval): boolean {
+		return this.intervals.has(interval);
+	}
+
+	getIntervalData(interval: Interval): NodeIntervalData {
+		let rtn: NodeIntervalData = this.intervals.get(interval);
+
+		if (!rtn) {
+			rtn = {};
+
+			this.intervals.set(interval, rtn);
+		}
+
+		return rtn;
+	}
+
+	setParent(interval: Interval, parent: Node): Node {
+		const intervalData = this.getIntervalData(interval);
+
+		if (intervalData.parent) {
+			if (intervalData.parent === parent) {
+				return this;
+			} else {
+				throw new Error(
+					`For interval ${interval.ref}, ${this.ref} already has ` +
+						`${intervalData.parent.ref}, tried ${parent.ref}`,
+				);
+			}
+		} else {
+			intervalData.parent = parent;
+		}
+
+		const parentData = parent.getIntervalData(interval);
+
+		if (!parentData.children) {
+			parentData.children = [];
+		}
+
+		parentData.children.push(this);
+
+		return this;
 	}
 
 	setType(type: string) {
@@ -56,33 +120,27 @@ export class Node implements NodeInterface {
 		return this;
 	}
 
-	addEvent(event: Event) {
-		// and event should be added to the lowest child, it will be
-		// bubbled up to all the parent nodes.  I want to make sure
-		// I protect from event collisions.
-		if (this.events.has(event.interval)) {
-			const check = this.events.get(event.interval);
+	addEdge(event: Event, weights: WeightData): Node {
+		const intervalData = addEvent(this, event);
 
-			if (check !== event) {
-				throw new Error('interval collision: ' + JSON.stringify(event));
-			}
-		} else {
-			this.events.set(event.interval, event);
-
-			if (this.parent) {
-				this.parent.addEvent(event);
-			}
-		}
+		intervalData.edgeWeights = new Weights(weights);
 
 		return this;
 	}
 
 	getEvent(interval: Interval): Event {
-		return this.events.get(interval);
+		return <Event>this.getIntervalData(interval).event;
 	}
 
-	getEdge(interval: Interval): Edge {
-		return <Edge>this.events.get(interval)?.getEdge(this);
+	hasEdge(interval: Interval): boolean {
+		return (
+			this.hasIntervalData(interval) &&
+			'edgeWeights' in this.getIntervalData(interval)
+		);
+	}
+
+	getEdge(interval: Interval): Weights {
+		return this.getIntervalData(interval).edgeWeights;
 	}
 
 	getEvents(other?: Node, intervals?: Interval[]): Event[] {
@@ -90,38 +148,39 @@ export class Node implements NodeInterface {
 			const rtn = [];
 
 			if (!intervals) {
-				intervals = Array.from(this.events.keys());
+				intervals = Array.from(this.intervals.keys());
 			}
 
 			for (const interval of intervals) {
-				const event = this.events.get(interval);
-				if (event.edges.get(other.type)?.has(other)) {
-					rtn.push(event);
+				const intervalData = this.getIntervalData(interval);
+
+				if (
+					intervalData.event &&
+					intervalData.event.nodes.get(other.type)?.includes(other)
+				) {
+					rtn.push(intervalData.event);
 				}
 			}
 
 			return rtn;
 		} else {
-			return Array.from(this.events.values());
+			return <Event[]>Array.from(this.intervals.values())
+				.map((nd) => nd.event)
+				.filter((event) => !!event);
 		}
 	}
 
-	getEventCount() {
-		return Object.values(this.events).reduce(
-			(agg, events) => agg + events.length,
-			0
-		);
-	}
-
 	getRelated(interval: Interval, tag?: NodeTag): Node[] {
-		const nodes = this.events.get(interval).edges.get(this.type);
-		const iterator = nodes.entries();
-
 		const rtn = [];
+		const intervalData = this.getIntervalData(interval);
 
-		for (const [node] of iterator) {
-			if (node !== this && (!tag || node.tag === tag)) {
-				rtn.push(node);
+		if (intervalData.event) {
+			const nodes = intervalData.event.nodes.get(this.type);
+
+			for (const node of nodes) {
+				if (node !== this && (!tag || node.tags.includes(tag))) {
+					rtn.push(node);
+				}
 			}
 		}
 
@@ -131,12 +190,16 @@ export class Node implements NodeInterface {
 	// edge vs weight.  Edge is input from the results, weights are the calculated values.
 	// data flow is edge => weight
 	bubble(interval: Interval, fn: NodeOperator, through = false) {
-		if (this.parent) {
+		const intervalData = this.getIntervalData(interval);
+
+		if (intervalData.parent) {
+			const parent = <Node>intervalData.parent;
 			// bubble this command up the relationship chain
-			fn(this.parent.getWeights(interval), this.getWeights(interval));
+			// TODO: yeah...
+			fn(parent.getWeights(interval), intervalData.weights);
 
 			if (through) {
-				this.parent.bubble(interval, fn);
+				parent.bubble(interval, fn);
 			}
 		}
 
@@ -144,12 +207,16 @@ export class Node implements NodeInterface {
 	}
 
 	trickle(interval: Interval, fn: NodeOperator, through = true) {
-		// trickle this command down the relationship chain
-		for (const child of this.children) {
-			fn(child.getWeights(interval), this.getWeights(interval));
+		const intervalData = this.getIntervalData(interval);
 
-			if (through && child.children.length !== 0) {
-				child.trickle(interval, fn);
+		// trickle this command down the relationship chain
+		if (intervalData.children) {
+			for (const child of intervalData.children) {
+				fn((<Node>child).getWeights(interval), this.getWeights(interval));
+
+				if (through) {
+					(<Node>child).trickle(interval, fn);
+				}
 			}
 		}
 
@@ -158,22 +225,33 @@ export class Node implements NodeInterface {
 
 	// returns back the whole lineage of the node, keeps them in order to
 	// optimize if you're bubbling
-	getLineage(checkContinue?: (node: Node) => boolean): Node[] {
+	getLineage(
+		interval: Interval,
+		checkContinue?: (node: Node) => boolean,
+	): Node[] {
 		// make sure children are returned before their parent
 		const rtn = [];
-		for (const child of this.children) {
-			if (child.children.length !== 0 && (!checkContinue || checkContinue(child))) {
-				rtn.push(child.getLineage());
-			}
+		const intervalData = this.getIntervalData(interval);
 
-			rtn.push(child);
+		if (intervalData.children) {
+			for (const child of intervalData.children) {
+				if (!checkContinue || checkContinue(<Node>child)) {
+					rtn.push((<Node>child).getLineage(interval, checkContinue));
+				}
+
+				rtn.push(child);
+			}
 		}
 
 		return rtn.flat();
 	}
 
-	pull(interval: Interval, fn: NodeOperator, checkContinue?: (node: Node) => boolean) {
-		const lineage = this.getLineage(checkContinue);
+	pull(
+		interval: Interval,
+		fn: NodeOperator,
+		settings: NodePullSettings = null,
+	) {
+		const lineage = this.getLineage(interval, settings?.continue);
 		// children will always be left of the parent
 		for (const sub of lineage) {
 			sub.bubble(interval, fn, false);
@@ -183,15 +261,13 @@ export class Node implements NodeInterface {
 	}
 
 	getWeights(interval: Interval): Weights {
-		let weights = this.intervals.get(interval);
+		const intervalData = this.getIntervalData(interval);
 
-		if (!weights) {
-			weights = new Weights();
-
-			this.intervals.set(interval, weights);
+		if (!intervalData.weights) {
+			intervalData.weights = new Weights();
 		}
 
-		return weights;
+		return intervalData.weights;
 	}
 
 	setWeight(interval: Interval, mount: string, value: number) {
@@ -201,13 +277,15 @@ export class Node implements NodeInterface {
 	}
 
 	getWeight(interval: Interval, mount: string): number {
-		return this.getWeights(interval).get(mount) || null;
+		return this.getWeights(interval).get(mount);
 	}
 
 	hasWeight(interval: Interval, mount: string = null): boolean {
-		if (this.intervals.has(interval)){
-			if (mount){
-				return this.getWeights(interval).has(mount);
+		const intervalData = this.getIntervalData(interval);
+
+		if (intervalData.weights) {
+			if (mount) {
+				return intervalData.weights.has(mount);
 			} else {
 				return true;
 			}
@@ -232,16 +310,37 @@ export class Node implements NodeInterface {
 	*/
 
 	toJSON(): NodeJson {
-		return {
+		const rtn = {
 			ref: this.ref,
 			type: this.type,
-			weights: Array.from(this.intervals).map(([interval, weight]) => {
-				return {
-					interval: interval.ref,
-					data: weight.toJSON()
-				};
-			}),
-			parentRef: this.parent?.ref
+			tags: this.tags,
+			intervals: Array.from(this.intervals).map(
+				([interval, intervalData]) => {
+					const rtn: NodeIntervalJson = {
+						intervalRef: interval.ref,
+					};
+
+					if (intervalData.weights) {
+						rtn.weights = intervalData.weights.toJSON();
+					}
+
+					if (intervalData.parent) {
+						rtn.parentRef = intervalData.parent.ref;
+					}
+
+					if (intervalData.event) {
+						rtn.eventRef = intervalData.event.ref;
+					}
+
+					if (intervalData.edgeWeights) {
+						rtn.edge = intervalData.edgeWeights.toJSON();
+					}
+
+					return rtn;
+				},
+			),
 		};
+
+		return rtn;
 	}
 }

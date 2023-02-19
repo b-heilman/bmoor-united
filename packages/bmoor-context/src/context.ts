@@ -1,6 +1,6 @@
 import {
 	ContextSecurityInterface,
-	ContextSettings
+	ContextSettings,
 } from './context.interface';
 
 export class Context implements ContextSecurityInterface {
@@ -18,7 +18,7 @@ export class Context implements ContextSecurityInterface {
 		if (!this.permissionDex) {
 			// lazy load this
 			this.permissionDex = new Map<string, boolean>(
-				this.settings.permissions.map((permission) => [permission, true])
+				this.settings.permissions.map((permission) => [permission, true]),
 			);
 		}
 		return this.permissionDex.has(permission);

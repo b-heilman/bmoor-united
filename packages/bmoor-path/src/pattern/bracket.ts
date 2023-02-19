@@ -61,7 +61,7 @@ export class BracketPattern extends Pattern {
 			});
 		} else {
 			return new ArrayToken(content, state, {
-				subType: 'object'
+				subType: 'object',
 			});
 		}
 	}

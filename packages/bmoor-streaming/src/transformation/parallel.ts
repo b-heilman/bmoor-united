@@ -34,6 +34,6 @@ export function parallel(fn, limit = 10, settings = {objectMode: true}) {
 			} else {
 				onEnd = callback;
 			}
-		}
+		},
 	});
 }

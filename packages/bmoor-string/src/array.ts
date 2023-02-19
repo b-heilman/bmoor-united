@@ -1,18 +1,21 @@
 import {get} from '@bmoor/object';
 
+import {PrettyArraySettings} from './array.interface';
 import {format} from './format';
-import {PrettyInteface} from './array.interface';
 
-// eslint-disable-next-line  @typescript-eslint/no-explicit-any
-export function pretty(arr: any[], settings: PrettyInteface): string {
+export function prettyArray(
+	// eslint-disable-next-line  @typescript-eslint/no-explicit-any
+	arr: any[],
+	settings: PrettyArraySettings,
+): string {
 	const header = [];
 
 	if (settings.header) {
 		header.push(
 			format(
 				settings.heading || settings.header,
-				settings.headerFormat || {}
-			)
+				settings.headerFormat || {},
+			),
 		);
 	}
 
@@ -32,8 +35,8 @@ export function pretty(arr: any[], settings: PrettyInteface): string {
 					row.push(
 						format(
 							get(value, settings.header),
-							settings.headerFormat || {}
-						)
+							settings.headerFormat || {},
+						),
 					);
 				}
 

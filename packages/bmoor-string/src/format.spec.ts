@@ -7,8 +7,8 @@ describe('@bmoor-string/format', function () {
 		it('work with length', function () {
 			expect(
 				format('fooBar', {
-					length: 8
-				})
+					length: 8,
+				}),
 			).to.equal('fooBar  ');
 		});
 
@@ -16,8 +16,8 @@ describe('@bmoor-string/format', function () {
 			expect(
 				format('fooBar', {
 					length: 8,
-					align: 'left'
-				})
+					align: 'left',
+				}),
 			).to.equal('fooBar  ');
 		});
 
@@ -25,8 +25,8 @@ describe('@bmoor-string/format', function () {
 			expect(
 				format('fooBar', {
 					length: 8,
-					align: 'right'
-				})
+					align: 'right',
+				}),
 			).to.equal('  fooBar');
 		});
 
@@ -34,8 +34,8 @@ describe('@bmoor-string/format', function () {
 			expect(
 				format('fooBar', {
 					length: 4,
-					align: 'left'
-				})
+					align: 'left',
+				}),
 			).to.equal('fooB');
 		});
 
@@ -43,8 +43,8 @@ describe('@bmoor-string/format', function () {
 			expect(
 				format('fooBar', {
 					length: 4,
-					align: 'right'
-				})
+					align: 'right',
+				}),
 			).to.equal('oBar');
 		});
 	});
@@ -54,8 +54,8 @@ describe('@bmoor-string/format', function () {
 			expect(
 				format('12345.567', {
 					type: 'number',
-					precision: 2
-				})
+					precision: 2,
+				}),
 			).to.equal('12345.57');
 		});
 
@@ -64,8 +64,8 @@ describe('@bmoor-string/format', function () {
 				format(12.567, {
 					type: 'number',
 					precision: 2,
-					length: 6
-				})
+					length: 6,
+				}),
 			).to.equal('12.57 ');
 		});
 
@@ -74,8 +74,8 @@ describe('@bmoor-string/format', function () {
 				format(12.5, {
 					type: 'number',
 					precision: 2,
-					length: 6
-				})
+					length: 6,
+				}),
 			).to.equal('12.50 ');
 		});
 
@@ -84,8 +84,8 @@ describe('@bmoor-string/format', function () {
 				format(12.567, {
 					type: 'number',
 					align: 'right',
-					length: 9
-				})
+					length: 9,
+				}),
 			).to.equal('   12.567');
 		});
 	});

@@ -1,15 +1,16 @@
 import {expect} from 'chai';
+
 import {
-	isDefined,
-	isUndefined,
-	isBoolean,
 	isArray,
 	isArrayLike,
-	isObject,
+	isBoolean,
+	isDefined,
+	isEmpty,
 	isFunction,
 	isNumber,
+	isObject,
 	isString,
-	isEmpty
+	isUndefined,
 } from './index';
 
 describe('@bmoor/compare', function () {

@@ -34,7 +34,7 @@ export class ContextualError {
 			...this.invocation,
 			...this.getCurrent(),
 
-			stack: this.stack
+			stack: this.stack,
 		};
 	}
 
@@ -42,7 +42,7 @@ export class ContextualError {
 		const builder = [];
 		if (this.invocation) {
 			builder.push(
-				'> info: ' + JSON.stringify(this.invocation, null, '\t')
+				'> info: ' + JSON.stringify(this.invocation, null, '\t'),
 			);
 		}
 
@@ -72,7 +72,7 @@ export class ContextualError {
 
 export function extendError(
 	ex: Error | ContextualError,
-	settings: ErrorContext
+	settings: ErrorContext,
 ): ContextualError {
 	const err =
 		ex instanceof ContextualError ? ex : new ContextualError(<Error>ex);
@@ -82,7 +82,7 @@ export function extendError(
 
 export function assignError(
 	ex: Error | ContextualError,
-	settings: InvocationContext
+	settings: InvocationContext,
 ): ContextualError {
 	const err =
 		ex instanceof ContextualError ? ex : new ContextualError(<Error>ex);
@@ -98,7 +98,7 @@ export function wrapError(ex: Error | ContextualError): ContextualError {
 
 export function create(
 	message: string,
-	settings: ErrorContext
+	settings: ErrorContext,
 ): ContextualError {
 	return extendError(new Error(message), settings);
 }

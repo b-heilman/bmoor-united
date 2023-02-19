@@ -1,6 +1,6 @@
 import {expect} from 'chai';
 
-import {toKebabCase, toCamelCase, toProperCase} from './cases';
+import {toCamelCase, toKebabCase, toProperCase} from './cases';
 
 describe('@bmoor/string', function () {
 	describe('toKebabCase', function () {

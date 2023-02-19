@@ -1,9 +1,9 @@
 import {expect} from 'chai';
 
+import {Reducer} from './reducer';
+import {Statement} from './reducer/statement';
 import {Token} from './tokenizer/token';
 import {TokenReference} from './tokenizer/token.interface';
-import {Statement} from './reducer/statement';
-import {Reducer} from './reducer';
 
 describe('@bmoor/compiler', function () {
 	describe('Reducer', function () {
@@ -75,7 +75,7 @@ describe('@bmoor/compiler', function () {
 			const tokens = reducer.reduce([eins, zwei]);
 
 			expect(tokens.map((token) => token.getReference())).to.deep.equal([
-				'compound:eins-zwei'
+				'compound:eins-zwei',
 			]);
 		});
 
@@ -88,7 +88,7 @@ describe('@bmoor/compiler', function () {
 				'compound:eins-zwei',
 				'eins',
 				'drei',
-				'fier'
+				'fier',
 			]);
 		});
 
@@ -101,13 +101,13 @@ describe('@bmoor/compiler', function () {
 				otherEins,
 				zwei,
 				drei,
-				fier
+				fier,
 			]);
 
 			expect(tokens.map((token) => token.getReference())).to.deep.equal([
 				'compound:eins-zwei',
 				'compound:eins-zwei-drei',
-				'fier'
+				'fier',
 			]);
 		});
 
@@ -121,13 +121,13 @@ describe('@bmoor/compiler', function () {
 				drei,
 				otherEins,
 				zwei,
-				fier
+				fier,
 			]);
 
 			expect(tokens.map((token) => token.getReference())).to.deep.equal([
 				'compound:eins-zwei-drei',
 				'drei',
-				'compound:eins-zwei-fier'
+				'compound:eins-zwei-fier',
 			]);
 		});
 	});

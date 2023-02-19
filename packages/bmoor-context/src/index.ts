@@ -1,5 +1,5 @@
 export {
 	ContextSecurityInterface,
-	ContextSettings
+	ContextSettings,
 } from './context.interface';
 export {Context} from './context';

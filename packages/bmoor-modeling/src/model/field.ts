@@ -1,26 +1,26 @@
 import {Config, ConfigObject} from '@bmoor/config';
-import {makeSetter, makeGetter} from '@bmoor/object';
 import {ContextSecurityInterface} from '@bmoor/context';
+import {makeGetter, makeSetter} from '@bmoor/object';
 
 import {
-	ModelFieldInterface,
-	ModelFieldSettings,
-	ModelFieldUsage,
-	ModelFieldMethods,
-	ModelFieldTypescript,
-	TypescriptUsage,
-	ModelFieldTypescriptInfo,
-	ModelFieldSetter,
-	ModelFieldGetter,
 	ModelFieldActions,
-	ModelFieldContext
+	ModelFieldContext,
+	ModelFieldGetter,
+	ModelFieldInterface,
+	ModelFieldMethods,
+	ModelFieldSetter,
+	ModelFieldSettings,
+	ModelFieldTypescript,
+	ModelFieldTypescriptInfo,
+	ModelFieldUsage,
+	TypescriptUsage,
 } from './field.interface';
 
 export const usages = new Config({
 	key: new ConfigObject<ModelFieldUsage>({
 		forKey: true,
 		forCreate: false,
-		forUpdate: false
+		forUpdate: false,
 	}),
 	json: new ConfigObject<ModelFieldMethods>({
 		onInflate: function (datum, setter, getter) {
@@ -36,7 +36,7 @@ export const usages = new Config({
 			if (value) {
 				setter(datum, JSON.stringify(value));
 			}
-		}
+		},
 	}),
 	monitor: new ConfigObject<ModelFieldMethods>({
 		onDeflate: function (datum, setter, getter, ctx, cfg) {
@@ -45,8 +45,8 @@ export const usages = new Config({
 			if (target !== undefined) {
 				setter(datum, Date.now());
 			}
-		}
-	})
+		},
+	}),
 });
 
 function buildActions(field: ModelField): ModelFieldActions {
@@ -164,21 +164,21 @@ export class ModelField implements ModelFieldInterface {
 		// TODO: how many types do I really need?
 		const external = <ModelFieldTypescriptInfo>{
 			path: this.settings.external,
-			format
+			format,
 		};
 
 		const internal = <ModelFieldTypescriptInfo>{
 			path: this.settings.internal,
-			format
+			format,
 		};
 
 		const rtn = {
 			external: <TypescriptUsage>{
-				read: external
+				read: external,
 			},
 			internal: <TypescriptUsage>{
-				read: internal
-			}
+				read: internal,
+			},
 		};
 
 		if (this.settings.forKey) {
@@ -195,22 +195,22 @@ export class ModelField implements ModelFieldInterface {
 		if (!('forUpdate' in this.settings) || this.settings.forUpdate) {
 			rtn.external.update = {
 				path: external.path + '?',
-				format: external.format
+				format: external.format,
 			};
 			rtn.internal.update = {
 				path: internal.path + '?',
-				format: internal.format
+				format: internal.format,
 			};
 		}
 
 		if (this.settings.forSearch) {
 			rtn.external.search = {
 				path: external.path + '?',
-				format: external.format
+				format: external.format,
 			};
 			rtn.internal.search = {
 				path: internal.path + '?',
-				format: internal.format
+				format: internal.format,
 			};
 		}
 

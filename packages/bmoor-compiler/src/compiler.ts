@@ -1,11 +1,11 @@
+import {CompilerInterface} from './compiler.interface';
+import {Expressor} from './expressor';
+import {ExecutableFunction} from './expressor/executable';
+import {Reducer} from './reducer';
+import {StatementConstructor} from './reducer/statement';
 import {Tokenizer} from './tokenizer';
 import {Pattern} from './tokenizer/pattern';
 import {ExpressableToken} from './tokenizer/token.interface';
-import {Reducer} from './reducer';
-import {StatementConstructor} from './reducer/statement';
-import {Expressor} from './expressor';
-import {ExecutableFunction} from './expressor/executable';
-import {CompilerInterface} from './compiler.interface';
 
 export type CompilerSettings = {
 	tokenizer: Pattern[];

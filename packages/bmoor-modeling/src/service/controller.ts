@@ -1,17 +1,17 @@
 import {ContextSecurityInterface} from '@bmoor/context';
 
+import {UpdateDelta} from '../datum.interface';
+import {ExternalKeyReader} from './accessor.interface';
 import {
 	ServiceControllerInterface,
-	ServiceControllerSettings
+	ServiceControllerSettings,
 } from './controller.interface';
-import {ExternalKeyReader} from './accessor.interface';
-import {UpdateDelta} from '../datum.interface';
 
 export class ServiceController<
 	ExternalRead,
 	ExternalReference,
 	ExternalCreate,
-	ExternalUpdate
+	ExternalUpdate,
 > implements
 		ServiceControllerInterface<
 			ExternalRead,
@@ -29,7 +29,7 @@ export class ServiceController<
 	// securing data that has been submitted
 	async canCreate(
 		datums: ExternalCreate[],
-		ctx: ContextSecurityInterface
+		ctx: ContextSecurityInterface,
 	): Promise<ExternalCreate[]> {
 		const permission = this.settings.permission?.create;
 
@@ -43,7 +43,7 @@ export class ServiceController<
 	async canRead(
 		datums: ExternalRead[],
 		fn: ExternalKeyReader<ExternalRead, ExternalReference>,
-		ctx: ContextSecurityInterface
+		ctx: ContextSecurityInterface,
 	): Promise<ExternalRead[]> {
 		const permission = this.settings.permission?.read;
 
@@ -56,7 +56,7 @@ export class ServiceController<
 
 	async canUpdate(
 		content: UpdateDelta<ExternalReference, ExternalUpdate>[],
-		ctx: ContextSecurityInterface
+		ctx: ContextSecurityInterface,
 	): Promise<UpdateDelta<ExternalReference, ExternalUpdate>[]> {
 		const permission = this.settings.permission?.update;
 
@@ -69,7 +69,7 @@ export class ServiceController<
 
 	async canDelete(
 		content: ExternalReference[],
-		ctx: ContextSecurityInterface
+		ctx: ContextSecurityInterface,
 	): Promise<ExternalReference[]> {
 		const permission = this.settings.permission?.delete;
 

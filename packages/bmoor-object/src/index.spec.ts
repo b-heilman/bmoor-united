@@ -1,15 +1,16 @@
 import {expect} from 'chai';
+
 import {
 	DynamicObject,
-	parsePath,
-	set,
-	makeSetter,
-	get,
-	makeGetter,
 	del,
 	explode,
+	get,
 	implode,
-	merge
+	makeGetter,
+	makeSetter,
+	merge,
+	parsePath,
+	set,
 } from './index';
 
 describe('@bmoor/object', function () {
@@ -35,7 +36,7 @@ describe('@bmoor/object', function () {
 				'foo',
 				'bar',
 				'ok',
-				'hello'
+				'hello',
 			]);
 		});
 	});
@@ -99,8 +100,8 @@ describe('@bmoor/object', function () {
 			const t = {
 				eins: 1,
 				zwei: {
-					drei: 3
-				}
+					drei: 3,
+				},
 			};
 
 			expect(get(t, 'eins')).to.equal(1);
@@ -111,8 +112,8 @@ describe('@bmoor/object', function () {
 			const t = {
 				eins: 1,
 				zwei: {
-					drei: 3
-				}
+					drei: 3,
+				},
 			};
 
 			expect(get(t, '')).to.equal(null);
@@ -130,8 +131,8 @@ describe('@bmoor/object', function () {
 			const t = {
 				eins: 1,
 				zwei: {
-					drei: 3
-				}
+					drei: 3,
+				},
 			};
 			const f1 = makeGetter<number>('eins');
 			const f2 = makeGetter<number>('zwei.drei');
@@ -187,8 +188,8 @@ describe('@bmoor/object', function () {
 			const t = {
 				eins: 1,
 				zwei: {
-					drei: 3
-				}
+					drei: 3,
+				},
 			};
 
 			expect(del(t, 'eins')).to.equal(1);
@@ -204,15 +205,15 @@ describe('@bmoor/object', function () {
 			const t = {
 				'eins.zwei': 12,
 				'eins.drei': 13,
-				fier: 4
+				fier: 4,
 			};
 
 			expect(explode<number>(t)).to.deep.equal({
 				eins: {
 					zwei: 12,
-					drei: 13
+					drei: 13,
 				},
-				fier: 4
+				fier: 4,
 			});
 		});
 	});
@@ -222,21 +223,21 @@ describe('@bmoor/object', function () {
 			const t = {
 				time: {
 					start: 99,
-					stop: 100
+					stop: 100,
 				},
 				id: 'woot',
 				foo: {
 					bar: {
-						hello: 'world'
-					}
-				}
+						hello: 'world',
+					},
+				},
 			};
 
 			expect(implode<string | number>(t)).to.deep.equal({
 				'time.start': 99,
 				'time.stop': 100,
 				id: 'woot',
-				'foo.bar.hello': 'world'
+				'foo.bar.hello': 'world',
 			});
 		});
 
@@ -244,28 +245,28 @@ describe('@bmoor/object', function () {
 			const t = {
 				time: {
 					start: 99,
-					stop: 100
+					stop: 100,
 				},
 				id: 'woot',
 				foo: {
 					bar: {
-						hello: 'world'
-					}
-				}
+						hello: 'world',
+					},
+				},
 			};
 
 			expect(
 				implode<string | number>(t, {
 					ignore: {
 						time: {
-							start: true
+							start: true,
 						},
 						id: true,
-						foo: true
-					}
-				})
+						foo: true,
+					},
+				}),
 			).to.deep.equal({
-				'time.stop': 100
+				'time.stop': 100,
 			});
 		});
 
@@ -301,22 +302,22 @@ describe('@bmoor/object', function () {
 				hello: 'world',
 				foo: {
 					bar: 'ok',
-					eins: junk
+					eins: junk,
 				},
 				zwei: another,
-				drei: ok
+				drei: ok,
 			};
 
 			expect(
 				implode<string | number | Another | Junk>(t, {
-					skipInstanceOf: [Another, Junk]
-				})
+					skipInstanceOf: [Another, Junk],
+				}),
 			).to.deep.equal({
 				hello: 'world',
 				'foo.bar': 'ok',
 				'foo.eins': junk,
 				zwei: another,
-				'drei.value': 3
+				'drei.value': 3,
 			});
 		});
 	});
@@ -329,17 +330,17 @@ describe('@bmoor/object', function () {
 					bar: {a: 'ok'},
 					hello: {
 						world: 1,
-						other: 'thing'
-					}
+						other: 'thing',
+					},
 				},
 				{
 					foo: 'bar',
 					bar: null,
 					hello: {
 						world: null,
-						foo: 'bar'
-					}
-				}
+						foo: 'bar',
+					},
+				},
 			);
 
 			expect(res).to.deep.equal({
@@ -348,8 +349,8 @@ describe('@bmoor/object', function () {
 				hello: {
 					world: null,
 					other: 'thing',
-					foo: 'bar'
-				}
+					foo: 'bar',
+				},
 			});
 		});
 	});

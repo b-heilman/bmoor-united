@@ -1,61 +1,69 @@
-import { Node } from '../node';
-import { Weights } from '../weights';
+import {Node} from '../node';
+import {Weights} from '../weights';
 import {GraphSelection} from './selection';
 
 export class GraphCalculator {
 	selection: GraphSelection;
 
-	constructor(selection: GraphSelection) {
+	constructor(selection: GraphSelection = null) {
+		this.setSelection(selection);
+	}
+
+	setSelection(selection: GraphSelection) {
 		this.selection = selection;
+
+		return this;
 	}
 
 	copyToNode(from: string, to?: string) {
-		if (!to) {
-			to = from;
-		}
+		this.selection.transfer(from, to);
 
-		this.selection.eachInterval((nodeWeights, edgeWeights) => {
-			nodeWeights.set(to, edgeWeights.get(from));
-		});
+		return this;
 	}
 
 	/**
 	 * For every node in the selection, go through each interval and sum them up
 	 * over time
 	 */
-	intervalSum(from: string, to: string = null, clean:boolean = false) {
+	intervalSum(from: string, to: string = null, clean = false) {
 		if (!to) {
 			to = from;
 		}
 
 		this.selection.eachInterval(
 			(nodeWeights, edgeWeights, prevWeights) => {
-				if (!nodeWeights.has(to) || clean){
+				if (!nodeWeights.has(to) || clean) {
 					if (prevWeights) {
-						nodeWeights.set(to, prevWeights.get(to) + edgeWeights.get(from));
+						nodeWeights.set(
+							to,
+							prevWeights.get(to) + edgeWeights.get(from),
+						);
 					} else {
 						nodeWeights.set(to, edgeWeights.get(from));
 					}
 				}
-			}
+			},
 		);
+
+		return this;
 	}
 
-	bubbleSum(from: string, to?: string) {
+	bubbleSum(mount: string) {
 		const interval = this.selection.settings.interval;
 
-		if (!to) {
-			to = from;
-		}
-
-		this.selection.nodes.forEach(
-			(node: Node) => node.pull(
-				interval, 
+		this.selection.nodes.forEach((node: Node) =>
+			node.pull(
+				interval,
 				(parentWeights: Weights, selfWeights: Weights) => {
-					parentWeights.sum(to, selfWeights.get(from));
+					parentWeights.sum(mount, selfWeights.get(mount));
 				},
-				(selfNode => selfNode.hasWeight(interval, from))
-			)
+				{
+					continue: (selfNode) =>
+						!(<Node>selfNode).hasWeight(interval, mount),
+				},
+			),
 		);
+
+		return this;
 	}
 }

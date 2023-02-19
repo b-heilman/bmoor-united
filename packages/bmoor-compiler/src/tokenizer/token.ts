@@ -1,12 +1,12 @@
-import {Expressable} from '../expressor/expressable';
-import {ExpressorExpressSettings} from '../expressor.interface';
 import {CompilerInterface} from '../compiler.interface';
+import {ExpressorExpressSettings} from '../expressor.interface';
+import {Expressable} from '../expressor/expressable';
 import {TokenizerState} from './state';
 import {
-	TokenValue,
+	ExpressableToken,
 	TokenReference,
 	TokenSettings,
-	ExpressableToken
+	TokenValue,
 } from './token.interface';
 
 export type TokenConstructor = {
@@ -17,7 +17,7 @@ export type TokenConstructor = {
 export abstract class Token implements ExpressableToken {
 	abstract toExpressable(
 		compiler?: CompilerInterface,
-		settings?: ExpressorExpressSettings
+		settings?: ExpressorExpressSettings,
 	): Expressable;
 
 	type: string;
@@ -30,7 +30,7 @@ export abstract class Token implements ExpressableToken {
 	constructor(
 		content: TokenValue,
 		state: TokenizerState,
-		settings: TokenSettings = null
+		settings: TokenSettings = null,
 	) {
 		this.state = state;
 		this.content = content;
@@ -51,7 +51,7 @@ export abstract class Token implements ExpressableToken {
 		return {
 			reference: this.getReference(),
 			content: this.content,
-			settings: this.settings
+			settings: this.settings,
 		};
 	}
 }

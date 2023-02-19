@@ -1,10 +1,10 @@
 import {expect} from 'chai';
 
 import {
+	BlockPattern,
 	Compiler,
-	RegexValuePattern,
 	RegexOpPattern,
-	BlockPattern
+	RegexValuePattern,
 } from './index';
 
 describe('@bmoor/compiler', function () {
@@ -13,9 +13,9 @@ describe('@bmoor/compiler', function () {
 			const compiler = new Compiler({
 				tokenizer: [
 					new RegexValuePattern(/\d/, (v) => parseInt(v), 'number'),
-					new RegexOpPattern(/\+/, (a, b) => a + b, 'number')
+					new RegexOpPattern(/\+/, (a, b) => a + b, 'number'),
 				],
-				reducer: []
+				reducer: [],
 			});
 
 			const fn = compiler.compile('12+34+56++78');
@@ -27,9 +27,9 @@ describe('@bmoor/compiler', function () {
 				tokenizer: [
 					new RegexValuePattern(/\d/, (v) => parseInt(v), 'number'),
 					new RegexOpPattern(/\+/, (a, b) => a + b, 'number'),
-					new BlockPattern('(', ')')
+					new BlockPattern('(', ')'),
 				],
-				reducer: []
+				reducer: [],
 			});
 
 			const fn = compiler.compile('12+34+(56++78)');
@@ -42,9 +42,9 @@ describe('@bmoor/compiler', function () {
 					new RegexValuePattern(/\d/, (v) => parseInt(v), 'number'),
 					new RegexOpPattern(/\+/, (a, b) => a + b, '4-number'),
 					new RegexOpPattern(/\*/, (a, b) => a * b, '3-number'),
-					new BlockPattern('(', ')')
+					new BlockPattern('(', ')'),
 				],
-				reducer: []
+				reducer: [],
 			});
 
 			const fn = compiler.compile('12+34*(56++78)');

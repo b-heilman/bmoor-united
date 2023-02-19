@@ -1,8 +1,8 @@
 import {
-	Token,
-	ExpressableUsages,
+	CompilerInterface,
 	Expressable,
-	CompilerInterface
+	ExpressableUsages,
+	Token,
 } from '@bmoor/compiler';
 
 import {ParserModes, ParserSettings} from '../parser.interface';
@@ -17,7 +17,7 @@ export class AccessorToken extends Token {
 	toExpressable(
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		compiler: CompilerInterface = null,
-		settings: ParserSettings = {mode: ParserModes.read}
+		settings: ParserSettings = {mode: ParserModes.read},
 	) {
 		if (
 			this.content === '__proto__' ||
@@ -50,13 +50,13 @@ export class AccessorToken extends Token {
 
 						return obj;
 					}
-				}
+				},
 			);
 		} else {
 			return new Expressable(
 				this,
 				ExpressableUsages.value,
-				(obj) => obj[this.content]
+				(obj) => obj[this.content],
 			);
 		}
 	}

@@ -1,9 +1,9 @@
 import {Expressable} from '@bmoor/compiler';
 
-import {Parser, WriterFunction, ReaderFunction} from './parser';
-import {ParserModes} from './parser.interface';
 import {mapping} from './mapping.interface';
-import {OperandIndex, indexExpressables, ArrayInfo} from './operands';
+import {ArrayInfo, OperandIndex, indexExpressables} from './operands';
+import {Parser, ReaderFunction, WriterFunction} from './parser';
+import {ParserModes} from './parser.interface';
 
 const pathParser = new Parser();
 
@@ -11,7 +11,7 @@ function addMapping(
 	ref: string,
 	fromMap: OperandIndex,
 	toMap: OperandIndex,
-	m: mapping
+	m: mapping,
 ) {
 	const from: Expressable[] = pathParser.express(m.from, ParserModes.read);
 	const to: Expressable[] = pathParser.express(m.to, ParserModes.write);
@@ -23,12 +23,12 @@ function readArray(
 	tgt,
 	src,
 	[info, ...rest]: ArrayInfo[],
-	dexCommand: OperandIndex
+	dexCommand: OperandIndex,
 ) {
 	if (info.leafRef) {
 		// reading .foo[]
 		tgt[info.ref] = src.map((value) => ({
-			[info.leafRef]: value
+			[info.leafRef]: value,
 		}));
 	} else if (rest.length) {
 		// reading [][]
@@ -36,7 +36,7 @@ function readArray(
 	} else {
 		// reading [].foo
 		tgt[info.ref] = src.map((datum) =>
-			runReaderMap(dexCommand, {}, datum)
+			runReaderMap(dexCommand, {}, datum),
 		);
 	}
 
@@ -94,7 +94,7 @@ function writeArray(
 	src,
 	[info, ...rest]: ArrayInfo[],
 	dexCommand: OperandIndex,
-	offset = -1
+	offset = -1,
 ) {
 	if (offset === -1) {
 		if (info.sources.length > 1) {

@@ -15,7 +15,7 @@ export function toCamelCase(str: string): string {
 			} else {
 				return right.toUpperCase();
 			}
-		}
+		},
 	);
 }
 

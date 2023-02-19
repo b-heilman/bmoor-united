@@ -4,7 +4,9 @@ import {expect} from 'chai';
  * I want to focus my tests on my gambling AI I'm tinkering with.
  */
 import {Graph} from '../graph';
+import {GraphCalculator} from './calculator';
 import {GraphLoader} from './loader';
+import {GraphSelection} from './selection';
 
 describe('bmoor-graph::GraphCalculator', function () {
 	let graph = null;
@@ -16,36 +18,36 @@ describe('bmoor-graph::GraphCalculator', function () {
 				{
 					type: 'team',
 					reference: {
-						mount: 't'
-					}
+						mount: 't',
+					},
 				},
 				{
 					type: 'position',
 					reference: function (row) {
 						return row.t + ':' + row.p;
-					}
+					},
 				},
 				{
 					type: 'player',
 					reference: {
-						mount: 'name'
+						mount: 'name',
 					},
 					normalizer: (row) => {
 						return {
 							yards: parseInt(<string>row.yards),
-							other: parseInt(<string>row.other)
+							other: parseInt(<string>row.other),
 						};
-					}
-				}
+					},
+				},
 			],
 			event: {
 				reference: {
-					mount: 'game'
+					mount: 'game',
 				},
 				interval: {
-					mount: 'time'
-				}
-			}
+					mount: 'time',
+				},
+			},
 		});
 
 		loader.fromArray([
@@ -65,13 +67,72 @@ describe('bmoor-graph::GraphCalculator', function () {
 			['team-4', 'qb', 'p-4-1', 'game-4', 2, 112, 107],
 			['team-4', 'wr', 'p-4-2', 'game-4', 2, 113, 114],
 			['team-2', 'qb', 'p-2-1', 'game-4', 2, 114, 109],
-			['team-2', 'wr', 'p-2-2', 'game-4', 2, 115, 106]
+			['team-2', 'wr', 'p-2-2', 'game-4', 2, 115, 106],
 		]);
 	});
 
-	describe('selector', function () {
-		it('should work', function () {
-			expect(true).to.equal(false);
+	describe('intervalSum', function () {
+		it('should calculate a sum for a node over time', function () {
+			const select = new GraphSelection(graph, {
+				interval: graph.getInterval(2),
+				type: 'player',
+			});
+
+			const calculator = new GraphCalculator(select);
+
+			calculator.intervalSum('yards', 'total_yards');
+
+			expect(
+				graph
+					.getNode('p-1-1')
+					.getWeight(graph.getInterval(1), 'total_yards'),
+			).to.equal(100);
+
+			expect(
+				graph
+					.getNode('p-1-1')
+					.getWeight(graph.getInterval(2), 'total_yards'),
+			).to.equal(208);
+		});
+	});
+
+	describe('bubbleSum', function () {
+		it('should calculate a sum for a node over all its children', function () {
+			const select = new GraphSelection(graph, {
+				interval: graph.getInterval(2),
+				type: 'player',
+			});
+
+			const calculator = new GraphCalculator(select);
+
+			calculator.intervalSum('yards', 'total_yards');
+
+			const select2 = new GraphSelection(graph, {
+				interval: graph.getInterval(2),
+				type: 'team',
+			});
+
+			const calculator2 = new GraphCalculator(select2);
+
+			calculator2.bubbleSum('total_yards');
+
+			expect(
+				graph
+					.getNode('team-1')
+					.getWeight(graph.getInterval(1), 'total_yards'),
+			).to.equal(null);
+
+			expect(
+				graph
+					.getNode('team-1')
+					.getWeight(graph.getInterval(2), 'total_yards'),
+			).to.equal(418);
+
+			expect(
+				graph
+					.getNode('team-2')
+					.getWeight(graph.getInterval(2), 'total_yards'),
+			).to.equal(434);
 		});
 	});
 });

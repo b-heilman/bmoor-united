@@ -1,25 +1,26 @@
 import {expect} from 'chai';
-import {create, Config, ConfigObject, ConfigValue} from './index';
+
+import {Config, ConfigObject, ConfigValue, create} from './index';
 
 describe('@bmoor/config', function () {
 	describe('Config', function () {
 		it('should basic construction', function () {
 			const cfg = new Config({
 				obj: new ConfigObject<ConfigValue>({
-					foo: 'bar'
+					foo: 'bar',
 				}),
 				hello: 'world',
 				eins: new Config({
-					zwei: 2
-				})
+					zwei: 2,
+				}),
 			});
 
 			expect(cfg.get('obj')).to.deep.equal({
-				foo: 'bar'
+				foo: 'bar',
 			});
 			expect(cfg.get('hello')).to.equal('world');
 			expect((<Config<ConfigValue>>cfg.get('eins')).get('zwei')).to.equal(
-				2
+				2,
 			);
 		});
 
@@ -40,8 +41,8 @@ describe('@bmoor/config', function () {
 						console.log(str + val);
 
 						return 'bar';
-					}
-				})
+					},
+				}),
 			});
 
 			expect(cfg.get('obj').fn()).to.equal('foo');
@@ -52,13 +53,13 @@ describe('@bmoor/config', function () {
 			it('should basic construction', function () {
 				const cfg = new Config<ConfigValue>({
 					obj: new ConfigObject<ConfigValue>({
-						foo: 'bar'
+						foo: 'bar',
 					}),
 					hello: 'world',
 					eins: new Config({
 						one: 1,
-						zwei: 2
-					})
+						zwei: 2,
+					}),
 				});
 
 				const other = cfg.override({
@@ -66,26 +67,26 @@ describe('@bmoor/config', function () {
 					hello: 'world2',
 					eins: new Config<ConfigValue>({
 						zwei: 22,
-						blah: ':-('
-					})
+						blah: ':-(',
+					}),
 				});
 
 				expect(other.get('obj')).to.deep.equal({
-					foo: 'bar'
+					foo: 'bar',
 				});
 				expect(other.get('hello')).to.equal('world2');
 				expect(other.get('junk')).to.equal('value');
 				expect(
-					(<Config<ConfigValue>>cfg.get('eins')).get('zwei')
+					(<Config<ConfigValue>>cfg.get('eins')).get('zwei'),
 				).to.equal(2);
 				expect(
-					(<Config<ConfigValue>>other.get('eins')).get('one')
+					(<Config<ConfigValue>>other.get('eins')).get('one'),
 				).to.equal(1);
 				expect(
-					(<Config<ConfigValue>>other.get('eins')).get('zwei')
+					(<Config<ConfigValue>>other.get('eins')).get('zwei'),
 				).to.equal(22);
 				expect(
-					(<Config<ConfigValue>>other.get('eins')).get('blah')
+					(<Config<ConfigValue>>other.get('eins')).get('blah'),
 				).to.equal(':-(');
 			});
 		});
@@ -103,8 +104,8 @@ describe('@bmoor/config', function () {
 			const cfg = create<cfgI>({
 				foo: 'bar',
 				hello: {
-					world: 1
-				}
+					world: 1,
+				},
 			});
 
 			expect(cfg.get('foo')).to.equal('bar');

@@ -1,12 +1,12 @@
 import {ContextSecurityInterface} from '@bmoor/context';
 
 import {UpdateDelta} from './datum.interface';
-import {
-	ServiceSettings,
-	ServiceInterface,
-	ServiceActions
-} from './service.interface';
 import {ModelFieldInterface} from './model/field.interface';
+import {
+	ServiceActions,
+	ServiceInterface,
+	ServiceSettings,
+} from './service.interface';
 
 function actionExtend(old, action) {
 	if (old) {
@@ -23,7 +23,7 @@ function buildActions<
 	ExternalReference,
 	ExternalCreate,
 	ExternalUpdate,
-	ExternalSearch
+	ExternalSearch,
 >(
 	actions: ServiceActions<
 		ExternalRead,
@@ -32,7 +32,7 @@ function buildActions<
 		ExternalUpdate,
 		ExternalSearch
 	>,
-	field: ModelFieldInterface
+	field: ModelFieldInterface,
 ): void {
 	if (field.actions.create) {
 		actions.create = actionExtend(actions.create, field.actions.create);
@@ -67,7 +67,7 @@ export class Service<
 	InternalReference,
 	InternalCreate,
 	InternalUpdate,
-	InternalSearch
+	InternalSearch,
 > implements
 		ServiceInterface<
 			ExternalRead,
@@ -113,7 +113,7 @@ export class Service<
 			InternalCreate,
 			InternalUpdate,
 			InternalSearch
-		>
+		>,
 	) {
 		this.settings = settings;
 		this.fields = new Map<string, ModelFieldInterface>();
@@ -132,7 +132,7 @@ export class Service<
 
 	async create(
 		content: ExternalCreate[],
-		ctx: ContextSecurityInterface
+		ctx: ContextSecurityInterface,
 	): Promise<ExternalRead[]> {
 		if (this.actions.create) {
 			content.map((datum) => this.actions.create(datum, ctx));
@@ -152,7 +152,7 @@ export class Service<
 		const rtn = await this.settings.adapter.create(
 			<InternalCreate[]>(
 				allowed.map((datum) => this.convertToInternal(datum, ctx))
-			)
+			),
 		);
 
 		return rtn.map((datum) => this.convertToExternal(datum, ctx));
@@ -160,18 +160,18 @@ export class Service<
 
 	async read(
 		ids: ExternalReference[],
-		ctx: ContextSecurityInterface
+		ctx: ContextSecurityInterface,
 	): Promise<ExternalRead[]> {
 		const res = await this.settings.adapter.read(
 			<InternalReference[]>(
 				ids.map((ref) => this.convertToInternal(ref, ctx))
-			)
+			),
 		);
 
 		const rtn = await this.settings.controller.canRead(
 			res.map((datum) => this.convertToExternal(datum, ctx)),
 			this.settings.accessor.getExternalKey,
-			ctx
+			ctx,
 		);
 
 		if (this.actions.read) {
@@ -183,7 +183,7 @@ export class Service<
 
 	async update(
 		content: UpdateDelta<ExternalReference, ExternalUpdate>[],
-		ctx: ContextSecurityInterface
+		ctx: ContextSecurityInterface,
 	): Promise<ExternalRead[]> {
 		if (this.actions.update) {
 			content.map(({delta}) => this.actions.update(delta, ctx));
@@ -202,7 +202,7 @@ export class Service<
 		const converted: UpdateDelta<InternalReference, InternalUpdate>[] =
 			send.map((change) => ({
 				ref: <InternalReference>this.convertToInternal(change.ref, ctx),
-				delta: <InternalUpdate>this.convertToInternal(change.delta, ctx)
+				delta: <InternalUpdate>this.convertToInternal(change.delta, ctx),
 			}));
 
 		const rtn = await this.settings.adapter.update(converted);
@@ -212,7 +212,7 @@ export class Service<
 
 	async delete(
 		ids: ExternalReference[],
-		ctx: ContextSecurityInterface
+		ctx: ContextSecurityInterface,
 	): Promise<ExternalRead[]> {
 		// TODO: canDelete
 
@@ -221,7 +221,7 @@ export class Service<
 		const count = await this.settings.adapter.delete(
 			<InternalReference[]>(
 				ids.map((ref) => this.convertToInternal(ref, ctx))
-			)
+			),
 		);
 
 		if (count !== datums.length) {
@@ -233,16 +233,16 @@ export class Service<
 
 	async search(
 		search: ExternalSearch,
-		ctx: ContextSecurityInterface
+		ctx: ContextSecurityInterface,
 	): Promise<ExternalRead[]> {
 		const res = await this.settings.adapter.search(
-			<InternalSearch>this.convertToInternal(search, ctx)
+			<InternalSearch>this.convertToInternal(search, ctx),
 		);
 
 		const rtn = await this.settings.controller.canRead(
 			res.map((datum) => this.convertToExternal(datum, ctx)),
 			this.settings.accessor.getExternalKey,
-			ctx
+			ctx,
 		);
 
 		if (this.actions.read) {
@@ -259,7 +259,7 @@ export class Service<
 			| ExternalCreate
 			| ExternalUpdate
 			| ExternalSearch,
-		ctx: ContextSecurityInterface
+		ctx: ContextSecurityInterface,
 	): InternalReference | InternalCreate | InternalUpdate | InternalSearch {
 		if (this.actions.deflate) {
 			this.actions.deflate(datum, ctx);
@@ -270,7 +270,7 @@ export class Service<
 
 	convertToExternal(
 		datum: InternalRead,
-		ctx: ContextSecurityInterface
+		ctx: ContextSecurityInterface,
 	): ExternalRead {
 		const rtn = this.settings.model.inflate.transform(datum);
 

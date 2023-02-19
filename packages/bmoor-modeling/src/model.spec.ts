@@ -13,19 +13,19 @@ describe('@bmoor-modeling::Model', function () {
 						external: 'key',
 						internal: 'id',
 						usage: 'key',
-						jsonType: 'number'
+						jsonType: 'number',
 					},
 					{
 						external: 'field1',
 						internal: 'field1',
-						jsonType: 'string'
+						jsonType: 'string',
 					},
 					{
 						external: 'other.field2',
 						internal: 'field2',
-						jsonType: 'number'
-					}
-				)
+						jsonType: 'number',
+					},
+				),
 			});
 
 			const ts = model.toTypescript();
@@ -77,7 +77,7 @@ describe('@bmoor-modeling::Model', function () {
 			`;
 
 			expect(ts.replace(/\s+/g, '')).to.equal(
-				expected.replace(/\s+/g, '')
+				expected.replace(/\s+/g, ''),
 			);
 		});
 	});

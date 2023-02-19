@@ -1,5 +1,5 @@
 import {create as createError} from '@bmoor/error';
-import {implode, MappedObject, DynamicObject} from '@bmoor/object';
+import {DynamicObject, MappedObject, implode} from '@bmoor/object';
 
 // eslint-disable-next-line  @typescript-eslint/no-explicit-any
 export type ConfigValue = any;
@@ -21,12 +21,12 @@ export class Config<I> {
 
 	constructor(settings: I) {
 		this.settings = implode(<DynamicObject<ConfigValue>>settings, {
-			skipInstanceOf: [ConfigObject, Config]
+			skipInstanceOf: [ConfigObject, Config],
 		});
 	}
 
 	get(
-		path: string
+		path: string,
 	): ConfigValue | Config<ConfigValue> | ConfigObject<ConfigValue> {
 		return this.settings[path];
 	}
@@ -43,7 +43,7 @@ export class Config<I> {
 						val.merge(original);
 					} else {
 						throw createError('no mixing', {
-							code: 'BM_CFG_MIX_1'
+							code: 'BM_CFG_MIX_1',
 						});
 					}
 				} else if (original instanceof ConfigObject) {
@@ -51,7 +51,7 @@ export class Config<I> {
 						this.settings[path] = val;
 					} else {
 						throw createError('no mixing', {
-							code: 'BM_CFG_MIX_2'
+							code: 'BM_CFG_MIX_2',
 						});
 					}
 				} else {

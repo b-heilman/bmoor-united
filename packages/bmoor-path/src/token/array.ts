@@ -1,8 +1,8 @@
 import {
-	Token,
-	ExpressableUsages,
+	CompilerInterface,
 	Expressable,
-	CompilerInterface
+	ExpressableUsages,
+	Token,
 } from '@bmoor/compiler';
 
 import {ParserModes, ParserSettings} from '../parser.interface';
@@ -13,7 +13,7 @@ export class ArrayToken extends Token {
 	toExpressable(
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		compiler: CompilerInterface = null,
-		settings: ParserSettings = {mode: ParserModes.read}
+		settings: ParserSettings = {mode: ParserModes.read},
 	) {
 		if (settings.mode === ParserModes.write) {
 			return new Expressable(this, ExpressableUsages.value, (arr) => {

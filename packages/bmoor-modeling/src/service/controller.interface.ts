@@ -1,8 +1,8 @@
 import {ContextSecurityInterface} from '@bmoor/context';
 
+import {UpdateDelta} from '../datum.interface';
 import {Model} from '../model';
 import {ExternalKeyReader} from './accessor.interface';
-import {UpdateDelta} from '../datum.interface';
 
 export interface ServiceControllerSettings {
 	permission?: {
@@ -18,28 +18,28 @@ export interface ServiceControllerInterface<
 	ExternalRead,
 	ExternalReference,
 	ExternalCreate,
-	ExternalUpdate
+	ExternalUpdate,
 > {
 	// securing data that has been requested
 	canRead(
 		datums: ExternalRead[],
 		fn: ExternalKeyReader<ExternalRead, ExternalReference>,
-		ctx: ContextSecurityInterface
+		ctx: ContextSecurityInterface,
 	): Promise<ExternalRead[]>;
 
 	// securing data that has been submitted
 	canCreate(
 		datums: ExternalCreate[],
-		ctx: ContextSecurityInterface
+		ctx: ContextSecurityInterface,
 	): Promise<ExternalCreate[]>;
 
 	canUpdate(
 		content: UpdateDelta<ExternalReference, ExternalUpdate>[],
-		ctx: ContextSecurityInterface
+		ctx: ContextSecurityInterface,
 	): Promise<UpdateDelta<ExternalReference, ExternalUpdate>[]>;
 
 	canDelete(
 		content: ExternalReference[],
-		ctx: ContextSecurityInterface
+		ctx: ContextSecurityInterface,
 	): Promise<ExternalReference[]>;
 }

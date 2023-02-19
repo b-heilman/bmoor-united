@@ -1,17 +1,17 @@
 import {expect} from 'chai';
 
-import {Token} from './tokenizer/token';
-import {Statement} from './reducer/statement';
 import {Expressor, ExpressorModes} from './expressor';
 import {Expressable} from './expressor/expressable';
 import {ExpressableUsages} from './expressor/expressable.interface';
+import {Statement} from './reducer/statement';
+import {Token} from './tokenizer/token';
 
 describe('@bmoor/compiler', function () {
 	describe('Expressor', function () {
 		class ValueToken extends Token {
 			toExpressable() {
 				return new Expressable(this, ExpressableUsages.value, () =>
-					parseInt(this.content)
+					parseInt(this.content),
 				);
 			}
 		}
@@ -24,7 +24,7 @@ describe('@bmoor/compiler', function () {
 					(a, b) => {
 						return a + b;
 					},
-					{rank: 4}
+					{rank: 4},
 				);
 			}
 		}
@@ -37,7 +37,7 @@ describe('@bmoor/compiler', function () {
 					(a, b) => {
 						return a * b;
 					},
-					{rank: 3}
+					{rank: 3},
 				);
 			}
 		}
@@ -50,7 +50,7 @@ describe('@bmoor/compiler', function () {
 					(a, b) => {
 						return a - b;
 					},
-					{rank: 4}
+					{rank: 4},
 				);
 			}
 		}
@@ -66,12 +66,12 @@ describe('@bmoor/compiler', function () {
 
 			const infix = ex.express(
 				[eins, add, zwei, sub, drei],
-				ExpressorModes.infix
+				ExpressorModes.infix,
 			);
 
 			const postfix = ex.express(
 				[eins, add, zwei, sub, drei],
-				ExpressorModes.postfix
+				ExpressorModes.postfix,
 			);
 
 			expect(infix.map((e) => e.usage)).to.deep.equal([
@@ -79,7 +79,7 @@ describe('@bmoor/compiler', function () {
 				'operation',
 				'value',
 				'operation',
-				'value'
+				'value',
 			]);
 
 			expect(postfix.map((e) => e.usage)).to.deep.equal([
@@ -87,11 +87,11 @@ describe('@bmoor/compiler', function () {
 				'value',
 				'operation',
 				'value',
-				'operation'
+				'operation',
 			]);
 
 			expect(
-				ex.makeExecutable([eins, add, zwei, sub, drei])()
+				ex.makeExecutable([eins, add, zwei, sub, drei])(),
 			).to.deep.equal(0);
 		});
 

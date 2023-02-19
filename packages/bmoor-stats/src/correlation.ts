@@ -1,7 +1,7 @@
 // https://www.statisticshowto.com/probability-and-statistics/correlation-coefficient-formula/
 export function pearsonCorrelation(
 	arr1: number[],
-	arr2: number[]
+	arr2: number[],
 ): number {
 	const length = arr1.length;
 	const arr1_avg = arr1.reduce((agg, v) => agg + v, 0) / length;

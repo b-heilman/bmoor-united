@@ -1,15 +1,16 @@
-import {Node} from '../node';
-import {Edge} from '../edge';
+import {Tags} from '@bmoor/tagging';
+
 import {Event} from '../event';
 import {Graph} from '../graph';
-import {Interval} from '../interval.interface';
+import {Interval} from '../interval';
+import {Node} from '../node';
+import {NodeSettings} from '../node.interface';
 import {
-	LoaderSettings,
 	InputRow,
 	LoaderNodeInfo,
-	LoaderVariable
+	LoaderSettings,
+	LoaderVariable,
 } from './loader.interface';
-import {NodeSettings} from '../node.interface';
 
 function readValue(row: InputRow, settings: LoaderVariable) {
 	if (typeof settings === 'function') {
@@ -39,19 +40,16 @@ export class GraphLoader {
 		this.settings = settings;
 	}
 
-	getOrder(orderPos, label): Interval {
-		let order = this.intervals[orderPos];
+	getInterval(ref, label, tags: Tags = []): Interval {
+		let interval = this.intervals[ref];
 
-		if (!order) {
-			order = {
-				ref: orderPos,
-				label
-			};
+		if (!interval) {
+			interval = new Interval(ref, label, tags);
 
-			this.intervals[orderPos] = order;
+			this.intervals[ref] = interval;
 		}
 
-		return order;
+		return interval;
 	}
 
 	getEvent(row: InputRow): Event {
@@ -62,15 +60,24 @@ export class GraphLoader {
 		let event = this.graph.getEvent(ref);
 
 		if (!event) {
-			const readOrder = <string>readValue(row, setting.interval);
-			const readLabel = setting.label
+			const intervalRef = <string>readValue(row, setting.interval);
+			const intervalLabel = setting.label
 				? <string>readValue(row, setting.label)
-				: readOrder;
+				: intervalRef;
+			const intervalTags = setting.tags ? <string[]>setting.tags(row) : [];
 
-			const order = this.getOrder(parseInt(readOrder), readLabel);
+			const order = this.getInterval(
+				parseInt(intervalRef),
+				intervalLabel,
+				intervalTags,
+			);
 
 			event = new Event(ref, order);
 			this.graph.addEvent(event);
+		}
+
+		if (setting.normalizer) {
+			event.weights.load(setting.normalizer(row, event.ref));
 		}
 
 		return event;
@@ -79,12 +86,17 @@ export class GraphLoader {
 	computeNodeInfo(row: InputRow): LoaderNodeInfo[] {
 		return this.settings.nodes.map((setting) => {
 			const rtn: LoaderNodeInfo = {
+				tags: [],
 				type: setting.type,
-				reference: <string>readValue(row, setting.reference)
+				reference: <string>readValue(row, setting.reference),
 			};
 
 			if (setting.tag) {
-				rtn.tag = <string>readValue(row, setting.tag);
+				rtn.tags = [<string>readValue(row, setting.tag)];
+			}
+
+			if (setting.tags) {
+				rtn.tags = rtn.tags.concat(setting.tags(row));
 			}
 
 			if (setting.normalizer) {
@@ -96,38 +108,38 @@ export class GraphLoader {
 	}
 
 	// Load the entire node heirarchy, and return the primary node which data gets loaded on
-	createNodes(row: InputRow, event: Event): Node {
-		const types = this.computeNodeInfo(row);
+	createNodes(row: InputRow, event: Event): Node[] {
+		return (this.settings.split ? this.settings.split(row) : [row]).map(
+			(seed) => {
+				const types = this.computeNodeInfo(seed);
 
-		return types.reduce((prev: Node, info) => {
-			let node = this.graph.getNode(info.reference);
+				return types.reduce((prev: Node, info: LoaderNodeInfo) => {
+					let node = this.graph.getNode(info.reference);
 
-			if (!node) {
-				const settings: NodeSettings = {
-					parent: prev
-				};
+					if (!node) {
+						const settings: NodeSettings = {};
 
-				if (info.tag) {
-					settings.tag = info.tag;
-				}
+						if (info.tags) {
+							settings.tags = info.tags;
+						}
 
-				node = new Node(info.reference, info.type, settings);
-				this.graph.addNode(node);
-			}
+						node = new Node(info.reference, info.type, settings);
+						this.graph.addNode(node);
+					}
 
-			// First time a node is introduced to an event the weights will get set
-			if (info.normalizer && !node.hasWeight(event.interval)) {
-				const edge = new Edge(node);
+					if (prev) {
+						node.setParent(event.interval, prev);
+					}
 
-				event.addEdge(edge);
+					// First time a node is introduced to an event the weights will get set
+					if (info.normalizer && !node.hasWeight(event.interval)) {
+						node.addEdge(event, info.normalizer(seed, node.ref));
+					}
 
-				edge.weights.load(info.normalizer(row));
-
-				node.addEvent(event);
-			}
-
-			return node;
-		}, null);
+					return node;
+				}, null);
+			},
+		);
 	}
 
 	addRow(row: InputRow): void {

@@ -7,7 +7,7 @@ export type ExpressableFunction = (
 
 export enum ExpressableUsages {
 	operation = 'operation',
-	value = 'value'
+	value = 'value',
 }
 
 export interface ExpressableSettings {

@@ -1,10 +1,10 @@
 import {explode} from '@bmoor/object';
-import {ModelField} from '../field';
 
+import {ModelField} from '../field';
 import {
-	ModelFieldTypescriptInfo,
 	ModelFieldInterface,
-	ModelFieldSettings
+	ModelFieldSettings,
+	ModelFieldTypescriptInfo,
 } from '../field.interface';
 import {ModelFieldSetTypescript} from './set.interface';
 
@@ -32,7 +32,7 @@ function typescriptify(infos: ModelFieldTypescriptInfo[]): string {
 			agg[info.path] = info.format;
 
 			return agg;
-		}, {})
+		}, {}),
 	);
 
 	return dumpObject(style);
@@ -66,16 +66,16 @@ export class ModelFieldSet extends Array {
 					reference: [],
 					create: [],
 					update: [],
-					search: []
+					search: [],
 				},
 				internal: {
 					read: [],
 					reference: [],
 					create: [],
 					update: [],
-					search: []
-				}
-			}
+					search: [],
+				},
+			},
 		);
 
 		return {
@@ -84,15 +84,15 @@ export class ModelFieldSet extends Array {
 				reference: typescriptify(res.external.reference),
 				create: typescriptify(res.external.create),
 				update: typescriptify(res.external.update),
-				search: typescriptify(res.external.search)
+				search: typescriptify(res.external.search),
 			},
 			internal: {
 				read: typescriptify(res.internal.read),
 				reference: typescriptify(res.internal.reference),
 				create: typescriptify(res.internal.create),
 				update: typescriptify(res.internal.update),
-				search: typescriptify(res.internal.search)
-			}
+				search: typescriptify(res.internal.search),
+			},
 		};
 	}
 }
@@ -100,7 +100,7 @@ export class ModelFieldSet extends Array {
 export function factory(...settings: ModelFieldSettings[]): ModelFieldSet {
 	return new ModelFieldSet(
 		...settings.map(
-			(fieldSettings: ModelFieldSettings) => new ModelField(fieldSettings)
-		)
+			(fieldSettings: ModelFieldSettings) => new ModelField(fieldSettings),
+		),
 	);
 }

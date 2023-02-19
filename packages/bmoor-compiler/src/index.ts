@@ -8,12 +8,12 @@ export {TokenizerState} from './tokenizer/state';
 export {
 	ExpressableUsages,
 	ExpressableValue,
-	ExpressableFunction
+	ExpressableFunction,
 } from './expressor/expressable.interface';
 export {Expressable} from './expressor/expressable';
 export {
 	ExpressorExpressPosition,
-	ExpressorExpressSettings
+	ExpressorExpressSettings,
 } from './expressor.interface';
 export {ExecutableFunction} from './expressor/executable';
 export {ExpressorModes} from './expressor';
@@ -21,6 +21,6 @@ export {
 	ValueToken,
 	RegexValuePattern,
 	OpToken,
-	RegexOpPattern
+	RegexOpPattern,
 } from './pattern/regex';
 export {BlockToken, BlockPattern} from './pattern/block';

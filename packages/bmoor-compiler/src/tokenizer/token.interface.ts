@@ -1,6 +1,6 @@
-import {Expressable} from '../expressor/expressable';
-import {ExpressorExpressSettings} from '../expressor.interface';
 import {CompilerInterface} from '../compiler.interface';
+import {ExpressorExpressSettings} from '../expressor.interface';
+import {Expressable} from '../expressor/expressable';
 
 // eslint-disable-next-line  @typescript-eslint/no-explicit-any
 export type TokenValue = any;
@@ -16,7 +16,7 @@ export interface ExpressableToken {
 
 	toExpressable(
 		compiler?: CompilerInterface,
-		settings?: ExpressorExpressSettings
+		settings?: ExpressorExpressSettings,
 	): Expressable;
 	getReference(): string;
 }

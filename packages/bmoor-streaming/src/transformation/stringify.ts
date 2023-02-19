@@ -17,6 +17,6 @@ export function stringify(tgt) {
 					this.destroy();
 				});
 			}
-		}
+		},
 	});
 }

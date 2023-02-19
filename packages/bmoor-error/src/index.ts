@@ -5,5 +5,5 @@ export {
 	extendError,
 	assignError,
 	wrapError,
-	create
+	create,
 } from './contextual';

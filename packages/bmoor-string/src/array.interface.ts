@@ -4,7 +4,7 @@ export interface ColumnInterface extends FormatInterface {
 	heading?: string;
 }
 
-export interface PrettyInteface {
+export interface PrettyArraySettings {
 	header?: string;
 	heading?: string;
 	headerFormat?: FormatInterface;

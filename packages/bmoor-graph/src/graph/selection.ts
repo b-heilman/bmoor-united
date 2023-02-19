@@ -1,27 +1,42 @@
+import {Tagging} from '@bmoor/tagging';
+
 import {Graph} from '../graph';
+import {Interval} from '../interval';
 import {Node} from '../node';
-import {Interval} from '../interval.interface';
-import {
-	GraphSelectionSettings,
-	GraphSelectionComparator,
-	GraphSelectionSubSettings
-} from './selection.interface';
 import {Weights} from '../weights';
+import {
+	GraphSelectionComparator,
+	GraphSelectionSettings,
+	GraphSelectionSubSettings,
+} from './selection.interface';
 
 export function select(
 	selector: GraphSelectionSettings,
-	nodes: Node[]
+	incoming: Node[] | GraphSelection,
 ): Node[] {
-	if (selector.tag) {
-		nodes = nodes.filter((node) => node.tag === selector.tag);
+	let nodes: Node[] = null;
+
+	// we optimize sub selection by using the
+	if (incoming instanceof GraphSelection) {
+		if (selector.tag) {
+			nodes = incoming.tagging.get(selector.tag);
+		} else {
+			nodes = incoming.nodes.slice();
+		}
+	} else {
+		nodes = <Node[]>incoming;
+
+		if (selector.tag) {
+			nodes = nodes.filter((node) => node.tags.includes(selector.tag));
+		}
 	}
 
 	if (selector.sort) {
 		nodes.sort((a, b) =>
 			selector.sort(
 				a.getWeights(selector.interval),
-				b.getWeights(selector.interval)
-			)
+				b.getWeights(selector.interval),
+			),
 		);
 	}
 
@@ -44,6 +59,7 @@ export function select(
 //   be written to the node instead of being written directly to the node.
 export class GraphSelection {
 	nodes: Node[];
+	tagging: Tagging<Node>;
 	graph: Graph;
 	sorted: boolean;
 	settings: GraphSelectionSettings;
@@ -52,17 +68,26 @@ export class GraphSelection {
 	constructor(
 		graph: Graph,
 		settings: GraphSelectionSettings,
-		pool: Node[] = null,
-		sorted = false
+		pool: Node[] | GraphSelection = null,
+		sorted = false,
 	) {
 		this.graph = graph;
+		this.tagging = new Tagging();
 		this.settings = settings;
 		this.intervals = null;
 
 		this.nodes = select(
 			settings,
-			pool || this.graph.getNodesByType(settings.type)
+			/***
+			 * TODO: this makes me feel like selected need to become a higher level thing.  Do I need to tie
+			 * into a tiered thing where type -> tagging?  The below loses its 'tagged' benefit from the graph
+			 * or do I need to do some kind of cross tagging?  If I do that though is it turtles all the way
+			 * down?  If I tackle that now, that's premature optimization so leaving this for peace of mind.
+			 ***/
+			pool || this.graph.getNodesByType(settings.type),
 		);
+
+		this.nodes.forEach((node) => this.tagging.add(node, node.tags));
 
 		this.sorted = settings.sort ? true : sorted;
 	}
@@ -71,7 +96,7 @@ export class GraphSelection {
 		if (!this.intervals) {
 			this.intervals = this.graph.getIntervalsInOrder(
 				this.settings.interval,
-				this.settings.from
+				this.settings.from,
 			);
 		}
 
@@ -83,8 +108,8 @@ export class GraphSelection {
 		return new GraphSelection(
 			this.graph,
 			Object.assign({}, this.settings, subSelector),
-			this.nodes.slice(),
-			this.sorted
+			this,
+			this.sorted,
 		);
 	}
 
@@ -96,8 +121,8 @@ export class GraphSelection {
 		return new GraphSelection(
 			this.graph,
 			Object.assign({}, this.settings, {top: count}),
-			this.nodes.slice(),
-			this.sorted
+			this,
+			this.sorted,
 		);
 	}
 
@@ -109,8 +134,8 @@ export class GraphSelection {
 		return new GraphSelection(
 			this.graph,
 			Object.assign({}, this.settings, {bottom: count}),
-			this.nodes.slice(),
-			this.sorted
+			this,
+			this.sorted,
 		);
 	}
 
@@ -124,7 +149,7 @@ export class GraphSelection {
 
 		return {
 			top,
-			bottom
+			bottom,
 		};
 	}
 
@@ -140,13 +165,14 @@ export class GraphSelection {
 		this.nodes.sort((nodeA, nodeB) =>
 			(<GraphSelectionComparator>nodeCompare)(
 				nodeA.getWeights(interval),
-				nodeB.getWeights(interval)
-			)
+				nodeB.getWeights(interval),
+			),
 		);
 		this.sorted = true;
 	}
 
 	rank(nodeCompare: GraphSelectionComparator) {
+		// TODO: a way to use tags rather than this?
 		const intervals = this.getIntervals();
 		const scores = this.nodes.reduce((map, node) => {
 			const score = intervals.reduce((score, interval) => {
@@ -163,9 +189,9 @@ export class GraphSelection {
 							sum +
 							nodeCompare(
 								node.getWeights(interval),
-								otherNode.getWeights(interval)
+								otherNode.getWeights(interval),
 							),
-						0
+						0,
 					)
 				);
 			}, 0);
@@ -184,7 +210,7 @@ export class GraphSelection {
 				if (
 					nodeCompare(
 						nodeA.getWeights(event.interval),
-						nodeB.getWeights(event.interval)
+						nodeB.getWeights(event.interval),
 					) > 0
 				) {
 					sum += 1;
@@ -210,7 +236,7 @@ export class GraphSelection {
 
 					return nodeCompare(
 						nodeA.getWeights(interval),
-						nodeB.getWeights(interval)
+						nodeB.getWeights(interval),
 					);
 				}
 			} else {
@@ -254,13 +280,16 @@ export class GraphSelection {
 		const intervals = this.getIntervals();
 
 		for (const node of nodes) {
-			const previous = this.graph.getIntervalBefore(intervals[0]); // TODO: figure out previous interval if possible
+			// TODO: figure out previous interval if possible
+			const previous = this.graph.getIntervalBefore(intervals[0]);
 
 			let prev = previous ? node.getWeights(previous) : null;
 			for (const interval of intervals) {
 				const cur = node.getWeights(interval);
 
-				fn(cur, node.getEdge(interval).weights, prev);
+				if (node.hasEdge(interval)) {
+					fn(cur, node.getEdge(interval), prev);
+				}
 
 				prev = cur;
 			}
@@ -282,12 +311,12 @@ export class GraphSelection {
 			return {
 				selected: this.nodes.map((node) => ({
 					reference: node.ref,
-					value: node.getWeight(this.settings.interval, mount)
-				}))
+					value: node.getWeight(this.settings.interval, mount),
+				})),
 			};
 		} else {
 			return {
-				selected: this.nodes.map((node) => node.ref)
+				selected: this.nodes.map((node) => node.ref),
 			};
 		}
 	}

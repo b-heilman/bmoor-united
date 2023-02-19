@@ -3,7 +3,7 @@ import {Readable} from 'stream';
 
 import {pause} from '@bmoor/timing';
 
-import {parallel, promisefy, batch, stringify} from './index';
+import {batch, parallel, promisefy, stringify} from './index';
 
 describe('@bmoor/stream', function () {
 	describe('promisefy', function () {
@@ -12,32 +12,32 @@ describe('@bmoor/stream', function () {
 				Readable.from([
 					{
 						eins: 1,
-						zwei: 2
+						zwei: 2,
 					},
 					{
 						eins: 10,
-						zwei: 20
+						zwei: 20,
 					},
 					{
 						eins: 100,
-						zwei: 200
-					}
-				])
+						zwei: 200,
+					},
+				]),
 			);
 
 			expect(await prom).to.deep.equal([
 				{
 					eins: 1,
-					zwei: 2
+					zwei: 2,
 				},
 				{
 					eins: 10,
-					zwei: 20
+					zwei: 20,
 				},
 				{
 					eins: 100,
-					zwei: 200
-				}
+					zwei: 200,
+				},
 			]);
 		});
 	});
@@ -47,16 +47,16 @@ describe('@bmoor/stream', function () {
 			const readable = Readable.from([
 				{
 					eins: 1,
-					zwei: 2
+					zwei: 2,
 				},
 				{
 					eins: 10,
-					zwei: 20
+					zwei: 20,
 				},
 				{
 					eins: 100,
-					zwei: 200
-				}
+					zwei: 200,
+				},
 			]);
 
 			const closures: ((value: unknown) => void)[] = [];
@@ -68,9 +68,9 @@ describe('@bmoor/stream', function () {
 					});
 
 					return {
-						value: obj.eins + obj.zwei
+						value: obj.eins + obj.zwei,
 					};
-				})
+				}),
 			);
 
 			await pause(3);
@@ -83,14 +83,14 @@ describe('@bmoor/stream', function () {
 
 			expect(res).to.deep.equal([
 				{
-					value: 3
+					value: 3,
 				},
 				{
-					value: 30
+					value: 30,
 				},
 				{
-					value: 300
-				}
+					value: 300,
+				},
 			]);
 		});
 
@@ -98,16 +98,16 @@ describe('@bmoor/stream', function () {
 			const readable = Readable.from([
 				{
 					eins: 1,
-					zwei: 2
+					zwei: 2,
 				},
 				{
 					eins: 10,
-					zwei: 20
+					zwei: 20,
 				},
 				{
 					eins: 100,
-					zwei: 200
-				}
+					zwei: 200,
+				},
 			]);
 
 			const closures: ((value: unknown) => void)[] = [];
@@ -119,9 +119,9 @@ describe('@bmoor/stream', function () {
 					});
 
 					return {
-						value: obj.eins + obj.zwei
+						value: obj.eins + obj.zwei,
 					};
-				}, 2)
+				}, 2),
 			);
 
 			await pause(3);
@@ -140,14 +140,14 @@ describe('@bmoor/stream', function () {
 
 			expect(res).to.deep.equal([
 				{
-					value: 3
+					value: 3,
 				},
 				{
-					value: 30
+					value: 30,
 				},
 				{
-					value: 300
-				}
+					value: 300,
+				},
 			]);
 		});
 	});
@@ -158,36 +158,36 @@ describe('@bmoor/stream', function () {
 				Readable.from([
 					{
 						eins: 1,
-						zwei: 2
+						zwei: 2,
 					},
 					{
 						eins: 10,
-						zwei: 20
+						zwei: 20,
 					},
 					{
 						eins: 100,
-						zwei: 200
-					}
-				]).pipe(batch(2))
+						zwei: 200,
+					},
+				]).pipe(batch(2)),
 			);
 
 			expect(await prom).to.deep.equal([
 				[
 					{
 						eins: 1,
-						zwei: 2
+						zwei: 2,
 					},
 					{
 						eins: 10,
-						zwei: 20
-					}
+						zwei: 20,
+					},
 				],
 				[
 					{
 						eins: 100,
-						zwei: 200
-					}
-				]
+						zwei: 200,
+					},
+				],
 			]);
 		});
 	});
@@ -199,31 +199,31 @@ describe('@bmoor/stream', function () {
 					stream: Readable.from([
 						{
 							eins: 1,
-							zwei: 2
+							zwei: 2,
 						},
 						{
 							eins: 10,
-							zwei: 20
+							zwei: 20,
 						},
 						{
 							eins: 100,
-							zwei: 200
-						}
+							zwei: 200,
+						},
 					]).pipe(batch(2)),
 					number: 1,
 					string: '2',
 					prom: Promise.resolve({
-						hello: 'world'
+						hello: 'world',
 					}),
 					arr: [
 						'eins',
 						'zwei',
 						Promise.resolve('drei'),
 						{
-							foo: 'bar'
-						}
-					]
-				})
+							foo: 'bar',
+						},
+					],
+				}),
 			);
 
 			const res = JSON.parse(agg.join(''));
@@ -232,30 +232,30 @@ describe('@bmoor/stream', function () {
 				stream: [
 					{
 						eins: 1,
-						zwei: 2
+						zwei: 2,
 					},
 					{
 						eins: 10,
-						zwei: 20
+						zwei: 20,
 					},
 					{
 						eins: 100,
-						zwei: 200
-					}
+						zwei: 200,
+					},
 				],
 				number: 1,
 				string: '2',
 				prom: {
-					hello: 'world'
+					hello: 'world',
 				},
 				arr: [
 					'eins',
 					'zwei',
 					'drei',
 					{
-						foo: 'bar'
-					}
-				]
+						foo: 'bar',
+					},
+				],
 			});
 		});
 	});

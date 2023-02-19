@@ -1,7 +1,7 @@
 import {Mapping} from '@bmoor/path';
 import {toProperCase} from '@bmoor/string';
 
-import {ModelSettings, ModelInterface} from './model.interface';
+import {ModelInterface, ModelSettings} from './model.interface';
 import {ModelFieldInterface} from './model/field.interface';
 
 /***
@@ -33,14 +33,14 @@ export class Model implements ModelInterface {
 		const toInternal = settings.fields.map((field) => {
 			return {
 				from: field.settings.external,
-				to: field.settings.storage
+				to: field.settings.storage,
 			};
 		});
 
 		const toExternal = settings.fields.map((field) => {
 			return {
 				from: field.settings.internal,
-				to: field.settings.external
+				to: field.settings.external,
 			};
 		});
 
@@ -63,7 +63,7 @@ export class Model implements ModelInterface {
 						'export interface ' +
 						group +
 						toProperCase(usage) +
-						res[key][usage]
+						res[key][usage],
 				);
 			})
 			.join('\n');

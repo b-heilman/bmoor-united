@@ -4,8 +4,8 @@ export function format(
 	value: number | string,
 	settings: FormatInterface = {
 		type: 'string',
-		align: 'left'
-	}
+		align: 'left',
+	},
 ): string {
 	const type = settings.type || typeof value;
 
@@ -29,7 +29,7 @@ export function format(
 		}
 
 		// TODO: length management
-	} else {
+	} else if (value) {
 		rtn = '' + value;
 
 		// string
@@ -42,6 +42,8 @@ export function format(
 				}
 			}
 		}
+	} else {
+		rtn = '';
 	}
 
 	if (align === 'left') {

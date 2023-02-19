@@ -1,5 +1,5 @@
+import {isArray, isObject, isString, isUndefined} from '@bmoor/compare';
 import {create} from '@bmoor/error';
-import {isString, isArray, isUndefined, isObject} from '@bmoor/compare';
 
 import {ImplodeSettings} from './object.interface';
 
@@ -32,8 +32,8 @@ export function parsePath(path: IncomingPathType): ParsedPathType {
 			code: 'BM_OB_PATH',
 			context: {
 				path,
-				type: typeof path
-			}
+				type: typeof path,
+			},
 		});
 	}
 }
@@ -55,7 +55,7 @@ export type DynamicObject<T> = {
 export function set<T>(
 	root: DynamicObject<T>,
 	space: IncomingPathType,
-	value: T
+	value: T,
 ): DynamicObject<T> {
 	const path = parsePath(space);
 	const val = path.pop();
@@ -88,7 +88,7 @@ export function set<T>(
 // https://www.typescriptlang.org/docs/handbook/2/functions.html
 export type SetterFn<T> = (
 	root: DynamicObject<T>,
-	value: T
+	value: T,
 ) => DynamicObject<T>;
 
 function _makeSetter<T>(property: string, next: SetterFn<T>): SetterFn<T> {
@@ -100,14 +100,14 @@ function _makeSetter<T>(property: string, next: SetterFn<T>): SetterFn<T> {
 		property === 'prototype'
 	) {
 		throw create('unable to access __proto__, constructor, prototype', {
-			code: 'BM_OB_MAKESETTER'
+			code: 'BM_OB_MAKESETTER',
 		});
 	}
 
 	if (next) {
 		return function setter(
 			root: DynamicObject<T>,
-			value: T
+			value: T,
 		): DynamicObject<T> {
 			let t = <DynamicObject<T>>root[property];
 
@@ -188,7 +188,7 @@ function _makeGetter<T>(property: string, next: GetterFn<T>): GetterFn<T> {
 		property === 'prototype'
 	) {
 		throw create('unable to access __proto__, constructor, prototype', {
-			code: 'BM_OB_MAKEGETTER'
+			code: 'BM_OB_MAKEGETTER',
 		});
 	}
 
@@ -270,7 +270,7 @@ export type MappedObject<T> = {[key: string]: T};
 
 export function explode<T>(
 	mappings: MappedObject<T>,
-	target: DynamicObject<T> = null
+	target: DynamicObject<T> = null,
 ): DynamicObject<T> {
 	if (!target) {
 		target = <DynamicObject<T>>{};
@@ -287,7 +287,7 @@ type IgnoreSettings = {[key: string]: boolean | IgnoreSettings};
 
 export function implode<T>(
 	obj: DynamicObject<T>,
-	settings: ImplodeSettings = {}
+	settings: ImplodeSettings = {},
 ): MappedObject<T> {
 	const rtn = <MappedObject<T>>{};
 
@@ -301,7 +301,7 @@ export function implode<T>(
 	if (isArray(obj)) {
 		// array support will go into path operators
 		throw create('unable to process arrays', {
-			code: 'BM_OB_IMPLODE_1'
+			code: 'BM_OB_IMPLODE_1',
 		});
 	} else {
 		format = function fn2(key: string, next: string = null): string {
@@ -324,7 +324,7 @@ export function implode<T>(
 		if (t !== true) {
 			if (isArray(val)) {
 				throw create('unable to process arrays', {
-					code: 'BM_OB_IMPLODE_2'
+					code: 'BM_OB_IMPLODE_2',
 				});
 			} else if (
 				isObject(val) &&
@@ -340,7 +340,7 @@ export function implode<T>(
 			) {
 				const todo = implode(
 					<MappedObject<T>>val,
-					Object.assign({}, settings, {ignore: t})
+					Object.assign({}, settings, {ignore: t}),
 				);
 
 				for (const k in todo) {
@@ -359,7 +359,7 @@ export function implode<T>(
 // much more efficient
 export function keys<T>(
 	obj: DynamicObject<T>,
-	settings: ImplodeSettings = {}
+	settings: ImplodeSettings = {},
 ): string[] {
 	let rtn = [];
 
@@ -373,7 +373,7 @@ export function keys<T>(
 	if (isArray(obj)) {
 		// array support will go into path operators
 		throw create('unable to process arrays', {
-			code: 'BM_OB_IMPLODE_1'
+			code: 'BM_OB_IMPLODE_1',
 		});
 	} else {
 		format = function fn2(key: string, next: string = null): string {
@@ -396,7 +396,7 @@ export function keys<T>(
 		if (t !== true) {
 			if (isArray(val)) {
 				throw create('unable to process arrays', {
-					code: 'BM_OB_IMPLODE_2'
+					code: 'BM_OB_IMPLODE_2',
 				});
 			} else if (
 				isObject(val) &&
@@ -412,7 +412,7 @@ export function keys<T>(
 			) {
 				const subs = keys(
 					<MappedObject<T>>val,
-					Object.assign({}, settings, {ignore: t})
+					Object.assign({}, settings, {ignore: t}),
 				);
 
 				rtn = rtn.concat(subs.map((sub) => format(key, sub)));
@@ -436,7 +436,7 @@ export function merge<T>(
 			continue;
 		} else if (isArray(from)) {
 			throw create('unable to process arrays', {
-				code: 'BM_OB_MERGE_ARRAY'
+				code: 'BM_OB_MERGE_ARRAY',
 			});
 		} else if (!isObject(from)) {
 			// only to is an objects

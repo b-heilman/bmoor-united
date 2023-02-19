@@ -36,10 +36,10 @@ export class OperandIndex extends Map<string, OperandIndex> {
 			array: this.array.map((arrayInfo) => ({
 				ref: arrayInfo.ref,
 				leafRef: arrayInfo.leafRef,
-				sources: arrayInfo.sources
+				sources: arrayInfo.sources,
 			})),
 			next: null,
-			filter: null
+			filter: null,
 		};
 
 		if (this.size) {
@@ -81,7 +81,7 @@ export function reduceExpressables(ops: Expressable[]): Operand[] {
 			if (!cur) {
 				cur = {
 					ops: [],
-					array: null
+					array: null,
 				};
 
 				agg[0] = cur;
@@ -97,7 +97,7 @@ export function reduceExpressables(ops: Expressable[]): Operand[] {
 
 			return agg;
 		},
-		[null]
+		[null],
 	);
 
 	// We need to remove the first one if it's still null
@@ -119,7 +119,7 @@ export function indexExpressables(
 	ref: string,
 	exps: Expressable[],
 	target: OperandIndex,
-	stats: IndexStats = {arrays: []}
+	stats: IndexStats = {arrays: []},
 ): IndexStats {
 	const last = exps.length - 1;
 	const arrays = [];
@@ -179,7 +179,7 @@ export function indexExpressables(
 					exp,
 					ref: arrayRef,
 					sources: isWriting ? [arrayRef] : null,
-					leafRef: isLeaf ? stats.ref || ref : null
+					leafRef: isLeaf ? stats.ref || ref : null,
 				});
 
 				curFilter = arrayRef;
@@ -222,6 +222,6 @@ export function indexExpressables(
 
 	return {
 		ref,
-		arrays
+		arrays,
 	};
 }

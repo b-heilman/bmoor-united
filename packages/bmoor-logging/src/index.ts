@@ -5,7 +5,7 @@ export {
 	ERROR,
 	WARN,
 	INFO,
-	VERBOSE
+	VERBOSE,
 } from './logging.interface';
 
 export {Logging} from './logging';

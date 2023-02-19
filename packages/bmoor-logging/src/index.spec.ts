@@ -1,6 +1,6 @@
 import {expect} from 'chai';
 
-import {Logging, LogInfo, ERROR, INFO} from './index';
+import {ERROR, INFO, LogInfo, Logging} from './index';
 
 describe('@bmoor/logging', function () {
 	describe('Logging', function () {
@@ -16,17 +16,17 @@ describe('@bmoor/logging', function () {
 
 						expect(info).to.deep.include({
 							// TODO: test timestamp
-							message: 'hello-world'
+							message: 'hello-world',
 						});
 					},
-					level: INFO
+					level: INFO,
 				});
 
 				await logger.log(
 					{
-						message: 'hello-world'
+						message: 'hello-world',
 					},
-					INFO
+					INFO,
 				);
 
 				expect(logged).to.equal(true);
@@ -41,14 +41,14 @@ describe('@bmoor/logging', function () {
 
 						throw new Error('never should be here');
 					},
-					level: ERROR
+					level: ERROR,
 				});
 
 				await logger.log(
 					{
-						message: 'hello-world'
+						message: 'hello-world',
 					},
-					INFO
+					INFO,
 				);
 
 				expect(logged).to.equal(false);
@@ -66,10 +66,10 @@ describe('@bmoor/logging', function () {
 						expect(type).to.equal(INFO);
 
 						expect(info).to.deep.include({
-							message: 'ok'
+							message: 'ok',
 						});
 					},
-					level: INFO
+					level: INFO,
 				});
 
 				await logger.report(new Error('ok'), INFO);
@@ -92,20 +92,20 @@ describe('@bmoor/logging', function () {
 							message: 'foo bar',
 							invocation: {
 								requestId: '123-456',
-								method: 'POST:Malone'
-							}
+								method: 'POST:Malone',
+							},
 						});
 					},
-					level: INFO
+					level: INFO,
 				});
 
 				await logger.comment(
 					'foo bar',
 					{
 						requestId: '123-456',
-						method: 'POST:Malone'
+						method: 'POST:Malone',
 					},
-					INFO
+					INFO,
 				);
 
 				expect(logged).to.equal(true);

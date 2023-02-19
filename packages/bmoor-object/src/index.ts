@@ -13,5 +13,5 @@ export {
 	explode,
 	implode,
 	keys,
-	merge
+	merge,
 } from './object';

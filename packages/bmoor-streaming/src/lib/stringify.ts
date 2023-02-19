@@ -7,7 +7,7 @@ import {Batched} from '../transformation/batch';
 async function encode(
 	incoming: Readable,
 	write,
-	flush = null
+	flush = null,
 ): Promise<void> {
 	return new Promise(function (resolve, reject) {
 		let first = true;
@@ -40,7 +40,7 @@ async function encode(
 					} catch (ex) {
 						reject(ex);
 					}
-				}
+				},
 			});
 
 			incoming.on('end', function () {
@@ -64,7 +64,7 @@ async function encode(
 export async function stringify(
 	value,
 	write,
-	onFlush = null
+	onFlush = null,
 ): Promise<void> {
 	if (value === null || value === undefined) {
 		write('null');
@@ -106,7 +106,7 @@ export async function stringify(
 					write(`"${key}":`);
 					return stringify(value[key], write, onFlush);
 				},
-				null
+				null,
 			);
 			write('}');
 		}

@@ -21,17 +21,17 @@ describe('@bmoor-modeling.ModelFieldSet', function () {
 				{
 					external: 'root',
 					jsonType: 'string',
-					usage: 'key'
+					usage: 'key',
 				},
 				{
 					external: 'path.eins',
-					jsonType: 'string'
+					jsonType: 'string',
 				},
 				{
 					external: 'path.zwei',
 					internal: 'p2',
-					jsonType: 'number'
-				}
+					jsonType: 'number',
+				},
 			);
 
 			const res = fieldSet.toTypescript();
@@ -68,7 +68,7 @@ describe('@bmoor-modeling.ModelFieldSet', function () {
 							zwei?: number
 						}
 					}`.replace(/\s/g, ''),
-					search: '{}'
+					search: '{}',
 				},
 				internal: {
 					read: `{
@@ -93,8 +93,8 @@ describe('@bmoor-modeling.ModelFieldSet', function () {
 						},
 						p2?: number
 					}`.replace(/\s/g, ''),
-					search: '{}'
-				}
+					search: '{}',
+				},
 			});
 		});
 	});

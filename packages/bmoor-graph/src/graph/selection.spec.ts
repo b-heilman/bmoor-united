@@ -4,9 +4,9 @@ import {expect} from 'chai';
  * I want to focus my tests on my gambling AI I'm tinkering with.
  */
 import {Graph} from '../graph';
+import {Weights} from '../weights';
 import {GraphLoader} from './loader';
 import {GraphSelection} from './selection';
-import {Weights} from '../weights';
 
 describe('bmoor-graph::GraphSelection', function () {
 	let graph = null;
@@ -18,47 +18,47 @@ describe('bmoor-graph::GraphSelection', function () {
 				{
 					type: 'team',
 					reference: {
-						mount: 't'
+						mount: 't',
 					},
 					normalizer: (row) => {
 						return {
-							score: parseInt(<string>row.score)
+							score: parseInt(<string>row.score),
 						};
-					}
+					},
 				},
 				{
 					type: 'position',
 					tag: {
-						mount: 'p'
+						mount: 'p',
 					},
 					reference: function (row) {
 						return row.t + ':' + row.p;
-					}
+					},
 				},
 				{
 					type: 'player',
 					reference: {
-						mount: 'name'
+						mount: 'name',
 					},
 					tag: {
-						mount: 'p'
+						mount: 'p',
 					},
 					normalizer: (row) => {
 						return {
 							yards: parseInt(<string>row.yards),
-							other: parseInt(<string>row.other)
+							other: parseInt(<string>row.other),
 						};
-					}
-				}
+					},
+				},
 			],
 			event: {
 				reference: {
-					mount: 'game'
+					mount: 'game',
 				},
 				interval: {
-					mount: 'time'
-				}
-			}
+					mount: 'time',
+				},
+			},
 		});
 
 		loader.fromArray([
@@ -78,7 +78,7 @@ describe('bmoor-graph::GraphSelection', function () {
 			['team-4', 'qb', 'p-4-1', 'game-4', 2, 112, 107, 21],
 			['team-4', 'wr', 'p-4-2', 'game-4', 2, 113, 114, 21],
 			['team-2', 'qb', 'p-2-1', 'game-4', 2, 114, 109, 14],
-			['team-2', 'wr', 'p-2-2', 'game-4', 2, 115, 106, 14]
+			['team-2', 'wr', 'p-2-2', 'game-4', 2, 115, 106, 14],
 		]);
 	});
 
@@ -86,7 +86,7 @@ describe('bmoor-graph::GraphSelection', function () {
 		it('should filter by type', function () {
 			const select = new GraphSelection(graph, {
 				interval: graph.getInterval(2),
-				type: 'player'
+				type: 'player',
 			});
 
 			expect(select.nodes).to.deep.equal([
@@ -97,7 +97,7 @@ describe('bmoor-graph::GraphSelection', function () {
 				graph.getNode('p-3-1'),
 				graph.getNode('p-3-2'),
 				graph.getNode('p-4-1'),
-				graph.getNode('p-4-2')
+				graph.getNode('p-4-2'),
 			]);
 		});
 
@@ -105,28 +105,28 @@ describe('bmoor-graph::GraphSelection', function () {
 			const select = new GraphSelection(graph, {
 				interval: graph.getInterval(2),
 				type: 'position',
-				tag: 'qb'
+				tag: 'qb',
 			});
 
 			expect(select.nodes).to.deep.equal([
 				graph.getNode('team-1:qb'),
 				graph.getNode('team-2:qb'),
 				graph.getNode('team-3:qb'),
-				graph.getNode('team-4:qb')
+				graph.getNode('team-4:qb'),
 			]);
 		});
 
 		it('should filter and allow sub selects', function () {
 			const select = new GraphSelection(graph, {
 				interval: graph.getInterval(2),
-				type: 'position'
+				type: 'position',
 			}).subSelect({tag: 'qb'});
 
 			expect(select.nodes).to.deep.equal([
 				graph.getNode('team-1:qb'),
 				graph.getNode('team-2:qb'),
 				graph.getNode('team-3:qb'),
-				graph.getNode('team-4:qb')
+				graph.getNode('team-4:qb'),
 			]);
 		});
 	});
@@ -135,39 +135,39 @@ describe('bmoor-graph::GraphSelection', function () {
 		it('should properly copy from edge to node weight', function () {
 			const select = new GraphSelection(graph, {
 				interval: graph.getInterval(1),
-				type: 'player'
+				type: 'player',
 			});
 
 			select.transfer('yards', 'to');
 			select.transfer('other');
 
 			expect(
-				graph.getNode('p-1-1').getWeights(graph.getInterval(1)).get('to')
+				graph.getNode('p-1-1').getWeights(graph.getInterval(1)).get('to'),
 			).to.deep.equal(100);
 
 			expect(
 				graph
 					.getNode('p-2-2')
 					.getWeights(graph.getInterval(1))
-					.get('other')
+					.get('other'),
 			).to.deep.equal(111);
 		});
 
 		it('should allow sort by subSelect after transfer', function () {
 			const select = new GraphSelection(graph, {
 				interval: graph.getInterval(1),
-				type: 'player'
+				type: 'player',
 			});
 
 			select.transfer('yards', 'to');
 			select.transfer('other');
 
 			const sub1 = select.subSelect({
-				sort: (a: Weights, b: Weights) => b.get('to') - a.get('to')
+				sort: (a: Weights, b: Weights) => b.get('to') - a.get('to'),
 			});
 
 			const sub2 = select.subSelect({
-				sort: (a: Weights, b: Weights) => b.get('other') - a.get('other')
+				sort: (a: Weights, b: Weights) => b.get('other') - a.get('other'),
 			});
 
 			expect(sub1.nodes).to.deep.equal([
@@ -178,7 +178,7 @@ describe('bmoor-graph::GraphSelection', function () {
 				graph.getNode('p-2-2'),
 				graph.getNode('p-2-1'),
 				graph.getNode('p-1-2'),
-				graph.getNode('p-1-1')
+				graph.getNode('p-1-1'),
 			]);
 
 			expect(sub2.nodes).to.deep.equal([
@@ -189,20 +189,20 @@ describe('bmoor-graph::GraphSelection', function () {
 				graph.getNode('p-2-1'),
 				graph.getNode('p-3-2'),
 				graph.getNode('p-1-2'),
-				graph.getNode('p-3-1')
+				graph.getNode('p-3-1'),
 			]);
 		});
 
 		it('should allow sort after transfer', function () {
 			const select = new GraphSelection(graph, {
 				interval: graph.getInterval(1),
-				type: 'player'
+				type: 'player',
 			});
 
 			select.transfer('other');
 
 			select.sort(
-				(a: Weights, b: Weights) => b.get('other') - a.get('other')
+				(a: Weights, b: Weights) => b.get('other') - a.get('other'),
 			);
 
 			expect(select.sorted).to.equal(true);
@@ -214,7 +214,7 @@ describe('bmoor-graph::GraphSelection', function () {
 				graph.getNode('p-2-1'),
 				graph.getNode('p-3-2'),
 				graph.getNode('p-1-2'),
-				graph.getNode('p-3-1')
+				graph.getNode('p-3-1'),
 			]);
 
 			const top = select.top(3);
@@ -223,26 +223,26 @@ describe('bmoor-graph::GraphSelection', function () {
 			expect(top.nodes).to.deep.equal([
 				graph.getNode('p-4-1'),
 				graph.getNode('p-4-2'),
-				graph.getNode('p-1-1')
+				graph.getNode('p-1-1'),
 			]);
 
 			expect(bottom.nodes).to.deep.equal([
 				graph.getNode('p-3-2'),
 				graph.getNode('p-1-2'),
-				graph.getNode('p-3-1')
+				graph.getNode('p-3-1'),
 			]);
 		});
 
 		it('should allow sort after transfer on another interval', function () {
 			const select = new GraphSelection(graph, {
 				interval: graph.getInterval(2),
-				type: 'player'
+				type: 'player',
 			});
 
 			select.transfer('other');
 
 			select.sort(
-				(a: Weights, b: Weights) => b.get('other') - a.get('other')
+				(a: Weights, b: Weights) => b.get('other') - a.get('other'),
 			);
 
 			expect(select.sorted).to.equal(true);
@@ -254,7 +254,7 @@ describe('bmoor-graph::GraphSelection', function () {
 				graph.getNode('p-4-1'),
 				graph.getNode('p-2-2'),
 				graph.getNode('p-1-2'),
-				graph.getNode('p-1-1')
+				graph.getNode('p-1-1'),
 			]);
 
 			const top = select.top(3);
@@ -263,24 +263,24 @@ describe('bmoor-graph::GraphSelection', function () {
 			expect(top.nodes).to.deep.equal([
 				graph.getNode('p-4-2'),
 				graph.getNode('p-3-1'),
-				graph.getNode('p-2-1')
+				graph.getNode('p-2-1'),
 			]);
 
 			expect(bottom.nodes).to.deep.equal([
 				graph.getNode('p-2-2'),
 				graph.getNode('p-1-2'),
-				graph.getNode('p-1-1')
+				graph.getNode('p-1-1'),
 			]);
 		});
 	});
 
 	describe('::rank', function () {
-		describe('on low level nodes', function(){
+		describe('on low level nodes', function () {
 			it('should allow you to compute a rank on the first interval', function () {
 				const select = new GraphSelection(graph, {
 					interval: graph.getInterval(1),
 					type: 'player',
-					tag: 'qb'
+					tag: 'qb',
 				});
 
 				select.transfer('yards');
@@ -294,15 +294,15 @@ describe('bmoor-graph::GraphSelection', function () {
 					graph.getNode('p-4-1'),
 					graph.getNode('p-2-1'),
 					graph.getNode('p-3-1'),
-					graph.getNode('p-1-1')
+					graph.getNode('p-1-1'),
 				]);
 			});
-	
+
 			it('should allow you to compute a rank on the last interval', function () {
 				const select = new GraphSelection(graph, {
 					interval: graph.getInterval(2),
 					type: 'player',
-					tag: 'qb'
+					tag: 'qb',
 				});
 
 				select.transfer('yards');
@@ -316,16 +316,16 @@ describe('bmoor-graph::GraphSelection', function () {
 					graph.getNode('p-2-1'),
 					graph.getNode('p-4-1'),
 					graph.getNode('p-3-1'),
-					graph.getNode('p-1-1')
+					graph.getNode('p-1-1'),
 				]);
 			});
 		});
 
-		describe('on top level nodes', function(){
+		describe('on top level nodes', function () {
 			it('should allow you to compute a rank on the first interval', function () {
 				const select = new GraphSelection(graph, {
 					interval: graph.getInterval(1),
-					type: 'team'
+					type: 'team',
 				});
 
 				select.transfer('score');
@@ -338,22 +338,24 @@ describe('bmoor-graph::GraphSelection', function () {
 					graph.getNode('team-4'),
 					graph.getNode('team-1'),
 					graph.getNode('team-2'),
-					graph.getNode('team-3')
+					graph.getNode('team-3'),
 				]);
 
 				select.setPositionAsWeight('pos');
 
-				expect(graph.getNode('team-1').getWeight(graph.getInterval(1), 'pos'))
-				.to.equal(3);
+				expect(
+					graph.getNode('team-1').getWeight(graph.getInterval(1), 'pos'),
+				).to.equal(3);
 
-				expect(graph.getNode('team-1').getWeight(graph.getInterval(2), 'pos'))
-				.to.equal(null);
+				expect(
+					graph.getNode('team-1').getWeight(graph.getInterval(2), 'pos'),
+				).to.equal(null);
 			});
-	
+
 			it('should allow you to compute a rank on the last interval', function () {
 				const select = new GraphSelection(graph, {
 					interval: graph.getInterval(2),
-					type: 'team'
+					type: 'team',
 				});
 
 				select.transfer('score');
@@ -366,18 +368,19 @@ describe('bmoor-graph::GraphSelection', function () {
 					graph.getNode('team-1'),
 					graph.getNode('team-4'),
 					graph.getNode('team-2'),
-					graph.getNode('team-3')
+					graph.getNode('team-3'),
 				]);
 
 				select.setPositionAsWeight('pos');
 
-				expect(graph.getNode('team-4').getWeight(graph.getInterval(1), 'pos'))
-				.to.equal(null);
+				expect(
+					graph.getNode('team-4').getWeight(graph.getInterval(1), 'pos'),
+				).to.equal(null);
 
-				expect(graph.getNode('team-4').getWeight(graph.getInterval(2), 'pos'))
-				.to.equal(3);
+				expect(
+					graph.getNode('team-4').getWeight(graph.getInterval(2), 'pos'),
+				).to.equal(3);
 			});
 		});
-		
 	});
 });

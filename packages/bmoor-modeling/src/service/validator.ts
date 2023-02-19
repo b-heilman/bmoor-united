@@ -1,15 +1,14 @@
+import {UpdateDelta} from '../datum.interface';
 import {
 	ServiceValidatorInterface,
 	ServiceValidatorInvalidation,
-	ServiceValidatorSettings
+	ServiceValidatorSettings,
 } from './validator.interface';
-
-import {UpdateDelta} from '../datum.interface';
 
 export class ServiceValidator<
 	ExternalReference,
 	ExternalCreate,
-	ExternalUpdate
+	ExternalUpdate,
 > implements
 		ServiceValidatorInterface<
 			ExternalReference,
@@ -24,14 +23,16 @@ export class ServiceValidator<
 	}
 
 	validateCreate(
-		datums: ExternalCreate[]
+		datums: ExternalCreate[],
 	): Promise<ServiceValidatorInvalidation> {
+		console.log(datums);
 		return null;
 	}
 
 	validateUpdate(
-		content: UpdateDelta<ExternalReference, ExternalUpdate>[]
+		content: UpdateDelta<ExternalReference, ExternalUpdate>[],
 	): Promise<ServiceValidatorInvalidation> {
+		console.log(content);
 		return null;
 	}
 }

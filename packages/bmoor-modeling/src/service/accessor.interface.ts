@@ -1,11 +1,11 @@
 import {ModelFieldSet} from '../model/field/set';
 
 export type InternalKeyReader<InternalRead, InternalReference> = (
-	datum: InternalRead | InternalReference
+	datum: InternalRead | InternalReference,
 ) => string | number;
 
 export type ExternalKeyReader<ExternalRead, ExternalReference> = (
-	datum: ExternalRead | ExternalReference
+	datum: ExternalRead | ExternalReference,
 ) => string | number;
 
 export interface ServiceAccessorSettings {
@@ -16,7 +16,7 @@ export interface ServiceAccessorInterface<
 	ExternalRead,
 	ExternalReference,
 	InternalRead,
-	InternalReference
+	InternalReference,
 > {
 	getInternalKey: InternalKeyReader<InternalRead, InternalReference>;
 	getExternalKey: ExternalKeyReader<ExternalRead, ExternalReference>;

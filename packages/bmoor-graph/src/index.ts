@@ -1,4 +1,6 @@
 export {Graph, load, dump} from './graph';
 export {Event} from './event';
-export {Edge} from './edge';
-export {Frame} from './graph/frame';
+export {GraphLoader} from './graph/loader';
+export {GraphCalculator} from './graph/calculator';
+export {GraphSelection} from './graph/selection';
+export {GraphFrame} from './graph/frame';

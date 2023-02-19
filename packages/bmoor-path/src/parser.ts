@@ -1,15 +1,15 @@
 import {
 	Compiler,
-	Expressable,
 	ExecutableFunction,
-	ExpressorModes
+	Expressable,
+	ExpressorModes,
 } from '@bmoor/compiler';
 
-import {ParserModes, ParserSettings} from './parser.interface';
 import {reduceExpressables} from './operands';
-import {RTN_VALUE} from './token/accessor';
-import {DotPattern} from './pattern/dot';
+import {ParserModes, ParserSettings} from './parser.interface';
 import {BracketPattern} from './pattern/bracket';
+import {DotPattern} from './pattern/dot';
+import {RTN_VALUE} from './token/accessor';
 
 export type ReaderFunction = ExecutableFunction;
 export type WriterFunction = ExecutableFunction;
@@ -84,7 +84,7 @@ function createReader(ops: Expressable[]): ReaderFunction {
 function createArrayWriter(
 	cur: ArrayOperations,
 	final: boolean, //
-	object = true // object || array
+	object = true, // object || array
 ): WriterFunction {
 	const setter = cur.ops.length ? cur.ops.pop() : null;
 
@@ -135,7 +135,7 @@ function createArrayWriter(
 function writeArray(
 	obj,
 	arr: PathContent[],
-	[fn, ...rest]: WriterFunction
+	[fn, ...rest]: WriterFunction,
 ): WriterFunction {
 	for (let i = 0, c = arr.length; i < c; i++) {
 		const value = arr[i];
@@ -163,9 +163,9 @@ function createWriter(ops: Expressable[]): WriterFunction {
 				return createArrayWriter(
 					op,
 					pos === final,
-					arr[pos + 1]?.ops.length > 0
+					arr[pos + 1]?.ops.length > 0,
 				);
-			}
+			},
 		);
 
 		return function (obj, value: PathContent[]) {
@@ -180,24 +180,24 @@ export class Parser extends Compiler {
 	constructor() {
 		super({
 			tokenizer: [new DotPattern(), new BracketPattern()],
-			reducer: []
+			reducer: [],
 		});
 	}
 
 	express(
 		str: string,
-		mode: ParserModes = ParserModes.read
+		mode: ParserModes = ParserModes.read,
 	): Expressable[] {
 		return this.expressor.express(this.parse(str), ExpressorModes.infix, <
 			ParserSettings
 		>{
-			mode
+			mode,
 		});
 	}
 
 	compile(
 		str: string,
-		mode: ParserModes = ParserModes.read
+		mode: ParserModes = ParserModes.read,
 	): ReaderFunction | WriterFunction {
 		const ops: Expressable[] = this.express(str, mode);
 

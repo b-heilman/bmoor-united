@@ -1,12 +1,12 @@
 import {ContextSecurityInterface} from '@bmoor/context';
 
-import {ModelFieldInterface} from './model/field.interface';
-import {ServiceControllerInterface} from './service/controller.interface';
-import {ServiceValidatorInterface} from './service/validator.interface';
-import {ServiceAdapterInterface} from './service/adapter.interface';
-import {ServiceAccessorInterface} from './service/accessor.interface';
 import {UpdateDelta} from './datum.interface';
 import {Model} from './model';
+import {ModelFieldInterface} from './model/field.interface';
+import {ServiceAccessorInterface} from './service/accessor.interface';
+import {ServiceAdapterInterface} from './service/adapter.interface';
+import {ServiceControllerInterface} from './service/controller.interface';
+import {ServiceValidatorInterface} from './service/validator.interface';
 
 export interface ServiceSettings<
 	ExternalRead,
@@ -17,7 +17,7 @@ export interface ServiceSettings<
 	InternalReference,
 	InternalCreate,
 	InternalUpdate,
-	InternalSearch
+	InternalSearch,
 > {
 	adapter: ServiceAdapterInterface<
 		InternalRead,
@@ -51,7 +51,7 @@ export type ServiceActions<
 	ExternalReference,
 	ExternalCreate,
 	ExternalUpdate,
-	ExternalSearch
+	ExternalSearch,
 > = {
 	create?(datum: ExternalCreate, ctx?: ContextSecurityInterface): void;
 	read?(datum: ExternalRead, ctx?: ContextSecurityInterface): void;
@@ -64,7 +64,7 @@ export type ServiceActions<
 			| ExternalCreate
 			| ExternalUpdate
 			| ExternalSearch,
-		ctx?: ContextSecurityInterface
+		ctx?: ContextSecurityInterface,
 	): void;
 };
 
@@ -78,7 +78,7 @@ export interface ServiceInterface<
 	InternalReference,
 	InternalCreate,
 	InternalUpdate,
-	InternalSearch
+	InternalSearch,
 > {
 	fields: Map<string, ModelFieldInterface>;
 	settings: ServiceSettings<
@@ -102,23 +102,23 @@ export interface ServiceInterface<
 
 	create(
 		content: ExternalCreate[],
-		ctx: ContextSecurityInterface
+		ctx: ContextSecurityInterface,
 	): Promise<ExternalRead[]>;
 	read(
 		ids: ExternalReference[],
-		ctx: ContextSecurityInterface
+		ctx: ContextSecurityInterface,
 	): Promise<ExternalRead[]>;
 	update(
 		content: UpdateDelta<ExternalReference, ExternalUpdate>[],
-		ctx: ContextSecurityInterface
+		ctx: ContextSecurityInterface,
 	): Promise<ExternalRead[]>;
 	delete(
 		ids: ExternalReference[],
-		ctx: ContextSecurityInterface
+		ctx: ContextSecurityInterface,
 	): Promise<ExternalRead[]>;
 	search(
 		search: ExternalSearch,
-		ctx: ContextSecurityInterface
+		ctx: ContextSecurityInterface,
 	): Promise<ExternalRead[]>;
 
 	convertToInternal(
@@ -128,10 +128,10 @@ export interface ServiceInterface<
 			| ExternalCreate
 			| ExternalUpdate
 			| ExternalSearch,
-		ctx: ContextSecurityInterface
+		ctx: ContextSecurityInterface,
 	): InternalReference | InternalCreate | InternalUpdate | InternalSearch;
 	convertToExternal(
 		content: InternalRead,
-		ctx: ContextSecurityInterface
+		ctx: ContextSecurityInterface,
 	): ExternalRead;
 }

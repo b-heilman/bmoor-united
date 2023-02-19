@@ -1,11 +1,11 @@
-import {Pattern} from '../tokenizer/pattern';
-import {Token} from '../tokenizer/token';
-import {TokenizerState} from '../tokenizer/state';
 import {Expressable} from '../expressor/expressable';
 import {
+	ExpressableFunction,
 	ExpressableUsages,
-	ExpressableFunction
 } from '../expressor/expressable.interface';
+import {Pattern} from '../tokenizer/pattern';
+import {TokenizerState} from '../tokenizer/state';
+import {Token} from '../tokenizer/token';
 
 export class ValueToken extends Token {
 	static reference = 'value';
@@ -14,7 +14,7 @@ export class ValueToken extends Token {
 		return new Expressable(
 			this,
 			ExpressableUsages.value,
-			() => this.content
+			() => this.content,
 		);
 	}
 }
@@ -27,7 +27,7 @@ export class RegexValuePattern extends Pattern {
 	constructor(
 		pattern: RegExp,
 		parser: ExpressableFunction,
-		subType: string
+		subType: string,
 	) {
 		super();
 
@@ -62,8 +62,8 @@ export class RegexValuePattern extends Pattern {
 			this.parser(base.substring(state.open, state.close)),
 			state,
 			{
-				subType: this.subType
-			}
+				subType: this.subType,
+			},
 		);
 	}
 
@@ -81,8 +81,8 @@ export class OpToken extends Token {
 			ExpressableUsages.operation,
 			(a, b) => this.content(a, b),
 			{
-				rank: parseInt(this.settings.subType) || 5
-			}
+				rank: parseInt(this.settings.subType) || 5,
+			},
 		);
 	}
 }
@@ -90,7 +90,7 @@ export class OpToken extends Token {
 export class RegexOpPattern extends RegexValuePattern {
 	toToken(base: string, state: TokenizerState) {
 		return new OpToken(this.parser, state, {
-			subType: this.subType
+			subType: this.subType,
 		});
 	}
 }

@@ -100,6 +100,8 @@ players = df[[
   }
 )
 
+players['game_ref'] = players['game_id']
+
 games = df[[
   "game_id",
   "game_date",
@@ -116,40 +118,20 @@ games = df[[
   inplace=False
 )
 
-
-scores = pd.concat([
-  games[['game_id', 'home_team', 'home_score']].rename(columns={'home_team': 'team', 'home_score': 'score'}),
-  games[['game_id', 'vis_team', 'vis_score']].rename(columns={'vis_team': 'team', 'vis_score': 'score'})
-])
-
-games.drop(['home_team', 'home_score', 'vis_team', 'vis_score'], axis=1, inplace=True)
-
-# step 2, break the data up into seasons and weeks
-teams = players.drop(
-  ['player_id', 'pos', 'player'], 
-  axis=1
-).groupby(
-  by=['game_id','team', 'game_date']
-).sum(numeric_only=True).reset_index(inplace=False).merge(scores, on=["game_id", "team"], how="left").reset_index(inplace=False)
-
 if not os.path.exists('./data/parquet'):
   os.mkdir('./data/parquet')
 
-games = games.merge(join, on="game_date", how="left")
-players = players.merge(join, on="game_date", how="left")
-teams = teams.merge(join, on="game_date", how="left")
+games = join.merge(games, on="game_date", how="left")
+players = join.merge(players, on="game_date", how="left")
 
 def write_file(df, path):
   table = pa.Table.from_pandas(df)
 
-  pq.write_table(table, path, version='1.0')
+  pq.write_table(table, path, version='1.0', use_dictionary=False)
 
 write_file(games, './data/parquet/games.parquet')
 print('--games--\n', games.head(5))
 
 write_file(players, './data/parquet/players.parquet')
 print('--players--\n', players.head(5))
-
-write_file(teams, './data/parquet/teams.parquet')
-print('--teams--\n', teams.head(5))
 

@@ -1,9 +1,9 @@
 import {CompilerInterface} from '../compiler.interface';
-import {Pattern} from '../tokenizer/pattern';
-import {Token} from '../tokenizer/token';
-import {TokenizerState} from '../tokenizer/state';
 import {Expressable} from '../expressor/expressable';
 import {ExpressableUsages} from '../expressor/expressable.interface';
+import {Pattern} from '../tokenizer/pattern';
+import {TokenizerState} from '../tokenizer/state';
+import {Token} from '../tokenizer/token';
 
 export class BlockToken extends Token {
 	static reference = 'block';
@@ -55,7 +55,7 @@ export class BlockPattern extends Pattern {
 	toToken(base: string, state: TokenizerState) {
 		return new BlockToken(
 			base.substring(state.begin, state.end + 1),
-			state
+			state,
 		);
 	}
 }

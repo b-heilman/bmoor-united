@@ -2,8 +2,8 @@ import {expect} from 'chai';
 
 import {Tokenizer} from './tokenizer';
 import {Pattern} from './tokenizer/pattern';
-import {Token} from './tokenizer/token';
 import {TokenizerState} from './tokenizer/state';
+import {Token} from './tokenizer/token';
 
 describe('@bmoor/compiler', function () {
 	describe('Tokenizer', function () {
@@ -31,7 +31,7 @@ describe('@bmoor/compiler', function () {
 			open(str: string, pos: number) {
 				const compare = str.substring(
 					pos - this.begin.length + 1,
-					pos + 1
+					pos + 1,
 				);
 
 				if (compare === this.begin) {
@@ -54,8 +54,8 @@ describe('@bmoor/compiler', function () {
 					base.substring(state.begin, state.end + this.end.length - 1),
 					state,
 					{
-						subType: this.begin + ':' + this.end
-					}
+						subType: this.begin + ':' + this.end,
+					},
 				);
 			}
 
@@ -68,7 +68,7 @@ describe('@bmoor/compiler', function () {
 			const tokenizer = new Tokenizer([
 				new TestProto('|', '|'),
 				new TestProto('{', '}'),
-				new TestProto('${', '}')
+				new TestProto('${', '}'),
 			]);
 
 			const tokens = tokenizer.tokenize('{ok} |foo|${bar}');
@@ -76,13 +76,13 @@ describe('@bmoor/compiler', function () {
 			expect(tokens.map((token) => token.content)).to.deep.equal([
 				'ok',
 				'foo',
-				'bar'
+				'bar',
 			]);
 
 			expect(tokens.map((token) => token.getReference())).to.deep.equal([
 				'{:}',
 				'|:|',
-				'{:}'
+				'{:}',
 			]);
 		});
 
@@ -90,7 +90,7 @@ describe('@bmoor/compiler', function () {
 			const tokenizer = new Tokenizer([
 				new TestProto('|', '|'),
 				new TestProto('${', '}'),
-				new TestProto('{', '}')
+				new TestProto('{', '}'),
 			]);
 
 			const tokens = tokenizer.tokenize('{ok} |foo|  ${bar}');
@@ -98,13 +98,13 @@ describe('@bmoor/compiler', function () {
 			expect(tokens.map((token) => token.content)).to.deep.equal([
 				'ok',
 				'foo',
-				'bar'
+				'bar',
 			]);
 
 			expect(tokens.map((token) => token.getReference())).to.deep.equal([
 				'{:}',
 				'|:|',
-				'${:}'
+				'${:}',
 			]);
 		});
 	});

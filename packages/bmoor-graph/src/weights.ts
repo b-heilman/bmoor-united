@@ -3,17 +3,17 @@ import {WeightData} from './weights.interface';
 export class Weights {
 	data: WeightData;
 
-	constructor() {
+	constructor(incoming: WeightData = {}) {
 		// this assumes the data is deflated and flat
-		this.data = {};
+		this.data = incoming;
 	}
 
 	set(mount: string, value: number) {
 		this.data[mount] = value;
 	}
 
-	has(mount: string){
-		return mount in this.data; 
+	has(mount: string) {
+		return mount in this.data;
 	}
 
 	load(input: WeightData) {
@@ -21,7 +21,9 @@ export class Weights {
 	}
 
 	get(mount: string, def: number = null): number {
-		return mount in this.data ? this.data[mount] : def;
+		const rtn = mount in this.data ? this.data[mount] : def;
+
+		return rtn;
 	}
 
 	sum(mount: string, value: number) {
@@ -49,6 +51,12 @@ export class Weights {
 	}
 
 	toJSON() {
-		return this.data;
+		return Object.keys(this.data).reduce((agg, key) => {
+			const value = this.data[key];
+
+			agg[key] = value;
+
+			return agg;
+		}, {});
 	}
 }

@@ -1,5 +1,6 @@
 import {expect} from 'chai';
-import {create, extendError, assignError} from './index';
+
+import {assignError, create, extendError} from './index';
 
 describe('@bmoor/error', function () {
 	describe('create', function () {
@@ -9,11 +10,11 @@ describe('@bmoor/error', function () {
 				code: 'FOO_BAR',
 				status: 200,
 				context: {
-					eins: 1
+					eins: 1,
 				},
 				protected: {
-					zwei: 2
-				}
+					zwei: 2,
+				},
 			};
 			const err = create('foo-bar', content);
 			const json = err.toJSON();
@@ -33,24 +34,24 @@ describe('@bmoor/error', function () {
 				code: 'FOO_BAR',
 				status: 200,
 				context: {
-					eins: 1
+					eins: 1,
 				},
 				protected: {
-					zwei: 2
-				}
+					zwei: 2,
+				},
 			};
 			const wrap = extendError(err, content);
 
 			extendError(wrap, {
 				code: 'FOO_BAR_2',
 				context: {
-					eins: 10
-				}
+					eins: 10,
+				},
 			});
 
 			extendError(wrap, {
 				code: 'FOO_BAR_3',
-				status: 403
+				status: 403,
 			});
 
 			const json = wrap.toJSON();
@@ -60,11 +61,11 @@ describe('@bmoor/error', function () {
 				code: 'FOO_BAR_3',
 				status: 403,
 				context: {
-					eins: 10
+					eins: 10,
 				},
 				protected: {
-					zwei: 2
-				}
+					zwei: 2,
+				},
 			});
 
 			expect(json.stack).to.deep.equal([
@@ -72,13 +73,13 @@ describe('@bmoor/error', function () {
 				{
 					code: 'FOO_BAR_2',
 					context: {
-						eins: 10
-					}
+						eins: 10,
+					},
 				},
 				{
 					code: 'FOO_BAR_3',
-					status: 403
-				}
+					status: 403,
+				},
 			]);
 		});
 	});
@@ -92,18 +93,18 @@ describe('@bmoor/error', function () {
 				code: 'FOO_BAR',
 				status: 200,
 				context: {
-					eins: 1
+					eins: 1,
 				},
 				protected: {
-					zwei: 2
-				}
+					zwei: 2,
+				},
 			};
 			const wrap = extendError(err, content);
 
 			const info = {
 				requestId: '123-456-789',
 				method: 'POST:somethere/outthere',
-				userId: 'brian_heilman'
+				userId: 'brian_heilman',
 			};
 			assignError(wrap, info);
 

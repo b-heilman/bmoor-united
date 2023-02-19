@@ -1,10 +1,10 @@
 import {Interval} from '../interval.interface';
-import {NodeType, NodeTag} from '../node.interface';
+import {NodeTag, NodeType} from '../node.interface';
 import {Weights} from '../weights';
 
 export type GraphSelectionComparator = (
 	nodeA: Weights,
-	nodeB: Weights
+	nodeB: Weights,
 ) => number;
 
 interface BaseSelection {

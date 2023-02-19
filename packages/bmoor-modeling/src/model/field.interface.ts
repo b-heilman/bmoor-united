@@ -8,7 +8,7 @@ export type ModelFieldValue = any;
 
 export type ModelFieldSetter = (
 	datum: ExternalDatum,
-	value: ModelFieldValue
+	value: ModelFieldValue,
 ) => void;
 export type ModelFieldGetter = (datum: ExternalDatum) => ModelFieldValue;
 
@@ -43,42 +43,42 @@ export interface ModelFieldMethods {
 		setter: ModelFieldSetter,
 		getter: ModelFieldGetter,
 		ctx?: ContextSecurityInterface,
-		fieldCtx?: ModelFieldContext
+		fieldCtx?: ModelFieldContext,
 	): void;
 	onDeflate?(
 		datum: ExternalDatum,
 		setter: ModelFieldSetter,
 		getter: ModelFieldGetter,
 		ctx?: ContextSecurityInterface,
-		fieldCtx?: ModelFieldContext
+		fieldCtx?: ModelFieldContext,
 	): void;
 	onCreate?(
 		datum: ExternalDatum,
 		setter: ModelFieldSetter,
 		getter: ModelFieldGetter,
 		ctx?: ContextSecurityInterface,
-		fieldCtx?: ModelFieldContext
+		fieldCtx?: ModelFieldContext,
 	): void;
 	onRead?(
 		datum: ExternalDatum,
 		setter: ModelFieldSetter,
 		getter: ModelFieldGetter,
 		ctx?: ContextSecurityInterface,
-		fieldCtx?: ModelFieldContext
+		fieldCtx?: ModelFieldContext,
 	): void;
 	onUpdate?(
 		datum: ExternalDatum,
 		setter: ModelFieldSetter,
 		getter: ModelFieldGetter,
 		ctx?: ContextSecurityInterface,
-		fieldCtx?: ModelFieldContext
+		fieldCtx?: ModelFieldContext,
 	): void;
 	onDelete?(
 		datum: ExternalDatum,
 		setter: ModelFieldSetter,
 		getter: ModelFieldGetter,
 		ctx?: ContextSecurityInterface,
-		fieldCtx?: ModelFieldContext
+		fieldCtx?: ModelFieldContext,
 	): void;
 }
 
@@ -90,27 +90,27 @@ export interface ModelFieldSettings
 export type ModelFieldActions = {
 	create?(
 		datum: ExternalDatum,
-		ctx?: ContextSecurityInterface
+		ctx?: ContextSecurityInterface,
 	): ExternalDatum;
 	read?(
 		datum: ExternalDatum,
-		ctx?: ContextSecurityInterface
+		ctx?: ContextSecurityInterface,
 	): ExternalDatum;
 	update?(
 		datum: ExternalDatum,
-		ctx?: ContextSecurityInterface
+		ctx?: ContextSecurityInterface,
 	): ExternalDatum;
 	delete?(
 		datum: ExternalDatum,
-		ctx?: ContextSecurityInterface
+		ctx?: ContextSecurityInterface,
 	): ExternalDatum;
 	inflate?(
 		datum: ExternalDatum,
-		ctx?: ContextSecurityInterface
+		ctx?: ContextSecurityInterface,
 	): ExternalDatum;
 	deflate?(
 		datum: ExternalDatum,
-		ctx?: ContextSecurityInterface
+		ctx?: ContextSecurityInterface,
 	): ExternalDatum;
 };
 

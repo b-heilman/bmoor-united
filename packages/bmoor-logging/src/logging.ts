@@ -1,37 +1,37 @@
 import {Config} from '@bmoor/config';
-import {ContextualError, wrapError, InvocationContext} from '@bmoor/error';
+import {ContextualError, InvocationContext, wrapError} from '@bmoor/error';
 
 import {
+	ERROR,
+	INFO,
 	LogInfo,
 	LoggingConfigInterface,
 	SILENT,
-	ERROR,
+	VERBOSE,
 	WARN,
-	INFO,
-	VERBOSE
 } from './logging.interface';
 
 const levels = {
 	[SILENT]: {
 		name: 'silent',
-		rank: 4
+		rank: 4,
 	},
 	[ERROR]: {
 		name: 'error',
-		rank: 3
+		rank: 3,
 	},
 	[WARN]: {
 		name: 'warn',
-		rank: 2
+		rank: 2,
 	},
 	[INFO]: {
 		name: 'info',
-		rank: 1
+		rank: 1,
 	},
 	[VERBOSE]: {
 		name: 'verbose',
-		rank: 0
-	}
+		rank: 0,
+	},
 };
 
 const config = new Config<LoggingConfigInterface>({
@@ -54,7 +54,7 @@ const config = new Config<LoggingConfigInterface>({
 			console.log(JSON.stringify(dump, null, '\t'));
 		}
 	},
-	level: ERROR
+	level: ERROR,
 });
 
 export class Logging {
@@ -79,23 +79,23 @@ export class Logging {
 			{
 				message: wrapped.parent.message,
 				error: wrapped,
-				invocation: wrapped.invocation
+				invocation: wrapped.invocation,
 			},
-			onLevel
+			onLevel,
 		);
 	}
 
 	async comment(
 		msg: string,
 		invocation: InvocationContext = null,
-		onLevel: symbol = INFO
+		onLevel: symbol = INFO,
 	) {
 		return this.log(
 			{
 				message: msg,
-				invocation
+				invocation,
 			},
-			onLevel
+			onLevel,
 		);
 	}
 }

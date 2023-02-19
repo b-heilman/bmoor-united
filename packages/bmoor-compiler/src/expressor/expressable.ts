@@ -1,10 +1,10 @@
-import {
-	ExpressableValue,
-	ExpressableFunction,
-	ExpressableUsages,
-	ExpressableSettings
-} from './expressable.interface';
 import {ExpressableToken} from '../tokenizer/token.interface';
+import {
+	ExpressableFunction,
+	ExpressableSettings,
+	ExpressableUsages,
+	ExpressableValue,
+} from './expressable.interface';
 
 export class Expressable {
 	usage: ExpressableUsages;
@@ -16,7 +16,7 @@ export class Expressable {
 		token: ExpressableToken,
 		usage: ExpressableUsages,
 		method: ExpressableFunction,
-		settings: ExpressableSettings = {rank: 0}
+		settings: ExpressableSettings = {rank: 0},
 	) {
 		this.token = token;
 		this.usage = usage;

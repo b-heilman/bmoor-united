@@ -19,7 +19,7 @@ describe('@bmoor-modeling.ModelField', function () {
 		it('should simply work', function () {
 			field = new ModelField({
 				external: 'path',
-				usage: 'json'
+				usage: 'json',
 			});
 		});
 	});
@@ -28,27 +28,27 @@ describe('@bmoor-modeling.ModelField', function () {
 		it('should work as json', function () {
 			field = new ModelField({
 				external: 'path',
-				usage: 'json'
+				usage: 'json',
 			});
 
 			const t1 = field.actions.inflate({
-				path: '{"foo":"bar"}'
+				path: '{"foo":"bar"}',
 			});
 
 			expect(t1).to.deep.equal({
 				path: {
-					foo: 'bar'
-				}
+					foo: 'bar',
+				},
 			});
 
 			const t2 = field.actions.deflate({
 				path: {
-					foo: 'bar'
-				}
+					foo: 'bar',
+				},
 			});
 
 			expect(t2).to.deep.equal({
-				path: '{"foo":"bar"}'
+				path: '{"foo":"bar"}',
 			});
 		});
 
@@ -57,17 +57,17 @@ describe('@bmoor-modeling.ModelField', function () {
 				external: 'path',
 				usage: 'monitor',
 				config: {
-					target: 'other'
-				}
+					target: 'other',
+				},
 			});
 
 			const t1 = field.actions.deflate({
-				other: 'ok'
+				other: 'ok',
 			});
 
 			expect(t1).to.deep.equal({
 				path: Date.now(),
-				other: 'ok'
+				other: 'ok',
 			});
 
 			const t2 = field.actions.deflate({});
@@ -79,14 +79,14 @@ describe('@bmoor-modeling.ModelField', function () {
 	describe('loading a model', function () {
 		it('should work with just an external reference', function () {
 			field = new ModelField({
-				external: 'foo.bar'
+				external: 'foo.bar',
 			});
 
 			const obj = {
 				foo: {
-					bar: true
+					bar: true,
 				},
-				'foo.bar': 1
+				'foo.bar': 1,
 			};
 
 			expect(field.internalGetter(obj)).to.equal(true);
@@ -97,23 +97,23 @@ describe('@bmoor-modeling.ModelField', function () {
 
 			expect(obj).to.deep.equal({
 				foo: {
-					bar: false
+					bar: false,
 				},
-				'foo.bar': 1
+				'foo.bar': 1,
 			});
 		});
 
 		it('should work with just an external reference', function () {
 			field = new ModelField({
 				external: 'foo.bar',
-				internal: 'eins.zwei'
+				internal: 'eins.zwei',
 			});
 
 			const obj = {
 				eins: {
-					zwei: true
+					zwei: true,
 				},
-				'eins.zwei': 1
+				'eins.zwei': 1,
 			};
 
 			expect(field.internalGetter(obj)).to.equal(true);
@@ -125,23 +125,23 @@ describe('@bmoor-modeling.ModelField', function () {
 
 			expect(obj).to.deep.equal({
 				eins: {
-					zwei: false
+					zwei: false,
 				},
-				'eins.zwei': 1
+				'eins.zwei': 1,
 			});
 		});
 
 		it('should work with an internal reference', function () {
 			field = new ModelField({
 				external: 'foo.bar',
-				internal: 'eins.zwei'
+				internal: 'eins.zwei',
 			});
 
 			const obj = {
 				eins: {
-					zwei: true
+					zwei: true,
 				},
-				'eins.zwei': 1
+				'eins.zwei': 1,
 			};
 
 			expect(field.internalGetter(obj)).to.equal(true);
@@ -153,9 +153,9 @@ describe('@bmoor-modeling.ModelField', function () {
 
 			expect(obj).to.deep.equal({
 				eins: {
-					zwei: false
+					zwei: false,
 				},
-				'eins.zwei': 1
+				'eins.zwei': 1,
 			});
 		});
 
@@ -163,14 +163,14 @@ describe('@bmoor-modeling.ModelField', function () {
 			field = new ModelField({
 				external: 'foo.bar',
 				internal: 'eins.zwei',
-				storage: 'hello.world'
+				storage: 'hello.world',
 			});
 
 			const obj = {
 				eins: {
-					zwei: true
+					zwei: true,
 				},
-				'eins.zwei': 1
+				'eins.zwei': 1,
 			};
 
 			expect(field.internalGetter(obj)).to.equal(true);
@@ -182,12 +182,12 @@ describe('@bmoor-modeling.ModelField', function () {
 
 			expect(obj).to.deep.equal({
 				eins: {
-					zwei: true
+					zwei: true,
 				},
 				hello: {
-					world: false
+					world: false,
 				},
-				'eins.zwei': 1
+				'eins.zwei': 1,
 			});
 		});
 
@@ -196,17 +196,17 @@ describe('@bmoor-modeling.ModelField', function () {
 				isFlat: true,
 				external: 'foo.bar',
 				internal: 'eins.zwei',
-				storage: 'hello.world'
+				storage: 'hello.world',
 			});
 
 			const obj = {
 				eins: {
-					zwei: true
+					zwei: true,
 				},
 				foo: {
-					bar: 'ok'
+					bar: 'ok',
 				},
-				'eins.zwei': 1
+				'eins.zwei': 1,
 			};
 
 			expect(field.internalGetter(obj)).to.equal(1);
@@ -218,13 +218,13 @@ describe('@bmoor-modeling.ModelField', function () {
 
 			expect(obj).to.deep.equal({
 				eins: {
-					zwei: true
+					zwei: true,
 				},
 				foo: {
-					bar: 'ok'
+					bar: 'ok',
 				},
 				'hello.world': false,
-				'eins.zwei': 1
+				'eins.zwei': 1,
 			});
 		});
 	});
@@ -235,15 +235,15 @@ describe('@bmoor-modeling.ModelField', function () {
 				external: 'path',
 				onCreate(datum, setter, getter) {
 					setter(datum, getter(datum) + '+1');
-				}
+				},
 			});
 
 			const t1 = field.actions.create({
-				path: 'hello'
+				path: 'hello',
 			});
 
 			expect(t1).to.deep.equal({
-				path: 'hello+1'
+				path: 'hello+1',
 			});
 		});
 
@@ -252,15 +252,15 @@ describe('@bmoor-modeling.ModelField', function () {
 				external: 'path',
 				onRead(datum, setter, getter) {
 					setter(datum, getter(datum) + '+1');
-				}
+				},
 			});
 
 			const t1 = field.actions.read({
-				path: 'hello'
+				path: 'hello',
 			});
 
 			expect(t1).to.deep.equal({
-				path: 'hello+1'
+				path: 'hello+1',
 			});
 		});
 
@@ -269,15 +269,15 @@ describe('@bmoor-modeling.ModelField', function () {
 				external: 'path',
 				onUpdate(datum, setter, getter) {
 					setter(datum, getter(datum) + '+1');
-				}
+				},
 			});
 
 			const t1 = field.actions.update({
-				path: 'hello'
+				path: 'hello',
 			});
 
 			expect(t1).to.deep.equal({
-				path: 'hello+1'
+				path: 'hello+1',
 			});
 		});
 
@@ -286,15 +286,15 @@ describe('@bmoor-modeling.ModelField', function () {
 				external: 'path',
 				onDelete(datum, setter, getter) {
 					setter(datum, getter(datum) + '+1');
-				}
+				},
 			});
 
 			const t1 = field.actions.delete({
-				path: 'hello'
+				path: 'hello',
 			});
 
 			expect(t1).to.deep.equal({
-				path: 'hello+1'
+				path: 'hello+1',
 			});
 		});
 
@@ -303,15 +303,15 @@ describe('@bmoor-modeling.ModelField', function () {
 				external: 'path',
 				onInflate(datum, setter, getter) {
 					setter(datum, getter(datum) + '+1');
-				}
+				},
 			});
 
 			const t1 = field.actions.inflate({
-				path: 'hello'
+				path: 'hello',
 			});
 
 			expect(t1).to.deep.equal({
-				path: 'hello+1'
+				path: 'hello+1',
 			});
 		});
 
@@ -320,15 +320,15 @@ describe('@bmoor-modeling.ModelField', function () {
 				external: 'path',
 				onDeflate(datum, setter, getter) {
 					setter(datum, getter(datum) + '+1');
-				}
+				},
 			});
 
 			const t1 = field.actions.deflate({
-				path: 'hello'
+				path: 'hello',
 			});
 
 			expect(t1).to.deep.equal({
-				path: 'hello+1'
+				path: 'hello+1',
 			});
 		});
 	});

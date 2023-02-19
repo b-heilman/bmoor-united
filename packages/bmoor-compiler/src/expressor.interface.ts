@@ -1,7 +1,7 @@
 export enum ExpressorExpressPosition {
 	first = 'first',
 	last = 'last',
-	middle = 'middle'
+	middle = 'middle',
 }
 
 export interface ExpressorExpressSettings {

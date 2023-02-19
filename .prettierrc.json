@@ -4,6 +4,10 @@
 	"useTabs": true,
 	"singleQuote": true,
 	"quoteProps": "as-needed",
-	"trailingComma": "none",
-	"bracketSpacing": false
+	"trailingComma": "all",
+	"bracketSpacing": false,
+	
+	"importOrder": ["<THIRD_PARTY_MODULES>", "^@bmoor/(.*)$", "^[./]" ],
+    "importOrderSeparation": true, 
+    "importOrderSortSpecifiers": true
 }

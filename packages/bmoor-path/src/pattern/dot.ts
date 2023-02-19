@@ -35,7 +35,7 @@ export class DotPattern extends Pattern {
 			state,
 			{
 				//	subType: this.subType
-			}
+			},
 		);
 	}
 }

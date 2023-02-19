@@ -1,8 +1,10 @@
 import {expect} from 'chai';
+
 import {Node} from './node';
 
 describe('@bmoor/graph::node', function () {
 	let root = null;
+	let interval = null;
 	let level1_a = null;
 	let level1_b = null;
 	let level2_a_a = null;
@@ -11,25 +13,30 @@ describe('@bmoor/graph::node', function () {
 	let level2_b_b = null;
 
 	beforeEach(function () {
+		interval = {
+			ref: 'interval-1',
+			label: 'base-interval',
+		};
+
 		root = new Node('team', 'team');
-		level1_a = new Node('group-1', 'group', {
-			parent: root
-		});
-		level1_b = new Node('group-2', 'group', {
-			parent: root
-		});
-		level2_a_a = new Node('player-1', 'player', {
-			parent: level1_a
-		});
-		level2_a_b = new Node('player-2', 'player', {
-			parent: level1_a
-		});
-		level2_b_a = new Node('player-3', 'player', {
-			parent: level1_b
-		});
-		level2_b_b = new Node('player-4', 'player', {
-			parent: level1_b
-		});
+		level1_a = new Node('group-1', 'group').setParent(interval, root);
+		level1_b = new Node('group-2', 'group').setParent(interval, root);
+		level2_a_a = new Node('player-1', 'player').setParent(
+			interval,
+			level1_a,
+		);
+		level2_a_b = new Node('player-2', 'player').setParent(
+			interval,
+			level1_a,
+		);
+		level2_b_a = new Node('player-3', 'player').setParent(
+			interval,
+			level1_b,
+		);
+		level2_b_b = new Node('player-4', 'player').setParent(
+			interval,
+			level1_b,
+		);
 	});
 
 	/**
@@ -37,8 +44,6 @@ describe('@bmoor/graph::node', function () {
 	 */
 	describe('::bubble', function () {
 		it('should work', function () {
-			const interval = 'pos-0';
-
 			level2_a_a.setWeight(interval, 'value', 10);
 
 			level2_a_b.setWeight(interval, 'value', 20);
@@ -62,8 +67,6 @@ describe('@bmoor/graph::node', function () {
 		});
 
 		it('should work expectedly incorrectly', function () {
-			const interval = 'pos-0';
-
 			level2_a_a.setWeight(interval, 'value', 10);
 
 			level2_a_b.setWeight(interval, 'value', 20);
@@ -89,8 +92,6 @@ describe('@bmoor/graph::node', function () {
 
 	describe('::pull', function () {
 		it('should work', function () {
-			const interval = 'pos-0';
-
 			level2_a_a.setWeight(interval, 'value', 10);
 
 			level2_a_b.setWeight(interval, 'value', 20);
@@ -115,8 +116,6 @@ describe('@bmoor/graph::node', function () {
 
 	describe('::trickle', function () {
 		it('should work', function () {
-			const interval = 'pos-0';
-
 			root.setWeight(interval, 'value', 10);
 
 			function fn(child, parent) {

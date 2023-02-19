@@ -1,21 +1,92 @@
-import {pearsonCorrelation} from '@bmoor/stats';
+//import {pearsonCorrelation} from '@bmoor/stats';
+//import {Weights} from '../weights';
+//import {Node} from '../node';
+import {prettyArray} from '@bmoor/string';
 
-import {Weights} from '../weights';
-import {Edge} from '../edge';
-import {Node} from '../node';
 import {Graph} from '../graph';
+import {Interval} from '../interval';
+
+class GraphFrameData {
+	features: string[];
+	rows: number[][];
+
+	constructor(features: string[], rows: number[][]) {
+		this.features = features;
+		this.rows = rows;
+	}
+
+	toString() {
+		return prettyArray(this.rows, {
+			separator: ' | ',
+			columns: this.features.reduce((agg, feature) => {
+				agg[feature] = {
+					// TODO: make this more dynamic?
+					align: 'right',
+					precision: 2,
+					length: 8,
+				};
+
+				return agg;
+			}, {}),
+		});
+	}
+}
 
 export class GraphFrame {
 	graph: Graph;
-	columns: string[];
-	computed: number[][];
 
 	constructor(graph: Graph) {
 		this.graph = graph;
-		this.columns = null;
-		this.computed = [];
 	}
 
+	getNodeWeights(interval: Interval, type: string) {
+		const fields = new Set<string>();
+		console.log(type, '?', Array.from(this.graph.nodesByType.keys()));
+		const nodes = this.graph.nodesByType.get(type);
+
+		// TODO: is there a way to track fields live
+		for (const node of nodes) {
+			const info = node.getIntervalData(interval);
+
+			info.weights?.keys().forEach((key) => fields.add(key));
+		}
+
+		const features = Array.from(fields.values());
+
+		return new GraphFrameData(
+			features,
+			nodes.map((node) => {
+				const info = node.getIntervalData(interval);
+
+				return features.map((feature) => info.weights?.get(feature));
+			}),
+		);
+	}
+
+	getEdgeWeights(interval: Interval, type: string) {
+		const fields = new Set<string>();
+		const nodes = this.graph.nodesByType.get(type);
+
+		// TODO: is there a way to track fields live
+		for (const node of nodes) {
+			const info = node.getIntervalData(interval);
+
+			info.edgeWeights?.keys().forEach((key) => fields.add(key));
+		}
+
+		const features = Array.from(fields.values());
+
+		return new GraphFrameData(
+			features,
+			nodes.map((node) => {
+				const info = node.getIntervalData(interval);
+
+				return features.map((feature) => info.edgeWeights.get(feature));
+			}),
+		);
+	}
+
+	/*
 	compute(
 		compute: (
 			nodeA: Node,
@@ -90,4 +161,5 @@ export class GraphFrame {
 			values: this.computed
 		};
 	}
+	*/
 }
