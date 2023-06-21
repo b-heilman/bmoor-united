@@ -1,6 +1,3 @@
-import {EventInterface, EventReference} from './event.interface';
-import {Interval} from './interval';
-import {IntervalReference} from './interval.interface';
 import {Weights} from './weights';
 import {WeightData} from './weights.interface';
 
@@ -10,39 +7,52 @@ export type NodeType = string;
 
 export type NodeTag = string;
 
-export interface NodeIntervalData {
-	weights?: Weights;
-	edgeWeights?: Weights;
-	event?: EventInterface;
-	parent?: NodeInterface;
-	children?: NodeInterface[];
-}
-
+// Nodes will no longer have any concept of an interval
+// instead that will be a layer above, so each interval
+// has its own graph under it.  I might do something with
+// node reference the allows you to find all instances of a
+// node across time, but for now I won't do that.
 export interface NodeInterface {
 	ref: NodeReference;
 	type: NodeType;
-	tags?: string[];
-	intervals: Map<Interval, NodeIntervalData>;
+	// TODO: this needs to be moved higher
+	// Delta is the changes applied to the node
+	// delta?: Weights;
+	// State is the result of all deltas prior, but not this one
+	weights?: Weights;
+	// The alignment of nodes can change over time, so parent and children
+	// should be defined here.
+	parent?: NodeInterface;
+	children?: Map<NodeType, NodeInterface[]>;
+	// Technically, tags might change over time too
+	tags?: NodeTag[];
 }
-
-export type NodeIntervalJson = {
-	intervalRef: IntervalReference;
-	parentRef?: NodeReference;
-	weights?: WeightData;
-	// I could define an interval to maintain the relationship, but no event happens
-	eventRef?: EventReference;
-	edge?: WeightData;
-};
 
 export interface NodeJson {
 	ref: NodeReference;
 	type: NodeType;
-	intervals: NodeIntervalJson[];
-	tags?: string[];
+
+	weights?: WeightData;
+	// I could define an interval to maintain the relationship, but no event happens
+	parentRef?: NodeReference;
+
+	//
+	tags?: NodeTag[];
+}
+
+export enum NodeValueSelector {
+	node,
+	edge,
+}
+
+export interface NodeChildSelector {
+	type: NodeType;
 }
 
 export interface NodeSettings {
-	tags?: string[];
+	tags?: NodeTag[];
+	parent?: NodeInterface;
+	weights?: Weights;
 }
 
 export type NodeOperator = (

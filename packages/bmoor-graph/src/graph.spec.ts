@@ -1,332 +1,391 @@
 import {expect} from 'chai';
 
-import {Event} from './event';
-import {Graph, dump, load} from './graph';
-import {Interval} from './interval';
+// import {Weights} from './weighted.interface';
 import {Node} from './node';
+import {Graph, load, dump} from './graph';
+import {Weights} from './weights';
 
-describe('@bmoor-graph::graph', function () {
-	const interval1 = new Interval(1, 'time-1', ['t-1']);
-	const interval2 = new Interval(2, 'time-2', ['t-2']);
-	const interval3 = new Interval(4, 'time-4');
-	const interval4 = new Interval(3, 'time-3', ['t-1']);
+describe('@bmoor/graph', function () {
+	describe('Graph building', function () {
+		it('should properly build a flat graph', function () {
+            const graph = new Graph();
 
-	let graph = null;
+            const node1 = new Node('node-1');
+            const node2 = new Node('node-2');
+            const node3 = new Node('node-3');
+            const node4 = new Node('node-4');
 
-	beforeEach(function () {
-		graph = new Graph();
+            graph.addNode(node1);
+            graph.addNode(node2);
+            graph.addNode(node3);
+            graph.addNode(node4);
 
-		const event1 = new Event('event-1', interval1);
-		const event2 = new Event('event-2', interval2);
-		const event3 = new Event('event-3', interval1);
-		const event4 = new Event('event-4', interval3);
-		const event5 = new Event('event-5', interval4);
+            graph.biConnectNodes(
+                new Weights({
+                    general: 1
+                }),
+                'node-1',
+                new Weights({
+                    value: 1
+                }),
+                'node-2',
+                new Weights({
+                    value: 2
+                }),
+            );
 
-		const root = new Node('root-1', 'root');
-		const second = new Node('second-1', 'second');
-		const third1 = new Node('third-1', 'third');
-		const third2 = new Node('third-2', 'third');
+            graph.biConnectNodes(
+                new Weights({
+                    general: 2
+                }),
+                'node-3',
+                new Weights({
+                    value: 3
+                }),
+                'node-4',
+                new Weights({
+                    value: 4
+                }),
+            );
 
-		second.setParent(interval1, root);
-		third1.setParent(interval1, second);
-		third2.setParent(interval1, second);
+            expect(graph.toJSON()).to.deep.equal({
+                "nodes": [
+                  {
+                    "ref": "node-1",
+                    "type": "__DEFAULT__",
+                    "tags": [],
+                    "parentRef": undefined,
+                    "weights": {}
+                  },
+                  {
+                    "ref": "node-2",
+                    "type": "__DEFAULT__",
+                    "tags": [],
+                    "parentRef": undefined,
+                    "weights": {}
+                  },
+                  {
+                    "ref": "node-3",
+                    "type": "__DEFAULT__",
+                    "tags": [],
+                    "parentRef": undefined,
+                    "weights": {}
+                  },
+                  {
+                    "ref": "node-4",
+                    "type": "__DEFAULT__",
+                    "tags": [],
+                    "parentRef": undefined,
+                    "weights": {}
+                  }
+                ],
+                "edges": [
+                  {
+                    "ref": "node-1:node-2",
+                    "weights": {
+                      "general": 1
+                    },
+                    "connections": [
+                      {
+                        "nodeRef": "node-1",
+                        "weights": {
+                          "value": 1
+                        }
+                      },
+                      {
+                        "nodeRef": "node-2",
+                        "weights": {
+                          "value": 2
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "ref": "node-3:node-4",
+                    "weights": {
+                      "general": 2
+                    },
+                    "connections": [
+                      {
+                        "nodeRef": "node-3",
+                        "weights": {
+                          "value": 3
+                        }
+                      },
+                      {
+                        "nodeRef": "node-4",
+                        "weights": {
+                          "value": 4
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            );
+        });
 
-		graph.addEvent(event1);
-		graph.addEvent(event2);
-		graph.addEvent(event3);
-		graph.addEvent(event4);
-		graph.addEvent(event5);
+        it('should properly build a tiered graph', function () {
+            const graph = new Graph();
 
-		graph.addNode(root);
-		graph.addNode(second);
-		graph.addNode(third1);
-		graph.addNode(third2);
+            const nodeA = new Node('node-a');
+            const node1 = new Node('node-1');
+            const node2 = new Node('node-2');
+            const nodeB = new Node('node-b');
+            const node3 = new Node('node-3');
+            const node4 = new Node('node-4');
 
-		root.setWeight(interval1, 'foo', 0.6);
+            node1.setParent(nodeA);
+            node2.setParent(nodeA);
+            node3.setParent(nodeB);
+            node4.setParent(node3);
 
-		event1.weights.set('hello.world', 0.7);
+            graph.addNode(nodeA);
+            graph.addNode(node1);
+            graph.addNode(node2);
+            graph.addNode(nodeB);
+            graph.addNode(node3);
+            graph.addNode(node4);
 
-		third1.addEdge(event1, {foo: 123});
-		third2.addEdge(event1, {bar: 123});
-	});
+            expect(graph.toJSON()).to.deep.equal({
+                "nodes": [
+                    {
+                        "ref": "node-a",
+                        "type": "__DEFAULT__",
+                        "tags": [],
+                        "parentRef": undefined,
+                        "weights": {}
+                      },
+                  {
+                    "ref": "node-1",
+                    "type": "__DEFAULT__",
+                    "tags": [],
+                    "parentRef": "node-a",
+                    "weights": {}
+                  },
+                  {
+                    "ref": "node-2",
+                    "type": "__DEFAULT__",
+                    "tags": [],
+                    "parentRef": "node-a",
+                    "weights": {}
+                  },
+                  {
+                    "ref": "node-b",
+                    "type": "__DEFAULT__",
+                    "tags": [],
+                    "parentRef": undefined,
+                    "weights": {}
+                  },
+                  {
+                    "ref": "node-3",
+                    "type": "__DEFAULT__",
+                    "tags": [],
+                    "parentRef": "node-b",
+                    "weights": {}
+                  },
+                  {
+                    "ref": "node-4",
+                    "type": "__DEFAULT__",
+                    "tags": [],
+                    "parentRef": "node-3",
+                    "weights": {}
+                  }
+                ],
+                "edges": []
+              }
+            );
+        });
+    });
 
-	describe('::getNodeTpes', function () {
-		it('should return back type in order', function () {
-			expect(graph.getNodeTypes()).to.deep.equal([
-				'root',
-				'second',
-				'third',
-			]);
-		});
-	});
+    describe('Graph::select', function () {
+        const graph = load({
+            "nodes": [
+                {
+                "ref": "node-a",
+                "type": "team",
+                "tags": [],
+                "parentRef": undefined,
+                "weights": {}
+                },
+              {
+                "ref": "node-1",
+                "type": "position",
+                "tags": ['wr'],
+                "parentRef": "node-a",
+                "weights": {}
+              },
+              {
+                "ref": "node-2",
+                "type": "position",
+                "tags": ['qb'],
+                "parentRef": "node-a",
+                "weights": {}
+              },
+              {
+                "ref": "node-b",
+                "type": "team",
+                "tags": [],
+                "parentRef": undefined,
+                "weights": {}
+              },
+              {
+                "ref": "node-3",
+                "type": "position",
+                "tags": ['qb'],
+                "parentRef": "node-b",
+                "weights": {}
+              },
+              {
+                "ref": "node-4",
+                "type": "player",
+                "tags": [],
+                "parentRef": "node-3",
+                "weights": {}
+              }
+            ],
+            "edges": []
+          });
 
-	describe('::getIntervalsInOrder', function () {
-		it('should work with no end points', function () {
-			expect(graph.getIntervalsInOrder()).to.deep.equal([
-				interval1,
-				interval2,
-				interval4,
-				interval3,
-			]);
-		});
+		it('should allow selection', function () {
+            const select1 = graph.select({
+                reference: 'node-a',
+                type: 'position'
+            });
 
-		it('should work with an end', function () {
-			expect(graph.getIntervalsInOrder(interval4)).to.deep.equal([
-				interval1,
-				interval2,
-				interval4,
-			]);
-		});
+            const select2 = graph.select({
+                type: 'position'
+            });
 
-		it('should work with an end and beginning', function () {
-			expect(
-				graph.getIntervalsInOrder(interval3, interval2),
-			).to.deep.equal([interval2, interval4, interval3]);
-		});
-	});
+            const select3 = graph.select({
+                type: 'position',
+                tag: 'qb'
+            });
 
-	describe('::getIntervalsByTag', function () {
-		it('should work', function () {
-			expect(graph.getIntervalsByTag('t-1')).to.deep.equal([
-				graph.getIntervalByPos(0),
-				graph.getIntervalByPos(2),
-			]);
-		});
-	});
+            expect(select1.map(node => node.ref)).to.deep.equal([
+                'node-1',
+                'node-2',
+            ]);
 
-	describe('::toJSON', function () {
-		it('should work', function () {
-			expect(graph.toJSON()).to.deep.equal({
-				intervals: [
-					{
-						label: 'time-1',
-						tags: ['t-1'],
-						ref: 1,
-					},
-					{
-						label: 'time-2',
-						tags: ['t-2'],
-						ref: 2,
-					},
-					{
-						label: 'time-3',
-						tags: ['t-1'],
-						ref: 3,
-					},
-					{
-						label: 'time-4',
-						tags: [],
-						ref: 4,
-					},
-				],
-				nodes: [
-					{
-						ref: 'root-1',
-						type: 'root',
-						tags: [],
-						intervals: [
-							{
-								eventRef: 'event-1',
-								intervalRef: 1,
-								weights: {
-									foo: 0.6,
-								},
-							},
-						],
-					},
-					{
-						ref: 'second-1',
-						type: 'second',
-						tags: [],
-						intervals: [
-							{
-								eventRef: 'event-1',
-								intervalRef: 1,
-								parentRef: 'root-1',
-							},
-						],
-					},
-					{
-						ref: 'third-1',
-						type: 'third',
-						tags: [],
-						intervals: [
-							{
-								eventRef: 'event-1',
-								intervalRef: 1,
-								parentRef: 'second-1',
-								edge: {
-									foo: 123,
-								},
-							},
-						],
-					},
-					{
-						ref: 'third-2',
-						type: 'third',
-						tags: [],
-						intervals: [
-							{
-								eventRef: 'event-1',
-								intervalRef: 1,
-								parentRef: 'second-1',
-								edge: {
-									bar: 123,
-								},
-							},
-						],
-					},
-				],
-				events: [
-					{
-						ref: 'event-1',
-						intervalRef: 1,
-						weights: {
-							'hello.world': 0.7,
-						},
-					},
-					{
-						ref: 'event-3',
-						intervalRef: 1,
-						weights: {},
-					},
-					{
-						ref: 'event-2',
-						intervalRef: 2,
-						weights: {},
-					},
-					{
-						ref: 'event-5',
-						intervalRef: 3,
-						weights: {},
-					},
-					{
-						ref: 'event-4',
-						intervalRef: 4,
-						weights: {},
-					},
-				],
-			});
-		});
-	});
+            expect(select2.map(node => node.ref)).to.deep.equal([
+                'node-1',
+                'node-2',
+                'node-3',
+            ]);
 
-	describe('dump and load', function () {
-		it('should work', function () {
-			const graph2 = load(dump(graph));
+            expect(select3.map(node => node.ref)).to.deep.equal([
+                'node-2',
+                'node-3',
+            ]);
+        });
+    });
 
-			expect(graph2.toJSON()).to.deep.equal({
-				intervals: [
-					{
-						label: 'time-1',
-						tags: ['t-1'],
-						ref: 1,
-					},
-					{
-						label: 'time-2',
-						tags: ['t-2'],
-						ref: 2,
-					},
-					{
-						label: 'time-3',
-						tags: ['t-1'],
-						ref: 3,
-					},
-					{
-						label: 'time-4',
-						tags: [],
-						ref: 4,
-					},
-				],
-				nodes: [
-					{
-						ref: 'root-1',
-						type: 'root',
-						tags: [],
-						intervals: [
-							{
-								eventRef: 'event-1',
-								intervalRef: 1,
-								weights: {
-									foo: 0.6,
-								},
-								edge: {},
-							},
-						],
-					},
-					{
-						ref: 'second-1',
-						type: 'second',
-						tags: [],
-						intervals: [
-							{
-								eventRef: 'event-1',
-								intervalRef: 1,
-								parentRef: 'root-1',
-								edge: {},
-							},
-						],
-					},
-					{
-						ref: 'third-1',
-						type: 'third',
-						tags: [],
-						intervals: [
-							{
-								eventRef: 'event-1',
-								intervalRef: 1,
-								parentRef: 'second-1',
-								edge: {
-									foo: 123,
-								},
-							},
-						],
-					},
-					{
-						ref: 'third-2',
-						type: 'third',
-						tags: [],
-						intervals: [
-							{
-								eventRef: 'event-1',
-								intervalRef: 1,
-								parentRef: 'second-1',
-								edge: {
-									bar: 123,
-								},
-							},
-						],
-					},
-				],
-				events: [
-					{
-						ref: 'event-1',
-						intervalRef: 1,
-						weights: {
-							'hello.world': 0.7,
-						},
-					},
-					{
-						ref: 'event-3',
-						intervalRef: 1,
-						weights: {},
-					},
-					{
-						ref: 'event-2',
-						intervalRef: 2,
-						weights: {},
-					},
-					{
-						ref: 'event-5',
-						intervalRef: 3,
-						weights: {},
-					},
-					{
-						ref: 'event-4',
-						intervalRef: 4,
-						weights: {},
-					},
-				],
-			});
-		});
-	});
+    describe('Graph::getEdgeWeights', function () {
+        const graph = load({
+            "nodes": [
+                {
+                "ref": "node-a",
+                "type": "team",
+                "tags": [],
+                "parentRef": undefined,
+                "weights": {}
+                },
+              {
+                "ref": "node-1",
+                "type": "position",
+                "tags": ['wr'],
+                "parentRef": "node-a",
+                "weights": {}
+              },
+              {
+                "ref": "node-2",
+                "type": "position",
+                "tags": ['qb'],
+                "parentRef": "node-a",
+                "weights": {}
+              },
+              {
+                "ref": "node-b",
+                "type": "team",
+                "tags": [],
+                "parentRef": undefined,
+                "weights": {}
+              },
+              {
+                "ref": "node-3",
+                "type": "position",
+                "tags": ['qb'],
+                "parentRef": "node-b",
+                "weights": {}
+              },
+              {
+                "ref": "node-4",
+                "type": "player",
+                "tags": [],
+                "parentRef": "node-3",
+                "weights": {}
+              }
+            ],
+            "edges": [
+                {
+                  "ref": "node-1:node-2",
+                  "weights": {
+                    "general": 1
+                  },
+                  "connections": [
+                    {
+                      "nodeRef": "node-1",
+                      "weights": {
+                        "value": 1
+                      }
+                    },
+                    {
+                      "nodeRef": "node-2",
+                      "weights": {
+                        "value": 2
+                      }
+                    }
+                  ]
+                },
+                {
+                  "ref": "node-3:node-4",
+                  "weights": {
+                    "general": 2
+                  },
+                  "connections": [
+                    {
+                      "nodeRef": "node-3",
+                      "weights": {
+                        "value": 3
+                      }
+                    },
+                    {
+                      "nodeRef": "node-4",
+                      "weights": {
+                        "value": 4
+                      }
+                    }
+                  ]
+                }
+              ]
+          });
+
+		it('should allow selection', function () {
+            const select1 = graph.getEdgeWeights('node-1');
+
+            expect(select1.map(edge => ({
+                edgeWeights: edge.edgeWeights.toJSON(),
+                nodeWeights: edge.nodeWeights.toJSON()
+            }))).to.deep.equal([
+                {
+                    edgeWeights: {
+                        general: 1
+                    },
+                    nodeWeights: {
+                        value: 1
+                    }
+                }
+            ]);
+        });
+    });
 });

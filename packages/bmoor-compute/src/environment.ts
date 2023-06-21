@@ -1,89 +1,97 @@
-import {
-	CalculationSettings,
-	CalculatorValue,
-} from './calculator.interface';
-import {
-	EnvironmentInterface,
-	EnvironmentMethodsInterface,
-} from './environment.interface';
+import {OrderedMap} from '@bmoor/index';
 
-export class Environment<Reference, Interval>
-	implements EnvironmentInterface<Reference, Interval>
+import {Datum} from './datum';
+import {EnvironmentInterface} from './environment.interface';
+
+export type Interval = string;
+
+export interface Selector {
+	ref?: string;
+	sub?: string;
+}
+
+export class Environment
+	implements EnvironmentInterface<Interval, Selector>
 {
-	cache: Map<Reference, Map<Interval, Record<string, CalculatorValue>>>;
-	methods: EnvironmentMethodsInterface;
+	map: OrderedMap<string, Map<string, Datum<Interval>>>;
 
 	constructor(
-		methods: EnvironmentMethodsInterface, 
-		prepop: Record<string, Record<string, Record<string, CalculatorValue>>> = null
+		src: Record<string, Record<string, Record<string, number>>>,
 	) {
-		this.cache = new Map();
-		this.methods = methods;
+		this.map = new OrderedMap();
 
-		if (prepop){
-			for(const ref in prepop){
-				const intervals = prepop[ref];
-				const refMap = new Map();
+		for (const key in src) {
+			const myMap = new Map();
+			const sub = src[key];
 
-				this.cache.set(<Reference>ref, refMap);
+			this.map.setNode(key, myMap);
 
-				for(const interval in intervals){
-					refMap.set(interval, intervals[interval]);
-				}
+			for (const subkey in sub) {
+				myMap.set(subkey, new Datum<Interval>(subkey, key, sub[subkey]));
 			}
 		}
 	}
 
-	getValue(
-		ref: Reference,
-		interval: Interval,
-		mount: string,
-	): CalculatorValue {
-		const arr = this.cache.get(ref)?.get(interval);
+	select(interval: Interval, select: Selector): Datum<Interval>[] {
+		return [this.map.getNode(interval).get(select.sub)];
+	}
 
-		if (arr && mount in arr) {
-			return arr[mount];
+	subSelect(
+		datum: Datum<Interval>,
+		interval: Interval,
+		select: Selector,
+	): Datum<Interval>[] {
+		return [this.map.getNode(interval).get(select.sub)];
+	}
+
+	getGlobal(): Datum<Interval> {
+		return null;
+	}
+
+	getSelfSelector(datum: Datum<Interval>) {
+		return {
+			sub: datum.ref,
+		};
+	}
+
+	intervalSelect(
+		datum: Datum<Interval>,
+		interval: Interval,
+	): Datum<Interval> {
+		const select = this.getSelfSelector(datum);
+
+		return this.map.getNode(interval).get(select.sub);
+	}
+
+	rangeSelect(
+		datum: Datum<Interval>,
+		interval: Interval,
+		range: number,
+	): Datum<Interval>[] {
+		const offset = interval;
+		const select = this.getSelfSelector(datum);
+
+		let maps = [];
+		if (range) {
+			const begin = this.map.getTagOffset(offset, 1 - range, true);
+
+			maps = Array.from(this.map.getNodesBetween(begin, offset).values());
 		} else {
-			return null;
-		}
-	}
-
-	setValue(
-		ref: Reference,
-		interval: Interval,
-		mount: string,
-		value: CalculatorValue,
-	): void {
-		let refData = this.cache.get(ref);
-		if (!refData) {
-			refData = new Map();
-
-			this.cache.set(ref, refData);
+			maps = [this.map.getNode(offset)];
 		}
 
-		let intervalData = refData.get(interval);
-		if (!intervalData) {
-			intervalData = {};
+		return maps.map((map) => map.get(select.sub));
+	}
 
-			refData.set(interval, intervalData);
+	offsetInterval(interval: Interval, offset: number): Interval {
+		return this.map.getTagOffset(interval, offset);
+	}
+
+	overrideSelector(select: Selector, override: Selector = null): Selector {
+		if (override?.sub) {
+			select.sub = override.sub;
 		}
 
-		intervalData[mount] = value;
-	}
-
-	hasValue(ref: Reference, interval: Interval, mount: string): boolean {
-		return this.getValue(ref, interval, mount) !== null;
-	}
-
-	canCompute(method: string): boolean {
-		return method in this.methods;
-	}
-
-	async compute(
-		method: string,
-		args: CalculatorValue[],
-		settings: CalculationSettings,
-	): Promise<CalculatorValue> {
-		return this.methods[method](args, settings);
+		return select;
 	}
 }

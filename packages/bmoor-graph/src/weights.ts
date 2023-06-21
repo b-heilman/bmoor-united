@@ -8,6 +8,20 @@ export class Weights {
 		this.data = incoming;
 	}
 
+	hasValue(attr: string) {
+		return attr in this.data;
+	}
+
+	async getValue(attr: string) {
+		return this.get(attr);
+	}
+
+	async setValue(attr: string, value: number) {
+		this.set(attr, value);
+
+		return true;
+	}
+
 	set(mount: string, value: number) {
 		this.data[mount] = value;
 	}
@@ -20,8 +34,8 @@ export class Weights {
 		Object.assign(this.data, input);
 	}
 
-	get(mount: string, def: number = null): number {
-		const rtn = mount in this.data ? this.data[mount] : def;
+	get(mount: string, defaultValue: number = null): number {
+		const rtn = mount in this.data ? this.data[mount] : defaultValue;
 
 		return rtn;
 	}

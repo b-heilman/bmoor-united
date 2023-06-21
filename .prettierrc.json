@@ -7,7 +7,13 @@
 	"trailingComma": "all",
 	"bracketSpacing": false,
 	
-	"importOrder": ["<THIRD_PARTY_MODULES>", "^@bmoor/(.*)$", "^[./]" ],
+	"importOrder": [
+		"^react(.*)", 
+		"<THIRD_PARTY_MODULES>", 
+		"^@bmoor/(.*)$",
+		"^[./]" 
+	],
     "importOrderSeparation": true, 
-    "importOrderSortSpecifiers": true
+    "importOrderSortSpecifiers": true,
+	"importOrderParserPlugins": ["typescript"]
 }

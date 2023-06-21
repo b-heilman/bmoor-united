@@ -1,33 +1,31 @@
-import {
-	CalculationSettings,
-	CalculatorValue,
-} from './calculator.interface';
+import {DatumInterface} from './datum.interface';
 
-export type EnvironmentMethodsInterface = Record<
-	string,
-	(
-		args: CalculatorValue[],
-		settings: CalculationSettings,
-	) => Promise<CalculatorValue>
->;
 // interface which allows local methods to be defined
-export interface EnvironmentInterface<Reference, Interval> {
-	getValue: (
-		ref: Reference,
-		i: Interval,
-		mount: string,
-	) => CalculatorValue;
-	setValue: (
-		ref: Reference,
-		i: Interval,
-		mount: string,
-		value: CalculatorValue,
-	) => void;
-	hasValue: (ref: Reference, i: Interval, mount: string) => boolean;
-	canCompute(method: string): boolean;
-	compute: (
-		method: string,
-		args: CalculatorValue[],
-		settings: CalculationSettings,
-	) => Promise<CalculatorValue>;
+export interface EnvironmentInterface<Interval, Selector> {
+	select(interval: Interval, select: Selector): DatumInterface<Interval>[];
+
+	subSelect(
+		datum: DatumInterface<Interval>,
+		interval: Interval,
+		select: Selector,
+	): DatumInterface<Interval>[];
+
+	intervalSelect(
+		datum: DatumInterface<Interval>,
+		interval: Interval,
+	): DatumInterface<Interval>;
+
+	rangeSelect(
+		datum: DatumInterface<Interval>,
+		interval: Interval,
+		range: number,
+	): DatumInterface<Interval>[];
+
+	getGlobal(interval: Interval): DatumInterface<Interval>;
+
+	getSelfSelector(datum: DatumInterface<Interval>);
+
+	overrideSelector(select: Selector, override: Selector): Selector;
+
+	offsetInterval(interval: Interval, offset: number): Interval;
 }

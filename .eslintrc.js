@@ -16,10 +16,18 @@ module.exports = {
         "sourceType": "module"
     },
     "plugins": [
-        "prettier",
-        "@typescript-eslint"
+        "@typescript-eslint",
+        "prettier"
     ],
-    "rules": {},
+    "rules": {
+        "prettier/prettier": "warn",
+        "@typescript-eslint/no-unused-vars": [
+            "error", 
+            { 
+                "argsIgnorePattern": "params"
+            }
+        ]
+    },
     "overrides": [
         {
             "files": "**/*.ts",

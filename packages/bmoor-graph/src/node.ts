@@ -1,12 +1,8 @@
-import {Tags} from '@bmoor/tagging';
-
-import {Event} from './event';
-import {Interval} from './interval';
+import {EdgeInterface} from './edge.interface';
 import {
 	NODE_DEFAULT_TYPE,
+	NodeChildSelector,
 	NodeInterface,
-	NodeIntervalData,
-	NodeIntervalJson,
 	NodeJson,
 	NodeOperator,
 	NodePullSettings,
@@ -14,9 +10,9 @@ import {
 	NodeSettings,
 	NodeTag,
 	NodeType,
+	NodeValueSelector,
 } from './node.interface';
 import {Weights} from './weights';
-import {WeightData} from './weights.interface';
 
 /**
  * TODO: I want to allow different types of nodes to exist on a graph all tied to the same event with their own weights.
@@ -25,197 +21,135 @@ import {WeightData} from './weights.interface';
  *   - Able to do calculations for all 'players'
  *   - Use players to calculate position scores for teams-
  */
-function addEvent(node: Node, event: Event) {
-	const intervalData = node.getIntervalData(event.interval);
 
-	// and event should be added to the lowest child, it will be
-	// bubbled up to all the parent nodes.  I want to make sure
-	// I protect from event collisions.
-	if (intervalData.event) {
-		if (intervalData.event !== event) {
-			console.log(
-				'existing:',
-				node.ref,
-				JSON.stringify(intervalData.event),
-			);
-			throw new Error('interval collision: ' + JSON.stringify(event));
-		}
-	} else {
-		intervalData.event = event;
-
-		event.addNode(node);
-
-		if (intervalData.parent) {
-			// TODO: define the interface properly so I don't need to do this
-			addEvent(<Node>intervalData.parent, event);
-		}
-	}
-
-	return intervalData;
-}
-
+/**
+ * TODO: Node can have edge to other nodes, think of games a team
+ * has played in this interval
+ */
 export class Node implements NodeInterface {
 	ref: NodeReference;
 	type: NodeType;
-	tags: Tags;
-	intervals: Map<Interval, NodeIntervalData>;
+	edges: EdgeInterface[];
+	weights: Weights;
+	parent?: Node;
+	children?: Map<NodeType, Node[]>;
+	tags: NodeTag[];
 
 	constructor(
-		ref: string,
-		type: string = NODE_DEFAULT_TYPE,
+		ref: NodeReference,
+		type: NodeType = NODE_DEFAULT_TYPE,
 		settings?: NodeSettings,
 	) {
 		this.ref = ref;
 		this.type = type;
 		this.tags = settings?.tags || [];
-		this.intervals = new Map();
+		this.edges = [];
+		this.parent = <Node>settings?.parent || null;
+		this.weights = settings?.weights || new Weights();
+		this.children = new Map();
 	}
 
-	hasIntervalData(interval: Interval): boolean {
-		return this.intervals.has(interval);
+	setParent(parent: Node): Node {
+		this.parent = parent;
+
+		parent.addChild(this);
+
+		return this;
 	}
 
-	getIntervalData(interval: Interval): NodeIntervalData {
-		let rtn: NodeIntervalData = this.intervals.get(interval);
-
-		if (!rtn) {
-			rtn = {};
-
-			this.intervals.set(interval, rtn);
-		}
-
-		return rtn;
-	}
-
-	setParent(interval: Interval, parent: Node): Node {
-		const intervalData = this.getIntervalData(interval);
-
-		if (intervalData.parent) {
-			if (intervalData.parent === parent) {
-				return this;
-			} else {
-				throw new Error(
-					`For interval ${interval.ref}, ${this.ref} already has ` +
-						`${intervalData.parent.ref}, tried ${parent.ref}`,
-				);
-			}
+	addChild(child: Node): Node {
+		if (this.children.has(child.type)) {
+			this.children.get(child.type).push(child);
 		} else {
-			intervalData.parent = parent;
+			this.children.set(child.type, [child]);
 		}
 
-		const parentData = parent.getIntervalData(interval);
-
-		if (!parentData.children) {
-			parentData.children = [];
+		if (!child.parent) {
+			child.parent = this;
 		}
 
-		parentData.children.push(this);
+		return this;
+	}
+
+	hasChildren(): boolean {
+		return this.children.size !== 0;
+	}
+
+	addEdge(edge: EdgeInterface): Node {
+		this.edges.push(edge);
 
 		return this;
 	}
 
-	setType(type: string) {
-		this.type = type;
+	getChildren(selector: NodeChildSelector, deep = false): Node[] {
+		if (selector === null) {
+			let rtn = [];
 
-		return this;
-	}
+			for (const entry of this.children.values()) {
+				for (const node of entry) {
+					rtn.push(node);
 
-	addEdge(event: Event, weights: WeightData): Node {
-		const intervalData = addEvent(this, event);
-
-		intervalData.edgeWeights = new Weights(weights);
-
-		return this;
-	}
-
-	getEvent(interval: Interval): Event {
-		return <Event>this.getIntervalData(interval).event;
-	}
-
-	hasEdge(interval: Interval): boolean {
-		return (
-			this.hasIntervalData(interval) &&
-			'edgeWeights' in this.getIntervalData(interval)
-		);
-	}
-
-	getEdge(interval: Interval): Weights {
-		return this.getIntervalData(interval).edgeWeights;
-	}
-
-	getEvents(other?: Node, intervals?: Interval[]): Event[] {
-		if (other) {
-			const rtn = [];
-
-			if (!intervals) {
-				intervals = Array.from(this.intervals.keys());
+					if (deep) {
+						rtn = rtn.concat(node.getChildren(selector, deep));
+					}
+				}
 			}
 
-			for (const interval of intervals) {
-				const intervalData = this.getIntervalData(interval);
+			return rtn;
+		} else if (this.children.has(selector.type)) {
+			return this.children.get(selector.type);
+		} else if (deep) {
+			let rtn = [];
 
-				if (
-					intervalData.event &&
-					intervalData.event.nodes.get(other.type)?.includes(other)
-				) {
-					rtn.push(intervalData.event);
+			for (const entry of this.children.values()) {
+				for (const node of entry) {
+					rtn = rtn.concat(node.getChildren(selector, deep));
 				}
 			}
 
 			return rtn;
 		} else {
-			return <Event[]>Array.from(this.intervals.values())
-				.map((nd) => nd.event)
-				.filter((event) => !!event);
+			return [];
 		}
 	}
 
-	getRelated(interval: Interval, tag?: NodeTag): Node[] {
-		const rtn = [];
-		const intervalData = this.getIntervalData(interval);
+	setType(type: NodeType) {
+		this.type = type;
 
-		if (intervalData.event) {
-			const nodes = intervalData.event.nodes.get(this.type);
+		return this;
+	}
 
-			for (const node of nodes) {
-				if (node !== this && (!tag || node.tags.includes(tag))) {
-					rtn.push(node);
-				}
-			}
-		}
-
-		return rtn;
+	hasTag(tag: NodeTag): boolean{
+		return this.tags.indexOf(tag) !== -1;
 	}
 
 	// edge vs weight.  Edge is input from the results, weights are the calculated values.
 	// data flow is edge => weight
-	bubble(interval: Interval, fn: NodeOperator, through = false) {
-		const intervalData = this.getIntervalData(interval);
-
-		if (intervalData.parent) {
-			const parent = <Node>intervalData.parent;
+	bubble(fn: NodeOperator, through = false) {
+		if (this.parent) {
+			const parent = this.parent;
 			// bubble this command up the relationship chain
 			// TODO: yeah...
-			fn(parent.getWeights(interval), intervalData.weights);
+			fn(parent.weights, this.weights);
 
 			if (through) {
-				parent.bubble(interval, fn);
+				parent.bubble(fn);
 			}
 		}
 
 		return this;
 	}
 
-	trickle(interval: Interval, fn: NodeOperator, through = true) {
-		const intervalData = this.getIntervalData(interval);
-
+	trickle(fn: NodeOperator, through = true) {
 		// trickle this command down the relationship chain
-		if (intervalData.children) {
-			for (const child of intervalData.children) {
-				fn((<Node>child).getWeights(interval), this.getWeights(interval));
+		if (this.children) {
+			for (const childList of this.children.values()) {
+				for (const child of childList) {
+					fn(child.weights, this.weights);
 
-				if (through) {
-					(<Node>child).trickle(interval, fn);
+					if (through) {
+						child.trickle(fn);
+					}
 				}
 			}
 		}
@@ -225,70 +159,83 @@ export class Node implements NodeInterface {
 
 	// returns back the whole lineage of the node, keeps them in order to
 	// optimize if you're bubbling
-	getLineage(
-		interval: Interval,
-		checkContinue?: (node: Node) => boolean,
-	): Node[] {
+	getLineage(checkContinue?: (node: Node) => boolean): Node[] {
 		// make sure children are returned before their parent
 		const rtn = [];
-		const intervalData = this.getIntervalData(interval);
 
-		if (intervalData.children) {
-			for (const child of intervalData.children) {
-				if (!checkContinue || checkContinue(<Node>child)) {
-					rtn.push((<Node>child).getLineage(interval, checkContinue));
+		if (this.children) {
+			for (const childList of this.children.values()) {
+				for (const child of childList) {
+					if (!checkContinue || checkContinue(child)) {
+						rtn.push(child.getLineage(checkContinue));
+					}
+
+					rtn.push(child);
 				}
-
-				rtn.push(child);
 			}
 		}
 
 		return rtn.flat();
 	}
 
-	pull(
-		interval: Interval,
-		fn: NodeOperator,
-		settings: NodePullSettings = null,
-	) {
-		const lineage = this.getLineage(interval, settings?.continue);
+	pull(fn: NodeOperator, settings: NodePullSettings = null) {
+		const lineage = this.getLineage(settings?.continue);
 		// children will always be left of the parent
 		for (const sub of lineage) {
-			sub.bubble(interval, fn, false);
+			sub.bubble(fn, false);
 		}
 
 		return this;
 	}
 
-	getWeights(interval: Interval): Weights {
-		const intervalData = this.getIntervalData(interval);
+	async setValue(
+		mount: string,
+		selector: NodeValueSelector,
+		value: number,
+	): Promise<boolean> {
+		selector === NodeValueSelector.node
+			? this.setWeight(mount, value)
+			: this.edges.map((edge) =>
+					edge.nodeWeights.get(this.ref).set(mount, value),
+			  );
 
-		if (!intervalData.weights) {
-			intervalData.weights = new Weights();
-		}
-
-		return intervalData.weights;
+		return true;
 	}
 
-	setWeight(interval: Interval, mount: string, value: number) {
-		this.getWeights(interval).set(mount, value);
+	// allows access to either current node or edge weights
+	async getValue(
+		mount: string,
+		selector: NodeValueSelector,
+	): Promise<number> {
+		return selector === NodeValueSelector.node
+			? this.getWeight(mount)
+			: this.edges.reduce(
+					(sum, edge) => sum + edge.nodeWeights.get(this.ref).get(mount),
+					0,
+			  );
+	}
+
+	// allows access to either current node or edge weights
+	hasValue(mount: string, selector: NodeValueSelector): boolean {
+		return selector === NodeValueSelector.node
+			? this.hasWeight(mount)
+			: this.edges[0].nodeWeights.get(this.ref).has(mount);
+	}
+
+	// allow access to just current values
+	setWeight(mount: string, value: number) {
+		this.weights.set(mount, value);
 
 		return this;
 	}
 
-	getWeight(interval: Interval, mount: string): number {
-		return this.getWeights(interval).get(mount);
+	getWeight(mount: string): number {
+		return this.weights.get(mount);
 	}
 
-	hasWeight(interval: Interval, mount: string = null): boolean {
-		const intervalData = this.getIntervalData(interval);
-
-		if (intervalData.weights) {
-			if (mount) {
-				return intervalData.weights.has(mount);
-			} else {
-				return true;
-			}
+	hasWeight(mount: string = null): boolean {
+		if (this.weights) {
+			return this.weights.has(mount);
 		}
 
 		return false;
@@ -314,31 +261,8 @@ export class Node implements NodeInterface {
 			ref: this.ref,
 			type: this.type,
 			tags: this.tags,
-			intervals: Array.from(this.intervals).map(
-				([interval, intervalData]) => {
-					const rtn: NodeIntervalJson = {
-						intervalRef: interval.ref,
-					};
-
-					if (intervalData.weights) {
-						rtn.weights = intervalData.weights.toJSON();
-					}
-
-					if (intervalData.parent) {
-						rtn.parentRef = intervalData.parent.ref;
-					}
-
-					if (intervalData.event) {
-						rtn.eventRef = intervalData.event.ref;
-					}
-
-					if (intervalData.edgeWeights) {
-						rtn.edge = intervalData.edgeWeights.toJSON();
-					}
-
-					return rtn;
-				},
-			),
+			parentRef: this.parent?.ref,
+			weights: this.weights.toJSON(),
 		};
 
 		return rtn;
