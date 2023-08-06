@@ -33,12 +33,12 @@ calculator.setSelection(new GraphSelection(graph, {
 })).intervalSum('pass_yds');
 
 console.log(
-    frame.getNodeWeights(graph.getIntervalByPos(-1), 'player').toString()
+    frame.getNodeFeatures(graph.getIntervalByPos(-1), 'player').toString()
 );
 /*
 graph.calculateNodeWeight(
     'off-pass-mean', 
-    edge => edge.weights.pass_yds,
+    edge => edge.features.pass_yds,
     {
         summarizer: (values) => {
             const sum = values.reduce((agg, value) => agg+value);
@@ -50,7 +50,7 @@ graph.calculateNodeWeight(
 
 graph.calculateNodeWeight(
     'off-rush-mean', 
-    edge => edge.weights.rush_yds,
+    edge => edge.features.rush_yds,
     {
         summarizer: (values) => {
             const sum = values.reduce((agg, value) => agg+value);
@@ -62,7 +62,7 @@ graph.calculateNodeWeight(
 
 graph.calculateNodeWeight(
     'def-pass-mean', 
-    (edgeA, edgeB) => edgeB.weights.pass_yds,
+    (edgeA, edgeB) => edgeB.features.pass_yds,
     {
         summarizer: (values) => {
             const sum = values.reduce((agg, value) => agg+value);
@@ -74,7 +74,7 @@ graph.calculateNodeWeight(
 
 graph.calculateNodeWeight(
     'def-rush-mean', 
-    (edgeA, edgeB) => edgeB.weights.rush_yds,
+    (edgeA, edgeB) => edgeB.features.rush_yds,
     {
         summarizer: (values) => {
             const sum = values.reduce((agg, value) => agg+value);
@@ -88,7 +88,7 @@ graph.sort(
     'off-rush-rank', 
     (nodeA, nodeB) => {
         // more yards is better
-        return nodeB.weights['off-rush-mean'] - nodeA.weights['off-rush-mean'];
+        return nodeB.features['off-rush-mean'] - nodeA.features['off-rush-mean'];
     }
 );
 
@@ -96,7 +96,7 @@ graph.sort(
     'off-pass-rank', 
     (nodeA, nodeB) => {
         // more yards is better
-        return nodeB.weights['off-pass-mean'] - nodeA.weights['off-pass-mean']
+        return nodeB.features['off-pass-mean'] - nodeA.features['off-pass-mean']
     }
 );
 
@@ -104,8 +104,8 @@ const oRanked = graph.sort(
     'off-rank', 
     (nodeA, nodeB) => {
         // more yards is better
-        return (nodeB.weights['off-pass-rank'] + nodeB.weights['off-rush-rank']) - 
-            (nodeA.weights['off-pass-rank'] + nodeA.weights['off-rush-rank']);
+        return (nodeB.features['off-pass-rank'] + nodeB.features['off-rush-rank']) - 
+            (nodeA.features['off-pass-rank'] + nodeA.features['off-rush-rank']);
     }
 );
 
@@ -115,7 +115,7 @@ graph.sort(
     'def-rush-rank', 
     (nodeA, nodeB) => {
         // more yards is worse
-        return nodeA.weights['def-rush-mean'] - nodeB.weights['def-rush-mean']
+        return nodeA.features['def-rush-mean'] - nodeB.features['def-rush-mean']
     }
 );
 
@@ -123,7 +123,7 @@ graph.sort(
     'def-pass-rank', 
     (nodeA, nodeB) => {
         // more yards is worse
-        return nodeA.weights['def-pass-mean'] - nodeB.weights['def-pass-mean']
+        return nodeA.features['def-pass-mean'] - nodeB.features['def-pass-mean']
     }
 );
 
@@ -131,8 +131,8 @@ const dRanked = graph.sort(
     'def-rank', 
     (nodeA, nodeB) => {
         // higher ranks wanted
-        return (nodeB.weights['def-pass-rank'] + nodeB.weights['def-rush-rank']) - 
-            (nodeA.weights['def-pass-rank'] + nodeA.weights['def-rush-rank']);
+        return (nodeB.features['def-pass-rank'] + nodeB.features['def-rush-rank']) - 
+            (nodeA.features['def-pass-rank'] + nodeA.features['def-rush-rank']);
     }
 );
 
@@ -142,8 +142,8 @@ const ranked = graph.sort(
     'full-rank', 
     (nodeA, nodeB) => {
         // higher ranks wanted
-        return (nodeB.getWeight('def-rank') + nodeB.weights['off-rank']) - 
-            (nodeA.weights['def-rank'] + nodeA.weights['off-rank']);
+        return (nodeB.getWeight('def-rank') + nodeB.features['off-rank']) - 
+            (nodeA.features['def-rank'] + nodeA.features['off-rank']);
     }
 );
 

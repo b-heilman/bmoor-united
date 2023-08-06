@@ -1,7 +1,7 @@
 /*
 import {expect} from 'chai';
 
-import {Weights} from './weighted.interface';
+import {Features} from './weighted.interface';
 import {Graph, load, dump} from './index';
 
 function pair(
@@ -9,17 +9,17 @@ function pair(
 	partition: string,
 	eventRef: string,
 	fromRef: string,
-	fromWeight: Weights,
+	fromWeight: Features,
 	toRef: string,
-	toWeight: Weights
+	toWeight: Features
 ) {
 	graph
 		.connect(partition, eventRef, fromRef, toRef)
-		.edge.addWeights(fromWeight);
+		.event.addFeatures(fromWeight);
 
 	graph
 		.connect(partition, eventRef, toRef, fromRef)
-		.edge.addWeights(toWeight);
+		.event.addFeatures(toWeight);
 }
 
 describe('@bmoor/graph', function () {
@@ -83,8 +83,8 @@ describe('@bmoor/graph', function () {
 				}
 			);
 
-			function ranker(edgeA, edgeB) {
-				return edgeA.weights.running - edgeB.weights.running;
+			function ranker(eventA, eventB) {
+				return eventA.features.running - eventB.features.running;
 			}
 
 			// 3 has max total, team-1 and team-2 are equal
@@ -96,25 +96,25 @@ describe('@bmoor/graph', function () {
 				nodes: [
 					{
 						ref: 'team-1',
-						weights: {
+						features: {
 							'best-offense': 2
 						}
 					},
 					{
 						ref: 'team-2',
-						weights: {
+						features: {
 							'best-offense': 3
 						}
 					},
 					{
 						ref: 'team-3',
-						weights: {
+						features: {
 							'best-offense': 4
 						}
 					},
 					{
 						ref: 'team-4',
-						weights: {
+						features: {
 							'best-offense': 1
 						}
 					}
@@ -123,19 +123,19 @@ describe('@bmoor/graph', function () {
 					w1: [
 						{
 							ref: 'game-1',
-							weights: {},
-							edges: [
+							features: {},
+							events: [
 								{
 									from: 'team-1',
 									to: 'team-2',
-									weights: {
+									features: {
 										running: 100
 									}
 								},
 								{
 									from: 'team-2',
 									to: 'team-1',
-									weights: {
+									features: {
 										running: 65
 									}
 								}
@@ -143,19 +143,19 @@ describe('@bmoor/graph', function () {
 						},
 						{
 							ref: 'game-2',
-							weights: {},
-							edges: [
+							features: {},
+							events: [
 								{
 									from: 'team-3',
 									to: 'team-4',
-									weights: {
+									features: {
 										running: 80
 									}
 								},
 								{
 									from: 'team-4',
 									to: 'team-3',
-									weights: {
+									features: {
 										running: 70
 									}
 								}
@@ -165,19 +165,19 @@ describe('@bmoor/graph', function () {
 					w2: [
 						{
 							ref: 'game-1',
-							weights: {},
-							edges: [
+							features: {},
+							events: [
 								{
 									from: 'team-1',
 									to: 'team-2',
-									weights: {
+									features: {
 										running: 80
 									}
 								},
 								{
 									from: 'team-2',
 									to: 'team-1',
-									weights: {
+									features: {
 										running: 120
 									}
 								}
@@ -185,19 +185,19 @@ describe('@bmoor/graph', function () {
 						},
 						{
 							ref: 'game-2',
-							weights: {},
-							edges: [
+							features: {},
+							events: [
 								{
 									from: 'team-3',
 									to: 'team-4',
-									weights: {
+									features: {
 										running: 80
 									}
 								},
 								{
 									from: 'team-4',
 									to: 'team-3',
-									weights: {
+									features: {
 										running: 70
 									}
 								}
@@ -323,13 +323,13 @@ describe('@bmoor/graph', function () {
 				}
 			);
 
-			function sorter(edgeA, edgeB) {
-				if (edgeA) {
+			function sorter(eventA, eventB) {
+				if (eventA) {
 					// whomever won the game
-					return edgeA.weights.score - edgeB.weights.score;
+					return eventA.features.score - eventB.features.score;
 				} else {
 					// playing less games is better
-					return edgeA.to.getEdgeCount() - edgeB.to.getEdgeCount();
+					return eventA.to.getEventCount() - eventB.to.getEventCount();
 				}
 			}
 
@@ -362,7 +362,7 @@ describe('@bmoor/graph', function () {
 			).to.deep.equal(['team-1', 'team-5', 'team-2', 'team-3', 'team-4']);
 		});
 
-		it('should not do anything without edges', function () {
+		it('should not do anything without events', function () {
 			const graph = new Graph();
 
 			graph
@@ -373,7 +373,7 @@ describe('@bmoor/graph', function () {
 				.addNode('team-5', {rank: 3});
 
 			function ranker(nodeA, nodeB) {
-				return nodeA.weights.rank - nodeB.weights.rank;
+				return nodeA.features.rank - nodeB.features.rank;
 			}
 
 			expect(
@@ -444,7 +444,7 @@ describe('@bmoor/graph', function () {
 
 			graph.calculateNodeWeight(
 				'running-average',
-				(edge) => edge.weights.running,
+				(event) => event.features.running,
 				{
 					summarizer: (values) =>
 						values.reduce((agg, value) => agg + value) / values.length
@@ -455,25 +455,25 @@ describe('@bmoor/graph', function () {
 				nodes: [
 					{
 						ref: 'team-1',
-						weights: {
+						features: {
 							'running-average': 90
 						}
 					},
 					{
 						ref: 'team-2',
-						weights: {
+						features: {
 							'running-average': 92.5
 						}
 					},
 					{
 						ref: 'team-3',
-						weights: {
+						features: {
 							'running-average': 80
 						}
 					},
 					{
 						ref: 'team-4',
-						weights: {
+						features: {
 							'running-average': 70
 						}
 					}
@@ -482,19 +482,19 @@ describe('@bmoor/graph', function () {
 					w1: [
 						{
 							ref: 'game-1',
-							weights: {},
-							edges: [
+							features: {},
+							events: [
 								{
 									from: 'team-1',
 									to: 'team-2',
-									weights: {
+									features: {
 										running: 100
 									}
 								},
 								{
 									from: 'team-2',
 									to: 'team-1',
-									weights: {
+									features: {
 										running: 65
 									}
 								}
@@ -502,19 +502,19 @@ describe('@bmoor/graph', function () {
 						},
 						{
 							ref: 'game-2',
-							weights: {},
-							edges: [
+							features: {},
+							events: [
 								{
 									from: 'team-3',
 									to: 'team-4',
-									weights: {
+									features: {
 										running: 80
 									}
 								},
 								{
 									from: 'team-4',
 									to: 'team-3',
-									weights: {
+									features: {
 										running: 70
 									}
 								}
@@ -524,19 +524,19 @@ describe('@bmoor/graph', function () {
 					w2: [
 						{
 							ref: 'game-1',
-							weights: {},
-							edges: [
+							features: {},
+							events: [
 								{
 									from: 'team-1',
 									to: 'team-2',
-									weights: {
+									features: {
 										running: 80
 									}
 								},
 								{
 									from: 'team-2',
 									to: 'team-1',
-									weights: {
+									features: {
 										running: 120
 									}
 								}
@@ -544,19 +544,19 @@ describe('@bmoor/graph', function () {
 						},
 						{
 							ref: 'game-2',
-							weights: {},
-							edges: [
+							features: {},
+							events: [
 								{
 									from: 'team-3',
 									to: 'team-4',
-									weights: {
+									features: {
 										running: 80
 									}
 								},
 								{
 									from: 'team-4',
 									to: 'team-3',
-									weights: {
+									features: {
 										running: 70
 									}
 								}
@@ -577,25 +577,25 @@ describe('@bmoor/graph', function () {
 
 			expect(
 				graph
-					.sort('sort-1', (a, b) => a.weights.value - b.weights.value)
+					.sort('sort-1', (a, b) => a.features.value - b.features.value)
 					.array.map((node) => node.ref)
 			).to.deep.equal(['foo', 'bar']);
 
 			expect(
 				graph
-					.sort('sort-2', (a, b) => b.weights.value - a.weights.value)
+					.sort('sort-2', (a, b) => b.features.value - a.features.value)
 					.array.map((node) => node.ref)
 			).to.deep.equal(['bar', 'foo']);
 
 			expect(
 				graph
-					.sort('sort-3', (b, a) => a.weights.value - b.weights.value)
+					.sort('sort-3', (b, a) => a.features.value - b.features.value)
 					.array.map((node) => node.ref)
 			).to.deep.equal(['bar', 'foo']);
 
-			expect(graph.getNode('foo').weights['sort-1']).to.equal(2);
-			expect(graph.getNode('foo').weights['sort-2']).to.equal(1);
-			expect(graph.getNode('foo').weights['sort-3']).to.equal(1);
+			expect(graph.getNode('foo').features['sort-1']).to.equal(2);
+			expect(graph.getNode('foo').features['sort-2']).to.equal(1);
+			expect(graph.getNode('foo').features['sort-3']).to.equal(1);
 		});
 	});
 
@@ -661,14 +661,14 @@ describe('@bmoor/graph', function () {
 
 			graph.calculateGraphWeight(
 				'running-average',
-				(edge) => edge.weights.running,
+				(event) => event.features.running,
 				{
 					summarizer: (values) =>
 						values.reduce((agg, value) => agg + value) / values.length
 				}
 			);
 
-			expect(graph.weights['running-average']).to.deep.equal(83.125);
+			expect(graph.features['running-average']).to.deep.equal(83.125);
 		});
 	});
 

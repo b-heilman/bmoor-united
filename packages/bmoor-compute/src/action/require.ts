@@ -1,33 +1,24 @@
 import {Action} from '../action';
-import {ActionReference} from '../action.interface';
-import {DatumInterface} from '../datum.interface';
-import {ActionRequireFn, ActionRequireThenFn} from './require.interface';
+import {ActionReference, ActionRequirement} from '../action.interface';
+import {ActionRequireThenFn} from './require.interface';
 
-export class ActionRequire<Interval, Selector> extends Action<
-	Interval,
-	Selector
+export class ActionRequire<NodeSelector, IntervalRef> extends Action<
+	NodeSelector,
+	IntervalRef
 > {
 	fn: ActionRequireThenFn;
-	args: ActionRequireFn<Interval>[];
-	requirements: Action<Interval, Selector>[];
+	requirements: ActionRequirement<NodeSelector, IntervalRef>[];
 
 	constructor(ref: ActionReference) {
 		super(ref);
 
-		this.args = [];
 		this.requirements = [];
 	}
 
 	require(
-		offset: number,
-		sub: Action<Interval, Selector>,
-	): ActionRequire<Interval, Selector> {
-		this.requirements.push(sub);
-		this.args.push(async (datum: DatumInterface<Interval>) => {
-			const myInterval = this.env.offsetInterval(datum.interval, offset);
-
-			return sub.execute(this.env.intervalSelect(datum, myInterval));
-		});
+		requirement: ActionRequirement<NodeSelector, IntervalRef>,
+	): ActionRequire<NodeSelector, IntervalRef> {
+		this.requirements.push(requirement);
 
 		return this;
 	}
@@ -36,13 +27,11 @@ export class ActionRequire<Interval, Selector> extends Action<
 		this.fn = fn;
 	}
 
-	getRequirements(): Action<Interval, Selector>[] {
+	getRequirements(): ActionRequirement<NodeSelector, IntervalRef>[] {
 		return this.requirements;
 	}
 
-	async eval(datum: DatumInterface<Interval>): Promise<number> {
-		const args = await Promise.all(this.args.map((fn) => fn(datum)));
-
-		return this.fn(...args);
+	async execute(includes: (number | number[])[]): Promise<number> {
+		return this.fn(...includes);
 	}
 }

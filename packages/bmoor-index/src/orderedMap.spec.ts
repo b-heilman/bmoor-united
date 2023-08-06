@@ -7,13 +7,13 @@ describe('@bmoor/index', function () {
 		it('should work correctly', async function () {
 			const om = new OrderedMap<number, string>();
 
-			om.setNode(1, 'eins');
-			om.setNode(2, 'zwei');
-			om.setNode(3, 'drei');
-			om.setNode(4, 'fier');
-			om.setNode(5, 'funf');
+			om.set(1, 'eins');
+			om.set(2, 'zwei');
+			om.set(3, 'drei');
+			om.set(4, 'fier');
+			om.set(5, 'funf');
 
-			expect(om.getNode(1)).to.equal('eins');
+			expect(om.get(1)).to.equal('eins');
 
 			expect(om.getTagsBetween(2, 4)).to.deep.equal([2, 3, 4]);
 
@@ -23,11 +23,11 @@ describe('@bmoor/index', function () {
 		it('should allow offsets', async function () {
 			const om = new OrderedMap<number, string>();
 
-			om.setNode(1, 'eins');
-			om.setNode(2, 'zwei');
-			om.setNode(3, 'drei');
-			om.setNode(4, 'fier');
-			om.setNode(5, 'funf');
+			om.set(1, 'eins');
+			om.set(2, 'zwei');
+			om.set(3, 'drei');
+			om.set(4, 'fier');
+			om.set(5, 'funf');
 
 			expect(om.getTagOffset(3, -2)).to.equal(1);
 			expect(om.getTagOffset(3, 2)).to.equal(5);

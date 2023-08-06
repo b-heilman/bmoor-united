@@ -5,5 +5,5 @@
   },
   "include": [
     "src"
-  ]
+, "../bmoor-compute-football/src/action/pull.ts"  ]
 }

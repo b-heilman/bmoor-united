@@ -14,4 +14,5 @@ export {
 	implode,
 	keys,
 	merge,
+	equals,
 } from './object';

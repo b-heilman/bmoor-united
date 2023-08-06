@@ -40,7 +40,7 @@ with open(os.path.join(sys.path[0], '../data/nfl_offense.csv'), "r") as f:
   "Wind_Speed"
 """
 
-with open('./data/weeks.json', 'r+') as file:
+with open('../data/weeks.json', 'r') as file:
   week_data = json.load(file)
   # need to flip this to make dataframe
   df_source = []
@@ -118,8 +118,8 @@ games = df[[
   inplace=False
 )
 
-if not os.path.exists('./data/parquet'):
-  os.mkdir('./data/parquet')
+if not os.path.exists('../data/parquet'):
+  os.mkdir('../data/parquet')
 
 games = join.merge(games, on="game_date", how="left")
 players = join.merge(players, on="game_date", how="left")
@@ -129,9 +129,9 @@ def write_file(df, path):
 
   pq.write_table(table, path, version='1.0', use_dictionary=False)
 
-write_file(games, './data/parquet/games.parquet')
+write_file(games, '../data/parquet/games.parquet')
 print('--games--\n', games.head(5))
 
-write_file(players, './data/parquet/players.parquet')
+write_file(players, '../data/parquet/players.parquet')
 print('--players--\n', players.head(5))
 

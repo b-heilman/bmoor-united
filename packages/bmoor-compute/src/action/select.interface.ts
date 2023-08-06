@@ -1,1 +1,1 @@
-export type ActionSelectTransformFn = (values: number[]) => number;
+export type ActionSelectTransformFn = (value: number) => number;

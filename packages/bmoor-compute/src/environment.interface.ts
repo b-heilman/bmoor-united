@@ -1,31 +1,44 @@
 import {DatumInterface} from './datum.interface';
+import {IntervalInterface} from './interval.interface';
+import {SelectionInterface} from './selection.interface';
 
 // interface which allows local methods to be defined
-export interface EnvironmentInterface<Interval, Selector> {
-	select(interval: Interval, select: Selector): DatumInterface<Interval>[];
+export interface EnvironmentInterface<
+	GraphSelector,
+	NodeSelector,
+	IntervalRef,
+	Order,
+> {
+	select(
+		interval: IntervalInterface<IntervalRef, Order>,
+		select: GraphSelector,
+	): SelectionInterface<NodeSelector, IntervalRef, Order>;
 
-	subSelect(
-		datum: DatumInterface<Interval>,
-		interval: Interval,
-		select: Selector,
-	): DatumInterface<Interval>[];
+	getGlobal(
+		interval: IntervalInterface<IntervalRef, Order>,
+	): DatumInterface<NodeSelector>;
 
 	intervalSelect(
-		datum: DatumInterface<Interval>,
-		interval: Interval,
-	): DatumInterface<Interval>;
+		datum: DatumInterface<NodeSelector>,
+		interval: IntervalInterface<IntervalRef, Order>,
+	): DatumInterface<NodeSelector>;
 
 	rangeSelect(
-		datum: DatumInterface<Interval>,
-		interval: Interval,
+		datum: DatumInterface<NodeSelector>,
+		interval: IntervalInterface<IntervalRef, Order>,
 		range: number,
-	): DatumInterface<Interval>[];
+	): Map<
+		IntervalInterface<IntervalRef, Order>,
+		DatumInterface<NodeSelector>
+	>;
 
-	getGlobal(interval: Interval): DatumInterface<Interval>;
+	overrideSelector(
+		select: GraphSelector,
+		override: GraphSelector,
+	): GraphSelector;
 
-	getSelfSelector(datum: DatumInterface<Interval>);
-
-	overrideSelector(select: Selector, override: Selector): Selector;
-
-	offsetInterval(interval: Interval, offset: number): Interval;
+	offsetInterval(
+		interval: IntervalInterface<IntervalRef, Order>,
+		offset: number,
+	): IntervalInterface<IntervalRef, Order>;
 }

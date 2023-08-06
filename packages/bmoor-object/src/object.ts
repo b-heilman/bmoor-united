@@ -460,3 +460,54 @@ export function merge<T>(
 
 	return to;
 }
+
+export function equals<T>(
+	cur: Record<string, T>,
+	comp: Record<string, T>,
+	deep = false,
+) {
+	const curKeys = Object.keys(cur);
+	const compKeys = Object.keys(comp);
+
+	if (curKeys.length !== compKeys.length) {
+		return false;
+	}
+
+	for (let i = 0, c = curKeys.length; i < c; i++) {
+		if (curKeys[i] !== compKeys[i]) {
+			return false;
+		}
+	}
+
+	if (deep) {
+		for (let i = 0, c = curKeys.length; i < c; i++) {
+			const key = curKeys[i];
+			const val = cur[key];
+			const other = comp[key];
+			if (val !== comp[key]) {
+				if (
+					!(
+						typeof val === 'object' &&
+						typeof other === 'object' &&
+						equals<T>(
+							<Record<string, T>>val,
+							<Record<string, T>>other,
+							deep,
+						)
+					)
+				) {
+					return false;
+				}
+			}
+		}
+	} else {
+		for (let i = 0, c = curKeys.length; i < c; i++) {
+			const key = curKeys[i];
+			if (cur[key] !== comp[key]) {
+				return false;
+			}
+		}
+	}
+
+	return true;
+}

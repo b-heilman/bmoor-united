@@ -1,5 +1,6 @@
-import {Weights} from './weights';
-import {WeightData} from './weights.interface';
+import {EdgeInterface, EdgeLabel} from './edge.interface';
+import {Features} from './features';
+import {FeatureValues} from './features.interface';
 
 export type NodeReference = string;
 
@@ -17,47 +18,69 @@ export interface NodeInterface {
 	type: NodeType;
 	// TODO: this needs to be moved higher
 	// Delta is the changes applied to the node
-	// delta?: Weights;
+	// delta?: Features;
 	// State is the result of all deltas prior, but not this one
-	weights?: Weights;
+	features: Features;
 	// The alignment of nodes can change over time, so parent and children
 	// should be defined here.
 	parent?: NodeInterface;
-	children?: Map<NodeType, NodeInterface[]>;
+	children: Map<NodeType, NodeInterface[]>;
+	edges: Map<EdgeLabel, EdgeInterface[]>;
 	// Technically, tags might change over time too
-	tags?: NodeTag[];
+	metadata: Map<string, NodeTag>;
 }
 
-export interface NodeJson {
+export interface NodeJSON {
 	ref: NodeReference;
-	type: NodeType;
+	type?: NodeType;
 
-	weights?: WeightData;
+	// TODO: I probably should rename this to features...
+	features?: FeatureValues;
 	// I could define an interval to maintain the relationship, but no event happens
 	parentRef?: NodeReference;
 
 	//
-	tags?: NodeTag[];
+	metadata?: Record<string, NodeTag>;
+
+	edges?: Record<EdgeLabel, NodeReference[]>;
 }
 
 export enum NodeValueSelector {
 	node,
-	edge,
+	event,
 }
 
-export interface NodeChildSelector {
-	type: NodeType;
+export interface NodeSelector {
+	// TODO: I might want to move this out of here, make
+	//   it a variable passed in with the selector
+	mode?: NodeValueSelector; // current , past
+
+	// TODO: where nodes are selected, order should matter
+	//   make sure to standardize that.
+	// search up the tree
+	parent?: NodeType;
+
+	edge?: EdgeLabel;
+
+	// search across the connections
+	sibling?: NodeType;
+
+	// search down the tree
+	type?: NodeType;
+
+	// filter results based on this
+	metadata?: Record<string, NodeTag>;
 }
 
 export interface NodeSettings {
-	tags?: NodeTag[];
+	metadata?: Record<string, NodeTag>;
 	parent?: NodeInterface;
-	weights?: Weights;
+	features?: FeatureValues;
 }
 
 export type NodeOperator = (
-	targetWeights: Weights,
-	sourceWeights: Weights,
+	targetFeatures: Features,
+	sourceFeatures: Features,
 ) => void;
 
 export const NODE_DEFAULT_TYPE = '__DEFAULT__';

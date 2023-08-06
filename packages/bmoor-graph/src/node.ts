@@ -1,39 +1,45 @@
-import {EdgeInterface} from './edge.interface';
+import {implode} from '@bmoor/object';
+
+import {Edge} from './edge';
+import {EdgeLabel} from './edge.interface';
+import {EventInterface, EventReference} from './event.interface';
+import {Features} from './features';
+import {FeatureValues} from './features.interface';
 import {
 	NODE_DEFAULT_TYPE,
-	NodeChildSelector,
 	NodeInterface,
-	NodeJson,
+	NodeJSON,
 	NodeOperator,
 	NodePullSettings,
 	NodeReference,
+	NodeSelector,
 	NodeSettings,
 	NodeTag,
 	NodeType,
 	NodeValueSelector,
 } from './node.interface';
-import {Weights} from './weights';
 
 /**
- * TODO: I want to allow different types of nodes to exist on a graph all tied to the same event with their own weights.
+ * TODO: I want to allow different types of nodes to exist on a graph all tied to the same event with their own features.
  *   - Nodes need to get a type ('team', 'player')
- *   - When adding player data, you assign as an edge to the game <event> from the player to the team
+ *   - When adding player data, you assign as an event to the game <event> from the player to the team
  *   - Able to do calculations for all 'players'
  *   - Use players to calculate position scores for teams-
  */
 
 /**
- * TODO: Node can have edge to other nodes, think of games a team
+ * TODO: Node can have event to other nodes, think of games a team
  * has played in this interval
  */
 export class Node implements NodeInterface {
 	ref: NodeReference;
 	type: NodeType;
-	edges: EdgeInterface[];
-	weights: Weights;
+	events: Map<EventReference, EventInterface>;
+	features: Features;
 	parent?: Node;
-	children?: Map<NodeType, Node[]>;
-	tags: NodeTag[];
+	children: Map<NodeType, Node[]>;
+	edges: Map<EdgeLabel, Edge[]>;
+	metadata: Map<string, NodeTag>;
 
 	constructor(
 		ref: NodeReference,
@@ -42,11 +48,26 @@ export class Node implements NodeInterface {
 	) {
 		this.ref = ref;
 		this.type = type;
-		this.tags = settings?.tags || [];
-		this.edges = [];
-		this.parent = <Node>settings?.parent || null;
-		this.weights = settings?.weights || new Weights();
+		this.events = new Map();
+		this.edges = new Map();
+		this.parent = null;
 		this.children = new Map();
+		this.metadata = new Map();
+		this.features = new Features();
+
+		if (settings) {
+			if (settings.features) {
+				this.addFeatures(settings.features);
+			}
+
+			if (settings.metadata) {
+				this.setMetadata(settings.metadata);
+			}
+
+			if (settings.parent) {
+				this.setParent(<Node>settings.parent);
+			}
+		}
 	}
 
 	setParent(parent: Node): Node {
@@ -55,6 +76,26 @@ export class Node implements NodeInterface {
 		parent.addChild(this);
 
 		return this;
+	}
+
+	hasParent() {
+		return this.parent !== null;
+	}
+
+	addFeatures(features: FeatureValues) {
+		this.features.load(features);
+	}
+
+	hasFeatures() {
+		return this.features.hasData();
+	}
+
+	setMetadata(metadata: Record<string, NodeTag>) {
+		this.metadata = new Map(Object.entries(implode(metadata)));
+	}
+
+	hasMetadata() {
+		return this.metadata.size > 0;
 	}
 
 	addChild(child: Node): Node {
@@ -75,42 +116,131 @@ export class Node implements NodeInterface {
 		return this.children.size !== 0;
 	}
 
-	addEdge(edge: EdgeInterface): Node {
-		this.edges.push(edge);
+	addEvent(event: EventInterface): Node {
+		if (!this.events.has(event.ref)) {
+			this.events.set(event.ref, event);
+		}
 
 		return this;
 	}
 
-	getChildren(selector: NodeChildSelector, deep = false): Node[] {
-		if (selector === null) {
-			let rtn = [];
+	addEdge(edge: Edge): Node {
+		const edgeSet = this.edges.get(edge.label);
 
-			for (const entry of this.children.values()) {
-				for (const node of entry) {
-					rtn.push(node);
-
-					if (deep) {
-						rtn = rtn.concat(node.getChildren(selector, deep));
-					}
-				}
-			}
-
-			return rtn;
-		} else if (this.children.has(selector.type)) {
-			return this.children.get(selector.type);
-		} else if (deep) {
-			let rtn = [];
-
-			for (const entry of this.children.values()) {
-				for (const node of entry) {
-					rtn = rtn.concat(node.getChildren(selector, deep));
-				}
-			}
-
-			return rtn;
+		if (edgeSet) {
+			edgeSet.push(edge);
 		} else {
-			return [];
+			this.edges.set(edge.label, [edge]);
 		}
+
+		return this;
+	}
+
+	hasEdges(): boolean {
+		return this.edges.size > 0;
+	}
+
+	/** NEXT
+	 * - Loader adding edge
+	 * - search via edges
+	 ***/
+
+	getChildren(deep): Node[] {
+		let rtn = [];
+
+		for (const entry of this.children.values()) {
+			for (const node of entry) {
+				rtn.push(node);
+
+				if (deep) {
+					rtn = rtn.concat(node.getChildren(deep));
+				}
+			}
+		}
+
+		return rtn;
+	}
+
+	selectChildren(selector: NodeSelector, deep = false): Node[] {
+		let rtn: Node[] = [];
+
+		if (this.children.has(selector.type)) {
+			rtn = this.children.get(selector.type);
+		} else if (deep) {
+			for (const entry of this.children.values()) {
+				for (const node of entry) {
+					rtn = rtn.concat(node.selectChildren(selector, deep));
+				}
+			}
+		}
+
+		return rtn;
+	}
+
+	selectParent(selector: NodeSelector): Node {
+		let found = null;
+		let cur = this.parent;
+
+		while (cur && found === null) {
+			if (cur.type === selector.parent) {
+				found = cur;
+			} else {
+				cur = cur.parent;
+			}
+		}
+
+		return found;
+	}
+
+	selectEdges(selector: NodeSelector): Node[] {
+		return this.edges.get(selector.edge)?.map((edge) => edge.target) || [];
+	}
+
+	selectSiblings(selector: NodeSelector): Node[] {
+		if (this.parent?.children.has(selector.sibling)) {
+			if (selector.sibling === this.type) {
+				return this.parent.children
+					.get(selector.sibling)
+					.filter((node) => node !== this);
+			} else {
+				return this.parent.children.get(selector.sibling);
+			}
+		}
+
+		return [];
+	}
+
+	select(selector: NodeSelector): Node[] {
+		let rtn: Node[] = null;
+
+		if (!selector) {
+			// return all leafs
+			rtn = this.getChildren(true);
+		} else {
+			rtn = [selector.parent ? this.selectParent(selector) : this];
+
+			if (selector.edge) {
+				rtn = rtn.flatMap((node) => node.selectEdges(selector));
+			}
+
+			if (selector.sibling) {
+				rtn = rtn.flatMap((node) => node.selectSiblings(selector));
+			}
+
+			if (selector.type) {
+				rtn = rtn.flatMap((node) =>
+					node.selectChildren({type: selector.type}, true),
+				);
+			}
+
+			if (selector.metadata) {
+				for (const [mount, tag] of Object.entries(selector.metadata)) {
+					rtn = rtn.filter((node) => node.searchMetadata(mount, tag));
+				}
+			}
+		}
+
+		return rtn;
 	}
 
 	setType(type: NodeType) {
@@ -119,18 +249,21 @@ export class Node implements NodeInterface {
 		return this;
 	}
 
-	hasTag(tag: NodeTag): boolean{
-		return this.tags.indexOf(tag) !== -1;
+	searchMetadata(mount: string, tag: NodeTag = null): boolean {
+		if (tag) {
+			return this.metadata.get(mount) === tag;
+		} else {
+			return this.metadata.has(mount);
+		}
 	}
 
-	// edge vs weight.  Edge is input from the results, weights are the calculated values.
-	// data flow is edge => weight
+	// event vs weight.  Event is input from the results, features are the calculated values.
+	// data flow is event => weight
 	bubble(fn: NodeOperator, through = false) {
 		if (this.parent) {
 			const parent = this.parent;
 			// bubble this command up the relationship chain
-			// TODO: yeah...
-			fn(parent.weights, this.weights);
+			fn(parent.features, this.features);
 
 			if (through) {
 				parent.bubble(fn);
@@ -145,7 +278,7 @@ export class Node implements NodeInterface {
 		if (this.children) {
 			for (const childList of this.children.values()) {
 				for (const child of childList) {
-					fn(child.weights, this.weights);
+					fn(child.features, this.features);
 
 					if (through) {
 						child.trickle(fn);
@@ -195,47 +328,50 @@ export class Node implements NodeInterface {
 	): Promise<boolean> {
 		selector === NodeValueSelector.node
 			? this.setWeight(mount, value)
-			: this.edges.map((edge) =>
-					edge.nodeWeights.get(this.ref).set(mount, value),
+			: Array.from(this.events.values()).map((event) =>
+					event.getNodeFeatures(this.ref).set(mount, value),
 			  );
 
 		return true;
 	}
 
-	// allows access to either current node or edge weights
+	// allows access to either current node or event features
 	async getValue(
 		mount: string,
 		selector: NodeValueSelector,
 	): Promise<number> {
 		return selector === NodeValueSelector.node
 			? this.getWeight(mount)
-			: this.edges.reduce(
-					(sum, edge) => sum + edge.nodeWeights.get(this.ref).get(mount),
+			: Array.from(this.events.values()).reduce(
+					(sum, event) => sum + event.getNodeFeatures(this.ref).get(mount),
 					0,
 			  );
 	}
 
-	// allows access to either current node or edge weights
+	// allows access to either current node or event features
 	hasValue(mount: string, selector: NodeValueSelector): boolean {
 		return selector === NodeValueSelector.node
 			? this.hasWeight(mount)
-			: this.edges[0].nodeWeights.get(this.ref).has(mount);
+			: Array.from(this.events.values()).reduce(
+					(prev, event) => prev || event.hasNodeFeature(this.ref, mount),
+					false,
+			  );
 	}
 
 	// allow access to just current values
 	setWeight(mount: string, value: number) {
-		this.weights.set(mount, value);
+		this.features.set(mount, value);
 
 		return this;
 	}
 
 	getWeight(mount: string): number {
-		return this.weights.get(mount);
+		return this.features.get(mount);
 	}
 
 	hasWeight(mount: string = null): boolean {
-		if (this.weights) {
-			return this.weights.has(mount);
+		if (this.features) {
+			return this.features.has(mount);
 		}
 
 		return false;
@@ -247,7 +383,7 @@ export class Node implements NodeInterface {
 	}
 
 	// return back the data in imploded form
-	compareWeights(interval: Interval, other: Weighted, mounts: Record<string, string>): Weights {
+	compareFeatures(interval: Interval, other: Weighted, mounts: Record<string, string>): Features {
 		return Object.entries(mounts).reduce((agg, [key, mount]) => {
 			agg[key] = this.compareWeight(interval, other, mount);
 
@@ -256,14 +392,33 @@ export class Node implements NodeInterface {
 	}
 	*/
 
-	toJSON(): NodeJson {
-		const rtn = {
+	toJSON(): NodeJSON {
+		const rtn: NodeJSON = {
 			ref: this.ref,
 			type: this.type,
-			tags: this.tags,
-			parentRef: this.parent?.ref,
-			weights: this.weights.toJSON(),
 		};
+
+		if (this.metadata.size) {
+			rtn.metadata = Object.fromEntries(this.metadata);
+		}
+
+		if (this.parent) {
+			rtn.parentRef = this.parent.ref;
+		}
+
+		if (this.features.hasData()) {
+			rtn.features = this.features.toJSON();
+		}
+
+		if (this.edges.size) {
+			rtn.edges = Array.from(this.edges.entries()).reduce(
+				(agg, [label, edgeSet]) => {
+					agg[label] = edgeSet.map((edge) => edge.target.ref);
+					return agg;
+				},
+				{},
+			);
+		}
 
 		return rtn;
 	}

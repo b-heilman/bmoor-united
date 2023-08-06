@@ -12,7 +12,7 @@ export class OrderedMap<Tag, Node> {
 		this.tagPos = new Map();
 	}
 
-	setNode(tag: Tag, node: Node) {
+	set(tag: Tag, node: Node) {
 		this.index.set(tag, node);
 
 		const pos = this.tags.length;
@@ -21,11 +21,11 @@ export class OrderedMap<Tag, Node> {
 		this.tagPos.set(tag, pos);
 	}
 
-	getNode(tag: Tag): Node {
+	get(tag: Tag): Node {
 		return this.index.get(tag);
 	}
 
-	hasNode(tag: Tag): boolean {
+	has(tag: Tag): boolean {
 		return this.index.has(tag);
 	}
 
@@ -60,9 +60,9 @@ export class OrderedMap<Tag, Node> {
 		return rtn;
 	}
 
-	getNodesBetween(start: Tag, stop: Tag): Map<Tag, Node> {
+	getBetween(start: Tag, stop: Tag): Map<Tag, Node> {
 		return this.getTagsBetween(start, stop).reduce((agg, tag) => {
-			agg.set(tag, this.getNode(tag));
+			agg.set(tag, this.get(tag));
 			return agg;
 		}, new Map());
 	}

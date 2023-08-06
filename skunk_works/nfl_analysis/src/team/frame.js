@@ -18,7 +18,7 @@ for(const year of seasons){
     frame.compute(
         (nodeA, nodeB, edgeA, edgeB) => {
             return Object.assign(
-                nodeA.compareWeights(nodeB, [
+                nodeA.compareFeatures(nodeB, [
                     'def-rank',
                     'off-rank',
                     'full-rank',

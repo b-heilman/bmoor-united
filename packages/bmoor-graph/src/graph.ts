@@ -1,48 +1,64 @@
 import {Edge} from './edge';
-import {GraphEdgeWeights, GraphInterface, GraphJson, GraphSelector} from './graph.interface';
+import {Event} from './event';
+import {
+	EventFeaturesWriteMode,
+	EventJSON,
+	EventReference,
+} from './event.interface';
+import {Features} from './features';
+import {
+	GraphBuilder,
+	GraphEventFeatures,
+	GraphInterface,
+	GraphJSON,
+	GraphSelector,
+} from './graph.interface';
+import {GraphGlobal} from './graph/global';
+import {GraphSelection} from './graph/selection';
 import {Node} from './node';
-import {NodeReference, NodeType} from './node.interface';
-import {Weights} from './weights';
+import {
+	NODE_DEFAULT_TYPE,
+	NodeJSON,
+	NodeReference,
+	NodeType,
+} from './node.interface';
 
 // used to manage all top levels nodes and then facilitates
 // passing data through them
-function connect(graph: Graph, node: Node, edge: Edge) {
-	let arr = graph.edgeDex.get(node.ref);
+function connect(graph: Graph, node: Node, event: Event) {
+	let arr = graph.connectionDex.get(node.ref);
 
 	if (!arr) {
 		arr = [];
 
-		graph.edgeDex.set(node.ref, arr);
+		graph.connectionDex.set(node.ref, arr);
 	}
 
-	arr.push(edge);
+	arr.push(event);
 
-	node.addEdge(edge);
+	node.addEvent(event);
 }
 
 export class Graph implements GraphInterface {
-	top: Node[];
-	edges: Edge[];
 	types: Map<NodeType, Node[]>;
-	weights: Weights;
+	features: Features;
 	nodeDex: Map<NodeReference, Node>;
-	edgeDex: Map<NodeReference, Edge[]>;
+	eventDex: Map<EventReference, Event>;
+	connectionDex: Map<NodeReference, Event[]>;
 
-	constructor(){
-		this.top = [];
-		this.edges = [];
+	constructor() {
 		this.types = new Map();
-		this.weights = new Weights();
+		this.features = new Features();
 		this.nodeDex = new Map();
-		this.edgeDex = new Map();
+		this.eventDex = new Map();
+		this.connectionDex = new Map();
 	}
 
 	addNode(node: Node): void {
+		// TODO: I'd like to figure out how to merge this
+		//   logic with getOrCreateNode.  Makes me think I need to
+		//   delay adding in the loading loop and just create
 		if (!this.nodeDex.has(node.ref)) {
-			if (!node.parent) {
-				this.top.push(node);
-			}
-
 			this.nodeDex.set(node.ref, node);
 
 			let arr = this.types.get(node.type);
@@ -64,146 +80,179 @@ export class Graph implements GraphInterface {
 		return this.nodeDex.has(ref);
 	}
 
-	addEdge(edge: Edge): void {
-		for (const node of edge.nodes){
-			connect(this, <Node>node, edge);
+	addEvent(event: Event): void {
+		this.eventDex.set(event.ref, event);
+
+		for (const {node} of event.nodeInfo.values()) {
+			connect(this, <Node>node, event);
+			(<Node>node).addEvent(event);
 		}
-
-		this.edges.push(edge);
 	}
 
-	biConnectNodes(
-		edgeWeights: Weights,
-		ref1: NodeReference,
-		weights1: Weights,
-		ref2: NodeReference,
-		weights2: Weights,
-	): Edge {
-		const node1 = this.getNode(ref1);
-		const node2 = this.getNode(ref2);
-	
-		const edge = new Edge(node1.ref + ':' + node2.ref, edgeWeights);
-
-		edge.addNodeWeight(node1, weights1);
-		edge.addNodeWeight(node2, weights2);
-
-		this.addEdge(edge);
-
-		return edge;
+	getEvent(ref: EventReference): Event {
+		return this.eventDex.get(ref);
 	}
 
-	getEdges(ref: NodeReference): Edge[] {
-		return this.edgeDex.get(ref);
+	hasEvent(ref: EventReference): boolean {
+		return this.eventDex.has(ref);
 	}
 
-	getEdgeWeights(ref: NodeReference): GraphEdgeWeights[] {
-		const edges = this.getEdges(ref);
-
-		return edges.map(
-			edge => ({
-				edgeWeights: edge.weights,
-				nodeWeights: edge.nodeWeights.get(ref)
-			})
-		);
+	getEvents(ref: NodeReference): Event[] {
+		return this.connectionDex.get(ref);
 	}
 
-	select(select: GraphSelector): Node[] {
+	getEventFeatures(ref: NodeReference): GraphEventFeatures[] {
+		const events = this.getEvents(ref);
+
+		return events.map((event) => ({
+			eventFeatures: event.features,
+			nodeFeatures: event.nodeInfo.get(ref).features,
+		}));
+	}
+
+	select(selector: GraphSelector): GraphSelection {
 		let rtn: Node[] = null;
 
+<<<<<<< HEAD
 		if (select.reference && select.type){
 			const node = this.getNode(select.reference);
 
-			rtn = node.getChildren({type: select.type}, true);
-		} else if (select.reference){
-			rtn = [this.getNode(select.reference)];
-		} else {
-			rtn = this.types.get(select.type);
-		}
-
-		if (select.tag){
-			return rtn.filter(node => node.hasTag(select.tag));
-		} else {
-			return rtn;
-		}
-	}
-
-	subSelect(node: Node, select: GraphSelector): Node[] {
-		let rtn: Node[] = null;
-
-		if (select === null) {
-			// return all leaves
-			rtn = node.getChildren(null, true);
+			rtn = node.selectChildren({type: select.type}, true);
 		} else if (select.reference) {
-			// TODO: do I want to support reference for children?
-			throw new Error('Can no subselect by reference');
+			rtn = [this.getNode(select.reference)];
+=======
+		if (selector.reference) {
+			rtn = [this.getNode(selector.reference)];
+>>>>>>> add: finishing touches on edges, fixing graph build
 		} else {
-			rtn = node.getChildren({type: select.type}, true);
+			rtn = this.types.get(selector.type);
+			selector = Object.assign({}, selector, {type: null}); // so it doesn't run again
 		}
-
-		if (select.tag) {
-			return rtn.filter((node) => node.hasTag(select.tag));
-		} else {
-			return rtn;
-		}
+		return new GraphSelection(
+			selector,
+			rtn.flatMap((node) => node.select(selector)),
+		).unique();
 	}
 
-	toJSON(): GraphJson {
+	getGlobal(): GraphGlobal {
+		return new GraphGlobal(this.features);
+	}
+
+	toJSON(): GraphJSON {
 		const nodes = [];
 
 		for (const node of this.nodeDex.values()) {
 			nodes.push(node.toJSON());
 		}
 
-		const edges = this.edges.map((edge) => edge.toJSON());
+		const events = Array.from(this.eventDex.values()).map((event) =>
+			event.toJSON(),
+		);
 
 		return {
 			nodes,
-			edges,
+			events,
 		};
 	}
 }
 
-export function dump(graph: Graph): GraphJson {
+export function dump(graph: Graph): GraphJSON {
 	return graph.toJSON();
 }
 
-export function load(source: GraphJson): Graph {
-	const graph = new Graph();
+export function prepareNodeJSON(
+	builder: GraphBuilder,
+	nodeInfo: NodeJSON,
+): Node {
+	const dex = builder.nodes;
 
-	for (const nodeInfo of source.nodes){
-		const node = new Node(
-			nodeInfo.ref,
-			nodeInfo.type,
-			{
-				tags: nodeInfo.tags,
-				weights: new Weights(nodeInfo.weights)
+	let node = <Node>dex.get(nodeInfo.ref);
+
+	if (!node) {
+		node = new Node(nodeInfo.ref);
+
+		dex.set(node.ref, node);
+	}
+
+	if (nodeInfo.type && node.type === NODE_DEFAULT_TYPE) {
+		node.type = nodeInfo.type;
+	}
+
+	if (nodeInfo.parentRef && !node.hasParent()) {
+		node.setParent(
+			prepareNodeJSON(builder, {
+				ref: nodeInfo.parentRef,
+			}),
+		);
+	}
+
+	if (nodeInfo.features) {
+		node.addFeatures(nodeInfo.features);
+	}
+
+	if (nodeInfo.metadata && !node.hasMetadata()) {
+		node.setMetadata(nodeInfo.metadata);
+	}
+
+	if (nodeInfo.edges && !node.hasEdges()) {
+		for (const label in nodeInfo.edges) {
+			const edgeSet = nodeInfo.edges[label];
+
+			for (const ref of edgeSet) {
+				node.addEdge(new Edge(label, prepareNodeJSON(builder, {ref})));
 			}
-		);
-
-		if (nodeInfo.parentRef){
-			const parent = graph.getNode(nodeInfo.parentRef);
-
-			node.setParent(parent);
 		}
-
-		graph.addNode(node);
 	}
 
-	for(const edgeInfo of source.edges){
-		const edge = new Edge(
-			edgeInfo.ref, 
-			new Weights(edgeInfo.weights)
-		);
+	return node;
+}
 
-		for (const conn of edgeInfo.connections){
-			edge.addNodeWeight(
-				graph.getNode(conn.nodeRef),
-				new Weights(conn.weights)
-			);
-		}
+function addEventJSON(graph: Graph, eventInfo: EventJSON) {
+	let event = null;
 
-		graph.addEdge(edge);
+	if (graph.hasEvent(eventInfo.ref)) {
+		event = graph.getEvent(eventInfo.ref);
+	} else {
+		// TODO: should I use _collision here?
+		event = new Event(eventInfo.ref, new Features(eventInfo.features));
+
+		graph.addEvent(event);
 	}
+
+	for (const conn of eventInfo.connections) {
+		// when the event is added, no weights have been applied
+		connect(graph, graph.getNode(conn.nodeRef), event);
+
+		event.setNodeFeatures(
+			graph.getNode(conn.nodeRef),
+			new Features(conn.features),
+			conn.collision || EventFeaturesWriteMode.ignore,
+		);
+	}
+}
+
+export function applyBuilder(graph: Graph, builder: GraphBuilder) {
+	for (const node of builder.nodes.values()) {
+		graph.addNode(<Node>node);
+	}
+
+	for (const eventInfo of builder.events) {
+		addEventJSON(graph, eventInfo);
+	}
+}
+
+export function load(source: GraphJSON): Graph {
+	const graph = new Graph();
+	const builder = {
+		nodes: new Map(),
+		events: source.events,
+	};
+
+	for (const nodeInfo of source.nodes) {
+		prepareNodeJSON(builder, nodeInfo);
+	}
+
+	applyBuilder(graph, builder);
 
 	return graph;
 }

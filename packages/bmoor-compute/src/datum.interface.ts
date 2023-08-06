@@ -2,9 +2,8 @@ export type DatumReference = string;
 
 export type FeatureReference = string;
 
-export interface DatumInterface<Interval> {
+export interface DatumInterface<NodeSelector> {
 	ref?: DatumReference;
-	interval: Interval;
 
 	hasValue(attr: FeatureReference): boolean;
 
@@ -13,4 +12,6 @@ export interface DatumInterface<Interval> {
 
 	// set the value
 	setValue(attr: FeatureReference, value: number): Promise<boolean>;
+
+	select(select: NodeSelector): DatumInterface<NodeSelector>[];
 }

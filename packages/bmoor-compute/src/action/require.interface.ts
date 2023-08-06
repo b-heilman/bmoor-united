@@ -4,4 +4,6 @@ export type ActionRequireFn<Interval> = (
 	datum: DatumInterface<Interval>,
 ) => Promise<number>;
 
-export type ActionRequireThenFn = (...args: number[]) => number;
+export type ActionRequireThenFn = (
+	...args: (number | number[])[]
+) => number;

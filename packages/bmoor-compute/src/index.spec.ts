@@ -3,18 +3,28 @@ import {expect} from 'chai';
 import {ActionRange} from './action/range';
 import {ActionRequire} from './action/require';
 import {ActionSelect} from './action/select';
-import {Interval, Selector} from './environment';
-import {Environment, Registry} from './index';
+import {Environment, Interval, Order, Selector} from './environment';
+import {Executor} from './executor';
+import {Registry} from './index';
 
-class Select extends ActionSelect<Interval, Selector> {}
+class Select extends ActionSelect<Selector, Interval> {}
 
-class Require extends ActionRequire<Interval, Selector> {}
+class Require extends ActionRequire<Selector, Interval> {}
 
-class Range extends ActionRange<Interval, Selector> {}
+class Range extends ActionRange<Selector, Interval> {}
 
 describe('@bmoor/compute', function () {
-	it('should work', async function () {
-		const env = new Environment({
+	let env = null;
+	let registry = null;
+	let executor = null;
+
+	let foo = null;
+	let bar1 = null;
+	let bar2 = null;
+	let calc1 = null;
+
+	beforeEach(function () {
+		env = new Environment({
 			eins: {
 				'g-1': {
 					foo: 1,
@@ -73,15 +83,28 @@ describe('@bmoor/compute', function () {
 			},
 		});
 
-		const registry = new Registry<Interval, Selector>(env);
+		registry = new Registry<Selector, Interval>();
 
-		const foo = new Select('s:1', 'foo');
+		executor = new Executor<Selector, Selector, Interval, Order>(
+			env,
+			registry,
+		);
 
-		const bar1 = new Require('r:1');
+		// TODO: I don't need select if I allow
+		//   executor to direcly read values
+		foo = new Select('s:1', 'foo');
+
+		bar1 = new Require('r:1');
 		bar1
-			.require(-1, foo)
-			.require(-2, foo)
-			.then((arg1, arg2) => {
+			.require({
+				offset: -1,
+				action: foo,
+			})
+			.require({
+				offset: -2,
+				feature: 'foo',
+			})
+			.then((arg1: number, arg2: number) => {
 				return (arg1 + arg2) / 2;
 			});
 
@@ -89,95 +112,60 @@ describe('@bmoor/compute', function () {
 
 		function fn1(vals: number[]) {
 			const sum = vals.reduce((agg, val) => agg + val, 0);
-
 			return sum / vals.length;
 		}
 
-		const calc1 = new Range('range:3:0', 'foo', 3, fn1);
-		const calc2 = new Range('range:3:-1', 'foo', 3, fn1, -1);
+		calc1 = new Range('range:3:0', 'foo', 3, fn1);
+		registry.addAction(calc1);
 
-		const bar3 = new Require('r:2');
-		bar3
-			.require(-2, bar1)
-			.require(-2, calc1)
-			.then((arg1, arg2) => (arg1 + arg2) / 2);
+		bar2 = new Require('r:2');
+		bar2
+			.require({
+				offset: -2,
+				action: bar1,
+			})
+			.require({
+				offset: -2,
+				action: calc1,
+			})
+			.then((arg1: number, arg2: number) => (arg1 + arg2) / 2);
 
-		registry.addAction(bar3);
+		registry.addAction(bar2);
+	});
 
-		const foo2 = new Select('s:2', calc2, {sub: 'g-1'});
-
-		registry.addAction(foo2);
-
-		const bar4 = new Require('r:3');
-		bar4
-			.require(-2, bar1)
-			.require(-1, foo2)
-			.then((arg1, arg2) => (arg1 + arg2) / 2);
-
-		registry.addAction(bar4);
-
-		const calc3 = new Range(
-			'range:3',
-			'foo',
-			2,
-			function (values) {
-				console.log('>', values[0], values[1]);
-				return values[0] - values[1];
-			},
-			-1,
-		);
-
-		const calc4 = new Range('range:4', calc3, 3, function (values) {
-			return values[0] - values[values.length - 1];
-		});
-
-		registry.addAction(calc4);
-
+	it('should work with a simple execution', async function () {
 		// (1 + 2) / 2
-		const v1 = await registry.calculate('drei', 'r:1', {
+		const v1 = await executor.calculate({ref: 'drei', order: 0}, 'r:1', {
 			sub: 'g-1',
 		});
-		expect(v1).to.equal(1.5);
+		expect(v1).to.deep.equal([1.5]);
+	});
 
-		// (2 + 3 + 4) / 3
-		const v2 = await registry.calculate('fier', 'range:3:0', {
-			sub: 'g-1',
-		});
-		expect(v2).to.equal(3);
-
-		// (1 + 2 + 3) / 3
-		const v22 = await registry.calculate('fier', 'range:3:-1', {
-			sub: 'g-1',
-		});
-		expect(v22).to.equal(2);
-
-		const v23 = await registry.calculate('drei', 'range:3:-1', {
-			sub: 'g-1',
-		});
-		expect(v23).to.equal(1.5);
-
-		// (((4 + 3) / 2) + ((5 + 4 + 3) / 3)) / 2
-		const v3 = await registry.calculate('sieben', 'r:2', {
-			sub: 'g-1',
-		});
-		expect(v3).to.equal(3.75);
-
+	it('should allow you to simply pick the other side', async function () {
 		// (10 + 20) / 2
-		const v4 = await registry.calculate('drei', 'r:1', {
+		const v4 = await executor.calculate({ref: 'drei', order: 0}, 'r:1', {
 			sub: 'g-2',
 		});
-		expect(v4).to.equal(15);
+		expect(v4).to.deep.equal([15]);
+	});
 
-		// (((40 + 30) / 2) + ((5 + 4 + 3) / 3)) / 2 => (35 + 4) / 2
-		const v5 = await registry.calculate('sieben', 'r:3', {
-			sub: 'g-2',
-		});
-		expect(v5).to.equal(19.5);
+	it('should work with a range execution', async function () {
+		// (2 + 3 + 4) / 3
+		const v2 = await executor.calculate(
+			{ref: 'fier', order: 0},
+			'range:3:0',
+			{
+				sub: 'g-1',
+			},
+		);
+		expect(v2).to.deep.equal([3]);
+	});
 
-		// arr = [(3-4),(4-5),(5-6)] => (-1) - (-1)
-		const v6 = await registry.calculate('sieben', 'range:4', {
+	it('should allow compound calls', async function () {
+		// (((4 + 3) / 2) + ((5 + 4 + 3) / 3)) / 2
+		const v3 = await executor.calculate({ref: 'sieben', order: 0}, 'r:2', {
 			sub: 'g-1',
 		});
-		expect(v6).to.equal(0);
+		expect(v3).to.deep.equal([3.75]);
 	});
 });

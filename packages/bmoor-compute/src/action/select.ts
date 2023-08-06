@@ -1,21 +1,23 @@
 import {Action} from '../action';
-import {ActionFeature, ActionReference} from '../action.interface';
-import {DatumInterface} from '../datum.interface';
+import {
+	ActionFeature,
+	ActionReference,
+	ActionRequirement,
+} from '../action.interface';
 import {ActionSelectTransformFn} from './select.interface';
 
-export class ActionSelect<Interval, Selector> extends Action<
-	Interval,
-	Selector
+export class ActionSelect<NodeSelector, IntervalRef> extends Action<
+	NodeSelector,
+	IntervalRef
 > {
-	offset: number;
-	feature: ActionFeature<Interval, Selector>;
-	override: Selector;
+	feature: ActionFeature<NodeSelector, IntervalRef>;
+	override: NodeSelector;
 	fn: ActionSelectTransformFn;
 
 	constructor(
 		ref: ActionReference,
-		feature: ActionFeature<Interval, Selector>,
-		override?: Selector,
+		feature: ActionFeature<NodeSelector, IntervalRef>,
+		override?: NodeSelector,
 		fn: ActionSelectTransformFn = null,
 	) {
 		super(ref);
@@ -25,43 +27,20 @@ export class ActionSelect<Interval, Selector> extends Action<
 		this.override = override;
 	}
 
-	getRequirements(): Action<Interval, Selector>[] {
-		if (this.feature instanceof Action) {
-			return [this.feature];
-		} else {
-			return [];
-		}
+	getRequirements(): ActionRequirement<NodeSelector, IntervalRef>[] {
+		return [
+			{
+				feature: <ActionReference>this.feature,
+				offset: 0,
+			},
+		];
 	}
 
-	async eval(datum: DatumInterface<Interval>): Promise<number> {
-		let tgt: DatumInterface<Interval> = null;
-
-		if (this.override) {
-			const select = this.env.subSelect(
-				datum,
-				datum.interval,
-				this.override,
-			);
-
-			if (select.length > 1 && !this.fn) {
-				throw new Error('Can not sub select > 1');
-			}
-
-			const datums = select;
-
-			if (this.fn) {
-				return this.fn(
-					await Promise.all(
-						datums.map((datum) => this.readFeature(datum, this.feature)),
-					),
-				);
-			} else {
-				tgt = datums[0];
-			}
+	async execute(includes: (number | number[])[]): Promise<number> {
+		if (this.fn) {
+			return this.fn(<number>includes[0]);
 		} else {
-			tgt = datum;
+			return <number>includes[0];
 		}
-
-		return this.readFeature(tgt, this.feature);
 	}
 }

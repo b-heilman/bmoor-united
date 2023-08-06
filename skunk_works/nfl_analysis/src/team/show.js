@@ -17,47 +17,47 @@ for(const year of seasons){
     console.log(prettyArray(graph.toArray('schedule-weighted-rank'), {
         header: 'ref',
         columns: {
-            'weights.off-rank': {
+            'features.off-rank': {
                 length: 10,
                 precision: 0,
                 align: 'right'
             },
-            'weights.def-rank': {
+            'features.def-rank': {
                 length: 10,
                 precision: 0,
                 align: 'right'
             },
-            'weights.wins': {
+            'features.wins': {
                 length: 10,
                 precision: 0,
                 align: 'right'
             },
-            'weights.losses': {
+            'features.losses': {
                 length: 10,
                 precision: 0,
                 align: 'right'
             },
-            'weights.quality': {
+            'features.quality': {
                 length: 10,
                 precision: 2,
                 align: 'right'
             },
-            'weights.quality-rank': {
+            'features.quality-rank': {
                 length: 10,
                 precision: 0,
                 align: 'right'
             },
-            'weights.schedule-strength-rank': {
+            'features.schedule-strength-rank': {
                 length: 10,
                 precision: 0,
                 align: 'right'
             },
-            'weights.schedule-weighted-rank': {
+            'features.schedule-weighted-rank': {
                 length: 10,
                 precision: 0,
                 align: 'right'
             },
-            'weights.full-rank': {
+            'features.full-rank': {
                 length: 10,
                 precision: 0,
                 align: 'right'

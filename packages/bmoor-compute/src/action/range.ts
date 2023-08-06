@@ -1,58 +1,57 @@
 import {Action} from '../action';
-import {ActionFeature, ActionReference} from '../action.interface';
-import {DatumInterface} from '../datum.interface';
+import {
+	ActionFeature,
+	ActionReference,
+	ActionRequirement,
+} from '../action.interface';
 import {ActionRangeTransformFn} from './range.interface';
 
-export class ActionRange<Interval, Selector> extends Action<
-	Interval,
-	Selector
+export class ActionRange<NodeSelector, IntervalRef> extends Action<
+	NodeSelector,
+	IntervalRef
 > {
 	fn: ActionRangeTransformFn;
 	range: number;
-	offset: number;
-	feature: ActionFeature<Interval, Selector>;
+	feature: ActionFeature<NodeSelector, IntervalRef>;
 
 	constructor(
 		ref: ActionReference,
-		feature: ActionFeature<Interval, Selector>,
+		feature: ActionFeature<NodeSelector, IntervalRef>,
 		range: number,
-		fn: ActionRangeTransformFn,
-		offset = 0,
+		fn?: ActionRangeTransformFn,
 	) {
 		super(ref);
 
 		this.fn = fn;
 		this.range = range;
-		this.offset = offset;
 		this.feature = feature;
 	}
 
-	getRequirements(): Action<Interval, Selector>[] {
+	getRequirements(): ActionRequirement<NodeSelector, IntervalRef>[] {
 		if (this.feature instanceof Action) {
-			return [this.feature];
+			return [
+				{
+					action: this.feature,
+					offset: 0,
+					range: this.range,
+				},
+			];
 		} else {
-			return [];
+			return [
+				{
+					feature: <ActionReference>this.feature,
+					offset: 0,
+					range: this.range,
+				},
+			];
 		}
 	}
 
-	/**
-	 * I would like to cache the range selections.  Not sure
-	 * the best way to do that.
-	 */
-	async eval(datum: DatumInterface<Interval>): Promise<number> {
-		let interval = datum.interval;
-
-		if (this.offset) {
-			interval = this.env.offsetInterval(interval, this.offset);
+	async execute(includes: (number | number[])[]): Promise<number> {
+		if (this.fn) {
+			return this.fn(<number[]>includes[0]);
+		} else {
+			return <number>includes[0];
 		}
-
-		const values = await Promise.all(
-			this.env
-				.rangeSelect(datum, interval, this.range)
-				// interval here needs to be the datum's interval
-				.map((datum) => this.readFeature(datum, this.feature)),
-		);
-
-		return this.fn(values);
 	}
 }

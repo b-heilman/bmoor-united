@@ -1,28 +1,43 @@
-import {DatumInterface, FeatureReference} from './datum.interface';
-import {EnvironmentInterface} from './environment.interface';
-import {RegistryInterface} from './registry.interface';
+import {FeatureReference} from './datum.interface';
 
 export type ActionReference = string;
 
-export type ActionFeature<Interval, Selector> =
-	| FeatureReference
-	| ActionInterface<Interval, Selector>;
+export interface ActionRequirementRelation {
+	offset?: number;
+	range?: number;
+}
+
+export interface ActionRequirementBase<NodeSelector>
+	extends ActionRequirementRelation {
+	select?: NodeSelector;
+}
+
+export interface ActionRequirementFeature<NodeSelector>
+	extends ActionRequirementBase<NodeSelector> {
+	feature: FeatureReference;
+}
+
+export interface ActionRequirementAction<NodeSelector, IntervalRef>
+	extends ActionRequirementBase<NodeSelector> {
+	action: ActionInterface<NodeSelector, IntervalRef>;
+}
+
+export type ActionRequirement<NodeSelector, IntervalRef> =
+	| ActionRequirementFeature<NodeSelector>
+	| ActionRequirementAction<NodeSelector, IntervalRef>;
+
+export type ActionValue = number | number[];
 
 // common interface for a data source to be hooked back into the calculator
-export interface ActionInterface<Interval, Selector> {
-	env: EnvironmentInterface<Interval, Selector>;
-	reg: RegistryInterface<Interval, Selector>;
+export interface ActionInterface<NodeSelector, IntervalRef> {
+	ref: ActionReference;
 
-	setEnvironment(env: EnvironmentInterface<Interval, Selector>): void;
-	setRegistry(registry: RegistryInterface<Interval, Selector>): void;
+	getRequirements(): ActionRequirement<NodeSelector, IntervalRef>[];
 
-	readFeature(
-		datum: DatumInterface<Interval>,
-		feature: ActionFeature<Interval, Selector>,
-	): Promise<number>;
-
-	execute(
-		datum: DatumInterface<Interval>,
-		interval: Interval,
-	): Promise<number>;
+	// execute an action against a datum at a particular time
+	execute(values: ActionValue[]): Promise<number>;
 }
+
+export type ActionFeature<NodeSelector, IntervalRef> =
+	| FeatureReference
+	| ActionInterface<NodeSelector, IntervalRef>;

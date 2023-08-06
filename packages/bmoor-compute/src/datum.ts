@@ -1,18 +1,12 @@
 import {DatumInterface} from './datum.interface';
 
-export class Datum<Interval> implements DatumInterface<Interval> {
+export class Datum<NodeSelector> implements DatumInterface<NodeSelector> {
 	ref: string;
 	data: Map<string, number>;
-	interval: Interval;
 
-	constructor(
-		ref: string,
-		interval: Interval,
-		src: Record<string, number>,
-	) {
+	constructor(ref: string, src: Record<string, number>) {
 		this.ref = ref;
 		this.data = new Map();
-		this.interval = interval;
 
 		for (const key in src) {
 			this.data.set(key, src[key]);
@@ -31,5 +25,9 @@ export class Datum<Interval> implements DatumInterface<Interval> {
 		this.data.set(attr, value);
 
 		return true;
+	}
+
+	select() {
+		return [this];
 	}
 }

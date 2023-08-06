@@ -1,47 +1,46 @@
-import {EdgeInterface, EdgeJson} from './edge.interface';
+import {
+	EventInterface,
+	EventJSON,
+	EventReference,
+} from './event.interface';
+import {Features} from './features';
 import {
 	NodeInterface,
-	NodeJson,
+	NodeJSON,
 	NodeReference,
+	NodeSelector,
 	NodeType,
-	NodeTag
 } from './node.interface';
-import {Weights} from './weights';
 
-export interface GraphSelector {
-	reference?: NodeReference,
-	type?: NodeType,
-	tag?: NodeTag,
+export interface GraphSelector extends NodeSelector {
+	reference?: NodeReference;
 }
 
-export interface GraphEdgeWeights {
-	edgeWeights: Weights,
-	nodeWeights: Weights,
+export interface GraphEventFeatures {
+	eventFeatures: Features;
+	nodeFeatures: Features;
 }
 
 export interface GraphInterface {
-	top: NodeInterface[];
-	edges: EdgeInterface[];
 	types: Map<NodeType, NodeInterface[]>;
 	nodeDex: Map<NodeReference, NodeInterface>;
-	edgeDex: Map<NodeReference, EdgeInterface[]>;
+	eventDex: Map<EventReference, EventInterface>;
+	connectionDex: Map<NodeReference, EventInterface[]>;
 
 	addNode(node: NodeInterface): void;
 	getNode(ref: NodeReference): NodeInterface;
-	addEdge(edge: EdgeInterface): void;
-	getEdges(ref: NodeReference): EdgeInterface[];
-	getEdgeWeights(ref: NodeReference): GraphEdgeWeights[];
-	biConnectNodes(
-		edgeWeights: Weights,
-		ref1: NodeReference,
-		weights1: Weights,
-		ref2: NodeReference,
-		weights2: Weights,
-	): EdgeInterface;
+	addEvent(event: EventInterface): void;
+	getEvents(ref: NodeReference): EventInterface[];
+	getEventFeatures(ref: NodeReference): GraphEventFeatures[];
 	// some search methods
 }
 
-export interface GraphJson {
-	nodes: NodeJson[];
-	edges: EdgeJson[];
+export interface GraphJSON {
+	nodes: NodeJSON[];
+	events: EventJSON[];
+}
+
+export interface GraphBuilder {
+	nodes: Map<NodeReference, NodeInterface>;
+	events: EventJSON[];
 }

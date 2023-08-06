@@ -1,2 +1,13 @@
-export {Graph} from './graph';
+export {Graph, load, dump, applyBuilder} from './graph';
+export * from './graph.interface';
 export {Node} from './node';
+export * from './node.interface';
+export {Event} from './event';
+export * from './event.interface';
+export {Features} from './features';
+export * from './features.interface';
+export {GraphLoader} from './graph/loader';
+export * from './graph/loader.interface';
+export {GraphDatum} from './graph/datum';
+export {GraphGlobal} from './graph/global';
+export {GraphSelection} from './graph/selection';

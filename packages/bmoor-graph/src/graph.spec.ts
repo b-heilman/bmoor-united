@@ -1,9 +1,10 @@
 import {expect} from 'chai';
 
-// import {Weights} from './weighted.interface';
+import {Edge} from './edge';
+import {Event} from './event';
+import {Features} from './features';
+import {Graph, load} from './graph';
 import {Node} from './node';
-import {Graph, load, dump} from './graph';
-import {Weights} from './weights';
 
 describe('@bmoor/graph', function () {
 	describe('Graph building', function () {
@@ -20,110 +21,115 @@ describe('@bmoor/graph', function () {
             graph.addNode(node3);
             graph.addNode(node4);
 
-            graph.biConnectNodes(
-                new Weights({
-                    general: 1
-                }),
-                'node-1',
-                new Weights({
-                    value: 1
-                }),
-                'node-2',
-                new Weights({
-                    value: 2
-                }),
-            );
+			function biConnectNodes(
+				eventFeatures: Features,
+				node1: Node,
+				features1: Features,
+				node2: Node,
+				features2: Features,
+			) {
+				const event = new Event(
+					node1.ref + ':' + node2.ref,
+					eventFeatures,
+				);
 
-            graph.biConnectNodes(
-                new Weights({
-                    general: 2
-                }),
-                'node-3',
-                new Weights({
-                    value: 3
-                }),
-                'node-4',
-                new Weights({
-                    value: 4
-                }),
-            );
+				event.setNodeFeatures(node1, features1);
+				event.setNodeFeatures(node2, features2);
 
-            expect(graph.toJSON()).to.deep.equal({
-                "nodes": [
-                  {
-                    "ref": "node-1",
-                    "type": "__DEFAULT__",
-                    "tags": [],
-                    "parentRef": undefined,
-                    "weights": {}
-                  },
-                  {
-                    "ref": "node-2",
-                    "type": "__DEFAULT__",
-                    "tags": [],
-                    "parentRef": undefined,
-                    "weights": {}
-                  },
-                  {
-                    "ref": "node-3",
-                    "type": "__DEFAULT__",
-                    "tags": [],
-                    "parentRef": undefined,
-                    "weights": {}
-                  },
-                  {
-                    "ref": "node-4",
-                    "type": "__DEFAULT__",
-                    "tags": [],
-                    "parentRef": undefined,
-                    "weights": {}
-                  }
-                ],
-                "edges": [
-                  {
-                    "ref": "node-1:node-2",
-                    "weights": {
-                      "general": 1
-                    },
-                    "connections": [
-                      {
-                        "nodeRef": "node-1",
-                        "weights": {
-                          "value": 1
-                        }
-                      },
-                      {
-                        "nodeRef": "node-2",
-                        "weights": {
-                          "value": 2
-                        }
-                      }
-                    ]
-                  },
-                  {
-                    "ref": "node-3:node-4",
-                    "weights": {
-                      "general": 2
-                    },
-                    "connections": [
-                      {
-                        "nodeRef": "node-3",
-                        "weights": {
-                          "value": 3
-                        }
-                      },
-                      {
-                        "nodeRef": "node-4",
-                        "weights": {
-                          "value": 4
-                        }
-                      }
-                    ]
-                  }
-                ]
-              }
-            );
-        });
+				graph.addEvent(event);
+			}
+
+			biConnectNodes(
+				new Features({
+					general: 1,
+				}),
+				node1,
+				new Features({
+					value: 1,
+				}),
+				node2,
+				new Features({
+					value: 2,
+				}),
+			);
+
+			biConnectNodes(
+				new Features({
+					general: 2,
+				}),
+				node3,
+				new Features({
+					value: 3,
+				}),
+				node4,
+				new Features({
+					value: 4,
+				}),
+			);
+
+			expect(graph.toJSON()).to.deep.equal({
+				nodes: [
+					{
+						ref: 'node-1',
+						type: '__DEFAULT__',
+					},
+					{
+						ref: 'node-2',
+						type: '__DEFAULT__',
+					},
+					{
+						ref: 'node-3',
+						type: '__DEFAULT__',
+					},
+					{
+						ref: 'node-4',
+						type: '__DEFAULT__',
+					},
+				],
+				events: [
+					{
+						ref: 'node-1:node-2',
+						features: {
+							general: 1,
+						},
+						connections: [
+							{
+								nodeRef: 'node-1',
+								features: {
+									value: 1,
+								},
+							},
+							{
+								nodeRef: 'node-2',
+								features: {
+									value: 2,
+								},
+							},
+						],
+					},
+					{
+						ref: 'node-3:node-4',
+						features: {
+							general: 2,
+						},
+						connections: [
+							{
+								nodeRef: 'node-3',
+								features: {
+									value: 3,
+								},
+							},
+							{
+								nodeRef: 'node-4',
+								features: {
+									value: 4,
+								},
+							},
+						],
+					},
+				],
+			});
+		});
 
         it('should properly build a tiered graph', function () {
             const graph = new Graph();
@@ -147,245 +153,305 @@ describe('@bmoor/graph', function () {
             graph.addNode(node3);
             graph.addNode(node4);
 
-            expect(graph.toJSON()).to.deep.equal({
-                "nodes": [
-                    {
-                        "ref": "node-a",
-                        "type": "__DEFAULT__",
-                        "tags": [],
-                        "parentRef": undefined,
-                        "weights": {}
-                      },
-                  {
-                    "ref": "node-1",
-                    "type": "__DEFAULT__",
-                    "tags": [],
-                    "parentRef": "node-a",
-                    "weights": {}
-                  },
-                  {
-                    "ref": "node-2",
-                    "type": "__DEFAULT__",
-                    "tags": [],
-                    "parentRef": "node-a",
-                    "weights": {}
-                  },
-                  {
-                    "ref": "node-b",
-                    "type": "__DEFAULT__",
-                    "tags": [],
-                    "parentRef": undefined,
-                    "weights": {}
-                  },
-                  {
-                    "ref": "node-3",
-                    "type": "__DEFAULT__",
-                    "tags": [],
-                    "parentRef": "node-b",
-                    "weights": {}
-                  },
-                  {
-                    "ref": "node-4",
-                    "type": "__DEFAULT__",
-                    "tags": [],
-                    "parentRef": "node-3",
-                    "weights": {}
-                  }
-                ],
-                "edges": []
-              }
-            );
-        });
-    });
+			nodeA.addEdge(new Edge('opponent', nodeB));
+			nodeB.addEdge(new Edge('opponent', nodeA));
 
-    describe('Graph::select', function () {
-        const graph = load({
-            "nodes": [
-                {
-                "ref": "node-a",
-                "type": "team",
-                "tags": [],
-                "parentRef": undefined,
-                "weights": {}
-                },
-              {
-                "ref": "node-1",
-                "type": "position",
-                "tags": ['wr'],
-                "parentRef": "node-a",
-                "weights": {}
-              },
-              {
-                "ref": "node-2",
-                "type": "position",
-                "tags": ['qb'],
-                "parentRef": "node-a",
-                "weights": {}
-              },
-              {
-                "ref": "node-b",
-                "type": "team",
-                "tags": [],
-                "parentRef": undefined,
-                "weights": {}
-              },
-              {
-                "ref": "node-3",
-                "type": "position",
-                "tags": ['qb'],
-                "parentRef": "node-b",
-                "weights": {}
-              },
-              {
-                "ref": "node-4",
-                "type": "player",
-                "tags": [],
-                "parentRef": "node-3",
-                "weights": {}
-              }
-            ],
-            "edges": []
-          });
+			expect(graph.toJSON()).to.deep.equal({
+				nodes: [
+					{
+						ref: 'node-a',
+						type: '__DEFAULT__',
+						edges: {
+							opponent: ['node-b'],
+						},
+					},
+					{
+						ref: 'node-1',
+						type: '__DEFAULT__',
+						parentRef: 'node-a',
+					},
+					{
+						ref: 'node-2',
+						type: '__DEFAULT__',
+						parentRef: 'node-a',
+					},
+					{
+						ref: 'node-b',
+						type: '__DEFAULT__',
+						edges: {
+							opponent: ['node-a'],
+						},
+					},
+					{
+						ref: 'node-3',
+						type: '__DEFAULT__',
+						parentRef: 'node-b',
+					},
+					{
+						ref: 'node-4',
+						type: '__DEFAULT__',
+						parentRef: 'node-3',
+					},
+				],
+				events: [],
+			});
+		});
+	});
+
+	describe('Graph::select', function () {
+		const graph = load({
+			nodes: [
+				{
+					ref: 'node-a',
+					type: 'team',
+					edges: {
+						opponent: ['node-b'],
+					},
+				},
+				{
+					ref: 'node-1',
+					type: 'position',
+					metadata: {
+						which: 'wr',
+					},
+					parentRef: 'node-a',
+				},
+				{
+					ref: 'node-2',
+					type: 'position',
+					metadata: {
+						which: 'qb',
+					},
+					parentRef: 'node-a',
+				},
+				{
+					ref: 'node-b',
+					type: 'team',
+					edges: {
+						opponent: ['node-a'],
+					},
+				},
+				{
+					ref: 'node-3',
+					type: 'position',
+					metadata: {
+						which: 'qb',
+					},
+					parentRef: 'node-b',
+				},
+				{
+					ref: 'node-4',
+					type: 'player',
+					parentRef: 'node-3',
+				},
+			],
+			events: [],
+		});
 
 		it('should allow selection', function () {
             const select1 = graph.select({
                 reference: 'node-a',
                 type: 'position'
             });
+		it('should allow selection with .type', function () {
+			console.log(JSON.stringify(graph.toJSON(), null, 2));
+
+			const select1 = graph.select({
+				reference: 'node-a',
+				type: 'position',
+			});
 
             const select2 = graph.select({
                 type: 'position'
             });
 
-            const select3 = graph.select({
-                type: 'position',
-                tag: 'qb'
-            });
+			expect(select1.datums.map((node) => node.ref)).to.deep.equal([
+				'node-1',
+				'node-2',
+			]);
 
-            expect(select1.map(node => node.ref)).to.deep.equal([
-                'node-1',
-                'node-2',
-            ]);
+			expect(select2.datums.map((node) => node.ref)).to.deep.equal([
+				'node-1',
+				'node-2',
+				'node-3',
+			]);
+		});
 
-            expect(select2.map(node => node.ref)).to.deep.equal([
-                'node-1',
-                'node-2',
-                'node-3',
-            ]);
+		it('should work with .parent', function () {
+			const select1 = graph.select({
+				reference: 'node-1',
+				parent: 'team',
+			});
+			const select2 = graph.select({
+				type: 'player',
+				parent: 'team',
+			});
+			const select3 = graph.select({
+				type: 'position',
+				parent: 'team',
+			});
 
-            expect(select3.map(node => node.ref)).to.deep.equal([
-                'node-2',
-                'node-3',
-            ]);
-        });
-    });
+			expect(select1.datums.map((node) => node.ref)).to.deep.equal([
+				'node-a',
+			]);
+			expect(select2.datums.map((node) => node.ref)).to.deep.equal([
+				'node-b',
+			]);
+			expect(select3.datums.map((node) => node.ref)).to.deep.equal([
+				'node-a',
+				'node-b',
+			]);
+		});
 
-    describe('Graph::getEdgeWeights', function () {
-        const graph = load({
-            "nodes": [
-                {
-                "ref": "node-a",
-                "type": "team",
-                "tags": [],
-                "parentRef": undefined,
-                "weights": {}
-                },
-              {
-                "ref": "node-1",
-                "type": "position",
-                "tags": ['wr'],
-                "parentRef": "node-a",
-                "weights": {}
-              },
-              {
-                "ref": "node-2",
-                "type": "position",
-                "tags": ['qb'],
-                "parentRef": "node-a",
-                "weights": {}
-              },
-              {
-                "ref": "node-b",
-                "type": "team",
-                "tags": [],
-                "parentRef": undefined,
-                "weights": {}
-              },
-              {
-                "ref": "node-3",
-                "type": "position",
-                "tags": ['qb'],
-                "parentRef": "node-b",
-                "weights": {}
-              },
-              {
-                "ref": "node-4",
-                "type": "player",
-                "tags": [],
-                "parentRef": "node-3",
-                "weights": {}
-              }
-            ],
-            "edges": [
-                {
-                  "ref": "node-1:node-2",
-                  "weights": {
-                    "general": 1
-                  },
-                  "connections": [
-                    {
-                      "nodeRef": "node-1",
-                      "weights": {
-                        "value": 1
-                      }
-                    },
-                    {
-                      "nodeRef": "node-2",
-                      "weights": {
-                        "value": 2
-                      }
-                    }
-                  ]
-                },
-                {
-                  "ref": "node-3:node-4",
-                  "weights": {
-                    "general": 2
-                  },
-                  "connections": [
-                    {
-                      "nodeRef": "node-3",
-                      "weights": {
-                        "value": 3
-                      }
-                    },
-                    {
-                      "nodeRef": "node-4",
-                      "weights": {
-                        "value": 4
-                      }
-                    }
-                  ]
-                }
-              ]
-          });
+		it('should work with .sibling', function () {
+			const select1 = graph.select({
+				reference: 'node-1',
+				sibling: 'position',
+			});
+
+			expect(select1.datums.map((node) => node.ref)).to.deep.equal([
+				'node-2',
+			]);
+		});
+
+		it('should work with .metadata', function () {
+			const select1 = graph.select({
+				type: 'position',
+				metadata: {
+					which: 'qb',
+				},
+			});
+
+			expect(select1.datums.map((node) => node.ref)).to.deep.equal([
+				'node-2',
+				'node-3',
+			]);
+		});
+
+		it('should work with .edge', function () {
+			const select1 = graph.select({
+				reference: 'node-b',
+				edge: 'opponent',
+			});
+			const select2 = graph.select({
+				reference: 'node-b',
+				edge: 'opponent',
+				type: 'position',
+			});
+
+			expect(select1.datums.map((node) => node.ref)).to.deep.equal([
+				'node-a',
+			]);
+			expect(select2.datums.map((node) => node.ref)).to.deep.equal([
+				'node-1',
+				'node-2',
+			]);
+		});
+	});
+
+	describe('Graph::getEventFeatures', function () {
+		const graph = load({
+			nodes: [
+				{
+					ref: 'node-a',
+					type: 'team',
+				},
+				{
+					ref: 'node-1',
+					type: 'position',
+					metadata: {
+						which: 'wr',
+					},
+					parentRef: 'node-a',
+				},
+				{
+					ref: 'node-2',
+					type: 'position',
+					metadata: {
+						which: 'qb',
+					},
+					parentRef: 'node-a',
+				},
+				{
+					ref: 'node-b',
+					type: 'team',
+				},
+				{
+					ref: 'node-3',
+					type: 'position',
+					metadata: {
+						which: 'qb',
+					},
+					parentRef: 'node-b',
+				},
+				{
+					ref: 'node-4',
+					type: 'player',
+					parentRef: 'node-3',
+				},
+			],
+			events: [
+				{
+					ref: 'node-1:node-2',
+					features: {
+						general: 1,
+					},
+					connections: [
+						{
+							nodeRef: 'node-1',
+							features: {
+								value: 1,
+							},
+						},
+						{
+							nodeRef: 'node-2',
+							features: {
+								value: 2,
+							},
+						},
+					],
+				},
+				{
+					ref: 'node-3:node-4',
+					features: {
+						general: 2,
+					},
+					connections: [
+						{
+							nodeRef: 'node-3',
+							features: {
+								value: 3,
+							},
+						},
+						{
+							nodeRef: 'node-4',
+							features: {
+								value: 4,
+							},
+						},
+					],
+				},
+			],
+		});
 
 		it('should allow selection', function () {
-            const select1 = graph.getEdgeWeights('node-1');
+			const select1 = graph.getEventFeatures('node-1');
 
-            expect(select1.map(edge => ({
-                edgeWeights: edge.edgeWeights.toJSON(),
-                nodeWeights: edge.nodeWeights.toJSON()
-            }))).to.deep.equal([
-                {
-                    edgeWeights: {
-                        general: 1
-                    },
-                    nodeWeights: {
-                        value: 1
-                    }
-                }
-            ]);
-        });
-    });
+			expect(
+				select1.map((event) => ({
+					eventFeatures: event.eventFeatures.toJSON(),
+					nodeFeatures: event.nodeFeatures.toJSON(),
+				})),
+			).to.deep.equal([
+				{
+					eventFeatures: {
+						general: 1,
+					},
+					nodeFeatures: {
+						value: 1,
+					},
+				},
+			]);
+		});
+	});
 });

@@ -32,14 +32,10 @@ describe('@bmoor/config', function () {
 
 			const cfg = new Config({
 				obj: new ConfigObject<foo>({
-					fn: (str: string, val: number) => {
-						console.log(str + val);
-
+					fn: () => {
 						return 'foo';
 					},
-					fOther: (str: string, val: number) => {
-						console.log(str + val);
-
+					fOther: () => {
 						return 'bar';
 					},
 				}),
