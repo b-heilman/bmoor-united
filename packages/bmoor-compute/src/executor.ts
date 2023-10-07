@@ -1,14 +1,76 @@
-import {
-	ActionInterface,
-	ActionReference,
-	ActionRequirement,
-	ActionRequirementAction,
-	ActionRequirementFeature,
-} from './action.interface';
+// import { DatumAccessorInterface} from './datum/accessor.interface';
 import {DatumInterface} from './datum.interface';
+import {DatumAccessor} from './datum/accessor';
+import {DatumAccessorResponse} from './datum/accessor.interface';
+import {DatumProcessor} from './datum/processor';
+import {
+	DatumProcessorRequirement,
+	DatumProcessorRequirementsResponse,
+	DatumProcessorResponse,
+} from './datum/processor.interface';
 import {EnvironmentInterface} from './environment.interface';
+import {ExecutorAction, ExecutorResponse} from './executor.interface';
 import {IntervalInterface} from './interval.interface';
-import {RegistryInterface} from './registry.interface';
+
+async function loadAccessorRequirement<
+	GraphSelector,
+	NodeSelector,
+	IntervalRef,
+	Order,
+>(
+	exe: Executor<GraphSelector, NodeSelector, IntervalRef, Order>,
+	req: DatumProcessor<NodeSelector, IntervalRef>,
+	datum: DatumInterface<NodeSelector>,
+	interval: IntervalInterface<IntervalRef, Order>,
+): Promise<DatumProcessorResponse> {
+	return exe.process(req, datum, interval);
+}
+
+async function loadProcessorRequirement<
+	GraphSelector,
+	NodeSelector,
+	IntervalRef,
+	Order,
+>(
+	exe: Executor<GraphSelector, NodeSelector, IntervalRef, Order>,
+	req: DatumProcessorRequirement<NodeSelector, IntervalRef>,
+	datum: DatumInterface<NodeSelector>,
+	interval: IntervalInterface<IntervalRef, Order>,
+): Promise<DatumProcessorRequirementsResponse> {
+	const accessor = <DatumAccessor<NodeSelector, IntervalRef>>req.accessor;
+	const newInterval = req.offset
+		? exe.env.offsetInterval(interval, req.offset)
+		: interval;
+	const newDatum = exe.env.intervalSelect(datum, newInterval);
+
+	if ('range' in req) {
+		const timeline = exe.env.rangeSelect(newDatum, newInterval, req.range);
+
+		const rtn = [];
+
+		for (const [subInterval, subDatum] of timeline.entries()) {
+			rtn.push(exe.access(accessor, subDatum, subInterval));
+		}
+
+		return Promise.all(rtn);
+	} else if ('select' in req) {
+		const subDatums = newDatum.select(req.select);
+
+		if (req.reduce) {
+			return exe.access(accessor, subDatums[0], newInterval);
+		} else {
+			const rtn = [];
+
+			for (const subDatum of subDatums) {
+				rtn.push(exe.access(accessor, subDatum, newInterval));
+			}
+
+			return Promise.all(rtn);
+		}
+	} else {
+		return exe.access(accessor, newDatum, newInterval);
+	}
+}
 
 export class Executor<GraphSelector, NodeSelector, IntervalRef, Order> {
 	env: EnvironmentInterface<
@@ -17,7 +79,6 @@ export class Executor<GraphSelector, NodeSelector, IntervalRef, Order> {
 		IntervalRef,
 		Order
 	>;
-	reg: RegistryInterface<NodeSelector, IntervalRef>;
 
 	constructor(
 		env: EnvironmentInterface<
@@ -26,106 +87,75 @@ export class Executor<GraphSelector, NodeSelector, IntervalRef, Order> {
 			IntervalRef,
 			Order
 		>,
-		reg: RegistryInterface<NodeSelector, IntervalRef>,
 	) {
 		this.env = env;
-		this.reg = reg;
 	}
 
-	async require(
-		requirement: ActionRequirement<NodeSelector, IntervalRef>,
+	async process(
+		processor: DatumProcessor<NodeSelector, IntervalRef>,
 		datum: DatumInterface<NodeSelector>,
 		interval: IntervalInterface<IntervalRef, Order>,
-	): Promise<number | number[]> {
-		const feature = (<ActionRequirementFeature<NodeSelector>>requirement)
-			.feature;
-		const action = (<ActionRequirementAction<NodeSelector, IntervalRef>>(
-			requirement
-		)).action;
-		const newInterval = requirement.offset
-			? this.env.offsetInterval(interval, requirement.offset)
-			: interval;
-
-		/**
-		 * My problem is that I need to handle...
-		 * - subselect (one or more) => number[]
-		 * - offset => number
-		 * - range => number[]
-		 *****
-		 * can I allow you to mix a subselect with a range?  I think no...
-		 * A select is to pick other nodes, where a a range is to pick over time.  Logic would be to
-		 * run the select, and then pick the range, but that would make it number[][]
-		 */
-		if (requirement.range) {
-			const timeline = this.env.rangeSelect(
-				datum,
-				newInterval,
-				requirement.range,
-			);
-			const rtn = [];
-
-			if (action) {
-				for (const [subInterval, subDatum] of timeline.entries()) {
-					rtn.push(this.execute(action, subDatum, subInterval));
-				}
-			} else {
-				for (const subDatum of timeline.values()) {
-					rtn.push(subDatum.getValue(<string>feature));
-				}
-			}
-
-			return Promise.all(rtn);
-			// TODO: need to implement a subselect
+	): Promise<DatumProcessorResponse> {
+		if (datum.hasValue(processor.name)) {
+			return datum.getValue(processor.name);
 		} else {
-			if (action) {
-				return this.execute(action, datum, newInterval);
-			} else {
-				return this.env
-					.intervalSelect(datum, newInterval)
-					.getValue(<string>feature);
-			}
-		}
-	}
+			const requirements = processor.getRequirements();
 
-	async execute(
-		action: ActionInterface<NodeSelector, IntervalRef>,
-		datum: DatumInterface<NodeSelector>,
-		interval: IntervalInterface<IntervalRef, Order>,
-	): Promise<number> {
-		if (datum.hasValue(action.ref)) {
-			return datum.getValue(action.ref);
-		} else {
-			const requirements = action.getRequirements();
-
-			const value = await action.execute(
-				await Promise.all(
-					requirements.map((req) => this.require(req, datum, interval)),
+			const reqs = await Promise.all(
+				requirements.map((req) =>
+					loadProcessorRequirement(this, req, datum, interval),
 				),
 			);
 
-			datum.setValue(action.ref, value);
+			const value = processor.process(...reqs);
+
+			await datum.setValue(processor.name, value);
 
 			return value;
+		}
+	}
+
+	async access(
+		accessor: DatumAccessor<NodeSelector, IntervalRef>,
+		datum: DatumInterface<NodeSelector>,
+		interval: IntervalInterface<IntervalRef, Order>,
+	): Promise<DatumAccessorResponse> {
+		if (accessor.isReady(datum)) {
+			return accessor.read(datum);
+		} else {
+			const requirements = accessor.getRequirements();
+
+			await Promise.all(
+				requirements.map((req) =>
+					loadAccessorRequirement(
+						this,
+						<DatumProcessor<NodeSelector, IntervalRef>>req,
+						datum,
+						interval,
+					),
+				),
+			);
+
+			return accessor.read(datum);
 		}
 	}
 
 	// run a definition and pull back the value
 	async calculate(
 		interval: IntervalInterface<IntervalRef, Order>,
-		ref: ActionReference,
+		action: ExecutorAction<NodeSelector, IntervalRef>,
 		select: GraphSelector,
-	): Promise<number[]> {
-		const action = this.reg.getAction(ref);
+	): Promise<ExecutorResponse[]> {
 		const selection = this.env.select(interval, select);
 
-		if (!action) {
-			throw new Error(`action ${ref} not registered`);
-		}
-
 		return Promise.all(
-			selection.datums.map((datum) =>
-				this.execute(action, datum, interval),
-			),
+			selection.map((datum) => {
+				if (action instanceof DatumAccessor) {
+					return this.access(action, datum, interval);
+				} else {
+					return this.process(action, datum, interval);
+				}
+			}),
 		);
 	}
 }

@@ -1,8 +1,4 @@
-import {
-	GraphBuilder,
-	GraphLoaderRow,
-	GraphLoaderSettings,
-} from '@bmoor/graph';
+import {GraphLoaderRow, GraphLoaderSettings} from '@bmoor/graph';
 
 import {Interval} from '../interval';
 import {IntervalReference} from '../interval.interface';

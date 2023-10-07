@@ -1,5 +1,6 @@
 import {DatumInterface} from '@bmoor/compute';
 import {
+	GraphInterface,
 	Node,
 	NodeReference,
 	NodeSelector,
@@ -8,22 +9,28 @@ import {
 
 export class GraphDatum implements DatumInterface<NodeSelector> {
 	ref: NodeReference;
-	mode: NodeValueSelector;
 	node: Node;
+	graph: GraphInterface;
 
-	constructor(node: Node, mode: NodeValueSelector) {
+	constructor(node: Node, graph: GraphInterface) {
 		this.ref = node.ref;
-		this.mode = mode;
 		this.node = node;
+		this.graph = graph;
 	}
 
-	hasValue(attr: string): boolean {
-		return this.node.hasValue(attr, this.mode);
+	hasValue(
+		attr: string,
+		mode: NodeValueSelector = NodeValueSelector.node,
+	): boolean {
+		return this.node.hasValue(attr, mode);
 	}
 
 	// get the value, could be an async source
-	async getValue(attr: string): Promise<number> {
-		return this.node.getValue(attr, this.mode);
+	async getValue(
+		attr: string,
+		mode: NodeValueSelector = NodeValueSelector.node,
+	): Promise<number> {
+		return this.node.getValue(attr, mode);
 	}
 
 	// set the value
@@ -33,9 +40,13 @@ export class GraphDatum implements DatumInterface<NodeSelector> {
 		return true;
 	}
 
-	select(select: NodeSelector): GraphDatum[] {
-		return this.node
-			.select(select)
-			.map((node) => new GraphDatum(node, select.mode || this.mode));
+	select(select: NodeSelector): DatumInterface<NodeSelector>[] {
+		if (select.global) {
+			return this.graph.select(select);
+		} else {
+			return this.node
+				.select(select)
+				.map((node) => new GraphDatum(node, this.graph));
+		}
 	}
 }

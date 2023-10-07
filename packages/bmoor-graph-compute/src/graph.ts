@@ -1,8 +1,9 @@
+import {DatumInterface} from '@bmoor/compute';
 import {
 	Graph,
 	GraphDatum,
-	GraphGlobal,
 	GraphSelector,
+	NodeSelector,
 	load as loadGraph,
 } from '@bmoor/graph';
 import {OrderedMap} from '@bmoor/index';
@@ -11,7 +12,6 @@ import {
 	DimensionalGraphInterface,
 	DimensionalGraphJSON,
 } from './graph.interface';
-import {DimensionalGraphSelection} from './graph/selection';
 import {Interval} from './interval';
 import {IntervalReference} from './interval.interface';
 
@@ -44,6 +44,10 @@ export class DimensionalGraph implements DimensionalGraphInterface {
 
 	addGraph(interval: Interval, graph: Graph) {
 		this.graphs.set(interval.ref, graph);
+
+		if (!this.hasInterval(interval.ref)) {
+			this.addInterval(interval);
+		}
 	}
 
 	getGraph(interval: Interval) {
@@ -70,22 +74,14 @@ export class DimensionalGraph implements DimensionalGraphInterface {
 	select(
 		interval: Interval,
 		selector: GraphSelector,
-	): DimensionalGraphSelection {
-		return new DimensionalGraphSelection(
-			this.graphs.get(interval.ref).select(selector),
-			interval,
-		);
-	}
-
-	getGlobal(interval: Interval): GraphGlobal {
-		return this.graphs.get(interval.ref).getGlobal();
+	): DatumInterface<NodeSelector>[] {
+		return this.graphs.get(interval.ref).select(selector);
 	}
 
 	intervalSelect(datum: GraphDatum, interval: Interval): GraphDatum {
-		return new GraphDatum(
-			this.graphs.get(interval.ref).getNode(datum.node.ref),
-			datum.mode,
-		);
+		const cur = this.graphs.get(interval.ref);
+
+		return new GraphDatum(cur.getNode(datum.node.ref), cur);
 	}
 
 	rangeSelect(
@@ -93,27 +89,20 @@ export class DimensionalGraph implements DimensionalGraphInterface {
 		interval: Interval,
 		range: number,
 	): Map<Interval, GraphDatum> {
-		const begin = this.graphs.getTagOffset(interval.ref, 1 - range, true);
+		const end = this.graphs.getTagOffset(interval.ref, 1 - range, true);
 
-		const graphs = this.graphs.getBetween(begin, interval.ref);
+		const graphs = this.graphs.getBetween(interval.ref, end);
 
 		const rtn = new Map();
 
 		for (const [intervalRef, graph] of graphs.entries()) {
 			rtn.set(
 				this.getInterval(intervalRef),
-				new GraphDatum(graph.getNode(datum.node.ref), datum.mode),
+				new GraphDatum(graph.getNode(datum.node.ref), graph),
 			);
 		}
 
 		return rtn;
-	}
-
-	overrideSelector(
-		select: GraphSelector,
-		override: GraphSelector,
-	): GraphSelector {
-		return Object.assign(select, override);
 	}
 
 	offsetInterval(interval: Interval, offset: number): Interval {

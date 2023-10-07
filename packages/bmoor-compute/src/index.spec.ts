@@ -1,171 +1,338 @@
 import {expect} from 'chai';
 
-import {ActionRange} from './action/range';
-import {ActionRequire} from './action/require';
-import {ActionSelect} from './action/select';
-import {Environment, Interval, Order, Selector} from './environment';
-import {Executor} from './executor';
-import {Registry} from './index';
+import {Interval, Order} from './environment';
+import {
+	DatumAccessor,
+	DatumProcessor,
+	DatumSelector,
+	Environment,
+	EnvironmentSelector,
+	Executor,
+	mean,
+} from './index';
 
-class Select extends ActionSelect<Selector, Interval> {}
+class Accessor extends DatumAccessor<DatumSelector, Interval> {}
 
-class Require extends ActionRequire<Selector, Interval> {}
-
-class Range extends ActionRange<Selector, Interval> {}
+class Processor extends DatumProcessor<DatumSelector, Interval> {}
 
 describe('@bmoor/compute', function () {
-	let env = null;
-	let registry = null;
-	let executor = null;
+	let env: Environment = null;
+	let executor: Executor<
+		EnvironmentSelector,
+		DatumSelector,
+		Interval,
+		Order
+	>;
 
-	let foo = null;
-	let bar1 = null;
-	let bar2 = null;
-	let calc1 = null;
+	let accessFoo;
+	let proc1;
+	let proc2;
+	let proc3;
+	let proc4;
+	let proc5;
 
 	beforeEach(function () {
 		env = new Environment({
 			eins: {
 				'g-1': {
-					foo: 1,
+					features: {
+						foo: 1,
+					},
+					children: {
+						'g-1-1': {
+							features: {
+								foo: 101,
+							},
+							metadata: {
+								type: 'p',
+								position: 'p-1',
+							},
+						},
+						'g-1-2': {
+							features: {
+								foo: 201,
+							},
+							metadata: {
+								type: 'p',
+								position: 'p-2',
+							},
+						},
+					},
 				},
 				'g-2': {
-					foo: 10,
+					features: {
+						foo: 10,
+					},
+					children: {
+						'g-2-1': {
+							features: {
+								foo: 110,
+							},
+							metadata: {
+								type: 'p',
+								position: 'p-1',
+							},
+						},
+						'g-2-2': {
+							features: {
+								foo: 210,
+							},
+							metadata: {
+								type: 'p',
+								position: 'p-2',
+							},
+						},
+					},
 				},
 			},
 			zwei: {
 				'g-1': {
-					foo: 2,
+					features: {
+						foo: 2,
+					},
+					children: {
+						'g-1-1': {
+							features: {
+								foo: 102,
+							},
+							metadata: {
+								type: 'p',
+								position: 'p-1',
+							},
+						},
+						'g-1-2': {
+							features: {
+								foo: 202,
+							},
+							metadata: {
+								type: 'p',
+								position: 'p-2',
+							},
+						},
+					},
 				},
 				'g-2': {
-					foo: 20,
+					features: {
+						foo: 20,
+					},
+					children: {
+						'g-2-1': {
+							features: {
+								foo: 120,
+							},
+							metadata: {
+								type: 'p',
+								position: 'p-1',
+							},
+						},
+						'g-2-2': {
+							features: {
+								foo: 220,
+							},
+							metadata: {
+								type: 'p',
+								position: 'p-2',
+							},
+						},
+					},
 				},
 			},
 			drei: {
 				'g-1': {
-					foo: 3,
+					features: {
+						foo: 3,
+					},
 				},
 				'g-2': {
-					foo: 30,
+					features: {
+						foo: 30,
+					},
 				},
 			},
 			fier: {
 				'g-1': {
-					foo: 4,
+					features: {
+						foo: 4,
+					},
 				},
 				'g-2': {
-					foo: 40,
+					features: {
+						foo: 40,
+					},
 				},
 			},
 			funf: {
 				'g-1': {
-					foo: 5,
+					features: {
+						foo: 5,
+					},
 				},
 				'g-2': {
-					foo: 50,
+					features: {
+						foo: 50,
+					},
 				},
 			},
 			sechs: {
 				'g-1': {
-					foo: 6,
+					features: {
+						foo: 6,
+					},
 				},
 				'g-2': {
-					foo: 60,
+					features: {
+						foo: 60,
+					},
 				},
 			},
 			sieben: {
 				'g-1': {
-					foo: 7,
+					features: {
+						foo: 7,
+					},
 				},
 				'g-2': {
-					foo: 70,
+					features: {
+						foo: 70,
+					},
 				},
 			},
 		});
 
-		registry = new Registry<Selector, Interval>();
+		executor = new Executor<
+			EnvironmentSelector,
+			DatumSelector,
+			Interval,
+			Order
+		>(env);
 
-		executor = new Executor<Selector, Selector, Interval, Order>(
-			env,
-			registry,
+		accessFoo = new Accessor({value: 'foo'});
+
+		// bar1
+
+		proc1 = new Processor(
+			'mean-between',
+			(arg1: {value: number}, arg2: {value: number}) => {
+				return (arg1.value + arg2.value) / 2;
+			},
+			[
+				{
+					accessor: accessFoo,
+					offset: -1,
+				},
+				{
+					accessor: accessFoo,
+					offset: -2,
+				},
+			],
 		);
 
-		// TODO: I don't need select if I allow
-		//   executor to direcly read values
-		foo = new Select('s:1', 'foo');
+		proc2 = new Processor('mean-3', mean, [
+			{
+				accessor: accessFoo,
+				range: 3,
+			},
+		]);
 
-		bar1 = new Require('r:1');
-		bar1
-			.require({
-				offset: -1,
-				action: foo,
-			})
-			.require({
-				offset: -2,
-				feature: 'foo',
-			})
-			.then((arg1: number, arg2: number) => {
-				return (arg1 + arg2) / 2;
-			});
+		proc3 = new Processor(
+			'compared-means',
+			(data: {arg1: number; arg2: number}) => (data.arg1 + data.arg2) / 2,
+			[
+				{
+					offset: -2,
+					accessor: new Accessor({
+						arg1: proc1,
+						arg2: proc2,
+					}),
+				},
+			],
+		);
 
-		registry.addAction(bar1);
+		proc4 = new Processor('p-means', mean, [
+			{
+				accessor: accessFoo,
+				select: {
+					metadata: {
+						type: 'p',
+					},
+				},
+			},
+		]);
 
-		function fn1(vals: number[]) {
-			const sum = vals.reduce((agg, val) => agg + val, 0);
-			return sum / vals.length;
-		}
-
-		calc1 = new Range('range:3:0', 'foo', 3, fn1);
-		registry.addAction(calc1);
-
-		bar2 = new Require('r:2');
-		bar2
-			.require({
-				offset: -2,
-				action: bar1,
-			})
-			.require({
-				offset: -2,
-				action: calc1,
-			})
-			.then((arg1: number, arg2: number) => (arg1 + arg2) / 2);
-
-		registry.addAction(bar2);
+		proc5 = new Processor('p-proc', mean, [
+			{
+				accessor: new Accessor({value: proc2}),
+				select: {
+					metadata: {
+						type: 'p',
+					},
+				},
+			},
+		]);
 	});
 
 	it('should work with a simple execution', async function () {
-		// (1 + 2) / 2
-		const v1 = await executor.calculate({ref: 'drei', order: 0}, 'r:1', {
-			sub: 'g-1',
-		});
-		expect(v1).to.deep.equal([1.5]);
+		// access
+		const v = await executor.calculate(
+			{ref: 'drei', order: 0},
+			accessFoo,
+			{
+				reference: 'g-1',
+			},
+		);
+		expect(v).to.deep.equal([{value: 3}]);
 	});
 
 	it('should allow you to simply pick the other side', async function () {
+		// access
+		const v = await executor.calculate(
+			{ref: 'drei', order: 0},
+			accessFoo,
+			{
+				reference: 'g-2',
+			},
+		);
+		expect(v).to.deep.equal([{value: 30}]);
+	});
+
+	it('should work with simple processor', async function () {
 		// (10 + 20) / 2
-		const v4 = await executor.calculate({ref: 'drei', order: 0}, 'r:1', {
-			sub: 'g-2',
+		const v = await executor.calculate({ref: 'drei', order: 0}, proc1, {
+			reference: 'g-2',
 		});
-		expect(v4).to.deep.equal([15]);
+		expect(v).to.deep.equal([15]);
 	});
 
 	it('should work with a range execution', async function () {
 		// (2 + 3 + 4) / 3
-		const v2 = await executor.calculate(
-			{ref: 'fier', order: 0},
-			'range:3:0',
-			{
-				sub: 'g-1',
-			},
-		);
-		expect(v2).to.deep.equal([3]);
+		const v = await executor.calculate({ref: 'fier', order: 0}, proc2, {
+			reference: 'g-1',
+		});
+		expect(v).to.deep.equal([3]);
 	});
 
 	it('should allow compound calls', async function () {
 		// (((4 + 3) / 2) + ((5 + 4 + 3) / 3)) / 2
-		const v3 = await executor.calculate({ref: 'sieben', order: 0}, 'r:2', {
-			sub: 'g-1',
+		const v = await executor.calculate({ref: 'sieben', order: 0}, proc3, {
+			reference: 'g-1',
 		});
-		expect(v3).to.deep.equal([3.75]);
+
+		expect(v).to.deep.equal([3.75]);
+	});
+
+	it('should allow subcalls', async function () {
+		const v = await executor.calculate({ref: 'eins', order: 0}, proc4, {
+			reference: 'g-1',
+		});
+
+		expect(v).to.deep.equal([151]);
+	});
+
+	it('should allow compound subcalls', async function () {
+		const v = await executor.calculate({ref: 'zwei', order: 0}, proc5, {
+			reference: 'g-2',
+		});
+
+		expect(v).to.deep.equal([165]);
 	});
 });

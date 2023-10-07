@@ -1,15 +1,14 @@
-export * from './action.interface';
 export * from './datum.interface';
+export * from './datum/accessor.interface';
+export * from './datum/processor.interface';
 export * from './environment.interface';
 export * from './interval.interface';
-export * from './registry.interface';
-export * from './selection.interface';
 
-export {Registry} from './registry';
 export {Executor} from './executor';
-export * from './transform';
+export {Environment} from './environment';
 
-export * from './action';
-export * from './action/range';
-export * from './action/require';
-export * from './action/select';
+export {Datum} from './datum';
+export {DatumAccessor} from './datum/accessor';
+export {DatumProcessor} from './datum/processor';
+
+export * from './transform';

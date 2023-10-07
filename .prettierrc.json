@@ -1,4 +1,6 @@
 {
+	"plugins": ["@trivago/prettier-plugin-sort-imports"],
+
 	"printWidth": 75,
 	"tabWidth": 2,
 	"useTabs": true,
@@ -13,7 +15,7 @@
 		"^@bmoor/(.*)$",
 		"^[./]" 
 	],
-    "importOrderSeparation": true, 
-    "importOrderSortSpecifiers": true,
+  	"importOrderSortSpecifiers": true,
+    "importOrderSeparation": true,
 	"importOrderParserPlugins": ["typescript"]
 }

@@ -1,3 +1,5 @@
+import {DatumInterface} from '@bmoor/compute';
+
 import {
 	EventInterface,
 	EventJSON,
@@ -12,9 +14,11 @@ import {
 	NodeType,
 } from './node.interface';
 
-export interface GraphSelector extends NodeSelector {
+export interface GraphNodeSelector extends NodeSelector {
 	reference?: NodeReference;
 }
+
+export type GraphSelector = GraphNodeSelector;
 
 export interface GraphEventFeatures {
 	eventFeatures: Features;
@@ -33,6 +37,8 @@ export interface GraphInterface {
 	getEvents(ref: NodeReference): EventInterface[];
 	getEventFeatures(ref: NodeReference): GraphEventFeatures[];
 	// some search methods
+
+	select(selector: GraphSelector): DatumInterface<NodeSelector>[];
 }
 
 export interface GraphJSON {

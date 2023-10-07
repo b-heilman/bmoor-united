@@ -1,6 +1,19 @@
-import {DatumInterface} from './datum.interface';
+import {
+	DatumInterface,
+	DatumReference,
+	DatumSelector,
+	DatumSettings,
+} from './datum.interface';
 import {IntervalInterface} from './interval.interface';
-import {SelectionInterface} from './selection.interface';
+
+export type EnvironmentSettings = Record<
+	string,
+	Record<DatumReference, DatumSettings>
+>;
+
+export interface EnvironmentSelector extends DatumSelector {
+	reference: string;
+}
 
 // interface which allows local methods to be defined
 export interface EnvironmentInterface<
@@ -12,11 +25,7 @@ export interface EnvironmentInterface<
 	select(
 		interval: IntervalInterface<IntervalRef, Order>,
 		select: GraphSelector,
-	): SelectionInterface<NodeSelector, IntervalRef, Order>;
-
-	getGlobal(
-		interval: IntervalInterface<IntervalRef, Order>,
-	): DatumInterface<NodeSelector>;
+	): DatumInterface<NodeSelector>[];
 
 	intervalSelect(
 		datum: DatumInterface<NodeSelector>,
@@ -31,11 +40,6 @@ export interface EnvironmentInterface<
 		IntervalInterface<IntervalRef, Order>,
 		DatumInterface<NodeSelector>
 	>;
-
-	overrideSelector(
-		select: GraphSelector,
-		override: GraphSelector,
-	): GraphSelector;
 
 	offsetInterval(
 		interval: IntervalInterface<IntervalRef, Order>,

@@ -9,17 +9,17 @@ import {Node} from './node';
 describe('@bmoor/graph', function () {
 	describe('Graph building', function () {
 		it('should properly build a flat graph', function () {
-            const graph = new Graph();
+			const graph = new Graph();
 
-            const node1 = new Node('node-1');
-            const node2 = new Node('node-2');
-            const node3 = new Node('node-3');
-            const node4 = new Node('node-4');
+			const node1 = new Node('node-1');
+			const node2 = new Node('node-2');
+			const node3 = new Node('node-3');
+			const node4 = new Node('node-4');
 
-            graph.addNode(node1);
-            graph.addNode(node2);
-            graph.addNode(node3);
-            graph.addNode(node4);
+			graph.addNode(node1);
+			graph.addNode(node2);
+			graph.addNode(node3);
+			graph.addNode(node4);
 
 			function biConnectNodes(
 				eventFeatures: Features,
@@ -131,27 +131,27 @@ describe('@bmoor/graph', function () {
 			});
 		});
 
-        it('should properly build a tiered graph', function () {
-            const graph = new Graph();
+		it('should properly build a tiered graph', function () {
+			const graph = new Graph();
 
-            const nodeA = new Node('node-a');
-            const node1 = new Node('node-1');
-            const node2 = new Node('node-2');
-            const nodeB = new Node('node-b');
-            const node3 = new Node('node-3');
-            const node4 = new Node('node-4');
+			const nodeA = new Node('node-a');
+			const node1 = new Node('node-1');
+			const node2 = new Node('node-2');
+			const nodeB = new Node('node-b');
+			const node3 = new Node('node-3');
+			const node4 = new Node('node-4');
 
-            node1.setParent(nodeA);
-            node2.setParent(nodeA);
-            node3.setParent(nodeB);
-            node4.setParent(node3);
+			node1.setParent(nodeA);
+			node2.setParent(nodeA);
+			node3.setParent(nodeB);
+			node4.setParent(node3);
 
-            graph.addNode(nodeA);
-            graph.addNode(node1);
-            graph.addNode(node2);
-            graph.addNode(nodeB);
-            graph.addNode(node3);
-            graph.addNode(node4);
+			graph.addNode(nodeA);
+			graph.addNode(node1);
+			graph.addNode(node2);
+			graph.addNode(nodeB);
+			graph.addNode(node3);
+			graph.addNode(node4);
 
 			nodeA.addEdge(new Edge('opponent', nodeB));
 			nodeB.addEdge(new Edge('opponent', nodeA));
@@ -248,11 +248,6 @@ describe('@bmoor/graph', function () {
 			events: [],
 		});
 
-		it('should allow selection', function () {
-            const select1 = graph.select({
-                reference: 'node-a',
-                type: 'position'
-            });
 		it('should allow selection with .type', function () {
 			console.log(JSON.stringify(graph.toJSON(), null, 2));
 
@@ -261,16 +256,16 @@ describe('@bmoor/graph', function () {
 				type: 'position',
 			});
 
-            const select2 = graph.select({
-                type: 'position'
-            });
+			const select2 = graph.select({
+				type: 'position',
+			});
 
-			expect(select1.datums.map((node) => node.ref)).to.deep.equal([
+			expect(select1.map((node) => node.ref)).to.deep.equal([
 				'node-1',
 				'node-2',
 			]);
 
-			expect(select2.datums.map((node) => node.ref)).to.deep.equal([
+			expect(select2.map((node) => node.ref)).to.deep.equal([
 				'node-1',
 				'node-2',
 				'node-3',
@@ -291,13 +286,9 @@ describe('@bmoor/graph', function () {
 				parent: 'team',
 			});
 
-			expect(select1.datums.map((node) => node.ref)).to.deep.equal([
-				'node-a',
-			]);
-			expect(select2.datums.map((node) => node.ref)).to.deep.equal([
-				'node-b',
-			]);
-			expect(select3.datums.map((node) => node.ref)).to.deep.equal([
+			expect(select1.map((node) => node.ref)).to.deep.equal(['node-a']);
+			expect(select2.map((node) => node.ref)).to.deep.equal(['node-b']);
+			expect(select3.map((node) => node.ref)).to.deep.equal([
 				'node-a',
 				'node-b',
 			]);
@@ -309,9 +300,7 @@ describe('@bmoor/graph', function () {
 				sibling: 'position',
 			});
 
-			expect(select1.datums.map((node) => node.ref)).to.deep.equal([
-				'node-2',
-			]);
+			expect(select1.map((node) => node.ref)).to.deep.equal(['node-2']);
 		});
 
 		it('should work with .metadata', function () {
@@ -322,7 +311,7 @@ describe('@bmoor/graph', function () {
 				},
 			});
 
-			expect(select1.datums.map((node) => node.ref)).to.deep.equal([
+			expect(select1.map((node) => node.ref)).to.deep.equal([
 				'node-2',
 				'node-3',
 			]);
@@ -339,10 +328,8 @@ describe('@bmoor/graph', function () {
 				type: 'position',
 			});
 
-			expect(select1.datums.map((node) => node.ref)).to.deep.equal([
-				'node-a',
-			]);
-			expect(select2.datums.map((node) => node.ref)).to.deep.equal([
+			expect(select1.map((node) => node.ref)).to.deep.equal(['node-a']);
+			expect(select2.map((node) => node.ref)).to.deep.equal([
 				'node-1',
 				'node-2',
 			]);

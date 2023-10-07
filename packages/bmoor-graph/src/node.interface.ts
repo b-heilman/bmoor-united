@@ -51,9 +51,7 @@ export enum NodeValueSelector {
 }
 
 export interface NodeSelector {
-	// TODO: I might want to move this out of here, make
-	//   it a variable passed in with the selector
-	mode?: NodeValueSelector; // current , past
+	global?: boolean;
 
 	// TODO: where nodes are selected, order should matter
 	//   make sure to standardize that.

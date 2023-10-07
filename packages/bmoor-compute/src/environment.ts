@@ -1,65 +1,76 @@
 import {OrderedMap} from '@bmoor/index';
 
 import {Datum} from './datum';
-import {EnvironmentInterface} from './environment.interface';
+import {DatumSelector} from './datum.interface';
+import {
+	EnvironmentInterface,
+	EnvironmentSelector,
+	EnvironmentSettings,
+} from './environment.interface';
 import {IntervalInterface} from './interval.interface';
-import {Selection} from './selection';
 
 export type Interval = string;
 export type Order = number;
 
-export interface Selector {
-	ref?: string;
-	sub?: string;
-}
-
 export class Environment
-	implements EnvironmentInterface<Selector, Selector, Interval, Order>
+	implements
+		EnvironmentInterface<
+			EnvironmentSelector,
+			DatumSelector,
+			Interval,
+			Order
+		>
 {
-	map: OrderedMap<string, Map<string, Datum<Selector>>>;
+	map: OrderedMap<string, Map<string, Datum>>;
 
-	constructor(
-		src: Record<string, Record<string, Record<string, number>>>,
-	) {
+	constructor(settings: EnvironmentSettings) {
 		this.map = new OrderedMap();
 
-		for (const key in src) {
+		for (const intervalRef in settings) {
 			const myMap = new Map();
-			const sub = src[key];
+			const sub = settings[intervalRef];
 
-			this.map.set(key, myMap);
+			this.map.set(intervalRef, myMap);
 
-			for (const subkey in sub) {
-				myMap.set(subkey, new Datum(subkey, sub[subkey]));
+			for (const datumRef in sub) {
+				const info = sub[datumRef];
+				const datum = new Datum(datumRef, info);
+
+				this.addDatum(myMap, datum);
 			}
+		}
+	}
+
+	addDatum(map, datum: Datum) {
+		map.set(datum.ref, datum);
+
+		for (const childDatum of datum.children.values()) {
+			this.addDatum(map, childDatum);
 		}
 	}
 
 	select(
 		interval: IntervalInterface<Interval, Order>,
-		select: Selector,
-	): Selection<Selector, Interval, Order> {
-		return new Selection(interval, [
-			this.map.get(interval.ref).get(select.sub),
-		]);
-	}
+		select: EnvironmentSelector,
+	): Datum[] {
+		const current = this.map.get(interval.ref);
+		const head = current.get(select.reference);
 
-	getGlobal(): Datum<Selector> {
-		return null;
+		return head.select(select);
 	}
 
 	intervalSelect(
-		datum: Datum<Selector>,
+		datum: Datum,
 		interval: IntervalInterface<Interval, Order>,
-	): Datum<Selector> {
+	): Datum {
 		return this.map.get(interval.ref).get(datum.ref);
 	}
 
 	rangeSelect(
-		datum: Datum<Selector>,
+		datum: Datum,
 		interval: IntervalInterface<Interval, Order>,
 		range: number,
-	): Map<IntervalInterface<Interval, Order>, Datum<Selector>> {
+	): Map<IntervalInterface<Interval, Order>, Datum> {
 		const offset = interval.ref;
 
 		const rtn = new Map();
@@ -86,13 +97,5 @@ export class Environment
 			ref: this.map.getTagOffset(interval.ref, offset),
 			order: 0,
 		};
-	}
-
-	overrideSelector(select: Selector, override: Selector = null): Selector {
-		if (override?.sub) {
-			select.sub = override.sub;
-		}
-
-		return select;
 	}
 }

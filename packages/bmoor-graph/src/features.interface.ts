@@ -1,1 +1,2 @@
-export type FeatureValues = Record<string, number>;
+export type FeatureReference = string;
+export type FeatureValues = Record<FeatureReference, number>;

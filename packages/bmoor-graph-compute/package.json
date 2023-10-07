@@ -1,5 +1,5 @@
 {
-  "name": "@bmoor/graph-dimensional",
+  "name": "@bmoor/graph-compute",
   "version": "0.0.1",
   "description": "A way to work with linear data of events and intervals",
   "main": "src/index.ts",

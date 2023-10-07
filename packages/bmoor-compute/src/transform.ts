@@ -1,13 +1,15 @@
-export function mean(values: number[]) {
-	return values.reduce((agg, val) => agg + val, 0) / values.length;
+export function mean(datums: {value: number}[]) {
+	return (
+		datums.reduce((agg, datum) => agg + datum.value, 0) / datums.length
+	);
 }
 
-export function momentum(values: number[]) {
-	let old = values[0];
+export function momentum(datums: {value: number}[]) {
+	let old = datums[0].value;
 	let score = 0;
 
-	for (let i = 1; i < values.length; i++) {
-		const cur = values[i];
+	for (let i = 1; i < datums.length; i++) {
+		const cur = datums[i].value;
 
 		if (cur > old) {
 			score++;
@@ -21,9 +23,9 @@ export function momentum(values: number[]) {
 	return score;
 }
 
-export function change(values: number[]) {
-	const old = values[0];
-	const cur = values[values.length - 1];
+export function change(datums: {value: number}[]) {
+	const old = datums[0].value;
+	const cur = datums[datums.length - 1].value;
 
-	return (old - cur) / values.length;
+	return (old - cur) / datums.length;
 }

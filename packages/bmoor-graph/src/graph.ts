@@ -1,3 +1,5 @@
+import {DatumInterface} from '@bmoor/compute';
+
 import {Edge} from './edge';
 import {Event} from './event';
 import {
@@ -11,15 +13,16 @@ import {
 	GraphEventFeatures,
 	GraphInterface,
 	GraphJSON,
+	GraphNodeSelector,
 	GraphSelector,
 } from './graph.interface';
-import {GraphGlobal} from './graph/global';
-import {GraphSelection} from './graph/selection';
+import {GraphDatum} from './graph/datum';
 import {Node} from './node';
 import {
 	NODE_DEFAULT_TYPE,
 	NodeJSON,
 	NodeReference,
+	NodeSelector,
 	NodeType,
 } from './node.interface';
 
@@ -41,23 +44,21 @@ function connect(graph: Graph, node: Node, event: Event) {
 
 export class Graph implements GraphInterface {
 	types: Map<NodeType, Node[]>;
-	features: Features;
+	global: Node;
 	nodeDex: Map<NodeReference, Node>;
 	eventDex: Map<EventReference, Event>;
 	connectionDex: Map<NodeReference, Event[]>;
 
 	constructor() {
 		this.types = new Map();
-		this.features = new Features();
+		this.global = new Node('global', '__super__');
 		this.nodeDex = new Map();
 		this.eventDex = new Map();
 		this.connectionDex = new Map();
 	}
 
 	addNode(node: Node): void {
-		// TODO: I'd like to figure out how to merge this
-		//   logic with getOrCreateNode.  Makes me think I need to
-		//   delay adding in the loading loop and just create
+		// TODO: should this not be an exception?
 		if (!this.nodeDex.has(node.ref)) {
 			this.nodeDex.set(node.ref, node);
 
@@ -69,11 +70,19 @@ export class Graph implements GraphInterface {
 			}
 
 			arr.push(node);
+
+			if (!node.parent) {
+				this.global.addChild(node);
+			}
 		}
 	}
 
 	getNode(ref: NodeReference): Node {
-		return this.nodeDex.get(ref);
+		if (ref === this.global.ref) {
+			return this.global;
+		} else {
+			return this.nodeDex.get(ref);
+		}
 	}
 
 	hasNode(ref: NodeReference): boolean {
@@ -110,39 +119,31 @@ export class Graph implements GraphInterface {
 		}));
 	}
 
-	select(selector: GraphSelector): GraphSelection {
-		let rtn: Node[] = null;
+	select(selector: GraphSelector): DatumInterface<NodeSelector>[] {
+		let select = <GraphNodeSelector>selector;
+		let res: Node[] = null;
 
-<<<<<<< HEAD
-		if (select.reference && select.type){
-			const node = this.getNode(select.reference);
-
-			rtn = node.selectChildren({type: select.type}, true);
-		} else if (select.reference) {
-			rtn = [this.getNode(select.reference)];
-=======
-		if (selector.reference) {
-			rtn = [this.getNode(selector.reference)];
->>>>>>> add: finishing touches on edges, fixing graph build
+		if (selector.global) {
+			res = [this.global];
+		} else if (selector.reference) {
+			res = [this.getNode(selector.reference)];
 		} else {
-			rtn = this.types.get(selector.type);
-			selector = Object.assign({}, selector, {type: null}); // so it doesn't run again
+			res = this.types.get(selector.type);
+			select = Object.assign({}, selector, {type: null}); // so it doesn't run again
 		}
-		return new GraphSelection(
-			selector,
-			rtn.flatMap((node) => node.select(selector)),
-		).unique();
-	}
 
-	getGlobal(): GraphGlobal {
-		return new GraphGlobal(this.features);
+		const rtn = [...new Set(res.flatMap((node) => node.select(select)))];
+
+		return rtn.map((node) => new GraphDatum(node, this));
 	}
 
 	toJSON(): GraphJSON {
 		const nodes = [];
 
 		for (const node of this.nodeDex.values()) {
-			nodes.push(node.toJSON());
+			if (node !== this.global) {
+				nodes.push(node.toJSON(this.global));
+			}
 		}
 
 		const events = Array.from(this.eventDex.values()).map((event) =>

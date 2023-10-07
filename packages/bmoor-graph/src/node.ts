@@ -392,7 +392,7 @@ export class Node implements NodeInterface {
 	}
 	*/
 
-	toJSON(): NodeJSON {
+	toJSON(ignore = null): NodeJSON {
 		const rtn: NodeJSON = {
 			ref: this.ref,
 			type: this.type,
@@ -402,7 +402,7 @@ export class Node implements NodeInterface {
 			rtn.metadata = Object.fromEntries(this.metadata);
 		}
 
-		if (this.parent) {
+		if (this.parent && this.parent !== ignore) {
 			rtn.parentRef = this.parent.ref;
 		}
 
