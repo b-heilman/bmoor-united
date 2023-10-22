@@ -1,4 +1,9 @@
-import {EventFeaturesWriteMode, EventJSON, NodeJSON} from '@bmoor/graph';
+import {
+	EventFeaturesWriteMode,
+	EventJSON,
+	NodeJSON,
+	NodeReference,
+} from '@bmoor/graph';
 
 export type GraphLoaderValue = string | number | boolean;
 export type GraphLoaderFeature = string;
@@ -21,9 +26,12 @@ export type GraphLoaderGeneratorStringAccessor =
 export type GraphLoaderFeatureValueFn = (
 	row: GraphLoaderRow,
 ) => GraphLoaderValue;
+
 export type GraphLoaderFeatureValueAccessor =
 	| GraphLoaderValue
 	| GraphLoaderFeatureValueFn;
+
+export type GraphLoaderEdgeFn = (row: GraphLoaderRow) => NodeReference[];
 
 export interface GraphLoaderNodeGeneratorSettings {
 	ref: GraphLoaderGeneratorStringAccessor;
@@ -33,7 +41,7 @@ export interface GraphLoaderNodeGeneratorSettings {
 
 	type: GraphLoaderGeneratorStringAccessor;
 	metadata?: Record<string, GraphLoaderGeneratorStringAccessor>;
-
+	edges?: Record<string, GraphLoaderEdgeFn>;
 	/**
 	 * I'm removing these because features on nodes should be
 	 * current state, which should come from events

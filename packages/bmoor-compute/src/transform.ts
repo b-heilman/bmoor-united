@@ -8,6 +8,12 @@ function normalize(datums: {value: number}[] | number[]): number[] {
 	return <number[]>datums;
 }
 
+export function sum(datums: {value: number}[] | number[]) {
+	const values = normalize(datums);
+
+	return values.reduce((agg, value) => agg + value, 0);
+}
+
 export function mean(datums: {value: number}[] | number[]) {
 	const values = normalize(datums);
 

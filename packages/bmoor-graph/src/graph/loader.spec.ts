@@ -16,6 +16,11 @@ describe('@bmoor/graph::loader', function () {
 			ref: function (datum): string {
 				return <string>datum.t;
 			},
+			edges: {
+				opponent: function (row) {
+					return [<string>(row.t == row.home ? row.away : row.home)];
+				},
+			},
 		});
 
 		loader.addNodeGenerator({
@@ -71,6 +76,8 @@ describe('@bmoor/graph::loader', function () {
 					passing: 12,
 					attempts: 34,
 					complete: 56,
+					home: 'eagles',
+					away: 'chefs',
 				},
 				{
 					t: 'chefs',
@@ -82,6 +89,8 @@ describe('@bmoor/graph::loader', function () {
 					passing: 1,
 					attempts: 6,
 					complete: 3,
+					home: 'eagles',
+					away: 'chefs',
 				},
 				{
 					t: 'eagles',
@@ -93,6 +102,8 @@ describe('@bmoor/graph::loader', function () {
 					passing: 12,
 					attempts: 34,
 					complete: 56,
+					home: 'eagles',
+					away: 'chefs',
 				},
 				{
 					t: 'chefs',
@@ -104,6 +115,8 @@ describe('@bmoor/graph::loader', function () {
 					passing: 1,
 					attempts: 6,
 					complete: 3,
+					home: 'eagles',
+					away: 'chefs',
 				},
 			]);
 
@@ -111,8 +124,17 @@ describe('@bmoor/graph::loader', function () {
 				nodes: [
 					{
 						ref: 'eagles',
-
 						type: 'team',
+						edges: {
+							opponent: ['chefs'],
+						},
+					},
+					{
+						ref: 'chefs',
+						type: 'team',
+						edges: {
+							opponent: ['eagles'],
+						},
 					},
 					{
 						ref: 'eagles:qb',
@@ -126,10 +148,6 @@ describe('@bmoor/graph::loader', function () {
 						metadata: {
 							position: 'qb',
 						},
-					},
-					{
-						ref: 'chefs',
-						type: 'team',
 					},
 					{
 						ref: 'chefs:qb',
@@ -228,6 +246,8 @@ describe('@bmoor/graph::loader', function () {
 					'passing',
 					'attempts',
 					'complete',
+					'home',
+					'away',
 				],
 				[
 					'eagles',
@@ -239,8 +259,22 @@ describe('@bmoor/graph::loader', function () {
 					12,
 					34,
 					56,
+					'eagles',
+					'chefs',
 				],
-				['chefs', 'qb', 'Ma-Homies', 'eag-v-chef', '1', '1/1', 1, 6, 3],
+				[
+					'chefs',
+					'qb',
+					'Ma-Homies',
+					'eag-v-chef',
+					'1',
+					'1/1',
+					1,
+					6,
+					3,
+					'eagles',
+					'chefs',
+				],
 				[
 					'eagles',
 					'def',
@@ -251,16 +285,39 @@ describe('@bmoor/graph::loader', function () {
 					12,
 					34,
 					56,
+					'eagles',
+					'chefs',
 				],
-				['chefs', 'def', 'Bad-Defense', 'eag-v-chef', '1', '1/1', 1, 6, 3],
+				[
+					'chefs',
+					'def',
+					'Bad-Defense',
+					'eag-v-chef',
+					'1',
+					'1/1',
+					1,
+					6,
+					3,
+					'eagles',
+					'chefs',
+				],
 			]);
 
 			expect(graph.toJSON()).to.deep.equal({
 				nodes: [
 					{
 						ref: 'eagles',
-
 						type: 'team',
+						edges: {
+							opponent: ['chefs'],
+						},
+					},
+					{
+						ref: 'chefs',
+						type: 'team',
+						edges: {
+							opponent: ['eagles'],
+						},
 					},
 					{
 						ref: 'eagles:qb',
@@ -274,10 +331,6 @@ describe('@bmoor/graph::loader', function () {
 						metadata: {
 							position: 'qb',
 						},
-					},
-					{
-						ref: 'chefs',
-						type: 'team',
 					},
 					{
 						ref: 'chefs:qb',
@@ -364,15 +417,105 @@ describe('@bmoor/graph::loader', function () {
 
 		it('should work with multiple intervals', function () {
 			loader.loadArray(graph, [
-				['t', 'p', 'name', 'game', 'week', 'passing', 'attempts'],
-				['team-1', 'qb', 'p-1-1', 'game-1', 1, 100, 112],
-				['team-1', 'wr', 'p-1-2', 'game-1', 1, 101, 101],
-				['team-2', 'qb', 'p-2-1', 'game-1', 1, 102, 103],
-				['team-2', 'wr', 'p-2-2', 'game-1', 1, 103, 111],
-				['team-3', 'qb', 'p-3-1', 'game-2', 1, 104, 100],
-				['team-3', 'wr', 'p-3-2', 'game-2', 1, 105, 102],
-				['team-4', 'qb', 'p-4-1', 'game-2', 1, 106, 115],
-				['team-4', 'wr', 'p-4-2', 'game-2', 1, 107, 113],
+				[
+					't',
+					'p',
+					'name',
+					'game',
+					'week',
+					'passing',
+					'attempts',
+					'home',
+					'away',
+				],
+				[
+					'team-1',
+					'qb',
+					'p-1-1',
+					'game-1',
+					1,
+					100,
+					112,
+					'team-1',
+					'team-2',
+				],
+				[
+					'team-1',
+					'wr',
+					'p-1-2',
+					'game-1',
+					1,
+					101,
+					101,
+					'team-1',
+					'team-2',
+				],
+				[
+					'team-2',
+					'qb',
+					'p-2-1',
+					'game-1',
+					1,
+					102,
+					103,
+					'team-1',
+					'team-2',
+				],
+				[
+					'team-2',
+					'wr',
+					'p-2-2',
+					'game-1',
+					1,
+					103,
+					111,
+					'team-1',
+					'team-2',
+				],
+				[
+					'team-3',
+					'qb',
+					'p-3-1',
+					'game-2',
+					1,
+					104,
+					100,
+					'team-3',
+					'team-4',
+				],
+				[
+					'team-3',
+					'wr',
+					'p-3-2',
+					'game-2',
+					1,
+					105,
+					102,
+					'team-3',
+					'team-4',
+				],
+				[
+					'team-4',
+					'qb',
+					'p-4-1',
+					'game-2',
+					1,
+					106,
+					115,
+					'team-3',
+					'team-4',
+				],
+				[
+					'team-4',
+					'wr',
+					'p-4-2',
+					'game-2',
+					1,
+					107,
+					113,
+					'team-3',
+					'team-4',
+				],
 			]);
 
 			expect(graph.toJSON()).to.deep.equal({
@@ -380,6 +523,16 @@ describe('@bmoor/graph::loader', function () {
 					{
 						ref: 'team-1',
 						type: 'team',
+						edges: {
+							opponent: ['team-2'],
+						},
+					},
+					{
+						ref: 'team-2',
+						type: 'team',
+						edges: {
+							opponent: ['team-1'],
+						},
 					},
 					{
 						ref: 'team-1:qb',
@@ -410,10 +563,6 @@ describe('@bmoor/graph::loader', function () {
 						metadata: {
 							position: 'wr',
 						},
-					},
-					{
-						ref: 'team-2',
-						type: 'team',
 					},
 					{
 						ref: 'team-2:qb',
@@ -448,6 +597,16 @@ describe('@bmoor/graph::loader', function () {
 					{
 						ref: 'team-3',
 						type: 'team',
+						edges: {
+							opponent: ['team-4'],
+						},
+					},
+					{
+						ref: 'team-4',
+						type: 'team',
+						edges: {
+							opponent: ['team-3'],
+						},
 					},
 					{
 						ref: 'team-3:qb',
@@ -478,10 +637,6 @@ describe('@bmoor/graph::loader', function () {
 						metadata: {
 							position: 'wr',
 						},
-					},
-					{
-						ref: 'team-4',
-						type: 'team',
 					},
 					{
 						ref: 'team-4:qb',
@@ -615,8 +770,6 @@ describe('@bmoor/graph::loader', function () {
 				type: 'team',
 			});
 
-			// TODO: order matters here, I should make it where it
-			//   doesn't because it shouldn't.
 			loader2.addEventGenerator({
 				ref: function (row): string {
 					return <string>row.game;
@@ -676,6 +829,8 @@ describe('@bmoor/graph::loader', function () {
 					passing: 12,
 					attempts: 34,
 					complete: 56,
+					home: 'eagles',
+					away: 'chefs',
 				},
 				{
 					t: 'chefs',
@@ -687,6 +842,8 @@ describe('@bmoor/graph::loader', function () {
 					passing: 1,
 					attempts: 6,
 					complete: 3,
+					home: 'eagles',
+					away: 'chefs',
 				},
 				{
 					t: 'eagles',
@@ -698,6 +855,8 @@ describe('@bmoor/graph::loader', function () {
 					passing: 12,
 					attempts: 34,
 					complete: 56,
+					home: 'eagles',
+					away: 'chefs',
 				},
 				{
 					t: 'chefs',
@@ -709,6 +868,8 @@ describe('@bmoor/graph::loader', function () {
 					passing: 1,
 					attempts: 6,
 					complete: 3,
+					home: 'eagles',
+					away: 'chefs',
 				},
 			]);
 
@@ -716,7 +877,6 @@ describe('@bmoor/graph::loader', function () {
 				nodes: [
 					{
 						ref: 'eagles',
-
 						type: 'team',
 					},
 					{

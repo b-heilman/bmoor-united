@@ -91,13 +91,23 @@ export class GraphLoader {
 				}
 
 				if (settings.metadata) {
-					const metadata = {};
+					const metadata: Record<string, string> = {};
 
 					for (const [mount, tag] of Object.entries(settings.metadata)) {
 						metadata[mount] = accessString(row, tag);
 					}
 
 					res.metadata = metadata;
+				}
+
+				if (settings.edges) {
+					const edges: Record<string, string[]> = {};
+
+					for (const [mount, edgeFn] of Object.entries(settings.edges)) {
+						edges[mount] = edgeFn(row);
+					}
+
+					res.edges = edges;
 				}
 
 				prev.push(res);
