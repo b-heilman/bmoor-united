@@ -1,15 +1,27 @@
-export function mean(datums: {value: number}[]) {
-	return (
-		datums.reduce((agg, datum) => agg + datum.value, 0) / datums.length
-	);
+function normalize(datums: {value: number}[] | number[]): number[] {
+	if (datums.length) {
+		if (typeof datums[0] == 'object') {
+			return datums.map((datum) => datum.value);
+		}
+	}
+
+	return <number[]>datums;
 }
 
-export function momentum(datums: {value: number}[]) {
-	let old = datums[0].value;
+export function mean(datums: {value: number}[] | number[]) {
+	const values = normalize(datums);
+
+	return values.reduce((agg, value) => agg + value, 0) / values.length;
+}
+
+export function momentum(datums: {value: number}[] | number[]) {
+	const values = normalize(datums);
+
+	let old = values[0];
 	let score = 0;
 
-	for (let i = 1; i < datums.length; i++) {
-		const cur = datums[i].value;
+	for (let i = 1; i < values.length; i++) {
+		const cur = values[i];
 
 		if (cur > old) {
 			score++;
@@ -23,9 +35,10 @@ export function momentum(datums: {value: number}[]) {
 	return score;
 }
 
-export function change(datums: {value: number}[]) {
-	const old = datums[0].value;
-	const cur = datums[datums.length - 1].value;
+export function change(datums: {value: number}[] | number[]) {
+	const values = normalize(datums);
+	const old = values[0];
+	const cur = values[values.length - 1];
 
-	return (old - cur) / datums.length;
+	return (old - cur) / values.length;
 }

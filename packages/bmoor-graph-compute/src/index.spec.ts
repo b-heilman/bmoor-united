@@ -181,7 +181,7 @@ describe('bmoor/graph-compute', function () {
 
 		playerRushingAverage5 = new Processor('player-rushing-avg-5', mean, [
 			{
-				accessor: new Accessor({
+				input: new Accessor({
 					value: 'rush',
 				}),
 				range: 5,
@@ -190,7 +190,7 @@ describe('bmoor/graph-compute', function () {
 
 		playerRushingAverage2 = new Processor('player-rushing-avg-2', mean, [
 			{
-				accessor: new Accessor({
+				input: new Accessor({
 					value: 'rush',
 				}),
 				range: 2,
@@ -202,7 +202,7 @@ describe('bmoor/graph-compute', function () {
 			mean,
 			[
 				{
-					accessor: new Accessor({
+					input: new Accessor({
 						value: playerRushingAverage2,
 					}),
 					select: {
@@ -219,22 +219,18 @@ describe('bmoor/graph-compute', function () {
 				globalAverage: {value: number},
 				last2Average: {value: number},
 			) {
-				return globalAverage.value < last2Average.value ? 1 : 0;
+				return globalAverage < last2Average ? 1 : 0;
 			},
 			[
 				{
-					accessor: new Accessor({
-						value: playerRushingAverage2Agg,
-					}),
+					input: playerRushingAverage2Agg,
 					select: {
 						global: true,
 					},
 					reduce: true,
 				},
 				{
-					accessor: new Accessor({
-						value: playerRushingAverage2,
-					}),
+					input: playerRushingAverage2,
 				},
 			],
 		);

@@ -37,11 +37,20 @@ async function loadProcessorRequirement<
 	datum: DatumInterface<NodeSelector>,
 	interval: IntervalInterface<IntervalRef, Order>,
 ): Promise<DatumProcessorRequirementsResponse> {
-	const accessor = <DatumAccessor<NodeSelector, IntervalRef>>req.accessor;
 	const newInterval = req.offset
 		? exe.env.offsetInterval(interval, req.offset)
 		: interval;
 	const newDatum = exe.env.intervalSelect(datum, newInterval);
+
+	let action = null;
+	let input = null;
+	if (req.input instanceof DatumAccessor) {
+		action = 'access';
+		input = <DatumAccessor<NodeSelector, IntervalRef>>req.input;
+	} else {
+		action = 'process';
+		input = <DatumProcessor<NodeSelector, IntervalRef>>req.input;
+	}
 
 	if ('range' in req) {
 		const timeline = exe.env.rangeSelect(newDatum, newInterval, req.range);
@@ -49,7 +58,7 @@ async function loadProcessorRequirement<
 		const rtn = [];
 
 		for (const [subInterval, subDatum] of timeline.entries()) {
-			rtn.push(exe.access(accessor, subDatum, subInterval));
+			rtn.push(exe[action](input, subDatum, subInterval));
 		}
 
 		return Promise.all(rtn);
@@ -57,18 +66,18 @@ async function loadProcessorRequirement<
 		const subDatums = newDatum.select(req.select);
 
 		if (req.reduce) {
-			return exe.access(accessor, subDatums[0], newInterval);
+			return exe[action](input, subDatums[0], newInterval);
 		} else {
 			const rtn = [];
 
 			for (const subDatum of subDatums) {
-				rtn.push(exe.access(accessor, subDatum, newInterval));
+				rtn.push(exe[action](input, subDatum, newInterval));
 			}
 
 			return Promise.all(rtn);
 		}
 	} else {
-		return exe.access(accessor, newDatum, newInterval);
+		return exe[action](input, newDatum, newInterval);
 	}
 }
 

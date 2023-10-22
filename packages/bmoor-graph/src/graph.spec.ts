@@ -249,8 +249,6 @@ describe('@bmoor/graph', function () {
 		});
 
 		it('should allow selection with .type', function () {
-			console.log(JSON.stringify(graph.toJSON(), null, 2));
-
 			const select1 = graph.select({
 				reference: 'node-a',
 				type: 'position',

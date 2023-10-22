@@ -30,6 +30,8 @@ describe('@bmoor/compute', function () {
 	let proc3;
 	let proc4;
 	let proc5;
+	let proc6;
+	let proc7;
 
 	beforeEach(function () {
 		env = new Environment({
@@ -42,6 +44,7 @@ describe('@bmoor/compute', function () {
 						'g-1-1': {
 							features: {
 								foo: 101,
+								bar: 101.5,
 							},
 							metadata: {
 								type: 'p',
@@ -51,6 +54,7 @@ describe('@bmoor/compute', function () {
 						'g-1-2': {
 							features: {
 								foo: 201,
+								bar: 201.5,
 							},
 							metadata: {
 								type: 'p',
@@ -67,6 +71,7 @@ describe('@bmoor/compute', function () {
 						'g-2-1': {
 							features: {
 								foo: 110,
+								bar: 110.5,
 							},
 							metadata: {
 								type: 'p',
@@ -76,6 +81,7 @@ describe('@bmoor/compute', function () {
 						'g-2-2': {
 							features: {
 								foo: 210,
+								bar: 210.5,
 							},
 							metadata: {
 								type: 'p',
@@ -94,6 +100,7 @@ describe('@bmoor/compute', function () {
 						'g-1-1': {
 							features: {
 								foo: 102,
+								bar: 102.5,
 							},
 							metadata: {
 								type: 'p',
@@ -103,6 +110,7 @@ describe('@bmoor/compute', function () {
 						'g-1-2': {
 							features: {
 								foo: 202,
+								bar: 202.5,
 							},
 							metadata: {
 								type: 'p',
@@ -119,6 +127,7 @@ describe('@bmoor/compute', function () {
 						'g-2-1': {
 							features: {
 								foo: 120,
+								bar: 120.5,
 							},
 							metadata: {
 								type: 'p',
@@ -128,6 +137,7 @@ describe('@bmoor/compute', function () {
 						'g-2-2': {
 							features: {
 								foo: 220,
+								bar: 220.5,
 							},
 							metadata: {
 								type: 'p',
@@ -141,11 +151,13 @@ describe('@bmoor/compute', function () {
 				'g-1': {
 					features: {
 						foo: 3,
+						bar: 3.5,
 					},
 				},
 				'g-2': {
 					features: {
 						foo: 30,
+						bar: 30.5,
 					},
 				},
 			},
@@ -153,11 +165,13 @@ describe('@bmoor/compute', function () {
 				'g-1': {
 					features: {
 						foo: 4,
+						bar: 4.5,
 					},
 				},
 				'g-2': {
 					features: {
 						foo: 40,
+						bar: 40.5,
 					},
 				},
 			},
@@ -165,11 +179,13 @@ describe('@bmoor/compute', function () {
 				'g-1': {
 					features: {
 						foo: 5,
+						bar: 5.5,
 					},
 				},
 				'g-2': {
 					features: {
 						foo: 50,
+						bar: 50.5,
 					},
 				},
 			},
@@ -177,11 +193,13 @@ describe('@bmoor/compute', function () {
 				'g-1': {
 					features: {
 						foo: 6,
+						bar: 6.5,
 					},
 				},
 				'g-2': {
 					features: {
 						foo: 60,
+						bar: 60.5,
 					},
 				},
 			},
@@ -189,11 +207,13 @@ describe('@bmoor/compute', function () {
 				'g-1': {
 					features: {
 						foo: 7,
+						bar: 7.5,
 					},
 				},
 				'g-2': {
 					features: {
 						foo: 70,
+						bar: 70.5,
 					},
 				},
 			},
@@ -217,11 +237,11 @@ describe('@bmoor/compute', function () {
 			},
 			[
 				{
-					accessor: accessFoo,
+					input: accessFoo,
 					offset: -1,
 				},
 				{
-					accessor: accessFoo,
+					input: accessFoo,
 					offset: -2,
 				},
 			],
@@ -229,7 +249,7 @@ describe('@bmoor/compute', function () {
 
 		proc2 = new Processor('mean-3', mean, [
 			{
-				accessor: accessFoo,
+				input: accessFoo,
 				range: 3,
 			},
 		]);
@@ -240,7 +260,7 @@ describe('@bmoor/compute', function () {
 			[
 				{
 					offset: -2,
-					accessor: new Accessor({
+					input: new Accessor({
 						arg1: proc1,
 						arg2: proc2,
 					}),
@@ -250,7 +270,7 @@ describe('@bmoor/compute', function () {
 
 		proc4 = new Processor('p-means', mean, [
 			{
-				accessor: accessFoo,
+				input: accessFoo,
 				select: {
 					metadata: {
 						type: 'p',
@@ -261,12 +281,44 @@ describe('@bmoor/compute', function () {
 
 		proc5 = new Processor('p-proc', mean, [
 			{
-				accessor: new Accessor({value: proc2}),
+				input: proc2,
 				select: {
 					metadata: {
 						type: 'p',
 					},
 				},
+			},
+		]);
+
+		proc6 = new Processor(
+			'cross',
+			(inputs: {foo: number; bar: number}[]) => {
+				return (
+					inputs.reduce(
+						(agg, input) => agg + (input.foo + input.bar) / 2,
+						0,
+					) / inputs.length
+				);
+			},
+			[
+				{
+					input: new Accessor({
+						foo: 'foo',
+						bar: 'bar',
+					}),
+					select: {
+						metadata: {
+							type: 'p',
+						},
+					},
+				},
+			],
+		);
+
+		proc7 = new Processor('range', mean, [
+			{
+				input: proc6,
+				range: 3,
 			},
 		]);
 	});
@@ -334,5 +386,13 @@ describe('@bmoor/compute', function () {
 		});
 
 		expect(v).to.deep.equal([165]);
+	});
+
+	it.only('should allow more complex compound subcalls', async function () {
+		const v = await executor.calculate({ref: 'zwei', order: 0}, proc7, {
+			reference: 'g-2',
+		});
+
+		expect(v).to.deep.equal([165.25]);
 	});
 });

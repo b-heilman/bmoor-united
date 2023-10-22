@@ -5,7 +5,9 @@ import {
 } from './accessor.interface';
 
 export interface DatumProcessorSelect<NodeSelector, IntervalRef> {
-	accessor: DatumAccessorInterface<NodeSelector, IntervalRef>;
+	input?:
+		| DatumProcessorInterface<NodeSelector, IntervalRef>
+		| DatumAccessorInterface<NodeSelector, IntervalRef>;
 	offset?: number;
 }
 
@@ -27,7 +29,9 @@ export type DatumProcessorRequirement<NodeSelector, IntervalRef> =
 
 export type DatumProcessorRequirementsResponse =
 	| DatumAccessorResponse
-	| DatumAccessorResponse[];
+	| DatumAccessorResponse[]
+	| DatumProcessorResponse
+	| DatumProcessorResponse[];
 
 export type DatumProcessorFunction = (
 	...args: DatumProcessorRequirementsResponse[]
