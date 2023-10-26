@@ -8,6 +8,7 @@ import {
 	DatumProcessorRequirementsResponse,
 	DatumProcessorResponse,
 } from './datum/processor.interface';
+import {DatumRanker} from './datum/ranker';
 import {EnvironmentInterface} from './environment.interface';
 import {ExecutorAction, ExecutorResponse} from './executor.interface';
 import {IntervalInterface} from './interval.interface';
@@ -81,6 +82,28 @@ async function loadProcessorRequirement<
 	}
 }
 
+async function runProcessor<
+	GraphSelector,
+	NodeSelector,
+	IntervalRef,
+	Order,
+>(
+	exe: Executor<GraphSelector, NodeSelector, IntervalRef, Order>,
+	processor: DatumProcessor<NodeSelector, IntervalRef>,
+	datum: DatumInterface<NodeSelector>,
+	interval: IntervalInterface<IntervalRef, Order>,
+): Promise<DatumProcessorResponse> {
+	const requirements = processor.getRequirements();
+
+	const reqs = await Promise.all(
+		requirements.map((req) =>
+			loadProcessorRequirement(exe, req, datum, interval),
+		),
+	);
+
+	return processor.process(...reqs);
+}
+
 export class Executor<GraphSelector, NodeSelector, IntervalRef, Order> {
 	env: EnvironmentInterface<
 		GraphSelector,
@@ -107,16 +130,35 @@ export class Executor<GraphSelector, NodeSelector, IntervalRef, Order> {
 	): Promise<DatumProcessorResponse> {
 		if (datum.hasValue(processor.name)) {
 			return datum.getValue(processor.name);
+		} else if (processor instanceof DatumRanker) {
+			const siblings = datum.select(processor.settings.selector);
+
+			if (siblings.indexOf(datum) === -1) {
+				throw new Error('selection must contain original datum');
+			} else {
+				const pairings = await Promise.all(
+					siblings.map(async (datum) => {
+						const value = <number>(
+							await runProcessor(this, processor, datum, interval)
+						);
+
+						return {
+							value,
+							datum,
+						};
+					}),
+				);
+
+				pairings.sort((a, b) => b.value - a.value);
+
+				await pairings.map(({datum}, i) =>
+					datum.setValue(processor.name, i),
+				);
+
+				return datum.getValue(processor.name);
+			}
 		} else {
-			const requirements = processor.getRequirements();
-
-			const reqs = await Promise.all(
-				requirements.map((req) =>
-					loadProcessorRequirement(this, req, datum, interval),
-				),
-			);
-
-			const value = processor.process(...reqs);
+			const value = await runProcessor(this, processor, datum, interval);
 
 			await datum.setValue(processor.name, value);
 
