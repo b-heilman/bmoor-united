@@ -4,6 +4,7 @@ import {Interval, Order} from './environment';
 import {
 	DatumAccessor,
 	DatumProcessor,
+	DatumRanker,
 	DatumSelector,
 	Environment,
 	EnvironmentSelector,
@@ -14,6 +15,8 @@ import {
 class Accessor extends DatumAccessor<DatumSelector, Interval> {}
 
 class Processor extends DatumProcessor<DatumSelector, Interval> {}
+
+class Ranker extends DatumRanker<DatumSelector, Interval> {}
 
 describe('@bmoor/compute', function () {
 	let env: Environment = null;
@@ -39,6 +42,9 @@ describe('@bmoor/compute', function () {
 				'g-1': {
 					features: {
 						foo: 1,
+					},
+					metadata: {
+						type: 'u',
 					},
 					children: {
 						'g-1-1': {
@@ -66,6 +72,9 @@ describe('@bmoor/compute', function () {
 				'g-2': {
 					features: {
 						foo: 10,
+					},
+					metadata: {
+						type: 'u',
 					},
 					children: {
 						'g-2-1': {
@@ -388,11 +397,100 @@ describe('@bmoor/compute', function () {
 		expect(v).to.deep.equal([165]);
 	});
 
-	it.only('should allow more complex compound subcalls', async function () {
+	it('should allow more complex compound subcalls', async function () {
 		const v = await executor.calculate({ref: 'zwei', order: 0}, proc7, {
 			reference: 'g-2',
 		});
 
 		expect(v).to.deep.equal([165.25]);
+	});
+
+	it('should allow ranking across nodes', async function () {
+		const rank = new Ranker(
+			'rank-across-foo',
+			{
+				selector: {
+					parent: {
+						type: 'u',
+					},
+					metadata: {
+						type: 'p',
+					},
+				},
+			},
+			(input: {foo: number}) => {
+				return input.foo;
+			},
+			[
+				{
+					input: new Accessor({
+						foo: 'foo',
+					}),
+				},
+			],
+		);
+
+		const v1 = await executor.calculate({ref: 'eins', order: 0}, rank, {
+			reference: 'g-1-1',
+		});
+
+		expect(v1).to.deep.equal([1]);
+
+		const v2 = await executor.calculate({ref: 'eins', order: 0}, rank, {
+			reference: 'g-1-2',
+		});
+
+		expect(v2).to.deep.equal([0]);
+
+		const v3 = await executor.calculate({ref: 'eins', order: 0}, rank, {
+			reference: 'g-2-2',
+		});
+
+		expect(v3).to.deep.equal([0]);
+	});
+
+	it('should allow ranking ascending across nodes', async function () {
+		const rank = new Ranker(
+			'rank-across-foo',
+			{
+				asc: true,
+				selector: {
+					parent: {
+						type: 'u',
+					},
+					metadata: {
+						type: 'p',
+					},
+				},
+			},
+			(input: {foo: number}) => {
+				return input.foo;
+			},
+			[
+				{
+					input: new Accessor({
+						foo: 'foo',
+					}),
+				},
+			],
+		);
+
+		const v1 = await executor.calculate({ref: 'eins', order: 0}, rank, {
+			reference: 'g-1-1',
+		});
+
+		expect(v1).to.deep.equal([0]);
+
+		const v2 = await executor.calculate({ref: 'eins', order: 0}, rank, {
+			reference: 'g-1-2',
+		});
+
+		expect(v2).to.deep.equal([1]);
+
+		const v3 = await executor.calculate({ref: 'eins', order: 0}, rank, {
+			reference: 'g-2-2',
+		});
+
+		expect(v3).to.deep.equal([1]);
 	});
 });

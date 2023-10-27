@@ -149,7 +149,11 @@ export class Executor<GraphSelector, NodeSelector, IntervalRef, Order> {
 					}),
 				);
 
-				pairings.sort((a, b) => b.value - a.value);
+				if (processor.settings.asc) {
+					pairings.sort((a, b) => a.value - b.value);
+				} else {
+					pairings.sort((a, b) => b.value - a.value);
+				}
 
 				await pairings.map(({datum}, i) =>
 					datum.setValue(processor.name, i),

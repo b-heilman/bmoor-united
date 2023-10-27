@@ -10,5 +10,6 @@ export {Environment} from './environment';
 export {Datum} from './datum';
 export {DatumAccessor} from './datum/accessor';
 export {DatumProcessor} from './datum/processor';
+export {DatumRanker} from './datum/ranker';
 
 export * from './transform';

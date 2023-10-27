@@ -12,6 +12,7 @@ export interface DatumSettings {
 
 export interface DatumSelector {
 	metadata?: Record<string, string>;
+	parent?: Record<string, string>;
 }
 
 export interface DatumAccessor {

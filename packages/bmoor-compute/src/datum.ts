@@ -9,6 +9,7 @@ export class Datum implements DatumInterface<DatumSelector> {
 	features: Map<string, number>;
 	metadata: Record<string, string>;
 	children: Map<string, Datum>;
+	parent: Datum;
 
 	constructor(ref: string, settings: DatumSettings) {
 		this.ref = ref;
@@ -25,7 +26,10 @@ export class Datum implements DatumInterface<DatumSelector> {
 			for (const childRef in settings.children) {
 				const childSettings = settings.children[childRef];
 
-				this.children.set(childRef, new Datum(childRef, childSettings));
+				const datum = new Datum(childRef, childSettings);
+				this.children.set(childRef, datum);
+
+				datum.parent = this;
 			}
 		}
 	}
@@ -57,13 +61,30 @@ export class Datum implements DatumInterface<DatumSelector> {
 	}
 
 	select(selector: DatumSelector) {
-		if (selector.metadata) {
-			if (this.matches(selector.metadata)) {
-				return [this];
+		const clone = Object.assign({}, selector);
+
+		let base: Datum = null;
+
+		if (clone.parent) {
+			let cur = this.parent;
+			while (cur && !cur.matches(clone.parent)) {
+				cur = cur.parent;
+				console.log(cur);
+			}
+
+			base = cur;
+		} else {
+			base = this; // eslint-disable-line @typescript-eslint/no-this-alias
+		}
+
+		if (clone.metadata) {
+			if (base.matches(clone.metadata)) {
+				return [base];
 			} else {
-				return Array.from(this.children.values()).flatMap((child) =>
-					child.select(selector),
-				);
+				return Array.from(base.children.values()).flatMap((child) => {
+					clone.parent = null;
+					return child.select(clone);
+				});
 			}
 		} else {
 			return [this];
