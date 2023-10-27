@@ -18,6 +18,10 @@ export class GraphDatum implements DatumInterface<NodeSelector> {
 		this.graph = graph;
 	}
 
+	equals(other: GraphDatum) {
+		return this.node === other.node;
+	}
+
 	hasValue(
 		attr: string,
 		mode: NodeValueSelector = NodeValueSelector.node,

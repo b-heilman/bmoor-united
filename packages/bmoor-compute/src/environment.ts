@@ -29,12 +29,20 @@ export class Environment
 		for (const intervalRef in settings) {
 			const myMap = new Map();
 			const sub = settings[intervalRef];
+			const root = new Datum('root', {
+				metadata: {type: 'root'},
+				features: {},
+			});
 
+			myMap.set('root', root);
 			this.map.set(intervalRef, myMap);
 
 			for (const datumRef in sub) {
 				const info = sub[datumRef];
+
 				const datum = new Datum(datumRef, info);
+
+				root.addChild(datum);
 
 				this.addDatum(myMap, datum);
 			}
@@ -53,10 +61,17 @@ export class Environment
 		interval: IntervalInterface<Interval, Order>,
 		select: EnvironmentSelector,
 	): Datum[] {
-		const current = this.map.get(interval.ref);
-		const head = current.get(select.reference);
+		let datum;
 
-		return head.select(select);
+		const current = this.map.get(interval.ref);
+
+		if (select.reference) {
+			datum = current.get(select.reference);
+		} else {
+			datum = current.get('root');
+		}
+
+		return datum.select(select);
 	}
 
 	intervalSelect(

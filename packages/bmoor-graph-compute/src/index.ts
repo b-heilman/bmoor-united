@@ -1,5 +1,6 @@
 export {DimensionalDatumAccessor} from './datum/accessor';
 export {DimensionalDatumProcessor} from './datum/processor';
+export {DimensionalDatumRanker} from './datum/ranker';
 export {DimensionalGraph} from './graph';
 export * from './graph.interface';
 export {DimensionalGraphLoader} from './graph/loader';

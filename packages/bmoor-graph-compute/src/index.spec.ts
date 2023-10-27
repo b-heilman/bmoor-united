@@ -11,6 +11,7 @@ import {
 	Interval,
 	NodeValueSelector,
 	DimensionalDatumProcessor as Processor,
+	DimensionalDatumRanker as Ranker,
 } from './index';
 
 describe('bmoor/graph-compute', function () {
@@ -732,11 +733,43 @@ describe('bmoor/graph-compute', function () {
 		expect(res3).to.deep.equal([127]);
 	});
 
-	xit('should allow us to rank teams by defensive stats', function () {
-		console.log('TODO');
+	it('should allow us to rank players by offsensive stats', async function () {
+		const ranker = new Ranker(
+			'rushing-rank',
+			{
+				select: {
+					parent: 'root',
+					type: 'player',
+				},
+			},
+			(data: {value: number}) => data.value,
+			[
+				{
+					input: new Accessor({
+						value: 'rush',
+					}),
+				},
+			],
+		);
+
+		const res1 = await executor.calculate(i1, ranker, {
+			reference: 'rb-1-1',
+		});
+
+		const res2 = await executor.calculate(i1, ranker, {
+			reference: 'wr-1-3',
+		});
+
+		const res3 = await executor.calculate(i3, ranker, {
+			reference: 'wr-1-4',
+		});
+
+		expect(res1).to.deep.equal([0]);
+		expect(res2).to.deep.equal([6]);
+		expect(res3).to.deep.equal([4]);
 	});
 
-	xit('should allow us to rank teams by receiving stats', function () {
+	xit('should allow us to rank teams by defensive stats', async function () {
 		console.log('TODO');
 	});
 });

@@ -51,7 +51,7 @@ export class Graph implements GraphInterface {
 
 	constructor() {
 		this.types = new Map();
-		this.global = new Node('global', '__super__');
+		this.global = new Node('__root__', 'root');
 		this.nodeDex = new Map();
 		this.eventDex = new Map();
 		this.connectionDex = new Map();

@@ -26,12 +26,19 @@ export class Datum implements DatumInterface<DatumSelector> {
 			for (const childRef in settings.children) {
 				const childSettings = settings.children[childRef];
 
-				const datum = new Datum(childRef, childSettings);
-				this.children.set(childRef, datum);
-
-				datum.parent = this;
+				this.addChild(new Datum(childRef, childSettings));
 			}
 		}
+	}
+
+	equals(other: Datum) {
+		return this === other;
+	}
+
+	addChild(child: Datum) {
+		this.children.set(child.ref, child);
+
+		child.parent = this;
 	}
 
 	matches(metadata: Record<string, string>) {
@@ -69,7 +76,6 @@ export class Datum implements DatumInterface<DatumSelector> {
 			let cur = this.parent;
 			while (cur && !cur.matches(clone.parent)) {
 				cur = cur.parent;
-				console.log(cur);
 			}
 
 			base = cur;

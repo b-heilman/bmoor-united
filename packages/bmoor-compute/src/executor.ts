@@ -131,9 +131,14 @@ export class Executor<GraphSelector, NodeSelector, IntervalRef, Order> {
 		if (datum.hasValue(processor.name)) {
 			return datum.getValue(processor.name);
 		} else if (processor instanceof DatumRanker) {
-			const siblings = datum.select(processor.settings.selector);
+			const siblings = datum.select(processor.settings.select);
 
-			if (siblings.indexOf(datum) === -1) {
+			let found = false;
+			for (let i = 0; i < siblings.length && !found; i++) {
+				found = siblings[i].equals(datum);
+			}
+
+			if (!found) {
 				throw new Error('selection must contain original datum');
 			} else {
 				const pairings = await Promise.all(
@@ -155,8 +160,12 @@ export class Executor<GraphSelector, NodeSelector, IntervalRef, Order> {
 					pairings.sort((a, b) => b.value - a.value);
 				}
 
+				const length = processor.settings.buckets
+					? pairings.length / processor.settings.buckets
+					: 1;
+
 				await pairings.map(({datum}, i) =>
-					datum.setValue(processor.name, i),
+					datum.setValue(processor.name, Math.floor(i / length)),
 				);
 
 				return datum.getValue(processor.name);

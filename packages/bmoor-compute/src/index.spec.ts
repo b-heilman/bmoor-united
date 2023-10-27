@@ -409,7 +409,7 @@ describe('@bmoor/compute', function () {
 		const rank = new Ranker(
 			'rank-across-foo',
 			{
-				selector: {
+				select: {
 					parent: {
 						type: 'u',
 					},
@@ -449,12 +449,56 @@ describe('@bmoor/compute', function () {
 		expect(v3).to.deep.equal([0]);
 	});
 
+	it('should globally allow ranking across nodes', async function () {
+		const rank = new Ranker(
+			'rank-across-foo',
+			{
+				select: {
+					parent: {
+						type: 'root',
+					},
+					metadata: {
+						type: 'p',
+					},
+				},
+			},
+			(input: {foo: number}) => {
+				return input.foo;
+			},
+			[
+				{
+					input: new Accessor({
+						foo: 'foo',
+					}),
+				},
+			],
+		);
+
+		const v1 = await executor.calculate({ref: 'eins', order: 0}, rank, {
+			reference: 'g-1-1',
+		});
+
+		expect(v1).to.deep.equal([3]);
+
+		const v2 = await executor.calculate({ref: 'eins', order: 0}, rank, {
+			reference: 'g-1-2',
+		});
+
+		expect(v2).to.deep.equal([1]);
+
+		const v3 = await executor.calculate({ref: 'eins', order: 0}, rank, {
+			reference: 'g-2-2',
+		});
+
+		expect(v3).to.deep.equal([0]);
+	});
+
 	it('should allow ranking ascending across nodes', async function () {
 		const rank = new Ranker(
 			'rank-across-foo',
 			{
 				asc: true,
-				selector: {
+				select: {
 					parent: {
 						type: 'u',
 					},
@@ -492,5 +536,50 @@ describe('@bmoor/compute', function () {
 		});
 
 		expect(v3).to.deep.equal([1]);
+	});
+
+	it('should allow ranking in buckets', async function () {
+		const rank = new Ranker(
+			'rank-global-foo',
+			{
+				buckets: 2,
+				select: {
+					parent: {
+						type: 'root',
+					},
+					metadata: {
+						type: 'p',
+					},
+				},
+			},
+			(input: {foo: number}) => {
+				return input.foo;
+			},
+			[
+				{
+					input: new Accessor({
+						foo: 'foo',
+					}),
+				},
+			],
+		);
+
+		const v1 = await executor.calculate({ref: 'eins', order: 0}, rank, {
+			reference: 'g-1-1',
+		});
+
+		expect(v1).to.deep.equal([1]);
+
+		const v2 = await executor.calculate({ref: 'eins', order: 0}, rank, {
+			reference: 'g-1-2',
+		});
+
+		expect(v2).to.deep.equal([0]);
+
+		const v3 = await executor.calculate({ref: 'eins', order: 0}, rank, {
+			reference: 'g-2-2',
+		});
+
+		expect(v3).to.deep.equal([0]);
 	});
 });

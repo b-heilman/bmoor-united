@@ -23,6 +23,8 @@ export interface DatumAccessor {
 
 	// set the value
 	setValue(attr: FeatureReference, value: FeatureValue): Promise<boolean>;
+
+	equals(other: DatumAccessor): boolean;
 }
 
 export interface DatumInterface<NodeSelector> extends DatumAccessor {
