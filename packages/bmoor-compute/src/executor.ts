@@ -1,4 +1,6 @@
 // import { DatumAccessorInterface} from './datum/accessor.interface';
+import {Context} from '@bmoor/context';
+
 import {DatumInterface} from './datum.interface';
 import {DatumAccessor} from './datum/accessor';
 import {DatumAccessorResponse} from './datum/accessor.interface';
@@ -19,12 +21,13 @@ async function loadAccessorRequirement<
 	IntervalRef,
 	Order,
 >(
+	ctx: Context,
 	exe: Executor<GraphSelector, NodeSelector, IntervalRef, Order>,
 	req: DatumProcessor<NodeSelector, IntervalRef>,
 	datum: DatumInterface<NodeSelector>,
 	interval: IntervalInterface<IntervalRef, Order>,
 ): Promise<DatumProcessorResponse> {
-	return exe.process(req, datum, interval);
+	return exe.process(ctx, req, datum, interval);
 }
 
 async function loadProcessorRequirement<
@@ -33,6 +36,7 @@ async function loadProcessorRequirement<
 	IntervalRef,
 	Order,
 >(
+	ctx: Context,
 	exe: Executor<GraphSelector, NodeSelector, IntervalRef, Order>,
 	req: DatumProcessorRequirement<NodeSelector, IntervalRef>,
 	datum: DatumInterface<NodeSelector>,
@@ -59,7 +63,7 @@ async function loadProcessorRequirement<
 		const rtn = [];
 
 		for (const [subInterval, subDatum] of timeline.entries()) {
-			rtn.push(exe[action](input, subDatum, subInterval));
+			rtn.push(exe[action](ctx, input, subDatum, subInterval));
 		}
 
 		return Promise.all(rtn);
@@ -67,18 +71,18 @@ async function loadProcessorRequirement<
 		const subDatums = newDatum.select(req.select);
 
 		if (req.reduce) {
-			return exe[action](input, subDatums[0], newInterval);
+			return exe[action](ctx, input, subDatums[0], newInterval);
 		} else {
 			const rtn = [];
 
 			for (const subDatum of subDatums) {
-				rtn.push(exe[action](input, subDatum, newInterval));
+				rtn.push(exe[action](ctx, input, subDatum, newInterval));
 			}
 
 			return Promise.all(rtn);
 		}
 	} else {
-		return exe[action](input, newDatum, newInterval);
+		return exe[action](ctx, input, newDatum, newInterval);
 	}
 }
 
@@ -88,6 +92,7 @@ async function runProcessor<
 	IntervalRef,
 	Order,
 >(
+	ctx: Context,
 	exe: Executor<GraphSelector, NodeSelector, IntervalRef, Order>,
 	processor: DatumProcessor<NodeSelector, IntervalRef>,
 	datum: DatumInterface<NodeSelector>,
@@ -97,9 +102,13 @@ async function runProcessor<
 
 	const reqs = await Promise.all(
 		requirements.map((req) =>
-			loadProcessorRequirement(exe, req, datum, interval),
+			loadProcessorRequirement(ctx, exe, req, datum, interval),
 		),
 	);
+
+	if (ctx.hasFlag('verbose')) {
+		console.log(processor.name, datum.ref, reqs);
+	}
 
 	return processor.process(...reqs);
 }
@@ -124,6 +133,7 @@ export class Executor<GraphSelector, NodeSelector, IntervalRef, Order> {
 	}
 
 	async process(
+		ctx: Context,
 		processor: DatumProcessor<NodeSelector, IntervalRef>,
 		datum: DatumInterface<NodeSelector>,
 		interval: IntervalInterface<IntervalRef, Order>,
@@ -144,7 +154,7 @@ export class Executor<GraphSelector, NodeSelector, IntervalRef, Order> {
 				const pairings = await Promise.all(
 					siblings.map(async (datum) => {
 						const value = <number>(
-							await runProcessor(this, processor, datum, interval)
+							await runProcessor(ctx, this, processor, datum, interval)
 						);
 
 						return {
@@ -171,7 +181,13 @@ export class Executor<GraphSelector, NodeSelector, IntervalRef, Order> {
 				return datum.getValue(processor.name);
 			}
 		} else {
-			const value = await runProcessor(this, processor, datum, interval);
+			const value = await runProcessor(
+				ctx,
+				this,
+				processor,
+				datum,
+				interval,
+			);
 
 			await datum.setValue(processor.name, value);
 
@@ -180,6 +196,7 @@ export class Executor<GraphSelector, NodeSelector, IntervalRef, Order> {
 	}
 
 	async access(
+		ctx: Context,
 		accessor: DatumAccessor<NodeSelector, IntervalRef>,
 		datum: DatumInterface<NodeSelector>,
 		interval: IntervalInterface<IntervalRef, Order>,
@@ -192,6 +209,7 @@ export class Executor<GraphSelector, NodeSelector, IntervalRef, Order> {
 			await Promise.all(
 				requirements.map((req) =>
 					loadAccessorRequirement(
+						ctx,
 						this,
 						<DatumProcessor<NodeSelector, IntervalRef>>req,
 						datum,
@@ -209,15 +227,16 @@ export class Executor<GraphSelector, NodeSelector, IntervalRef, Order> {
 		interval: IntervalInterface<IntervalRef, Order>,
 		action: ExecutorAction<NodeSelector, IntervalRef>,
 		select: GraphSelector,
+		ctx: Context = new Context({}),
 	): Promise<ExecutorResponse[]> {
 		const selection = this.env.select(interval, select);
 
 		return Promise.all(
 			selection.map((datum) => {
 				if (action instanceof DatumAccessor) {
-					return this.access(action, datum, interval);
+					return this.access(ctx, action, datum, interval);
 				} else {
-					return this.process(action, datum, interval);
+					return this.process(ctx, action, datum, interval);
 				}
 			}),
 		);

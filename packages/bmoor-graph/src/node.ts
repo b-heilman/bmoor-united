@@ -179,7 +179,7 @@ export class Node implements NodeInterface {
 
 	selectParent(selector: NodeSelector): Node {
 		let found = null;
-		let cur = this.parent;
+		let cur: Node = this; // eslint-disable-line @typescript-eslint/no-this-alias
 
 		while (cur && found === null) {
 			if (cur.type === selector.parent) {

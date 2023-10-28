@@ -1,6 +1,8 @@
 import {
 	ContextSecurityInterface,
 	ContextSettings,
+	EnvVariable,
+	FeatureFlag,
 } from './context.interface';
 
 export class Context implements ContextSecurityInterface {
@@ -26,5 +28,13 @@ export class Context implements ContextSecurityInterface {
 
 	async hasClaim(/*claim: string*/) {
 		return false;
+	}
+
+	hasFlag(featureFlag: FeatureFlag) {
+		return this.settings.flags?.[featureFlag] || false;
+	}
+
+	getVariable(envVar: EnvVariable) {
+		return this.settings.variables?.[envVar] || null;
 	}
 }

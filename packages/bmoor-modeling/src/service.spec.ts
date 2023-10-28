@@ -76,6 +76,12 @@ describe('@bmoor-modeling::Service', function () {
 			async hasClaim() {
 				return true;
 			},
+			hasFlag() {
+				return false;
+			},
+			getVariable() {
+				return null;
+			},
 		};
 		controller = {
 			async canRead(datums) {

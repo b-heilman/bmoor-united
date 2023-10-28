@@ -701,7 +701,7 @@ describe('bmoor/graph-compute', function () {
 			},
 		]);
 
-		const opposingRushinng = new Processor(
+		const opposingRushing = new Processor(
 			'opp-rushing',
 			(value: number) => value,
 			[
@@ -716,15 +716,15 @@ describe('bmoor/graph-compute', function () {
 			],
 		);
 
-		const res1 = await executor.calculate(i1, opposingRushinng, {
+		const res1 = await executor.calculate(i1, opposingRushing, {
 			reference: 'rb-1-1',
 		});
 
-		const res2 = await executor.calculate(i2, opposingRushinng, {
+		const res2 = await executor.calculate(i2, opposingRushing, {
 			reference: 'rb-1-1',
 		});
 
-		const res3 = await executor.calculate(i3, opposingRushinng, {
+		const res3 = await executor.calculate(i3, opposingRushing, {
 			reference: 'rb-1-1',
 		});
 
@@ -769,7 +769,75 @@ describe('bmoor/graph-compute', function () {
 		expect(res3).to.deep.equal([4]);
 	});
 
-	xit('should allow us to rank teams by defensive stats', async function () {
-		console.log('TODO');
+	it.only('should allow us to rank teams by defensive stats', async function () {
+		const totalRushing = new Processor('total-rushing', sum, [
+			{
+				input: new Accessor({
+					value: 'rush',
+				}),
+				select: {
+					type: 'player',
+				},
+			},
+		]);
+
+		const opposingRushing = new Processor(
+			'allowed-rushing',
+			(value: number) => value,
+			[
+				{
+					input: totalRushing,
+					select: {
+						parent: 'team',
+						edge: 'opponent',
+					},
+					reduce: true,
+				},
+			],
+		);
+
+		const opposingRushAcross = new Processor('opposing-rushing-5', mean, [
+			{
+				input: opposingRushing,
+				range: 5,
+			},
+		]);
+
+		const ranker = new Ranker(
+			'rushing-rank',
+			{
+				select: {
+					parent: 'root',
+					type: 'team',
+				},
+			},
+			(value: number) => value,
+			[
+				{
+					input: opposingRushAcross,
+				},
+			],
+		);
+
+		const res1 = await executor.calculate(i1, ranker, {
+			reference: 't-1',
+		});
+
+		const res2 = await executor.calculate(i1, ranker, {
+			reference: 't-2',
+		});
+
+		const res3 = await executor.calculate(i1, ranker, {
+			reference: 't-3',
+		});
+
+		const res4 = await executor.calculate(i1, ranker, {
+			reference: 't-4',
+		});
+
+		expect(res1).to.deep.equal([0]);
+		expect(res2).to.deep.equal([1]);
+		expect(res3).to.deep.equal([2]);
+		expect(res4).to.deep.equal([3]);
 	});
 });
