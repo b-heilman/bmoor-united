@@ -23,26 +23,22 @@ export class DimensionalGraphLoader extends GraphLoader {
 		builder: DimensionalGraphBuilder,
 		row: GraphLoaderRow,
 	) {
-		const intervalRef = this.settings.readIntervalReference(row);
+		const interval = this.settings.generateInterval(row, builder.size);
 
-		let interval: DimensionalGraphBuilderPage = null;
-		if (builder.has(intervalRef)) {
-			interval = builder.get(intervalRef);
+		let builderInterval: DimensionalGraphBuilderPage = null;
+		if (builder.has(interval.ref)) {
+			builderInterval = builder.get(interval.ref);
 		} else {
-			interval = {
-				interval: this.settings.generateInterval(
-					intervalRef,
-					row,
-					builder.size,
-				),
+			builderInterval = {
+				interval,
 				nodes: new Map(),
 				events: [],
 			};
 
-			builder.set(intervalRef, interval);
+			builder.set(interval.ref, builderInterval);
 		}
 
-		return super.loadRow(interval, row);
+		return super.loadRow(builderInterval, row);
 	}
 
 	loadDimensionalJSON(dGraph: DimensionalGraph, arr: GraphLoaderRow[]) {

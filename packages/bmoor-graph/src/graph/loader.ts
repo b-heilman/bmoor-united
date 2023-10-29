@@ -15,9 +15,10 @@ import {
 function accessString(
 	row: GraphLoaderRow,
 	accessor: GraphLoaderGeneratorStringAccessor,
+	previous: NodeJSON,
 ) {
 	if (typeof accessor === 'function') {
-		return accessor(row);
+		return accessor(row, previous);
 	} else if (typeof accessor === 'string') {
 		return accessor;
 	} else {
@@ -44,12 +45,20 @@ function accessValue(
 	}
 }
 
-function featureCopy(row, features) {
-	return features.reduce((agg, feature) => {
-		agg[feature] = row[feature];
+function featureCopy(row, features, parser  = null) {
+	if (parser){
+		return features.reduce((agg, feature) => {
+			agg[feature] = parser(row[feature]);
 
-		return agg;
-	}, {});
+			return agg;
+		}, {});
+	} else {
+		return features.reduce((agg, feature) => {
+			agg[feature] = row[feature];
+
+			return agg;
+		}, {});
+	}
 }
 
 export class GraphLoader {
@@ -80,24 +89,25 @@ export class GraphLoader {
 				? settings.rowSplitter(row)
 				: [row];
 
+			let parent = prev[prev.length - 1] || null;
 			for (const row of rows) {
-				const res: NodeJSON = {
-					ref: accessString(row, settings.ref),
-					type: accessString(row, settings.type),
+				const node: NodeJSON = {
+					ref: accessString(row, settings.ref, parent),
+					type: accessString(row, settings.type, parent),
 				};
 
 				if (settings.parentRef) {
-					res.parentRef = accessString(row, settings.parentRef);
+					node.parentRef = accessString(row, settings.parentRef, parent);
 				}
 
 				if (settings.metadata) {
 					const metadata: Record<string, string> = {};
 
 					for (const [mount, tag] of Object.entries(settings.metadata)) {
-						metadata[mount] = accessString(row, tag);
+						metadata[mount] = accessString(row, tag, parent);
 					}
 
-					res.metadata = metadata;
+					node.metadata = metadata;
 				}
 
 				if (settings.edges) {
@@ -107,10 +117,11 @@ export class GraphLoader {
 						edges[mount] = edgeFn(row);
 					}
 
-					res.edges = edges;
+					node.edges = edges;
 				}
 
-				prev.push(res);
+				parent = node;
+				prev.push(node);
 			}
 
 			return prev;
@@ -120,8 +131,10 @@ export class GraphLoader {
 	addEventGenerator(settings: GraphLoaderEventGeneratorSettings) {
 		const old = this.settings.generateEvents;
 		this.settings.generateEvents = function (row: GraphLoaderRow) {
+			const prev = old(row);
+
 			const features = settings.features
-				? featureCopy(row, settings.features)
+				? featureCopy(row, settings.features, settings.featuresParser)
 				: {};
 
 			if (settings.featureValues) {
@@ -132,12 +145,12 @@ export class GraphLoader {
 				}
 			}
 
-			const res: EventJSON = {
-				ref: accessString(row, settings.ref),
+			const event: EventJSON = {
+				ref: accessString(row, settings.ref, null),
 				features,
 				connections: settings.connections.map((info) => {
 					const cFeatures = info.features
-						? featureCopy(row, info.features)
+						? featureCopy(row, info.features, info.featuresParser)
 						: {};
 
 					if (info.featureValues) {
@@ -149,15 +162,14 @@ export class GraphLoader {
 					}
 
 					return {
-						nodeRef: accessString(row, info.nodeRef),
+						nodeRef: accessString(row, info.nodeRef, null),
 						features: cFeatures,
 						collision: info.collision || EventFeaturesWriteMode.ignore,
 					};
 				}),
 			};
-			const prev = old(row);
 
-			prev.push(res);
+			prev.push(event);
 
 			return prev;
 		};

@@ -28,8 +28,8 @@ describe('@bmoor/graph::loader', function () {
 			ref: function (row): string {
 				return row.t + ':' + row.p;
 			},
-			parentRef: function (datum): string {
-				return <string>datum.t;
+			parentRef: function (datum, parent: {ref: string}): string {
+				return parent.ref;
 			},
 		});
 

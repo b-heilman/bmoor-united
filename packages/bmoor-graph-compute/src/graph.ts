@@ -138,7 +138,7 @@ export function load(schema: DimensionalGraphJSON): DimensionalGraph {
 	const graph = new DimensionalGraph();
 
 	for (const input of schema.intervals) {
-		graph.addInterval(new Interval(input.ref, input.label, input.order));
+		graph.addInterval(new Interval(input.ref, input.order, input.label));
 	}
 
 	for (const intervalRef in schema.graphs) {

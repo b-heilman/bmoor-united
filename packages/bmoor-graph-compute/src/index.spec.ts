@@ -35,15 +35,11 @@ describe('bmoor/graph-compute', function () {
 	beforeEach(function () {
 		graph = new DimensionalGraph();
 		loader = new DimensionalGraphLoader({
-			// TODO: I don't love this...
-			readIntervalReference: function (dict) {
-				return <string>dict.week;
-			},
-			generateInterval: function (ref, dict) {
+			generateInterval: function (dict) {
 				const interval = new Interval(
-					ref,
 					<string>dict.week,
 					parseInt(<string>dict.week),
+					<string>dict.week,
 				);
 
 				return interval;

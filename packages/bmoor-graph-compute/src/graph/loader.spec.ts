@@ -11,15 +11,11 @@ describe('@bmoor/graph-compute::loader', function () {
 	beforeEach(function () {
 		graph = new DimensionalGraph();
 		loader = new DimensionalGraphLoader({
-			// TODO: I don't love this...
-			readIntervalReference: function (dict) {
-				return <string>dict.week;
-			},
-			generateInterval: function (ref, dict) {
+			generateInterval: function (dict) {
 				const interval = new Interval(
-					ref,
-					<string>dict.date,
+					<string>dict.week,
 					parseInt(<string>dict.week),
+					<string>dict.date,
 				);
 
 				return interval;
@@ -899,14 +895,11 @@ describe('@bmoor/graph-compute::loader', function () {
 
 		it('should work with multiple loaders', function () {
 			const loader2 = new DimensionalGraphLoader({
-				readIntervalReference: function (dict) {
-					return <string>dict.week;
-				},
-				generateInterval: function (ref, dict) {
+				generateInterval: function (dict) {
 					const interval = new Interval(
-						ref,
-						<string>dict.date,
+						<string>dict.week,
 						parseInt(<string>dict.week),
+						<string>dict.date,
 					);
 
 					return interval;

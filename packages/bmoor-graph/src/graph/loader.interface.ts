@@ -18,7 +18,10 @@ export type GraphLoaderEventGenerator = (
 	row: GraphLoaderRow,
 ) => EventJSON[];
 
-export type GraphLoaderGeneratorStringFn = (row: GraphLoaderRow) => string;
+export type GraphLoaderGeneratorStringFn = (
+	row: GraphLoaderRow,
+	previous?: NodeJSON,
+) => string;
 export type GraphLoaderGeneratorStringAccessor =
 	| string
 	| GraphLoaderGeneratorStringFn;
@@ -55,11 +58,13 @@ export interface GraphLoaderEventGeneratorSettings {
 	ref: GraphLoaderGeneratorStringAccessor;
 
 	features?: string[];
+	featuresParser?: (GraphLoaderValue) => GraphLoaderValue;
 	featureValues?: Record<string, GraphLoaderFeatureValueAccessor>;
 
 	connections: {
 		nodeRef: GraphLoaderGeneratorStringAccessor;
 		features?: string[];
+		featuresParser?: (GraphLoaderValue) => GraphLoaderValue;
 		featureValues?: Record<string, GraphLoaderFeatureValueAccessor>;
 		collision?: EventFeaturesWriteMode;
 	}[];
