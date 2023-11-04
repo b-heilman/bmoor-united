@@ -7,6 +7,7 @@ import {
 } from './event.interface';
 import {Features} from './features';
 import {
+	NodeBuilder,
 	NodeInterface,
 	NodeJSON,
 	NodeReference,
@@ -42,11 +43,12 @@ export interface GraphInterface {
 }
 
 export interface GraphJSON {
+	root: NodeJSON;
 	nodes: NodeJSON[];
 	events: EventJSON[];
 }
 
 export interface GraphBuilder {
-	nodes: Map<NodeReference, NodeInterface>;
+	nodes: NodeBuilder;
 	events: EventJSON[];
 }

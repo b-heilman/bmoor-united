@@ -765,7 +765,7 @@ describe('bmoor/graph-compute', function () {
 		expect(res3).to.deep.equal([4]);
 	});
 
-	it.only('should allow us to rank teams by defensive stats', async function () {
+	it('should allow us to rank teams by defensive stats', async function () {
 		const totalRushing = new Processor('total-rushing', sum, [
 			{
 				input: new Accessor({

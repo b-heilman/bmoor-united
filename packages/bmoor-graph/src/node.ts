@@ -7,6 +7,7 @@ import {Features} from './features';
 import {FeatureValues} from './features.interface';
 import {
 	NODE_DEFAULT_TYPE,
+	NodeBuilder,
 	NodeInterface,
 	NodeJSON,
 	NodeOperator,
@@ -422,4 +423,61 @@ export class Node implements NodeInterface {
 
 		return rtn;
 	}
+}
+
+export function load(
+	source: NodeJSON,
+	builder: NodeBuilder,
+	stub = false,
+) {
+	let node: Node = null;
+	let info = builder.get(source.ref);
+	let define;
+
+	if (info) {
+		node = <Node>info.node;
+
+		define = info.stub && !stub;
+	} else {
+		node = new Node(source.ref);
+		define = !stub;
+		info = {
+			node,
+			stub,
+		};
+
+		builder.set(node.ref, info);
+	}
+
+	if (define) {
+		info.stub = false;
+
+		if (source.type) {
+			node.type = source.type;
+		}
+
+		if (source.parentRef) {
+			node.setParent(load({ref: source.parentRef}, builder, true));
+		}
+
+		if (source.features) {
+			node.addFeatures(source.features);
+		}
+
+		if (source.metadata) {
+			node.setMetadata(source.metadata);
+		}
+
+		if (source.edges) {
+			for (const label in source.edges) {
+				const edgeSet = source.edges[label];
+
+				for (const ref of edgeSet) {
+					node.addEdge(new Edge(label, load({ref}, builder, true)));
+				}
+			}
+		}
+	}
+
+	return node;
 }

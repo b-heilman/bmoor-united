@@ -68,6 +68,10 @@ describe('@bmoor/graph', function () {
 			);
 
 			expect(graph.toJSON()).to.deep.equal({
+				root: {
+					ref: '__root__',
+					type: 'root',
+				},
 				nodes: [
 					{
 						ref: 'node-1',
@@ -157,6 +161,10 @@ describe('@bmoor/graph', function () {
 			nodeB.addEdge(new Edge('opponent', nodeA));
 
 			expect(graph.toJSON()).to.deep.equal({
+				root: {
+					ref: '__root__',
+					type: 'root',
+				},
 				nodes: [
 					{
 						ref: 'node-a',
@@ -200,6 +208,10 @@ describe('@bmoor/graph', function () {
 
 	describe('Graph::select', function () {
 		const graph = load({
+			root: {
+				ref: '__root__',
+				type: 'root',
+			},
 			nodes: [
 				{
 					ref: 'node-a',
@@ -336,6 +348,10 @@ describe('@bmoor/graph', function () {
 
 	describe('Graph::getEventFeatures', function () {
 		const graph = load({
+			root: {
+				ref: '__root__',
+				type: 'root',
+			},
 			nodes: [
 				{
 					ref: 'node-a',

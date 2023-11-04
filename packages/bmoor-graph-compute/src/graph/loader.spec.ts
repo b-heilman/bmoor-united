@@ -139,10 +139,13 @@ describe('@bmoor/graph-compute::loader', function () {
 				],
 				graphs: {
 					'1': {
+						root: {
+							ref: '__root__',
+							type: 'root',
+						},
 						nodes: [
 							{
 								ref: 'eagles',
-
 								type: 'team',
 							},
 							{
@@ -232,6 +235,10 @@ describe('@bmoor/graph-compute::loader', function () {
 						],
 					},
 					'2': {
+						root: {
+							ref: '__root__',
+							type: 'root',
+						},
 						nodes: [
 							{
 								ref: 'eagles',
@@ -336,6 +343,10 @@ describe('@bmoor/graph-compute::loader', function () {
 				],
 				graphs: {
 					'1': {
+						root: {
+							ref: '__root__',
+							type: 'root',
+						},
 						nodes: [
 							{
 								ref: 'eagles',
@@ -429,6 +440,10 @@ describe('@bmoor/graph-compute::loader', function () {
 						],
 					},
 					'2': {
+						root: {
+							ref: '__root__',
+							type: 'root',
+						},
 						nodes: [
 							{
 								ref: 'eagles',
@@ -492,16 +507,20 @@ describe('@bmoor/graph-compute::loader', function () {
 					{
 						ref: 1,
 						order: 1,
-						label: undefined,
+						label: 1,
 					},
 					{
 						ref: 2,
 						order: 2,
-						label: undefined,
+						label: 2,
 					},
 				],
 				graphs: {
 					'1': {
+						root: {
+							ref: '__root__',
+							type: 'root',
+						},
 						nodes: [
 							{
 								ref: 'team-1',
@@ -696,6 +715,10 @@ describe('@bmoor/graph-compute::loader', function () {
 						],
 					},
 					'2': {
+						root: {
+							ref: '__root__',
+							type: 'root',
+						},
 						nodes: [
 							{
 								ref: 'team-1',
@@ -1046,6 +1069,10 @@ describe('@bmoor/graph-compute::loader', function () {
 				],
 				graphs: {
 					'1': {
+						root: {
+							ref: '__root__',
+							type: 'root',
+						},
 						nodes: [
 							{
 								ref: 'eagles',
@@ -1156,6 +1183,10 @@ describe('@bmoor/graph-compute::loader', function () {
 						],
 					},
 					'2': {
+						root: {
+							ref: '__root__',
+							type: 'root',
+						},
 						nodes: [
 							{
 								ref: 'eagles',

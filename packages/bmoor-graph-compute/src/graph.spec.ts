@@ -27,6 +27,10 @@ describe('@bmoor/graph-compute::graph', function () {
 		],
 		graphs: {
 			'd-1': {
+				root: {
+					ref: '__root__',
+					type: 'root',
+				},
 				nodes: [
 					{
 						ref: 'team-a',
@@ -148,6 +152,10 @@ describe('@bmoor/graph-compute::graph', function () {
 				],
 			},
 			'd-2': {
+				root: {
+					ref: '__root__',
+					type: 'root',
+				},
 				nodes: [
 					{
 						ref: 'team-a',
@@ -269,6 +277,10 @@ describe('@bmoor/graph-compute::graph', function () {
 				],
 			},
 			'd-3': {
+				root: {
+					ref: '__root__',
+					type: 'root',
+				},
 				nodes: [
 					{
 						ref: 'team-a',

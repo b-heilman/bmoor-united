@@ -121,6 +121,10 @@ describe('@bmoor/graph::loader', function () {
 			]);
 
 			expect(graph.toJSON()).to.deep.equal({
+				root: {
+					ref: '__root__',
+					type: 'root',
+				},
 				nodes: [
 					{
 						ref: 'eagles',
@@ -304,6 +308,10 @@ describe('@bmoor/graph::loader', function () {
 			]);
 
 			expect(graph.toJSON()).to.deep.equal({
+				root: {
+					ref: '__root__',
+					type: 'root',
+				},
 				nodes: [
 					{
 						ref: 'eagles',
@@ -519,6 +527,10 @@ describe('@bmoor/graph::loader', function () {
 			]);
 
 			expect(graph.toJSON()).to.deep.equal({
+				root: {
+					ref: '__root__',
+					type: 'root',
+				},
 				nodes: [
 					{
 						ref: 'team-1',
@@ -874,6 +886,10 @@ describe('@bmoor/graph::loader', function () {
 			]);
 
 			expect(graph.toJSON()).to.deep.equal({
+				root: {
+					ref: '__root__',
+					type: 'root',
+				},
 				nodes: [
 					{
 						ref: 'eagles',

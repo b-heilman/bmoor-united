@@ -1,6 +1,7 @@
 import {EventFeaturesWriteMode, EventJSON} from '../event.interface';
-import {Graph, applyBuilder, prepareNodeJSON} from '../graph';
+import {Graph, applyBuilder} from '../graph';
 import {GraphBuilder} from '../graph.interface';
+import {load as loadNode} from '../node';
 import {NodeJSON} from '../node.interface';
 import {
 	GraphLoaderEventGeneratorSettings,
@@ -45,8 +46,8 @@ function accessValue(
 	}
 }
 
-function featureCopy(row, features, parser  = null) {
-	if (parser){
+function featureCopy(row, features, parser = null) {
+	if (parser) {
 		return features.reduce((agg, feature) => {
 			agg[feature] = parser(row[feature]);
 
@@ -179,7 +180,7 @@ export class GraphLoader {
 		const nodes = this.settings.generateNodes(row);
 
 		for (const nodeJSON of nodes) {
-			prepareNodeJSON(builder, nodeJSON);
+			loadNode(nodeJSON, builder.nodes);
 		}
 
 		builder.events = builder.events.concat(

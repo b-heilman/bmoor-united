@@ -86,3 +86,11 @@ export const NODE_DEFAULT_TYPE = '__DEFAULT__';
 export interface NodePullSettings {
 	continue?: (node: NodeInterface) => boolean;
 }
+
+export type NodeBuilder = Map<
+	string,
+	{
+		node: NodeInterface;
+		stub: boolean;
+	}
+>;

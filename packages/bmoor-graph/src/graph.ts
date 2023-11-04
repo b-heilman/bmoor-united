@@ -17,7 +17,7 @@ import {
 	GraphSelector,
 } from './graph.interface';
 import {GraphDatum} from './graph/datum';
-import {Node} from './node';
+import {Node, load as loadNode} from './node';
 import {
 	NODE_DEFAULT_TYPE,
 	NodeJSON,
@@ -44,14 +44,14 @@ function connect(graph: Graph, node: Node, event: Event) {
 
 export class Graph implements GraphInterface {
 	types: Map<NodeType, Node[]>;
-	global: Node;
+	root: Node;
 	nodeDex: Map<NodeReference, Node>;
 	eventDex: Map<EventReference, Event>;
 	connectionDex: Map<NodeReference, Event[]>;
 
-	constructor() {
+	constructor(root?: Node) {
 		this.types = new Map();
-		this.global = new Node('__root__', 'root');
+		this.root = root || new Node('__root__', 'root');
 		this.nodeDex = new Map();
 		this.eventDex = new Map();
 		this.connectionDex = new Map();
@@ -72,14 +72,14 @@ export class Graph implements GraphInterface {
 			arr.push(node);
 
 			if (!node.parent) {
-				this.global.addChild(node);
+				this.root.addChild(node);
 			}
 		}
 	}
 
 	getNode(ref: NodeReference): Node {
-		if (ref === this.global.ref) {
-			return this.global;
+		if (ref === this.root.ref) {
+			return this.root;
 		} else {
 			return this.nodeDex.get(ref);
 		}
@@ -124,7 +124,7 @@ export class Graph implements GraphInterface {
 		let res: Node[] = null;
 
 		if (selector.global) {
-			res = [this.global];
+			res = [this.root];
 		} else if (selector.reference) {
 			res = [this.getNode(selector.reference)];
 		} else {
@@ -141,8 +141,8 @@ export class Graph implements GraphInterface {
 		const nodes = [];
 
 		for (const node of this.nodeDex.values()) {
-			if (node !== this.global) {
-				nodes.push(node.toJSON(this.global));
+			if (node !== this.root) {
+				nodes.push(node.toJSON(this.root));
 			}
 		}
 
@@ -151,6 +151,7 @@ export class Graph implements GraphInterface {
 		);
 
 		return {
+			root: this.root.toJSON(),
 			nodes,
 			events,
 		};
@@ -159,53 +160,6 @@ export class Graph implements GraphInterface {
 
 export function dump(graph: Graph): GraphJSON {
 	return graph.toJSON();
-}
-
-export function prepareNodeJSON(
-	builder: GraphBuilder,
-	nodeInfo: NodeJSON,
-): Node {
-	const dex = builder.nodes;
-
-	let node = <Node>dex.get(nodeInfo.ref);
-
-	if (!node) {
-		node = new Node(nodeInfo.ref);
-
-		dex.set(node.ref, node);
-	}
-
-	if (nodeInfo.type && node.type === NODE_DEFAULT_TYPE) {
-		node.type = nodeInfo.type;
-	}
-
-	if (nodeInfo.parentRef && !node.hasParent()) {
-		node.setParent(
-			prepareNodeJSON(builder, {
-				ref: nodeInfo.parentRef,
-			}),
-		);
-	}
-
-	if (nodeInfo.features) {
-		node.addFeatures(nodeInfo.features);
-	}
-
-	if (nodeInfo.metadata && !node.hasMetadata()) {
-		node.setMetadata(nodeInfo.metadata);
-	}
-
-	if (nodeInfo.edges && !node.hasEdges()) {
-		for (const label in nodeInfo.edges) {
-			const edgeSet = nodeInfo.edges[label];
-
-			for (const ref of edgeSet) {
-				node.addEdge(new Edge(label, prepareNodeJSON(builder, {ref})));
-			}
-		}
-	}
-
-	return node;
 }
 
 function addEventJSON(graph: Graph, eventInfo: EventJSON) {
@@ -233,8 +187,14 @@ function addEventJSON(graph: Graph, eventInfo: EventJSON) {
 }
 
 export function applyBuilder(graph: Graph, builder: GraphBuilder) {
-	for (const node of builder.nodes.values()) {
-		graph.addNode(<Node>node);
+	for (const info of builder.nodes.values()) {
+		if (info.stub) {
+			throw new Error('node stubbed but never defined: ' + info.node.ref);
+		} else if (graph.root === info.node) {
+			continue;
+		}
+
+		graph.addNode(<Node>info.node);
 	}
 
 	for (const eventInfo of builder.events) {
@@ -243,14 +203,17 @@ export function applyBuilder(graph: Graph, builder: GraphBuilder) {
 }
 
 export function load(source: GraphJSON): Graph {
-	const graph = new Graph();
 	const builder = {
 		nodes: new Map(),
 		events: source.events,
 	};
 
+	const root = loadNode(source.root, builder.nodes);
+
+	const graph = new Graph(root);
+
 	for (const nodeInfo of source.nodes) {
-		prepareNodeJSON(builder, nodeInfo);
+		loadNode(nodeInfo, builder.nodes);
 	}
 
 	applyBuilder(graph, builder);
