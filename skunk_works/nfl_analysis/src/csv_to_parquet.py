@@ -131,7 +131,9 @@ def write_file(df, path):
 
 write_file(games, '../data/parquet/games.parquet')
 print('--games--\n', games.head(5))
+print(games.columns)
 
 write_file(players, '../data/parquet/players.parquet')
 print('--players--\n', players.head(5))
+print(players.columns)
 
