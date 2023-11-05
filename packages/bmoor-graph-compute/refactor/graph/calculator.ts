@@ -1,5 +1,5 @@
 import {Node} from '../../src/node';
-import {Features} from '../../src/features';
+import {Features} from '../../../../skunk_works/nfl_analysis/src/features';
 import {GraphSelection} from './selection';
 
 export class GraphCalculator {

@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import * as parquet from 'parquetjs-lite';
-import {DimensionalGraph, DimensionalGraphLoader, Interval, dump, load} from '@bmoor/graph-compute';
+import {DimensionalGraphLoader, Interval, dump, load} from '@bmoor/graph-compute';
 
 type DataRow = {
     'game_date': string, 
@@ -34,14 +34,72 @@ async function run(){
         type: 'team',
         ref: function(row: DataRow){
             return row.home_team;
-        }
+        },
+        edges: {
+            opponent: function (row: DataRow) {
+                return [row.vis_team];
+            },
+        },
+    });
+
+    gameLoader.addNodeGenerator({
+        type: 'offsense',
+        ref: function(row: DataRow){
+            return row.home_team+':off';
+        },
+        edges: {
+            against: function (row: DataRow) {
+                return [row.vis_team+':def'];
+            },
+        },
+    });
+
+    gameLoader.addNodeGenerator({
+        type: 'defense',
+        ref: function(row: DataRow){
+            return row.home_team+':def';
+        },
+        edges: {
+            against: function (row: DataRow) {
+                return [row.home_team+':off'];
+            },
+        },
     });
 
     gameLoader.addNodeGenerator({
         type: 'team',
         ref: function(row: DataRow){
             return row.vis_team;
-        }
+        },
+        edges: {
+            opponent: function (row: DataRow) {
+                return [row.home_team];
+            },
+        },
+    });
+
+    gameLoader.addNodeGenerator({
+        type: 'offsense',
+        ref: function(row: DataRow){
+            return row.vis_team+':off';
+        },
+        edges: {
+            against: function (row: DataRow) {
+                return [row.home_team+':def'];
+            },
+        },
+    });
+
+    gameLoader.addNodeGenerator({
+        type: 'defense',
+        ref: function(row: DataRow){
+            return row.vis_team+':def';
+        },
+        edges: {
+            against: function (row: DataRow) {
+                return [row.home_team+':off'];
+            },
+        },
     });
     
     gameLoader.addEventGenerator({

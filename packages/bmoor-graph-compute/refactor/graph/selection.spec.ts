@@ -4,7 +4,7 @@ import {expect} from 'chai';
  * I want to focus my tests on my gambling AI I'm tinkering with.
  */
 import {Graph} from '../../src/graph';
-import {Features} from '../../src/features';
+import {Features} from '../../../../skunk_works/nfl_analysis/src/features';
 import {GraphLoader} from './loader';
 import {GraphSelection} from './selection';
 

@@ -188,11 +188,25 @@ export class GraphLoader {
 		);
 	}
 
-	loadJSON(graph: Graph, arr: GraphLoaderRow[]) {
-		const builder = {
-			nodes: new Map(),
+	_prepareBuilder(graph: Graph): GraphBuilder {
+		return {
+			nodes: Array.from(graph.nodeDex.entries()).reduce(
+				(agg, [ref, node]) => {
+					agg.set(ref, {
+						node,
+						stub: false,
+					});
+
+					return agg;
+				},
+				new Map(),
+			),
 			events: [],
 		};
+	}
+
+	loadJSON(graph: Graph, arr: GraphLoaderRow[]) {
+		const builder = this._prepareBuilder(graph);
 
 		for (const rowInfo of arr) {
 			this.loadRow(builder, rowInfo);
@@ -202,10 +216,7 @@ export class GraphLoader {
 	}
 
 	loadArray(graph: Graph, arr: GraphLoaderValue[][], headers = null) {
-		const builder = {
-			nodes: new Map(),
-			events: [],
-		};
+		const builder = this._prepareBuilder(graph);
 
 		if (!headers) {
 			headers = arr.shift();

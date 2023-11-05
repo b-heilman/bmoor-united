@@ -1,7 +1,7 @@
 import {Graph} from '../../src/graph';
 import {Interval} from '../../src/interval';
 import {Node} from '../../src/node';
-import {Features} from '../../src/features';
+import {Features} from '../../../../skunk_works/nfl_analysis/src/features';
 import {
 	GraphSelectionComparator,
 	GraphSelectionSettings,

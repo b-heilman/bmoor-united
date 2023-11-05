@@ -11,6 +11,7 @@ import {
 	DimensionalGraphBuilderPage,
 } from '../graph.interface';
 import {DimensionalGraphLoaderSettings} from './loader.interface';
+import { Interval } from '../interval';
 
 export class DimensionalGraphLoader extends GraphLoader {
 	settings: DimensionalGraphLoaderSettings;
@@ -41,15 +42,33 @@ export class DimensionalGraphLoader extends GraphLoader {
 		return super.loadRow(builderInterval, row);
 	}
 
+	_prepareDimentionalBuilder(dGraph: DimensionalGraph): DimensionalGraphBuilder {
+		return Array.from(dGraph.intervals.entries()).reduce(
+			(agg, [ref, interval]) => {
+				const graph = dGraph.getGraph(interval);
+				const graphBuilder = this._prepareBuilder(graph);
+
+				agg.set(ref, {
+					interval,
+					nodes: graphBuilder.nodes,
+					events: graphBuilder.events
+				});
+
+				return agg;
+			},
+			new Map(),
+		);
+	}
+
 	loadDimensionalJSON(dGraph: DimensionalGraph, arr: GraphLoaderRow[]) {
-		const builder = new Map();
+		const builder = this._prepareDimentionalBuilder(dGraph);
 
 		for (const rowInfo of arr) {
 			this.loadDimensionalRow(builder, rowInfo);
 		}
 
 		for (const page of builder.values()) {
-			const graph = dGraph.getGraph(page.interval);
+			const graph = dGraph.getGraph(<Interval>page.interval);
 
 			applyBuilder(graph, page);
 		}
@@ -60,7 +79,7 @@ export class DimensionalGraphLoader extends GraphLoader {
 		arr: GraphLoaderValue[][],
 		headers = null,
 	) {
-		const builder = new Map();
+		const builder = this._prepareDimentionalBuilder(dGraph);
 
 		if (!headers) {
 			headers = arr.shift();
@@ -77,7 +96,7 @@ export class DimensionalGraphLoader extends GraphLoader {
 		}
 
 		for (const page of builder.values()) {
-			const graph = dGraph.getGraph(page.interval);
+			const graph = dGraph.getGraph(<Interval>page.interval);
 
 			applyBuilder(graph, page);
 		}

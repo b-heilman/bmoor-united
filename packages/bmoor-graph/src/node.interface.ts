@@ -1,4 +1,3 @@
-import {EdgeInterface, EdgeLabel} from './edge.interface';
 import {Features} from './features';
 import {FeatureValues} from './features.interface';
 
@@ -7,6 +6,8 @@ export type NodeReference = string;
 export type NodeType = string;
 
 export type NodeTag = string;
+
+export type NodeEdgeLabel = string;
 
 // Nodes will no longer have any concept of an interval
 // instead that will be a layer above, so each interval
@@ -25,7 +26,7 @@ export interface NodeInterface {
 	// should be defined here.
 	parent?: NodeInterface;
 	children: Map<NodeType, NodeInterface[]>;
-	edges: Map<EdgeLabel, EdgeInterface[]>;
+	edges: Map<NodeEdgeLabel, Map<NodeReference, NodeInterface>>;
 	// Technically, tags might change over time too
 	metadata: Map<string, NodeTag>;
 }
@@ -42,7 +43,7 @@ export interface NodeJSON {
 	//
 	metadata?: Record<string, NodeTag>;
 
-	edges?: Record<EdgeLabel, NodeReference[]>;
+	edges?: Record<NodeEdgeLabel, NodeReference[]>;
 }
 
 export enum NodeValueSelector {
@@ -58,7 +59,7 @@ export interface NodeSelector {
 	// search up the tree
 	parent?: NodeType;
 
-	edge?: EdgeLabel;
+	edge?: NodeEdgeLabel;
 
 	// search across the connections
 	sibling?: NodeType;

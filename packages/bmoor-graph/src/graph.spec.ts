@@ -1,6 +1,5 @@
 import {expect} from 'chai';
 
-import {Edge} from './edge';
 import {Event} from './event';
 import {Features} from './features';
 import {Graph, load} from './graph';
@@ -157,8 +156,8 @@ describe('@bmoor/graph', function () {
 			graph.addNode(node3);
 			graph.addNode(node4);
 
-			nodeA.addEdge(new Edge('opponent', nodeB));
-			nodeB.addEdge(new Edge('opponent', nodeA));
+			nodeA.addEdge('opponent', nodeB);
+			nodeB.addEdge('opponent', nodeA);
 
 			expect(graph.toJSON()).to.deep.equal({
 				root: {

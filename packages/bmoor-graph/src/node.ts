@@ -1,13 +1,12 @@
 import {implode} from '@bmoor/object';
 
-import {Edge} from './edge';
-import {EdgeLabel} from './edge.interface';
 import {EventInterface, EventReference} from './event.interface';
 import {Features} from './features';
 import {FeatureValues} from './features.interface';
 import {
 	NODE_DEFAULT_TYPE,
 	NodeBuilder,
+	NodeEdgeLabel,
 	NodeInterface,
 	NodeJSON,
 	NodeOperator,
@@ -39,7 +38,7 @@ export class Node implements NodeInterface {
 	features: Features;
 	parent?: Node;
 	children: Map<NodeType, Node[]>;
-	edges: Map<EdgeLabel, Edge[]>;
+	edges: Map<NodeEdgeLabel, Map<NodeReference, Node>>;
 	metadata: Map<string, NodeTag>;
 
 	constructor(
@@ -125,13 +124,20 @@ export class Node implements NodeInterface {
 		return this;
 	}
 
-	addEdge(edge: Edge): Node {
-		const edgeSet = this.edges.get(edge.label);
+	hasEdge(label: NodeEdgeLabel, node: Node) {
+		return this.edges.get(label)?.has(node.ref);
+	}
+
+	addEdge(label: NodeEdgeLabel, node: Node): Node {
+		const edgeSet = this.edges.get(label);
 
 		if (edgeSet) {
-			edgeSet.push(edge);
+			edgeSet.set(node.ref, node);
 		} else {
-			this.edges.set(edge.label, [edge]);
+			const inside = new Map();
+			inside.set(node.ref, node);
+
+			this.edges.set(label, inside);
 		}
 
 		return this;
@@ -194,7 +200,7 @@ export class Node implements NodeInterface {
 	}
 
 	selectEdges(selector: NodeSelector): Node[] {
-		return this.edges.get(selector.edge)?.map((edge) => edge.target) || [];
+		return Array.from(this.edges.get(selector.edge)?.values() || []);
 	}
 
 	selectSiblings(selector: NodeSelector): Node[] {
@@ -414,7 +420,9 @@ export class Node implements NodeInterface {
 		if (this.edges.size) {
 			rtn.edges = Array.from(this.edges.entries()).reduce(
 				(agg, [label, edgeSet]) => {
-					agg[label] = edgeSet.map((edge) => edge.target.ref);
+					agg[label] = Array.from(edgeSet.values()).map(
+						(node) => node.ref,
+					);
 					return agg;
 				},
 				{},
@@ -428,27 +436,28 @@ export class Node implements NodeInterface {
 export function load(
 	source: NodeJSON,
 	builder: NodeBuilder,
-	stub = false,
+	define = true,
 ) {
 	let node: Node = null;
 	let info = builder.get(source.ref);
-	let define;
 
 	if (info) {
 		node = <Node>info.node;
-
-		define = info.stub && !stub;
 	} else {
 		node = new Node(source.ref);
-		define = !stub;
 		info = {
 			node,
-			stub,
+			stub: !define,
 		};
 
 		builder.set(node.ref, info);
 	}
 
+	/**
+	 * I can't lock this down to prevent overwrite because if you join together two graphs,
+	 * the order of definition shouldn't matter.  Because of that, I need to invoking code
+	 * to contain the logic if it's defining or not.
+	 */
 	if (define) {
 		info.stub = false;
 
@@ -456,7 +465,8 @@ export function load(
 			node.type = source.type;
 		}
 
-		if (source.parentRef) {
+		// TODO: any way to not need to do this check?
+		if (source.parentRef && !node.parent) {
 			node.setParent(load({ref: source.parentRef}, builder, true));
 		}
 
@@ -473,7 +483,10 @@ export function load(
 				const edgeSet = source.edges[label];
 
 				for (const ref of edgeSet) {
-					node.addEdge(new Edge(label, load({ref}, builder, true)));
+					const other = load({ref}, builder, false);
+					if (!node.hasEdge(label, other)) {
+						node.addEdge(label, other);
+					}
 				}
 			}
 		}

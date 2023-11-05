@@ -1,6 +1,6 @@
 import {Interval} from '../../../bmoor-interval/src/interval.interface';
 import {NodeTag, NodeType} from '../../src/node.interface';
-import {Features} from '../../src/features';
+import {Features} from '../../../../skunk_works/nfl_analysis/src/features';
 
 export type GraphSelectionComparator = (
 	nodeA: Features,

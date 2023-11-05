@@ -1,6 +1,5 @@
 import {DatumInterface} from '@bmoor/compute';
 
-import {Edge} from './edge';
 import {Event} from './event';
 import {
 	EventFeaturesWriteMode,
@@ -18,13 +17,7 @@ import {
 } from './graph.interface';
 import {GraphDatum} from './graph/datum';
 import {Node, load as loadNode} from './node';
-import {
-	NODE_DEFAULT_TYPE,
-	NodeJSON,
-	NodeReference,
-	NodeSelector,
-	NodeType,
-} from './node.interface';
+import {NodeReference, NodeSelector, NodeType} from './node.interface';
 
 // used to manage all top levels nodes and then facilitates
 // passing data through them

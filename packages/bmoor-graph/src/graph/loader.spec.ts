@@ -894,10 +894,16 @@ describe('@bmoor/graph::loader', function () {
 					{
 						ref: 'eagles',
 						type: 'team',
+						edges: {
+							opponent: ['chefs'],
+						},
 					},
 					{
 						ref: 'chefs',
 						type: 'team',
+						edges: {
+							opponent: ['eagles'],
+						},
 					},
 					{
 						ref: 'eagles:qb',

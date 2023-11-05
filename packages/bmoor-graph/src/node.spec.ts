@@ -1,6 +1,5 @@
 import {expect} from 'chai';
 
-import {Edge} from './edge';
 import {Event} from './event';
 import {Features} from './features';
 import {Node} from './node';
@@ -48,8 +47,8 @@ describe('@bmoor/graph::node', function () {
 			},
 		});
 
-		level1_a.addEdge(new Edge('opponent', level1_b));
-		level1_b.addEdge(new Edge('opponent', level1_a));
+		level1_a.addEdge('opponent', level1_b);
+		level1_b.addEdge('opponent', level1_a);
 	});
 
 	describe('::getValue', function () {

@@ -103,7 +103,7 @@ async function run(){
     });
 
     playerLoader.addNodeGenerator({
-        type: 'side-of-ball', // offense vs defense
+        type: 'offense',
         parentRef: function(row: DataRow, prev: {ref: string}){
             return prev.ref;
         },
@@ -158,15 +158,12 @@ async function run(){
 
     // This goes down here so I can load the offense with prev.ref
     playerLoader.addNodeGenerator({
-        type: 'side-of-ball', // offense vs defense
+        type: 'defense',
         parentRef: function(row: DataRow){
             return row.team;
         },
         ref: function(row: DataRow){
             return row.team+':def';
-        },
-        metadata: {
-            side: 'def'
         }
     });
 
