@@ -45,4 +45,8 @@ export interface EnvironmentInterface<
 		interval: IntervalInterface<IntervalRef, Order>,
 		offset: number,
 	): IntervalInterface<IntervalRef, Order>;
+
+	getInterval(
+		reference: IntervalRef,
+	): IntervalInterface<IntervalRef, Order>;
 }

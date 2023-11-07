@@ -80,8 +80,18 @@ export class DimensionalGraph implements DimensionalGraphInterface {
 
 	intervalSelect(datum: GraphDatum, interval: Interval): GraphDatum {
 		const cur = this.graphs.get(interval.ref);
+		const node = cur.getNode(datum.node.ref);
 
-		return new GraphDatum(cur.getNode(datum.node.ref), cur);
+		if (!node) {
+			throw new Error(
+				'could not interval select ' +
+					datum.node.ref +
+					' in interval ' +
+					interval.ref,
+			);
+		}
+
+		return new GraphDatum(node, cur);
 	}
 
 	rangeSelect(
@@ -96,6 +106,17 @@ export class DimensionalGraph implements DimensionalGraphInterface {
 		const rtn = new Map();
 
 		for (const [intervalRef, graph] of graphs.entries()) {
+			const node = graph.getNode(datum.node.ref);
+
+			if (!node) {
+				throw new Error(
+					'could not range select ' +
+						datum.node.ref +
+						' in interval ' +
+						intervalRef,
+				);
+			}
+
 			rtn.set(
 				this.getInterval(intervalRef),
 				new GraphDatum(graph.getNode(datum.node.ref), graph),

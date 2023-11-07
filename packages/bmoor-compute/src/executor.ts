@@ -107,6 +107,7 @@ async function runProcessor<
 	);
 
 	if (ctx.hasFlag('verbose')) {
+		// TODO: add ctx.log
 		console.log(processor.name, datum.ref, reqs);
 	}
 

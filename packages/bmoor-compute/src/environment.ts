@@ -81,6 +81,13 @@ export class Environment
 		return this.map.get(interval.ref).get(datum.ref);
 	}
 
+	getInterval(ref: Interval): IntervalInterface<string, number> {
+		return {
+			ref,
+			order: 0,
+		};
+	}
+
 	rangeSelect(
 		datum: Datum,
 		interval: IntervalInterface<Interval, Order>,

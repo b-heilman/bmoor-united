@@ -10,8 +10,8 @@ import {
 	DimensionalGraphBuilder,
 	DimensionalGraphBuilderPage,
 } from '../graph.interface';
+import {Interval} from '../interval';
 import {DimensionalGraphLoaderSettings} from './loader.interface';
-import { Interval } from '../interval';
 
 export class DimensionalGraphLoader extends GraphLoader {
 	settings: DimensionalGraphLoaderSettings;
@@ -42,7 +42,9 @@ export class DimensionalGraphLoader extends GraphLoader {
 		return super.loadRow(builderInterval, row);
 	}
 
-	_prepareDimentionalBuilder(dGraph: DimensionalGraph): DimensionalGraphBuilder {
+	_prepareDimentionalBuilder(
+		dGraph: DimensionalGraph,
+	): DimensionalGraphBuilder {
 		return Array.from(dGraph.intervals.entries()).reduce(
 			(agg, [ref, interval]) => {
 				const graph = dGraph.getGraph(interval);
@@ -51,7 +53,7 @@ export class DimensionalGraphLoader extends GraphLoader {
 				agg.set(ref, {
 					interval,
 					nodes: graphBuilder.nodes,
-					events: graphBuilder.events
+					events: graphBuilder.events,
 				});
 
 				return agg;
