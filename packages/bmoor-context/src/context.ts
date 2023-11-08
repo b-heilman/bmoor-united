@@ -1,4 +1,10 @@
 import {
+	ContextualError,
+	ErrorContext,
+	InvocationContext,
+} from '@bmoor/error';
+
+import {
 	ContextSecurityInterface,
 	ContextSettings,
 	EnvVariable,
@@ -6,6 +12,7 @@ import {
 } from './context.interface';
 
 export class Context implements ContextSecurityInterface {
+	error?: ContextualError;
 	settings: ContextSettings;
 
 	permissionDex: Map<string, boolean>;
@@ -36,5 +43,45 @@ export class Context implements ContextSecurityInterface {
 
 	getVariable(envVar: EnvVariable) {
 		return this.settings.variables?.[envVar] || null;
+	}
+
+	log(...args) {
+		if (!this.hasFlag('silent')) {
+			console.log(...args);
+		}
+	}
+
+	setError(error: Error) {
+		if (!this.error) {
+			this.error = new ContextualError(error);
+		}
+
+		return this;
+	}
+
+	setErrorInvocation(invocation: InvocationContext) {
+		if (!this.error) {
+			this.error = new ContextualError(new Error('invocated stub error'));
+		}
+
+		this.error.setInvocation(invocation);
+
+		return this;
+	}
+
+	addErrorContext(settings: ErrorContext) {
+		if (!this.error) {
+			this.error = new ContextualError(new Error('context stub error'));
+		}
+
+		this.error.addContext(settings);
+
+		return this;
+	}
+
+	close() {
+		if (this.error) {
+			this.log(this.error.toString());
+		}
 	}
 }

@@ -6,7 +6,7 @@ import pyarrow as pa
 import pyarrow.parquet as pq
 
 with open(os.path.join(sys.path[0], '../data/nfl_offense.csv'), "r") as f:
-    df = pd.read_csv(f)
+    df = pd.read_csv(f).fillna(0)
 
 """
   -------- unwanted
@@ -39,8 +39,10 @@ with open(os.path.join(sys.path[0], '../data/nfl_offense.csv'), "r") as f:
   "Humidity",
   "Wind_Speed"
 """
+with open('../files/teams.json', 'r') as file:
+  teams = json.load(file)
 
-with open('../data/weeks.json', 'r') as file:
+with open('../files/weeks.json', 'r') as file:
   week_data = json.load(file)
   # need to flip this to make dataframe
   df_source = []
@@ -54,6 +56,14 @@ with open('../data/weeks.json', 'r') as file:
       })
 
   join = pd.DataFrame(df_source)
+
+print('**sanitizing**')
+print('>', df.columns)
+bad_teams = df[~df.team.isin(teams)]
+print('>bad teams')
+print(bad_teams)
+
+df = df[df.team.isin(teams)]
 
 # step 1, standardize the fields to what I expect
 players = df[[
@@ -102,6 +112,31 @@ players = df[[
 
 players['game_ref'] = players['game_id']
 
+bad_home_teams = df[~df.home_team.isin(teams)]
+print('>bad home teams')
+print(bad_home_teams)
+
+df = df[df.home_team.isin(teams)]
+
+bad_vis_teams = df[~df.vis_team.isin(teams)]
+print('>bad vis teams')
+print(bad_vis_teams)
+
+df = df[df.vis_team.isin(teams)]
+
+print('--before--')
+print(df.Vegas_Favorite)
+df.Vegas_Favorite.replace('ERROR - abbrev_team', '?', inplace=True)
+df.Vegas_Favorite.replace(0, '?', inplace=True)
+print('--after--')
+print(df.Vegas_Favorite)
+
+#bad_Vegas_Favorite = df[~df.Vegas_Favorite.isin(teams)]
+#print('>bad vegas teams')
+#print(bad_Vegas_Favorite)
+
+#df = df[df.Vegas_Favorite.isin(teams)]
+
 games = df[[
   "game_id",
   "game_date",
@@ -114,7 +149,7 @@ games = df[[
   'vis_score'
 ]].groupby(
   by='game_id'
-).max().reset_index(
+).first().reset_index(
   inplace=False
 )
 

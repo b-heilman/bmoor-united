@@ -101,6 +101,11 @@ describe('@bmoor/graph-compute::graph', function () {
 						type: 'player',
 						parentRef: 'pos-4',
 					},
+					{
+						ref: 'player-5',
+						type: 'player',
+						parentRef: 'pos-4',
+					},
 				],
 				events: [
 					{
@@ -351,6 +356,11 @@ describe('@bmoor/graph-compute::graph', function () {
 						type: 'player',
 						parentRef: 'pos-4',
 					},
+					{
+						ref: 'player-5',
+						type: 'player',
+						parentRef: 'pos-4',
+					},
 				],
 				events: [
 					{
@@ -553,6 +563,53 @@ describe('@bmoor/graph-compute::graph', function () {
 			expect(
 				await res.get(i3).getValue('passing', NodeValueSelector.event),
 			).to.deep.equal(130);
+		});
+
+		it('should work on the node with keep active', async function () {
+			const datum = <GraphDatum>iGraph.select(i2, {
+				reference: 'player-1',
+			})[0];
+
+			const res = iGraph.rangeSelect(datum, i3, 3, {
+				keep: 2,
+			});
+
+			expect(
+				await res.get(i2).getValue('passing', NodeValueSelector.event),
+			).to.deep.equal(120);
+
+			expect(
+				await res.get(i3).getValue('passing', NodeValueSelector.event),
+			).to.deep.equal(130);
+		});
+
+		it('should fail if strict and missing data', async function () {
+			let failed = false;
+			const datum = <GraphDatum>iGraph.select(i1, {
+				reference: 'player-5',
+			})[0];
+
+			try {
+				iGraph.rangeSelect(datum, i3, 3, {
+					strict: true,
+				});
+			} catch (ex) {
+				failed = true;
+			}
+
+			expect(failed).to.equal(true);
+		});
+
+		it('should be ok if not strict and missing data', async function () {
+			const datum = <GraphDatum>iGraph.select(i1, {
+				reference: 'player-5',
+			})[0];
+
+			const res = iGraph.rangeSelect(datum, i3, 3, {
+				strict: false,
+			});
+
+			expect(res.size).to.equal(2);
 		});
 	});
 });

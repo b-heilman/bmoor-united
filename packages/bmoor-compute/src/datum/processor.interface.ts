@@ -20,6 +20,8 @@ export interface DatumProcessorSelectAcross<NodeSelector, IntervalRef>
 export interface DatumProcessorSelectRange<NodeSelector, IntervalRef>
 	extends DatumProcessorSelect<NodeSelector, IntervalRef> {
 	range: number;
+	keep?: number;
+	strict?: boolean;
 }
 
 export type DatumProcessorRequirement<NodeSelector, IntervalRef> =

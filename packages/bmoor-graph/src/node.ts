@@ -438,6 +438,10 @@ export function load(
 	builder: NodeBuilder,
 	define = true,
 ) {
+	if (!source.ref) {
+		throw new Error('invalid ref: ' + JSON.stringify(source));
+	}
+
 	let node: Node = null;
 	let info = builder.get(source.ref);
 
@@ -483,6 +487,10 @@ export function load(
 				const edgeSet = source.edges[label];
 
 				for (const ref of edgeSet) {
+					if (ref === null) {
+						throw new Error('edge failed for: ' + JSON.stringify(source));
+					}
+
 					const other = load({ref}, builder, false);
 					if (!node.hasEdge(label, other)) {
 						node.addEdge(label, other);

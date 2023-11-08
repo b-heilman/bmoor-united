@@ -15,6 +15,11 @@ export interface EnvironmentSelector extends DatumSelector {
 	reference: string;
 }
 
+export interface EnvironmentRangeSettings {
+	keep?: number;
+	strict?: boolean;
+}
+
 // interface which allows local methods to be defined
 export interface EnvironmentInterface<
 	GraphSelector,
@@ -36,6 +41,7 @@ export interface EnvironmentInterface<
 		datum: DatumInterface<NodeSelector>,
 		interval: IntervalInterface<IntervalRef, Order>,
 		range: number,
+		settings?: EnvironmentRangeSettings,
 	): Map<
 		IntervalInterface<IntervalRef, Order>,
 		DatumInterface<NodeSelector>

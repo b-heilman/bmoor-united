@@ -22,17 +22,12 @@ export class ContextualError {
 		return this;
 	}
 
-	getCurrent(): ErrorContext {
-		return Object.assign({}, ...this.stack);
-	}
-
 	toJSON() {
 		return {
 			message: this.parent.message,
 			stackTrace: this.parent.stack,
 
 			...this.invocation,
-			...this.getCurrent(),
 
 			stack: this.stack,
 		};
@@ -41,9 +36,7 @@ export class ContextualError {
 	toString() {
 		const builder = [];
 		if (this.invocation) {
-			builder.push(
-				'> info: ' + JSON.stringify(this.invocation, null, '\t'),
-			);
+			builder.push(`> info: ${JSON.stringify(this.invocation, null, 2)}`);
 		}
 
 		if (this.parent.message) {
@@ -51,19 +44,14 @@ export class ContextualError {
 		}
 
 		if (this.parent.stack) {
-			builder.push('> stack: ' + this.parent.stack.toString());
+			builder.push(`> stack: ${this.parent.stack.toString()}`);
 		}
 
 		if (this.stack) {
 			builder.push('> context trace');
 			this.stack.forEach((row) => {
-				builder.push('\t>' + JSON.stringify(row, null, '\t\t'));
+				builder.push('  >' + JSON.stringify(row, null, 2));
 			});
-		}
-
-		const current = this.getCurrent();
-		if (current) {
-			builder.push('> current: ' + JSON.stringify(current, null, '\t'));
 		}
 
 		return builder.join('\n');

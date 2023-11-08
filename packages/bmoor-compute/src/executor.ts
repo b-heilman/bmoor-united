@@ -58,7 +58,24 @@ async function loadProcessorRequirement<
 	}
 
 	if ('range' in req) {
-		const timeline = exe.env.rangeSelect(newDatum, newInterval, req.range);
+		let timeline = null;
+		try {
+			timeline = exe.env.rangeSelect(newDatum, newInterval, req.range, {
+				keep: req.keep,
+				strict: req.strict,
+			});
+		} catch (ex) {
+			ctx.setError(ex).addErrorContext({
+				code: 'PROCESSOR_RANGE_FAIL',
+				protected: {
+					ref: newDatum.ref,
+					interval: newInterval,
+					range: req.range,
+				},
+			});
+
+			throw ex;
+		}
 
 		const rtn = [];
 
@@ -68,7 +85,20 @@ async function loadProcessorRequirement<
 
 		return Promise.all(rtn);
 	} else if ('select' in req) {
-		const subDatums = newDatum.select(req.select);
+		let subDatums = null;
+		try {
+			subDatums = newDatum.select(req.select);
+		} catch (ex) {
+			ctx.setError(ex).addErrorContext({
+				code: 'PROCESSOR_SELECT_FAIL',
+				protected: {
+					ref: newDatum.ref,
+					select: req.select,
+				},
+			});
+
+			throw ex;
+		}
 
 		if (req.reduce) {
 			return exe[action](ctx, input, subDatums[0], newInterval);
@@ -107,8 +137,7 @@ async function runProcessor<
 	);
 
 	if (ctx.hasFlag('verbose')) {
-		// TODO: add ctx.log
-		console.log(processor.name, datum.ref, reqs);
+		ctx.log(processor.name, datum.ref, reqs);
 	}
 
 	return processor.process(...reqs);

@@ -1,5 +1,4 @@
-export {ErrorContext, InvocationContext} from './context.interface';
-
+export * from './context.interface';
 export {
 	ContextualError,
 	extendError,

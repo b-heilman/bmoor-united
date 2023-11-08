@@ -1,4 +1,4 @@
-import {DatumInterface} from '@bmoor/compute';
+import {DatumInterface, EnvironmentRangeSettings} from '@bmoor/compute';
 import {
 	Graph,
 	GraphDatum,
@@ -98,29 +98,36 @@ export class DimensionalGraph implements DimensionalGraphInterface {
 		datum: GraphDatum,
 		interval: Interval,
 		range: number,
+		settings?: EnvironmentRangeSettings,
 	): Map<Interval, GraphDatum> {
-		const end = this.graphs.getTagOffset(interval.ref, 1 - range, true);
+		if (!settings) {
+			settings = {};
+		}
 
+		const strict = 'strict' in settings ? settings.strict : true;
+		const keep = settings.keep || range;
+		const end = this.graphs.getTagOffset(interval.ref, 1 - range, true);
 		const graphs = this.graphs.getBetween(interval.ref, end);
 
 		const rtn = new Map();
 
 		for (const [intervalRef, graph] of graphs.entries()) {
-			const node = graph.getNode(datum.node.ref);
-
-			if (!node) {
-				throw new Error(
-					'could not range select ' +
-						datum.node.ref +
-						' in interval ' +
-						intervalRef,
-				);
+			if (rtn.size === keep) {
+				continue;
 			}
 
-			rtn.set(
-				this.getInterval(intervalRef),
-				new GraphDatum(graph.getNode(datum.node.ref), graph),
-			);
+			const node = graph.getNode(datum.node.ref);
+
+			if (node) {
+				rtn.set(
+					this.getInterval(intervalRef),
+					new GraphDatum(graph.getNode(datum.node.ref), graph),
+				);
+			} else if (strict) {
+				throw new Error(
+					`could not range select ${datum.node.ref} in interval ${intervalRef}`,
+				);
+			}
 		}
 
 		return rtn;

@@ -23,7 +23,7 @@ type PlayerEvent = {
 	pass_poor_throws: number;
 	pass_blitzed: number;
 	pass_hurried: number;
-	rush_scrambles: number;
+	pass_scrambles: number;
 	rush_att: number;
 	rush_yds: number;
 	rush_td: number;
@@ -31,8 +31,8 @@ type PlayerEvent = {
 	rush_yds_before_contact: number;
 	rush_yac: number;
 	rush_broken_tackles: number;
-	targets: number;
-	rec: number;
+	rec_att: number;
+	rec_cmp: number;
 	rec_yds: number;
 	rec_td: number;
 	rec_drops: number;

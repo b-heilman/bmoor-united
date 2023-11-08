@@ -19,8 +19,6 @@ describe('@bmoor/error', function () {
 			const err = create('foo-bar', content);
 			const json = err.toJSON();
 
-			expect(json).to.deep.include(content);
-
 			expect(json.stack).to.deep.equal([content]);
 		});
 	});
@@ -55,18 +53,6 @@ describe('@bmoor/error', function () {
 			});
 
 			const json = wrap.toJSON();
-
-			expect(json).to.deep.include({
-				response: 'ok',
-				code: 'FOO_BAR_3',
-				status: 403,
-				context: {
-					eins: 10,
-				},
-				protected: {
-					zwei: 2,
-				},
-			});
 
 			expect(json.stack).to.deep.equal([
 				content,
