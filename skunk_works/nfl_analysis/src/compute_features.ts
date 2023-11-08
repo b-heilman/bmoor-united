@@ -1,12 +1,11 @@
 import { Context } from '@bmoor/context';
 import {executor, defPassMean, offPassMean} from './features';
 
-// TODO: need to deal with bye weeks
-const ctx1 = new Context({});
+const ctx1 = new Context({flags: {verbose: false}});
 executor.calculate(
     executor.env.getInterval('2022-09'), 
     defPassMean, 
-    {reference: 'PHI'}, 
+    {reference: 'PHI', type:'defense'}, 
     ctx1
 ).then(res => {
     console.log(
@@ -17,11 +16,12 @@ executor.calculate(
     ctx1.close();
 })
 
-const ctx2 = new Context({});
+
+const ctx2 = new Context({flags: {verbose: false}});
 executor.calculate(
     executor.env.getInterval('2022-09'), 
     offPassMean, 
-    {reference: 'PHI'},
+    {reference: 'PHI', type:'offense'},
     ctx2
 ).then(res => {
     console.log(

@@ -43,7 +43,7 @@ async function run(){
     });
 
     gameLoader.addNodeGenerator({
-        type: 'offsense',
+        type: 'offense',
         ref: function(row: DataRow){
             return row.home_team+':off';
         },
@@ -79,7 +79,7 @@ async function run(){
     });
 
     gameLoader.addNodeGenerator({
-        type: 'offsense',
+        type: 'offense',
         ref: function(row: DataRow){
             return row.vis_team+':off';
         },

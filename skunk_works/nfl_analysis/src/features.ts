@@ -73,7 +73,9 @@ export const offPassMean = new Processor('off-pass-mean', mean, [
 	{
 		input: offPass,
 		offset: 1,
-		range: 5
+		range: 6,
+		strict: false,
+		keep: 5 // handle bye week
 	},
 ]);
 
@@ -92,7 +94,9 @@ export const offRushMean = new Processor('off-rush-mean', mean, [
 	{
 		input: offRush,
 		offset: 1,
-		range: 5
+		range:  6,
+		strict: false,
+		keep: 5 // handle bye week
 	},
 ]);
 
@@ -110,7 +114,12 @@ export const defRushMean = new Processor('def-rush-mean', mean, [
 	{
 		input: defRush,
 		offset: 1,
-		range: 5
+		range:  6,
+		strict: false,
+		keep: 5, // handle bye week
+		select: {
+			parent: 'defense' // make this implicit
+		}
 	},
 ]);
 
@@ -130,7 +139,9 @@ export const defPassMean = new Processor('def-pass-mean', mean, [
 	{
 		input: defPass,
 		offset: 1,
-		range: 5,
+		range:  6,
+		strict: false,
+		keep: 5, // handle bye week
 		select: {
 			parent: 'defense' // make this implicit
 		}

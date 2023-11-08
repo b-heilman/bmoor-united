@@ -261,6 +261,10 @@ export class Executor<GraphSelector, NodeSelector, IntervalRef, Order> {
 	): Promise<ExecutorResponse[]> {
 		const selection = this.env.select(interval, select);
 
+		if (ctx.hasFlag('verbose')) {
+			ctx.log(select, selection);
+		}
+
 		return Promise.all(
 			selection.map((datum) => {
 				if (action instanceof DatumAccessor) {

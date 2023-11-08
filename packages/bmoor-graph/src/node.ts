@@ -171,7 +171,9 @@ export class Node implements NodeInterface {
 	selectChildren(selector: NodeSelector, deep = false): Node[] {
 		let rtn: Node[] = [];
 
-		if (this.children.has(selector.type)) {
+		if (this.type === selector.type){
+			rtn = [this];	
+		} else if (this.children.has(selector.type)) {
 			rtn = this.children.get(selector.type);
 		} else if (deep) {
 			for (const entry of this.children.values()) {
@@ -186,13 +188,18 @@ export class Node implements NodeInterface {
 
 	selectParent(selector: NodeSelector): Node {
 		let found = null;
-		let cur: Node = this; // eslint-disable-line @typescript-eslint/no-this-alias
+		
+		if (this.type === selector.parent){
+			found = this;
+		} else {
+			let cur: Node = this; // eslint-disable-line @typescript-eslint/no-this-alias
 
-		while (cur && found === null) {
-			if (cur.type === selector.parent) {
-				found = cur;
-			} else {
-				cur = cur.parent;
+			while (cur && found === null) {
+				if (cur.type === selector.parent) {
+					found = cur;
+				} else {
+					cur = cur.parent;
+				}
 			}
 		}
 
