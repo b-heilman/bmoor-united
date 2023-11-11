@@ -16,7 +16,6 @@ export interface EnvironmentSelector extends DatumSelector {
 }
 
 export interface EnvironmentRangeSettings {
-	keep?: number;
 	strict?: boolean;
 }
 
@@ -35,6 +34,7 @@ export interface EnvironmentInterface<
 	intervalSelect(
 		datum: DatumInterface<NodeSelector>,
 		interval: IntervalInterface<IntervalRef, Order>,
+		strict: boolean,
 	): DatumInterface<NodeSelector>;
 
 	rangeSelect(
@@ -52,6 +52,11 @@ export interface EnvironmentInterface<
 		offset: number,
 	): IntervalInterface<IntervalRef, Order>;
 
+	getPrevInterval(
+		interval: IntervalInterface<IntervalRef, Order>,
+	): IntervalInterface<IntervalRef, Order>;
+
+	// Used to bootstrap the process
 	getInterval(
 		reference: IntervalRef,
 	): IntervalInterface<IntervalRef, Order>;

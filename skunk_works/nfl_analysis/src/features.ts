@@ -72,10 +72,9 @@ export const offPass = new Processor('off-pass', sum, [
 export const offPassMean = new Processor('off-pass-mean', mean, [
 	{
 		input: offPass,
-		offset: 1,
-		range: 6,
-		strict: false,
-		keep: 5 // handle bye week
+		offset: -1,
+		range: 5,
+		strict: false
 	},
 ]);
 
@@ -93,10 +92,9 @@ export const offRush = new Processor('off-rush', sum, [
 export const offRushMean = new Processor('off-rush-mean', mean, [
 	{
 		input: offRush,
-		offset: 1,
-		range:  6,
-		strict: false,
-		keep: 5 // handle bye week
+		offset: -1,
+		range:  5,
+		strict: false
 	},
 ]);
 
@@ -113,10 +111,9 @@ export const defRush = new Processor('def-rush', v => v[0], [
 export const defRushMean = new Processor('def-rush-mean', mean, [
 	{
 		input: defRush,
-		offset: 1,
-		range:  6,
+		offset: -1,
+		range:  5,
 		strict: false,
-		keep: 5, // handle bye week
 		select: {
 			parent: 'defense' // make this implicit
 		}
@@ -138,81 +135,127 @@ export const defPassMean = new Processor('def-pass-mean', mean, [
 	// TODO: this should be on the defense, ideally...
 	{
 		input: defPass,
-		offset: 1,
-		range:  6,
+		offset: -1,
+		range:  5,
 		strict: false,
-		keep: 5, // handle bye week
 		select: {
 			parent: 'defense' // make this implicit
 		}
 	},
 ]);
 
+export const offRushRank = new Ranker(
+	'off-rush-rank', 
+	{
+		buckets: 8,
+		select: {
+			global: true,
+			type: 'offense'
+		}
+	},
+	(input: number) => input,
+	[
+		{ input: offRushMean }
+	]
+);
+
+export const offPassRank = new Ranker(
+	'off-pass-rank', 
+	{
+		buckets: 8,
+		select: {
+			global: true,
+			type: 'offense'
+		}
+	},
+	(input: number) => input,
+	[
+		{ input: offPassMean }
+	]
+);
+
+export const offRank = new Ranker(
+	'off-rank', 
+	{
+		asc: true,
+		buckets: 8,
+		select: {
+			global: true,
+			type: 'offense'
+		}
+	},
+	(pass: number, rush: number) => pass + rush,
+	[
+		{ input: offPassRank },
+		{ input: offRushRank }
+	]
+);
+
+export const defRushRank = new Ranker(
+	'def-rush-rank', 
+	{
+		buckets: 8,
+		select: {
+			global: true,
+			type: 'defense'
+		}
+	},
+	(input: number) => input,
+	[
+		{ input: defRushMean }
+	]
+);
+
+export const defPassRank = new Ranker(
+	'def-pass-rank', 
+	{
+		buckets: 8,
+		select: {
+			global: true,
+			type: 'defense'
+		}
+	},
+	(input: number) => input,
+	[
+		{ input: defPassMean }
+	]
+);
+
+export const defRank = new Ranker(
+	'def-rank', 
+	{
+		asc: true,
+		buckets: 8,
+		select: {
+			global: true,
+			type: 'defense'
+		}
+	},
+	(pass: number, rush: number) => pass + rush,
+	[
+		{ input: defPassRank },
+		{ input: defRushRank }
+	]
+);
+
+export const teamRank = new Ranker(
+	'team-rank', 
+	{
+		asc: true,
+		buckets: 8,
+		select: {
+			global: true,
+			type: 'team'
+		}
+	},
+	(pass: number[], rush: number[]) => pass[0] + rush[0],
+	[
+		{ input: defRank, select: {type: 'defense'} },
+		{ input: offRank, select: {type: 'offense'} }
+	]
+);
+
 /*
-
-
-graph.sort(
-    'off-rush-rank', 
-    (nodeA, nodeB) => {
-        // more yards is better
-        return nodeB.features['off-rush-mean'] - nodeA.features['off-rush-mean'];
-    }
-);
-
-graph.sort(
-    'off-pass-rank', 
-    (nodeA, nodeB) => {
-        // more yards is better
-        return nodeB.features['off-pass-mean'] - nodeA.features['off-pass-mean']
-    }
-);
-
-const oRanked = graph.sort(
-    'off-rank', 
-    (nodeA, nodeB) => {
-        // more yards is better
-        return (nodeB.features['off-pass-rank'] + nodeB.features['off-rush-rank']) - 
-            (nodeA.features['off-pass-rank'] + nodeA.features['off-rush-rank']);
-    }
-);
-
-oRanked.bucket('off-bucket', 4);
-
-graph.sort(
-    'def-rush-rank', 
-    (nodeA, nodeB) => {
-        // more yards is worse
-        return nodeA.features['def-rush-mean'] - nodeB.features['def-rush-mean']
-    }
-);
-
-graph.sort(
-    'def-pass-rank', 
-    (nodeA, nodeB) => {
-        // more yards is worse
-        return nodeA.features['def-pass-mean'] - nodeB.features['def-pass-mean']
-    }
-);
-
-const dRanked = graph.sort(
-    'def-rank', 
-    (nodeA, nodeB) => {
-        // higher ranks wanted
-        return (nodeB.features['def-pass-rank'] + nodeB.features['def-rush-rank']) - 
-            (nodeA.features['def-pass-rank'] + nodeA.features['def-rush-rank']);
-    }
-);
-
-dRanked.bucket('def-bucket', 4);
-
-const ranked = graph.sort(
-    'full-rank', 
-    (nodeA, nodeB) => {
-        // higher ranks wanted
-        return (nodeB.getWeight('def-rank') + nodeB.features['off-rank']) - 
-            (nodeA.features['def-rank'] + nodeA.features['off-rank']);
-    }
-);
 
 graph.point('wins', (edgeA, edgeB) => {
     if (edgeA.getWeight('score') > edgeB.getWeight('score')){

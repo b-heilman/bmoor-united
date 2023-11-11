@@ -78,20 +78,41 @@ export class DimensionalGraph implements DimensionalGraphInterface {
 		return this.graphs.get(interval.ref).select(selector);
 	}
 
-	intervalSelect(datum: GraphDatum, interval: Interval): GraphDatum {
-		const cur = this.graphs.get(interval.ref);
-		const node = cur.getNode(datum.node.ref);
+	intervalSelect(
+		datum: GraphDatum,
+		interval: Interval,
+		strict = false,
+	): GraphDatum {
+		let graph = this.graphs.get(interval.ref);
+		let node = graph.getNode(datum.node.ref);
 
-		if (!node) {
+		if (strict && !node) {
 			throw new Error(
-				'could not interval select ' +
+				'strict: could not interval select ' +
 					datum.node.ref +
 					' in interval ' +
 					interval.ref,
 			);
+		} else {
+			let cur = this.graphs.getNextTag(interval.ref);
+			while (cur && !node) {
+				graph = this.graphs.get(cur);
+				node = graph.getNode(datum.node.ref);
+
+				cur = this.graphs.getNextTag(cur);
+			}
+
+			if (!node) {
+				throw new Error(
+					'relaxed: could not interval select ' +
+						datum.node.ref +
+						' in interval ' +
+						interval.ref,
+				);
+			}
 		}
 
-		return new GraphDatum(node, cur);
+		return new GraphDatum(node, graph);
 	}
 
 	rangeSelect(
@@ -104,29 +125,39 @@ export class DimensionalGraph implements DimensionalGraphInterface {
 			settings = {};
 		}
 
-		const strict = 'strict' in settings ? settings.strict : true;
-		const keep = settings.keep || range;
-		const end = this.graphs.getTagOffset(interval.ref, 1 - range, true);
-		const graphs = this.graphs.getBetween(interval.ref, end);
-
 		const rtn = new Map();
+		const strict = !!settings.strict;
 
-		for (const [intervalRef, graph] of graphs.entries()) {
-			if (rtn.size === keep) {
-				continue;
+		if (strict) {
+			const end = this.graphs.getTagOffset(interval.ref, 1 - range, true);
+			const graphs = this.graphs.getBetween(interval.ref, end);
+
+			for (const [intervalRef, graph] of graphs.entries()) {
+				const node = graph.getNode(datum.node.ref);
+
+				if (node) {
+					rtn.set(
+						this.getInterval(intervalRef),
+						new GraphDatum(node, graph),
+					);
+				} else if (strict) {
+					throw new Error(
+						`could not range select ${datum.node.ref} in interval ${intervalRef}`,
+					);
+				}
 			}
+		} else {
+			let cur = interval.ref;
 
-			const node = graph.getNode(datum.node.ref);
+			while (cur && rtn.size < range) {
+				const graph = this.graphs.get(cur);
+				const node = graph.getNode(datum.node.ref);
 
-			if (node) {
-				rtn.set(
-					this.getInterval(intervalRef),
-					new GraphDatum(graph.getNode(datum.node.ref), graph),
-				);
-			} else if (strict) {
-				throw new Error(
-					`could not range select ${datum.node.ref} in interval ${intervalRef}`,
-				);
+				if (node) {
+					rtn.set(this.getInterval(cur), new GraphDatum(node, graph));
+				}
+
+				cur = this.graphs.getPrevTag(cur);
 			}
 		}
 
@@ -137,6 +168,10 @@ export class DimensionalGraph implements DimensionalGraphInterface {
 		return this.getInterval(
 			this.graphs.getTagOffset(interval.ref, offset),
 		);
+	}
+
+	getPrevInterval(interval: Interval): Interval {
+		return this.getInterval(this.graphs.getPrevTag(interval.ref));
 	}
 
 	toJSON(): DimensionalGraphJSON {

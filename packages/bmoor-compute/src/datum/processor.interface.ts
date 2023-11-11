@@ -8,7 +8,8 @@ export interface DatumProcessorSelect<NodeSelector, IntervalRef> {
 	input?:
 		| DatumProcessorInterface<NodeSelector, IntervalRef>
 		| DatumAccessorInterface<NodeSelector, IntervalRef>;
-	offset?: number;
+	offset?: number; // how far back to look
+	strict?: boolean; // if the node is missing, fail?
 }
 
 export interface DatumProcessorSelectAcross<NodeSelector, IntervalRef>
@@ -20,7 +21,6 @@ export interface DatumProcessorSelectAcross<NodeSelector, IntervalRef>
 export interface DatumProcessorSelectRange<NodeSelector, IntervalRef>
 	extends DatumProcessorSelect<NodeSelector, IntervalRef> {
 	range: number;
-	keep?: number;
 	strict?: boolean;
 }
 

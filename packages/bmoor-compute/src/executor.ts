@@ -45,7 +45,11 @@ async function loadProcessorRequirement<
 	const newInterval = req.offset
 		? exe.env.offsetInterval(interval, req.offset)
 		: interval;
-	const newDatum = exe.env.intervalSelect(datum, newInterval);
+	const newDatum = exe.env.intervalSelect(
+		datum,
+		newInterval,
+		!!req.strict,
+	);
 
 	let action = null;
 	let input = null;
@@ -61,7 +65,6 @@ async function loadProcessorRequirement<
 		let timeline = null;
 		try {
 			timeline = exe.env.rangeSelect(newDatum, newInterval, req.range, {
-				keep: req.keep,
 				strict: req.strict,
 			});
 		} catch (ex) {
@@ -137,7 +140,7 @@ async function runProcessor<
 	);
 
 	if (ctx.hasFlag('verbose')) {
-		ctx.log(processor.name, datum.ref, reqs);
+		ctx.log('-> processor', datum.ref, interval.ref, processor.name, reqs);
 	}
 
 	return processor.process(...reqs);
@@ -171,18 +174,28 @@ export class Executor<GraphSelector, NodeSelector, IntervalRef, Order> {
 		if (datum.hasValue(processor.name)) {
 			return datum.getValue(processor.name);
 		} else if (processor instanceof DatumRanker) {
-			const siblings = datum.select(processor.settings.select);
+			const comparable = datum.select(processor.settings.select);
 
 			let found = false;
-			for (let i = 0; i < siblings.length && !found; i++) {
-				found = siblings[i].equals(datum);
+			for (let i = 0; i < comparable.length && !found; i++) {
+				found = comparable[i].equals(datum);
 			}
 
 			if (!found) {
+				if (ctx.hasFlag('verbose')) {
+					ctx.log(
+						'-> miss',
+						datum.ref,
+						interval.ref,
+						processor.name,
+						processor.settings.select
+					);
+				}
+
 				throw new Error('selection must contain original datum');
 			} else {
 				const pairings = await Promise.all(
-					siblings.map(async (datum) => {
+					comparable.map(async (datum) => {
 						const value = <number>(
 							await runProcessor(ctx, this, processor, datum, interval)
 						);
@@ -201,12 +214,23 @@ export class Executor<GraphSelector, NodeSelector, IntervalRef, Order> {
 				}
 
 				const length = processor.settings.buckets
-					? pairings.length / processor.settings.buckets
+					? Math.floor(pairings.length / processor.settings.buckets)
 					: 1;
 
-				await pairings.map(({datum}, i) =>
-					datum.setValue(processor.name, Math.floor(i / length)),
-				);
+				if (ctx.hasFlag('verbose')) {
+					ctx.log(
+						'-> rank',
+						datum.ref,
+						interval.ref,
+						processor.name,
+						pairings,
+					);
+				}
+
+				await pairings.map(({datum}, i) =>{
+					// Don't to 'rank 0', bump by 1
+					return datum.setValue(processor.name, Math.floor(i / length) + 1);
+				});
 
 				return datum.getValue(processor.name);
 			}
@@ -262,7 +286,7 @@ export class Executor<GraphSelector, NodeSelector, IntervalRef, Order> {
 		const selection = this.env.select(interval, select);
 
 		if (ctx.hasFlag('verbose')) {
-			ctx.log(select, selection);
+			ctx.log('-> select', interval.ref, select, selection);
 		}
 
 		return Promise.all(

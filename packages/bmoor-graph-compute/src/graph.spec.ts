@@ -565,13 +565,13 @@ describe('@bmoor/graph-compute::graph', function () {
 			).to.deep.equal(130);
 		});
 
-		it('should work on the node with keep active', async function () {
+		it('should work on the node with strict false', async function () {
 			const datum = <GraphDatum>iGraph.select(i2, {
 				reference: 'player-1',
 			})[0];
 
 			const res = iGraph.rangeSelect(datum, i3, 3, {
-				keep: 2,
+				strict: false,
 			});
 
 			expect(

@@ -60,6 +60,26 @@ export class OrderedMap<Tag, Node> {
 		return rtn;
 	}
 
+	getPrevTag(cur: Tag): Tag {
+		const pos = this.tagPos.get(cur) - 1;
+
+		if (pos < 0) {
+			return null;
+		} else {
+			return this.tags[pos];
+		}
+	}
+
+	getNextTag(cur: Tag): Tag {
+		const pos = this.tagPos.get(cur) + 1;
+
+		if (pos < this.tags.length) {
+			return this.tags[pos];
+		} else {
+			return null;
+		}
+	}
+
 	getBetween(start: Tag, stop: Tag): Map<Tag, Node> {
 		return this.getTagsBetween(start, stop).reduce((agg, tag) => {
 			agg.set(tag, this.get(tag));

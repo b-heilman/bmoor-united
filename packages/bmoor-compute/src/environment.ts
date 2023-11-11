@@ -120,4 +120,13 @@ export class Environment
 			order: 0,
 		};
 	}
+
+	getPrevInterval(
+		interval: IntervalInterface<Interval, Order>,
+	): IntervalInterface<Interval, Order> {
+		return {
+			ref: this.map.getPrevTag(interval.ref),
+			order: 0,
+		};
+	}
 }
