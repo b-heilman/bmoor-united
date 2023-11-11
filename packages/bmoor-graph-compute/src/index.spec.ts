@@ -760,9 +760,9 @@ describe('bmoor/graph-compute', function () {
 			reference: 'wr-1-4',
 		});
 
-		expect(res1).to.deep.equal([0]);
-		expect(res2).to.deep.equal([6]);
-		expect(res3).to.deep.equal([4]);
+		expect(res1).to.deep.equal([1]);
+		expect(res2).to.deep.equal([7]);
+		expect(res3).to.deep.equal([5]);
 	});
 
 	it('should allow us to rank teams by defensive stats', async function () {
@@ -831,9 +831,9 @@ describe('bmoor/graph-compute', function () {
 			reference: 't-4',
 		});
 
-		expect(res1).to.deep.equal([0]);
-		expect(res2).to.deep.equal([1]);
-		expect(res3).to.deep.equal([2]);
-		expect(res4).to.deep.equal([3]);
+		expect(res1).to.deep.equal([1]);
+		expect(res2).to.deep.equal([2]);
+		expect(res3).to.deep.equal([3]);
+		expect(res4).to.deep.equal([4]);
 	});
 });

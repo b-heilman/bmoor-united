@@ -2,17 +2,20 @@ import {
 	DatumInterface,
 	DatumSelector,
 	DatumSettings,
+	FeatureValue,
 } from './datum.interface';
 
 export class Datum implements DatumInterface<DatumSelector> {
 	ref: string;
-	features: Map<string, number>;
+	awaiting: Map<string, Promise<FeatureValue>>;
+	features: Map<string, FeatureValue>;
 	metadata: Record<string, string>;
 	children: Map<string, Datum>;
 	parent: Datum;
 
 	constructor(ref: string, settings: DatumSettings) {
 		this.ref = ref;
+		this.awaiting = new Map();
 		this.features = new Map();
 
 		for (const key in settings.features) {
@@ -54,14 +57,35 @@ export class Datum implements DatumInterface<DatumSelector> {
 	}
 
 	hasValue(attr: string) {
-		return this.features.has(attr);
+		return this.features.has(attr) || this.awaiting.has(attr);
 	}
 
 	async getValue(attr: string) {
-		return this.features.get(attr);
+		if (this.awaiting.has(attr)) {
+			return this.awaiting.get(attr);
+		} else {
+			return this.features.get(attr);
+		}
 	}
 
-	async setValue(attr: string, value: number) {
+	async awaitValue(
+		attr: string,
+		prom: Promise<FeatureValue>,
+	): Promise<boolean> {
+		if (this.features.has(attr)) {
+			this.features.delete(attr);
+		}
+
+		this.awaiting.set(attr, prom);
+
+		return prom.then((value) => this.setValue(attr, value));
+	}
+
+	async setValue(attr: string, value: FeatureValue) {
+		if (this.awaiting.has(attr)) {
+			this.awaiting.delete(attr);
+		}
+
 		this.features.set(attr, value);
 
 		return true;

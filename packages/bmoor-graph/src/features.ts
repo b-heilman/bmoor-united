@@ -1,6 +1,6 @@
 import {equals} from '@bmoor/object';
 
-import {FeatureValues} from './features.interface';
+import {FeatureValue, FeatureValues} from './features.interface';
 
 export class Features {
 	data: FeatureValues;
@@ -14,7 +14,7 @@ export class Features {
 		this.data = incoming;
 	}
 
-	set(mount: string, value: number) {
+	set(mount: string, value: FeatureValue) {
 		this.data[mount] = value;
 	}
 
@@ -26,7 +26,7 @@ export class Features {
 		Object.assign(this.data, input);
 	}
 
-	get(mount: string, defaultValue: number = null): number {
+	get(mount: string, defaultValue: number = null): FeatureValue {
 		const rtn = mount in this.data ? this.data[mount] : defaultValue;
 
 		return rtn;
@@ -60,14 +60,6 @@ export class Features {
 
 	equals(other: Features) {
 		return equals(this.data, other.data);
-	}
-
-	sum(mount: string, value: number) {
-		if (mount in this.data) {
-			this.data[mount] += value;
-		} else {
-			this.data[mount] = value;
-		}
 	}
 
 	toJSON() {

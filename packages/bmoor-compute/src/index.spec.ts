@@ -434,19 +434,19 @@ describe('@bmoor/compute', function () {
 			reference: 'g-1-1',
 		});
 
-		expect(v1).to.deep.equal([1]);
+		expect(v1).to.deep.equal([2]);
 
 		const v2 = await executor.calculate({ref: 'eins', order: 0}, rank, {
 			reference: 'g-1-2',
 		});
 
-		expect(v2).to.deep.equal([0]);
+		expect(v2).to.deep.equal([1]);
 
 		const v3 = await executor.calculate({ref: 'eins', order: 0}, rank, {
 			reference: 'g-2-2',
 		});
 
-		expect(v3).to.deep.equal([0]);
+		expect(v3).to.deep.equal([1]);
 	});
 
 	it('should globally allow ranking across nodes', async function () {
@@ -478,19 +478,19 @@ describe('@bmoor/compute', function () {
 			reference: 'g-1-1',
 		});
 
-		expect(v1).to.deep.equal([3]);
+		expect(v1).to.deep.equal([4]);
 
 		const v2 = await executor.calculate({ref: 'eins', order: 0}, rank, {
 			reference: 'g-1-2',
 		});
 
-		expect(v2).to.deep.equal([1]);
+		expect(v2).to.deep.equal([2]);
 
 		const v3 = await executor.calculate({ref: 'eins', order: 0}, rank, {
 			reference: 'g-2-2',
 		});
 
-		expect(v3).to.deep.equal([0]);
+		expect(v3).to.deep.equal([1]);
 	});
 
 	it('should allow ranking ascending across nodes', async function () {
@@ -523,19 +523,19 @@ describe('@bmoor/compute', function () {
 			reference: 'g-1-1',
 		});
 
-		expect(v1).to.deep.equal([0]);
+		expect(v1).to.deep.equal([1]);
 
 		const v2 = await executor.calculate({ref: 'eins', order: 0}, rank, {
 			reference: 'g-1-2',
 		});
 
-		expect(v2).to.deep.equal([1]);
+		expect(v2).to.deep.equal([2]);
 
 		const v3 = await executor.calculate({ref: 'eins', order: 0}, rank, {
 			reference: 'g-2-2',
 		});
 
-		expect(v3).to.deep.equal([1]);
+		expect(v3).to.deep.equal([2]);
 	});
 
 	it('should allow ranking in buckets', async function () {
@@ -568,18 +568,18 @@ describe('@bmoor/compute', function () {
 			reference: 'g-1-1',
 		});
 
-		expect(v1).to.deep.equal([1]);
+		expect(v1).to.deep.equal([2]);
 
 		const v2 = await executor.calculate({ref: 'eins', order: 0}, rank, {
 			reference: 'g-1-2',
 		});
 
-		expect(v2).to.deep.equal([0]);
+		expect(v2).to.deep.equal([1]);
 
 		const v3 = await executor.calculate({ref: 'eins', order: 0}, rank, {
 			reference: 'g-2-2',
 		});
 
-		expect(v3).to.deep.equal([0]);
+		expect(v3).to.deep.equal([1]);
 	});
 });

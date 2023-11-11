@@ -21,6 +21,11 @@ export interface DatumAccessor {
 	// get the value, could be an async source
 	getValue(attr: FeatureReference): Promise<FeatureValue>;
 
+	awaitValue(
+		attr: FeatureReference,
+		prom: Promise<FeatureValue>,
+	): Promise<boolean>;
+
 	// set the value
 	setValue(attr: FeatureReference, value: FeatureValue): Promise<boolean>;
 

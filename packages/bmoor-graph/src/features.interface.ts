@@ -1,2 +1,3 @@
 export type FeatureReference = string;
-export type FeatureValues = Record<FeatureReference, number>;
+export type FeatureValue = number | Promise<number> | boolean;
+export type FeatureValues = Record<FeatureReference, FeatureValue>;

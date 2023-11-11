@@ -242,13 +242,13 @@ export const teamRank = new Ranker(
 	'team-rank', 
 	{
 		asc: true,
-		buckets: 8,
+		buckets: 6,
 		select: {
 			global: true,
 			type: 'team'
 		}
 	},
-	(pass: number[], rush: number[]) => pass[0] + rush[0],
+	(def: number[], off: number[]) => def[0] + off[0],
 	[
 		{ input: defRank, select: {type: 'defense'} },
 		{ input: offRank, select: {type: 'offense'} }

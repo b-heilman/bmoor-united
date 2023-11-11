@@ -235,7 +235,10 @@ describe('@bmoor/graph::node', function () {
 			level2_b_b.setWeight('value', 40);
 
 			function bubble(parentFeatures, childFeatures) {
-				parentFeatures.sum('value', childFeatures.get('value'));
+				parentFeatures.set(
+					'value',
+					(parentFeatures.get('value') || 0) + childFeatures.get('value'),
+				);
 			}
 
 			level2_a_a.bubble(bubble);
@@ -258,7 +261,10 @@ describe('@bmoor/graph::node', function () {
 			level2_b_b.setWeight('value', 40);
 
 			function bubble(parentFeatures, childFeatures) {
-				parentFeatures.sum('value', childFeatures.get('value'));
+				parentFeatures.set(
+					'value',
+					(parentFeatures.get('value') || 0) + childFeatures.get('value'),
+				);
 			}
 
 			level2_a_a.bubble(bubble, true);
@@ -283,8 +289,15 @@ describe('@bmoor/graph::node', function () {
 			level2_b_b.setWeight('value', 40);
 
 			function bubble(parentFeatures, childFeatures) {
-				parentFeatures.sum('value', childFeatures.get('value'));
-				parentFeatures.sum('count', childFeatures.get('count', 1));
+				parentFeatures.set(
+					'value',
+					(parentFeatures.get('value') || 0) + childFeatures.get('value'),
+				);
+				parentFeatures.set(
+					'count',
+					(parentFeatures.get('count') || 0) +
+						childFeatures.get('count', 1),
+				);
 			}
 
 			root.pull(bubble);

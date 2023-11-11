@@ -1,4 +1,4 @@
-import {DatumInterface} from '@bmoor/compute';
+import {DatumInterface, FeatureValue} from '@bmoor/compute';
 import {
 	GraphInterface,
 	Node,
@@ -29,16 +29,22 @@ export class GraphDatum implements DatumInterface<NodeSelector> {
 		return this.node.hasValue(attr, mode);
 	}
 
+	async awaitValue(attr: string, prom: Promise<number>): Promise<boolean> {
+		this.node.setWeight(attr, prom);
+
+		return prom.then((value) => this.setValue(attr, value));
+	}
+
 	// get the value, could be an async source
 	async getValue(
 		attr: string,
 		mode: NodeValueSelector = NodeValueSelector.node,
-	): Promise<number> {
+	): Promise<FeatureValue> {
 		return this.node.getValue(attr, mode);
 	}
 
 	// set the value
-	async setValue(attr: string, value: number): Promise<boolean> {
+	async setValue(attr: string, value: FeatureValue): Promise<boolean> {
 		this.node.setWeight(attr, value);
 
 		return true;

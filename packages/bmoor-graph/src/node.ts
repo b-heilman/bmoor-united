@@ -2,7 +2,7 @@ import {implode} from '@bmoor/object';
 
 import {EventInterface, EventReference} from './event.interface';
 import {Features} from './features';
-import {FeatureValues} from './features.interface';
+import {FeatureValue, FeatureValues} from './features.interface';
 import {
 	NODE_DEFAULT_TYPE,
 	NodeBuilder,
@@ -353,12 +353,18 @@ export class Node implements NodeInterface {
 	async getValue(
 		mount: string,
 		selector: NodeValueSelector,
-	): Promise<number> {
+	): Promise<FeatureValue> {
 		return selector === NodeValueSelector.node
 			? this.getWeight(mount)
-			: Array.from(this.events.values()).reduce(
-					(sum, event) => sum + event.getNodeFeatures(this.ref).get(mount),
-					0,
+			: Promise.all(
+					Array.from(this.events.values()).map((event) =>
+						event.getNodeFeatures(this.ref).get(mount),
+					),
+			  ).then((values) =>
+					values.reduce(
+						(sum: number, value: number | boolean) => sum + +value,
+						0,
+					),
 			  );
 	}
 
@@ -373,13 +379,13 @@ export class Node implements NodeInterface {
 	}
 
 	// allow access to just current values
-	setWeight(mount: string, value: number) {
+	setWeight(mount: string, value: FeatureValue) {
 		this.features.set(mount, value);
 
 		return this;
 	}
 
-	getWeight(mount: string): number {
+	getWeight(mount: string): FeatureValue {
 		return this.features.get(mount);
 	}
 
