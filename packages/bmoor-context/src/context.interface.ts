@@ -8,6 +8,7 @@ export interface ContextSecurityInterface {
 	hasPermission(permission: string): boolean;
 	hasClaim(claim: string): Promise<boolean>;
 	hasFlag(flag: FeatureFlag): boolean;
+	getFlag(flag: FeatureFlag): string;
 	getVariable(envVar: EnvVariable): EnvValue;
 }
 
@@ -16,5 +17,5 @@ export interface ContextSecurityInterface {
 export interface ContextSettings {
 	permissions?: string[];
 	variables?: {[Key: EnvVariable]: EnvValue};
-	flags?: Record<string, boolean>;
+	flags?: Record<string, boolean|string>;
 }

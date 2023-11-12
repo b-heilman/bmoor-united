@@ -33,7 +33,7 @@ export interface DatumAccessor {
 }
 
 export interface DatumInterface<NodeSelector> extends DatumAccessor {
-	ref?: DatumReference;
+	ref: DatumReference;
 
 	select(select: NodeSelector): DatumInterface<NodeSelector>[];
 }

@@ -15,6 +15,12 @@ import {EnvironmentInterface} from './environment.interface';
 import {ExecutorAction, ExecutorResponse} from './executor.interface';
 import {IntervalInterface} from './interval.interface';
 
+function shouldVerbose(ctx: Context, datum: {ref: string}){
+	return ctx.hasFlag('verbose') && (
+		!ctx.hasFlag('reference') || datum.ref.indexOf(ctx.getFlag('reference')) !== -1
+	);
+}
+
 async function loadAccessorRequirement<
 	GraphSelector,
 	NodeSelector,
@@ -51,18 +57,25 @@ async function loadProcessorRequirement<
 		!!req.strict,
 	);
 
+	if (shouldVerbose(ctx, datum)) {
+		ctx.log('-> loadProcessorRequirement', newDatum.ref, newInterval.ref);
+	}
+
 	let action = null;
 	let input = null;
 	if (req.input instanceof DatumAccessor) {
 		action = 'access';
 		input = <DatumAccessor<NodeSelector, IntervalRef>>req.input;
 	} else {
-		console.log('?? process');
 		action = 'process';
 		input = <DatumProcessor<NodeSelector, IntervalRef>>req.input;
 	}
 
 	if ('range' in req) {
+		if (shouldVerbose(ctx, datum)) {
+			ctx.log('-> process:range', newDatum.ref, newInterval.ref, req);
+		}
+
 		let timeline = null;
 		try {
 			timeline = exe.env.rangeSelect(newDatum, newInterval, req.range, {
@@ -89,6 +102,10 @@ async function loadProcessorRequirement<
 
 		return Promise.all(rtn);
 	} else if ('select' in req) {
+		if (shouldVerbose(ctx, datum)) {
+			ctx.log('-> process:select', newDatum.ref, newInterval.ref, req);
+		}
+
 		let subDatums = null;
 		try {
 			subDatums = newDatum.select(req.select);
@@ -116,6 +133,10 @@ async function loadProcessorRequirement<
 			return Promise.all(rtn);
 		}
 	} else {
+		if (shouldVerbose(ctx, datum)) {
+			ctx.log('-> process:action', newDatum.ref, newInterval.ref, req);
+		}
+
 		return exe[action](ctx, input, newDatum, newInterval);
 	}
 }
@@ -134,8 +155,8 @@ async function runProcessor<
 ): Promise<DatumProcessorResponse> {
 	const requirements = processor.getRequirements();
 
-	if (ctx.hasFlag('verbose')) {
-		ctx.log('-> processor:entry', datum.ref, interval.ref, processor.name);
+	if (shouldVerbose(ctx, datum)) {
+		ctx.log('-> processor:requesting', datum.ref, interval.ref, processor.name);
 	}
 
 	const reqs = await Promise.all(
@@ -144,7 +165,7 @@ async function runProcessor<
 		),
 	);
 
-	if (ctx.hasFlag('verbose')) {
+	if (shouldVerbose(ctx, datum)) {
 		ctx.log(
 			'-> processor:response',
 			datum.ref,
@@ -185,15 +206,16 @@ export class Executor<GraphSelector, NodeSelector, IntervalRef, Order> {
 		if (datum.hasValue(processor.name)) {
 			return datum.getValue(processor.name);
 		} else if (processor instanceof DatumRanker) {
-			console.log(
-				'processor ==>',
-				datum.ref,
-				interval.ref,
-				processor.name,
-			);
-			const comparable = datum.select(processor.settings.select);
+			if (shouldVerbose(ctx, datum)) {
+				ctx.log(
+					'processor ==>',
+					datum.ref,
+					interval.ref,
+					processor.name,
+				);
+			}
 
-			console.log('::', comparable.length);
+			const comparable = datum.select(processor.settings.select);
 
 			let found = false;
 			for (let i = 0; i < comparable.length && !found; i++) {
@@ -201,7 +223,7 @@ export class Executor<GraphSelector, NodeSelector, IntervalRef, Order> {
 			}
 
 			if (!found) {
-				if (ctx.hasFlag('verbose')) {
+				if (shouldVerbose(ctx, datum)) {
 					ctx.log(
 						'-> miss',
 						datum.ref,
@@ -238,7 +260,7 @@ export class Executor<GraphSelector, NodeSelector, IntervalRef, Order> {
 						? Math.floor(pairings.length / processor.settings.buckets)
 						: 1;
 
-					if (ctx.hasFlag('verbose')) {
+					if (shouldVerbose(ctx, datum)) {
 						ctx.log(
 							'-> rank',
 							datum.ref,

@@ -15,7 +15,7 @@ export class Context implements ContextSecurityInterface {
 	error?: ContextualError;
 	settings: ContextSettings;
 
-	permissionDex: Map<string, boolean>;
+	permissionDex: Map<string, boolean|string>;
 
 	constructor(settings: ContextSettings) {
 		this.permissionDex = null;
@@ -37,8 +37,26 @@ export class Context implements ContextSecurityInterface {
 		return false;
 	}
 
-	hasFlag(featureFlag: FeatureFlag) {
-		return this.settings.flags?.[featureFlag] || false;
+	hasFlag(featureFlag: FeatureFlag): boolean {
+		if (featureFlag in this.settings.flags){
+			return !!this.settings.flags[featureFlag];
+		} else {
+			return false;
+		}
+	}
+
+	getFlag(featureFlag: FeatureFlag): string {
+		const flag = this.settings.flags?.[featureFlag];
+
+		if (flag){
+			if (typeof(flag) === 'boolean'){
+				return 'ok'
+			} else {
+				return flag;
+			}
+		} else {
+			return null;
+		}
 	}
 
 	getVariable(envVar: EnvVariable) {

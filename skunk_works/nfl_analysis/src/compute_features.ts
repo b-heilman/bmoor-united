@@ -31,7 +31,7 @@ executor.calculate(
     ctx2.close();
 });
 */
-const ctx3 = new Context({flags: {verbose: true}});
+const ctx3 = new Context({flags: {verbose: true, reference: 'PHI'}});
 executor.calculate(
     executor.env.getInterval('2022-09'), 
     teamRank, 
