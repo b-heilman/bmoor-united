@@ -255,6 +255,231 @@ export const teamRank = new Ranker(
 	]
 );
 
+export const gameExpectation = new Processor('game-expectation', 
+	(
+		[ourOff]: {total: number, rush: number, pass: number}[], 
+		[ourDef]: {total: number, rush: number, pass: number}[], 
+		[theirOff]: {total: number, rush: number, pass: number}[], 
+		[theirDef]: {total: number, rush: number, pass: number}[]
+	) => { 
+		let score = 0;
+        
+		// remember, ranks... lower is better
+		if (ourOff.total < theirDef.total){
+			score++;
+		} else if (ourOff.total > theirDef.total){
+			score--;
+		}
+		
+		if (ourOff.rush < theirDef.rush){
+			score++;
+		} else if (ourOff.rush > theirDef.rush){
+			score--;
+		}
+		
+		if (ourOff.pass < theirDef.pass){
+			score++;
+		} else if (ourOff.pass > theirDef.pass){
+			score--;
+		}
+		
+		if (ourDef.total < theirOff.total){
+			score++;
+		} else if (ourDef.total > theirOff.total){
+			score--;
+		}
+		
+		if (ourDef.rush < theirOff.rush){
+			score++;
+		} else if (ourDef.rush > theirOff.rush){
+			score--;
+		}
+		
+		if (ourDef.pass < theirOff.pass){
+			score++;
+		} else if (ourDef.pass > theirOff.pass){
+			score--;
+		}
+		
+		if (score > 2){
+			return 1;
+		} else if (score < -2){
+			return -1;
+		} else {
+			return 0;
+		}
+	}, [
+		{
+			input: new Accessor({
+				total: offRank,
+				rush: offRushRank,
+				pass: offPassRank
+			}),
+			select: {
+				type: 'offense',
+			},
+		},
+		{
+			input: new Accessor({
+				total: defRank,
+				rush: defRushRank,
+				pass: defPassRank
+			}),
+			select: {
+				type: 'defense',
+			},
+		},
+		{
+			input: new Accessor({
+				total: offRank,
+				rush: offRushRank,
+				pass: offPassRank
+			}),
+			select: {
+				edge: 'opponent',
+				type: 'offense',
+			},
+		},
+		{
+			input: new Accessor({
+				total: defRank,
+				rush: defRushRank,
+				pass: defPassRank
+			}),
+			select: {
+				edge: 'opponent',
+				type: 'defense',
+			},
+		},
+	]
+);
+
+export const expectedWin = new Processor('team-expected-win', 
+	(
+		results: {win: boolean, expect: number}, 
+	) => {
+		if (results.win && results.expect > 0){
+			return 1;
+		}
+
+		return 0;
+	}, [
+		{
+			input: new Accessor({
+				win: 'win',
+				expect: gameExpectation
+			}),
+		}
+	]
+);
+
+export const qualityWin = new Processor('team-quality-win', 
+	(
+		results: {win: boolean, expect: number}, 
+	) => {
+		if (results.win && results.expect < 0){
+			return 1;
+		}
+
+		return 0;
+	}, [
+		{
+			input: new Accessor({
+				win: 'win',
+				expect: gameExpectation
+			}),
+		}
+	]
+);
+
+export const expectedLoss = new Processor('team-expected-loss', 
+	(
+		results: {win: boolean, offset: number, expect: number}, 
+	) => {
+		if (!results.win && results.expect < 0){
+			return 1;
+		}
+
+		return 0;
+	}, [
+		{
+			input: new Accessor({
+				win: 'win',
+				offset: 'offset',
+				expect: gameExpectation
+			}),
+		}
+	]
+);
+
+export const qualityLoss = new Processor('team-quality-loss', 
+	(
+		results: {win: boolean, offset: number, expect: number}, 
+	) => {
+		if (!results.win && results.expect > 0){
+			return 1;
+		}
+
+		return 0;
+	}, [
+		{
+			input: new Accessor({
+				win: 'win',
+				offset: 'offset',
+				expect: gameExpectation
+			}),
+		}
+	]
+);
+
+export const qualityWins = new Processor('team-quality-wins', sum, [
+	{
+		input: qualityWin,
+		offset: -1,
+		range:  5,
+		strict: false,
+		select: {
+			parent: 'team' // make this implicit
+		}
+	},
+]);
+
+export const expectedWins = new Processor('team-expected-wins', sum, [
+	{
+		input: expectedWin,
+		offset: -1,
+		range:  5,
+		strict: false,
+		select: {
+			parent: 'team' // make this implicit
+		}
+	},
+]);
+
+export const qualityLosses = new Processor('team-quality-losses', sum, [
+	{
+		input: qualityLoss,
+		offset: -1,
+		range:  5,
+		strict: false,
+		select: {
+			parent: 'team' // make this implicit
+		}
+	},
+]);
+
+export const expectedLosses = new Processor('team-expected-losses', sum, [
+	{
+		input: expectedLoss,
+		offset: -1,
+		range:  5,
+		strict: false,
+		select: {
+			parent: 'team' // make this implicit
+		}
+	},
+]);
+
 /*
 
 graph.point('wins', (edgeA, edgeB) => {

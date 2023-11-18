@@ -1,6 +1,9 @@
 import { Context } from '@bmoor/context';
-import {executor, defRank, defRushMean, offRank, teamRank} from './features';
-
+import {
+	DimensionalDatumAccessor as Accessor
+} from '@bmoor/graph-compute';
+import {executor, qualityWins, expectedWins, qualityLosses, expectedLosses} from './features';
+/*
 const ctx1 = new Context({flags: {verbose: true}});
 executor.calculate(
     executor.env.getInterval('2022-09'), 
@@ -15,7 +18,7 @@ executor.calculate(
 }).finally(() => {
     ctx1.close();
 });
-/*
+
 const ctx2 = new Context({flags: {verbose: false}});
 executor.calculate(
     executor.env.getInterval('2022-09'), 
@@ -30,11 +33,16 @@ executor.calculate(
 }).finally(() => {
     ctx2.close();
 });
-
+*/
 const ctx3 = new Context({flags: {verbose: true, reference: 'PHI'}});
 executor.calculate(
     executor.env.getInterval('2022-09'), 
-    teamRank, 
+    new Accessor({
+        qualityWins,
+        qualityLosses,
+        expectedWins,
+        expectedLosses
+    }), 
     {reference: 'PHI'},
     ctx3
 ).then(res => {
@@ -45,4 +53,3 @@ executor.calculate(
 }).finally(() => {
     ctx3.close();
 });
-*/
