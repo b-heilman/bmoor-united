@@ -2,7 +2,25 @@ import { Context } from '@bmoor/context';
 import {
 	DimensionalDatumAccessor as Accessor
 } from '@bmoor/graph-compute';
-import {executor, qualityWins, expectedWins, qualityLosses, expectedLosses} from './features';
+import {
+    executor, 
+    qualityWins, 
+    expectedWins, 
+    qualityLosses, 
+    expectedLosses,
+    defPassSucceed,
+    defRushSucceed,
+    offPassSucceed,
+    offRushSucceed,
+    defPassSuccesses,
+    defRushSuccesses,
+    offPassSuccesses,
+    offRushSuccesses,
+    defPassSuccessRank,
+    defRushSuccessRank,
+    offPassSuccessRank,
+    offRushSuccessRank,
+} from './features';
 /*
 const ctx1 = new Context({flags: {verbose: true}});
 executor.calculate(
@@ -34,14 +52,14 @@ executor.calculate(
     ctx2.close();
 });
 */
-const ctx3 = new Context({flags: {verbose: true, reference: 'PHI'}});
+const ctx3 = new Context({flags: {verbose: true/*, reference: 'PHI'*/}});
 executor.calculate(
     executor.env.getInterval('2022-09'), 
     new Accessor({
-        qualityWins,
-        qualityLosses,
-        expectedWins,
-        expectedLosses
+        defPassSuccessRank,
+        defRushSuccessRank,
+        offPassSuccessRank,
+        offRushSuccessRank,
     }), 
     {reference: 'PHI'},
     ctx3

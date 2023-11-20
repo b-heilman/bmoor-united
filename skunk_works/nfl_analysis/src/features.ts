@@ -480,67 +480,215 @@ export const expectedLosses = new Processor('team-expected-losses', sum, [
 	},
 ]);
 
+export const defPassSucceed = new Processor(
+	'def-pass-succeed', 
+	(
+		[offenseAllowed]: number[],
+		[offenseUsual]: number[]
+	) => {
+		return offenseAllowed < offenseUsual;
+	}, [
+	{
+		input: offPass,
+		select: {
+			edge: 'opponent',
+			type: 'offense',
+		},
+	},
+	{
+		input: offPassMean,
+		select: {
+			edge: 'opponent',
+			type: 'offense',
+		},
+	}
+]);
+
+export const defPassSuccesses = new Processor(
+	'def-pass-successes', sum, [
+	{
+		input: defPassSucceed,
+		offset: -1,
+		range:  5,
+		strict: false,
+		select: {
+			parent: 'team' // make this implicit
+		}
+	},
+]);
+
+export const defRushSucceed = new Processor(
+	'def-rush-succeed', 
+	(
+		[offenseAllowed]: number[],
+		[offenseUsual]: number[]
+	) => {
+		return offenseAllowed < offenseUsual;
+	}, [
+	{
+		input: offRush,
+		select: {
+			edge: 'opponent',
+			type: 'offense',
+		},
+	},
+	{
+		input: offRushMean,
+		select: {
+			edge: 'opponent',
+			type: 'offense',
+		},
+	}
+]);
+
+export const defRushSuccesses = new Processor(
+	'def-rush-successes', sum, [
+	{
+		input: defRushSucceed,
+		offset: -1,
+		range:  5,
+		strict: false,
+		select: {
+			parent: 'team' // make this implicit
+		}
+	},
+]);
+
+export const offPassSucceed = new Processor(
+	'off-pass-succeed', 
+	(
+		[offenseAllowed]: number[],
+		[offenseUsual]: number[]
+	) => {
+		return offenseAllowed < offenseUsual;
+	}, [
+	{
+		input: offPass,
+		select: {
+			type: 'offense',
+		},
+	},
+	{
+		input: offPassMean,
+		select: {
+			type: 'offense',
+		},
+	}
+]);
+
+export const offPassSuccesses = new Processor(
+	'off-pass-successes', sum, [
+	{
+		input: offPassSucceed,
+		offset: -1,
+		range:  5,
+		strict: false,
+		select: {
+			parent: 'team' // make this implicit
+		}
+	},
+]);
+
+export const offRushSucceed = new Processor(
+	'off-rush-succeed', 
+	(
+		[offenseAllowed]: number[],
+		[offenseUsual]: number[]
+	) => {
+		return offenseAllowed < offenseUsual;
+	}, [
+	{
+		input: offRush,
+		select: {
+			type: 'offense',
+		},
+	},
+	{
+		input: offRushMean,
+		select: {
+			type: 'offense',
+		},
+	}
+]);
+
+export const offRushSuccesses = new Processor(
+	'off-rush-successes', sum, [
+	{
+		input: offRushSucceed,
+		offset: -1,
+		range:  5,
+		strict: false,
+		select: {
+			parent: 'team' // make this implicit
+		}
+	},
+]);
+
+export const defPassSuccessRank = new Ranker(
+	'def-pass-success-rank', 
+	{
+		asc: false, // higher is better
+		buckets: 6,
+		select: {
+			global: true,
+			type: 'team'
+		}
+	},
+	(def: number[]) => def[0],
+	[
+		{ input: defPassSuccesses, select: {type: 'team'} }
+	]
+);
+
+export const defRushSuccessRank = new Ranker(
+	'def-rush-success-rank', 
+	{
+		asc: false, // higher is better
+		buckets: 6,
+		select: {
+			global: true,
+			type: 'team'
+		}
+	},
+	(def: number[]) => def[0],
+	[
+		{ input: defRushSuccesses, select: {type: 'team'} }
+	]
+);
+
+export const offRushSuccessRank = new Ranker(
+	'off-rush-success-rank', 
+	{
+		asc: false, // higher is better
+		buckets: 6,
+		select: {
+			global: true,
+			type: 'team'
+		}
+	},
+	(def: number[]) => def[0],
+	[
+		{ input: offRushSuccesses, select: {type: 'team'} }
+	]
+);
+
+export const offPassSuccessRank = new Ranker(
+	'off-pass-success-rank', 
+	{
+		asc: false, // higher is better
+		buckets: 6,
+		select: {
+			global: true,
+			type: 'team'
+		}
+	},
+	(def: number[]) => def[0],
+	[
+		{ input: offPassSuccesses, select: {type: 'team'} }
+	]
+);
+
 /*
-
-graph.point('wins', (edgeA, edgeB) => {
-    if (edgeA.getWeight('score') > edgeB.getWeight('score')){
-        return 1;
-    }
-});
-
-graph.point('losses', (edgeA, edgeB) => {
-    if (edgeA.getWeight('score') < edgeB.getWeight('score')){
-        return 1;
-    }
-});
-
-graph.point('quality', (edgeA, edgeB) => {
-    const nodeA = edgeB.to;
-    const nodeB = edgeA.to;
-    const ours = edgeA.getWeight('score');
-    const theirs = edgeB.getWeight('score');
-
-    if (ours > theirs){
-        let score = 0;
-        
-        if (nodeB.getWeight('def-bucket') > nodeA.getWeight('off-bucket')){
-            score += 
-                (nodeB.getWeight('def-bucket') - nodeA.getWeight('off-bucket'));
-        } else {
-            score += .5;
-        }
-
-        if (nodeB.getWeight('off-bucket') > nodeA.getWeight('def-bucket')){
-            score += 
-                (nodeB.getWeight('off-bucket') - nodeA.getWeight('def-bucket')) * .5;
-        } else {
-            score += .5;
-        }
-
-        return score * (ours - theirs);
-    } else {
-        let score = 0;
-
-        if (nodeA.getWeight('def-bucket') > nodeB.getWeight('off-bucket')){
-            score += 
-                (nodeA.getWeight('def-bucket') - nodeB.getWeight('off-bucket')) * .5;
-        } else {
-            score += .5;
-        }
-
-        if (nodeA.getWeight('off-bucket') > nodeB.getWeight('def-bucket')){
-            score += 
-                (nodeA.getWeight('off-bucket') - nodeB.getWeight('def-bucket')) * .5;
-        } else {
-            score += .5;
-        }
-
-        return -score * (theirs - ours);
-    }
-});
-
-graph.sort('quality-rank', 'quality');
-
 graph.calculateNodeWeight('schedule-strength', (edgeA) => {
     return edgeA.to.getWeight('quality-rank');
 }).sort('schedule-strength-rank', 'schedule-strength');
