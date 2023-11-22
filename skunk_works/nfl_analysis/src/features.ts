@@ -72,9 +72,7 @@ export const offPass = new Processor('off-pass', sum, [
 export const offPassMean = new Processor('off-pass-mean', mean, [
 	{
 		input: offPass,
-		offset: -1,
 		range: 5,
-		strict: false
 	},
 ]);
 
@@ -92,9 +90,7 @@ export const offRush = new Processor('off-rush', sum, [
 export const offRushMean = new Processor('off-rush-mean', mean, [
 	{
 		input: offRush,
-		offset: -1,
 		range:  5,
-		strict: false
 	},
 ]);
 
@@ -111,9 +107,7 @@ export const defRush = new Processor('def-rush', v => v[0], [
 export const defRushMean = new Processor('def-rush-mean', mean, [
 	{
 		input: defRush,
-		offset: -1,
 		range:  5,
-		strict: false,
 		select: {
 			parent: 'defense' // make this implicit
 		}
@@ -135,9 +129,7 @@ export const defPassMean = new Processor('def-pass-mean', mean, [
 	// TODO: this should be on the defense, ideally...
 	{
 		input: defPass,
-		offset: -1,
 		range:  5,
-		strict: false,
 		select: {
 			parent: 'defense' // make this implicit
 		}
@@ -435,9 +427,7 @@ export const qualityLoss = new Processor('team-quality-loss',
 export const qualityWins = new Processor('team-quality-wins', sum, [
 	{
 		input: qualityWin,
-		offset: -1,
 		range:  5,
-		strict: false,
 		select: {
 			parent: 'team' // make this implicit
 		}
@@ -447,9 +437,7 @@ export const qualityWins = new Processor('team-quality-wins', sum, [
 export const expectedWins = new Processor('team-expected-wins', sum, [
 	{
 		input: expectedWin,
-		offset: -1,
 		range:  5,
-		strict: false,
 		select: {
 			parent: 'team' // make this implicit
 		}
@@ -459,9 +447,7 @@ export const expectedWins = new Processor('team-expected-wins', sum, [
 export const qualityLosses = new Processor('team-quality-losses', sum, [
 	{
 		input: qualityLoss,
-		offset: -1,
 		range:  5,
-		strict: false,
 		select: {
 			parent: 'team' // make this implicit
 		}
@@ -471,9 +457,7 @@ export const qualityLosses = new Processor('team-quality-losses', sum, [
 export const expectedLosses = new Processor('team-expected-losses', sum, [
 	{
 		input: expectedLoss,
-		offset: -1,
 		range:  5,
-		strict: false,
 		select: {
 			parent: 'team' // make this implicit
 		}
@@ -508,9 +492,7 @@ export const defPassSuccesses = new Processor(
 	'def-pass-successes', sum, [
 	{
 		input: defPassSucceed,
-		offset: -1,
 		range:  5,
-		strict: false,
 		select: {
 			parent: 'team' // make this implicit
 		}
@@ -545,9 +527,7 @@ export const defRushSuccesses = new Processor(
 	'def-rush-successes', sum, [
 	{
 		input: defRushSucceed,
-		offset: -1,
 		range:  5,
-		strict: false,
 		select: {
 			parent: 'team' // make this implicit
 		}
@@ -580,9 +560,7 @@ export const offPassSuccesses = new Processor(
 	'off-pass-successes', sum, [
 	{
 		input: offPassSucceed,
-		offset: -1,
 		range:  5,
-		strict: false,
 		select: {
 			parent: 'team' // make this implicit
 		}
@@ -615,9 +593,7 @@ export const offRushSuccesses = new Processor(
 	'off-rush-successes', sum, [
 	{
 		input: offRushSucceed,
-		offset: -1,
 		range:  5,
-		strict: false,
 		select: {
 			parent: 'team' // make this implicit
 		}

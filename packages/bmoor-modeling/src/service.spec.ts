@@ -79,6 +79,9 @@ describe('@bmoor-modeling::Service', function () {
 			hasFlag() {
 				return false;
 			},
+			getFlag() {
+				return null;
+			},
 			getVariable() {
 				return null;
 			},

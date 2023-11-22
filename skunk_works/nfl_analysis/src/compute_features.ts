@@ -55,6 +55,7 @@ executor.calculate(
 const ctx3 = new Context({flags: {verbose: true/*, reference: 'PHI'*/}});
 executor.calculate(
     executor.env.getInterval('2022-09'), 
+    // all of these are calculated as of after this week's game since I removed offsets
     new Accessor({
         defPassSuccessRank,
         defRushSuccessRank,

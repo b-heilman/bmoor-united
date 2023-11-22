@@ -52,11 +52,8 @@ export enum NodeValueSelector {
 }
 
 export interface NodeSelector {
-	global?: boolean;
+	assume?: NodeType;
 
-	// TODO: where nodes are selected, order should matter
-	//   make sure to standardize that.
-	// search up the tree
 	parent?: NodeType;
 
 	edge?: NodeEdgeLabel;

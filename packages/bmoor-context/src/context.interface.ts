@@ -17,5 +17,5 @@ export interface ContextSecurityInterface {
 export interface ContextSettings {
 	permissions?: string[];
 	variables?: {[Key: EnvVariable]: EnvValue};
-	flags?: Record<string, boolean|string>;
+	flags?: Record<string, boolean | string>;
 }

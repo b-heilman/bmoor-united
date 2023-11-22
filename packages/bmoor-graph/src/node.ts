@@ -231,7 +231,27 @@ export class Node implements NodeInterface {
 			// return all leafs
 			rtn = this.getChildren(true);
 		} else {
-			rtn = [selector.parent ? this.selectParent(selector) : this];
+			let root: Node = null;
+
+			if (selector.assume) {
+				root = this.selectParent({parent: selector.assume});
+
+				if (!root) {
+					const check = this.selectChildren({type: selector.type}, true);
+
+					if (check.length === 0) {
+						throw new Error('unable to assume: ' + selector.assume);
+					} else if (check.length > 1) {
+						throw new Error('assuming too much: ' + selector.assume);
+					} else {
+						root = check[0];
+					}
+				}
+			} else {
+				root = this; // eslint-disable-line @typescript-eslint/no-this-alias
+			}
+
+			rtn = [selector.parent ? root.selectParent(selector) : root];
 
 			if (selector.edge) {
 				rtn = rtn.flatMap((node) => node.selectEdges(selector));

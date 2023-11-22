@@ -4,18 +4,18 @@ import {
 	DatumAccessorResponse,
 	FeatureReference,
 } from '@bmoor/compute';
-import {GraphDatum, NodeSelector, NodeValueSelector} from '@bmoor/graph';
+import {GraphDatum, GraphSelector, NodeValueSelector} from '@bmoor/graph';
 
 import {IntervalReference} from '../interval.interface';
 
 export class DimensionalDatumAccessor extends DatumAccessor<
-	NodeSelector,
+	GraphSelector,
 	IntervalReference
 > {
 	modes: Record<FeatureReference, NodeValueSelector>;
 
 	constructor(
-		attrs: DatumAccessorRequest<NodeSelector, IntervalReference>,
+		attrs: DatumAccessorRequest<GraphSelector, IntervalReference>,
 		modes: Record<FeatureReference, NodeValueSelector> = {},
 	) {
 		super(attrs);

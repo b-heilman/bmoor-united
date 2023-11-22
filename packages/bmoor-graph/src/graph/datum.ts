@@ -1,13 +1,15 @@
 import {DatumInterface, FeatureValue} from '@bmoor/compute';
+
+import {GraphInterface} from '../graph.interface';
+import {GraphSelector} from '../graph.interface';
+import {Node} from '../node';
 import {
-	GraphInterface,
-	Node,
 	NodeReference,
 	NodeSelector,
 	NodeValueSelector,
-} from '@bmoor/graph';
+} from '../node.interface';
 
-export class GraphDatum implements DatumInterface<NodeSelector> {
+export class GraphDatum implements DatumInterface<GraphSelector> {
 	ref: NodeReference;
 	node: Node;
 	graph: GraphInterface;
@@ -50,7 +52,7 @@ export class GraphDatum implements DatumInterface<NodeSelector> {
 		return true;
 	}
 
-	select(select: NodeSelector): DatumInterface<NodeSelector>[] {
+	select(select: GraphSelector): DatumInterface<GraphSelector>[] {
 		if (select.global) {
 			return this.graph.select(select);
 		} else {

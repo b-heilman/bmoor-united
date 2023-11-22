@@ -16,6 +16,9 @@ describe('@bmoor/graph::node', function () {
 
 	beforeEach(function () {
 		root = new Node('team', 'team');
+		root = new Node('for-test', 'other', {
+			parent: root,
+		});
 		level1_a = new Node('group-1', 'group', {
 			parent: root,
 		});
@@ -127,6 +130,18 @@ describe('@bmoor/graph::node', function () {
 	});
 
 	describe('::select', function () {
+		it('should work with .assume', function () {
+			const select1 = root.select({assume: 'other'});
+
+			expect(select1.length).to.equal(1);
+
+			const select2 = root
+				.select({assume: 'other'})[0]
+				.select({assume: 'team'});
+
+			expect(select2.length).to.equal(1);
+		});
+
 		it('should work with .type', function () {
 			const select2 = root.select({type: 'player'});
 			const select3 = level1_a.select({type: 'player'});

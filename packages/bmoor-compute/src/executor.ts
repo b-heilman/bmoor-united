@@ -15,9 +15,11 @@ import {EnvironmentInterface} from './environment.interface';
 import {ExecutorAction, ExecutorResponse} from './executor.interface';
 import {IntervalInterface} from './interval.interface';
 
-function shouldVerbose(ctx: Context, datum: {ref: string}){
-	return ctx.hasFlag('verbose') && (
-		!ctx.hasFlag('reference') || datum.ref.indexOf(ctx.getFlag('reference')) !== -1
+function shouldVerbose(ctx: Context, datum: {ref: string}) {
+	return (
+		ctx.hasFlag('verbose') &&
+		(!ctx.hasFlag('reference') ||
+			datum.ref.indexOf(ctx.getFlag('reference')) !== -1)
 	);
 }
 
@@ -156,7 +158,12 @@ async function runProcessor<
 	const requirements = processor.getRequirements();
 
 	if (shouldVerbose(ctx, datum)) {
-		ctx.log('-> processor:requesting', datum.ref, interval.ref, processor.name);
+		ctx.log(
+			'-> processor:requesting',
+			datum.ref,
+			interval.ref,
+			processor.name,
+		);
 	}
 
 	const reqs = await Promise.all(
@@ -207,12 +214,7 @@ export class Executor<GraphSelector, NodeSelector, IntervalRef, Order> {
 			return datum.getValue(processor.name);
 		} else if (processor instanceof DatumRanker) {
 			if (shouldVerbose(ctx, datum)) {
-				ctx.log(
-					'processor ==>',
-					datum.ref,
-					interval.ref,
-					processor.name,
-				);
+				ctx.log('processor ==>', datum.ref, interval.ref, processor.name);
 			}
 
 			const comparable = datum.select(processor.settings.select);
@@ -355,4 +357,3 @@ export class Executor<GraphSelector, NodeSelector, IntervalRef, Order> {
 		);
 	}
 }
-
