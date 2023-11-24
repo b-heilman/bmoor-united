@@ -139,7 +139,7 @@ export const defPassMean = new Processor('def-pass-mean', mean, [
 export const offRushRank = new Ranker(
 	'off-rush-rank', 
 	{
-		buckets: 8,
+		bucketsCount: 8,
 		select: {
 			global: true,
 			type: 'offense'
@@ -154,7 +154,7 @@ export const offRushRank = new Ranker(
 export const offPassRank = new Ranker(
 	'off-pass-rank', 
 	{
-		buckets: 8,
+		bucketsCount: 8,
 		select: {
 			global: true,
 			type: 'offense'
@@ -170,7 +170,7 @@ export const offRank = new Ranker(
 	'off-rank', 
 	{
 		asc: true,
-		buckets: 8,
+		bucketsCount: 8,
 		select: {
 			global: true,
 			type: 'offense'
@@ -186,7 +186,7 @@ export const offRank = new Ranker(
 export const defRushRank = new Ranker(
 	'def-rush-rank', 
 	{
-		buckets: 8,
+		bucketsCount: 8,
 		select: {
 			global: true,
 			type: 'defense'
@@ -201,7 +201,7 @@ export const defRushRank = new Ranker(
 export const defPassRank = new Ranker(
 	'def-pass-rank', 
 	{
-		buckets: 8,
+		bucketsCount: 8,
 		select: {
 			global: true,
 			type: 'defense'
@@ -217,7 +217,7 @@ export const defRank = new Ranker(
 	'def-rank', 
 	{
 		asc: true,
-		buckets: 8,
+		bucketsCount: 8,
 		select: {
 			global: true,
 			type: 'defense'
@@ -234,7 +234,7 @@ export const teamRank = new Ranker(
 	'team-rank', 
 	{
 		asc: true,
-		buckets: 6,
+		bucketsCount: 6,
 		select: {
 			global: true,
 			type: 'team'
@@ -604,7 +604,7 @@ export const defPassSuccessRank = new Ranker(
 	'def-pass-success-rank', 
 	{
 		asc: false, // higher is better
-		buckets: 6,
+		bucketsCount: 6,
 		select: {
 			global: true,
 			type: 'team'
@@ -620,7 +620,7 @@ export const defRushSuccessRank = new Ranker(
 	'def-rush-success-rank', 
 	{
 		asc: false, // higher is better
-		buckets: 6,
+		bucketsCount: 6,
 		select: {
 			global: true,
 			type: 'team'
@@ -636,7 +636,7 @@ export const offRushSuccessRank = new Ranker(
 	'off-rush-success-rank', 
 	{
 		asc: false, // higher is better
-		buckets: 6,
+		bucketsCount: 6,
 		select: {
 			global: true,
 			type: 'team'
@@ -652,7 +652,7 @@ export const offPassSuccessRank = new Ranker(
 	'off-pass-success-rank', 
 	{
 		asc: false, // higher is better
-		buckets: 6,
+		bucketsCount: 6,
 		select: {
 			global: true,
 			type: 'team'

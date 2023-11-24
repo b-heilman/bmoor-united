@@ -258,8 +258,38 @@ export class Executor<GraphSelector, NodeSelector, IntervalRef, Order> {
 						pairings.sort((a, b) => b.value - a.value);
 					}
 
-					const length = processor.settings.buckets
-						? Math.floor(pairings.length / processor.settings.buckets)
+					// NOTE: If I sort first, does that make stat calculation more efficient which
+					//   outweighs sorting data I con't care about?  Not going to pre-optimize, but
+					//   might be something there
+					if (processor.settings.filter) {
+						const stats = processor.settings.filter.stats
+							? processor.settings.filter.stats(
+									pairings.map((pair) => pair.value),
+							  )
+							: null;
+
+						const fn = processor.settings.filter.fn;
+						const chosen = [];
+
+						for (const pair of pairings) {
+							// Remove datums we don't care about give them a default value
+							if (fn(pair.value, stats)) {
+								chosen.push(pair);
+							} else {
+								results.set(
+									pair.datum.ref,
+									processor.settings.filter.droppedValue,
+								);
+							}
+						}
+
+						pairings = chosen;
+					}
+
+					const length = processor.settings.bucketSize
+						? processor.settings.bucketSize
+						: processor.settings.bucketsCount
+						? Math.ceil(pairings.length / processor.settings.bucketsCount)
 						: 1;
 
 					if (shouldVerbose(ctx, datum)) {

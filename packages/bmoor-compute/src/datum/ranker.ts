@@ -1,10 +1,10 @@
 import {FeatureReference} from '../datum.interface';
 import {DatumProcessor} from './processor';
+import {DatumProcessorRequirement} from './processor.interface';
 import {
-	DatumProcessorFunction,
-	DatumProcessorRequirement,
-} from './processor.interface';
-import {DatumRankerSettings} from './ranker.interface';
+	DatumRankerFunction,
+	DatumRankerSettings,
+} from './ranker.interface';
 
 export class DatumRanker<NodeSelector, IntervalRef> extends DatumProcessor<
 	NodeSelector,
@@ -15,7 +15,7 @@ export class DatumRanker<NodeSelector, IntervalRef> extends DatumProcessor<
 	constructor(
 		name: FeatureReference,
 		settings: DatumRankerSettings<NodeSelector>,
-		fn: DatumProcessorFunction,
+		fn: DatumRankerFunction,
 		reqs: DatumProcessorRequirement<NodeSelector, IntervalRef>[],
 	) {
 		super(name, fn, reqs);
