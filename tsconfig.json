@@ -5,6 +5,7 @@
     "moduleResolution": "node",
     "removeComments": true,
 
+    "noEmit": true,
     "noEmitOnError": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
