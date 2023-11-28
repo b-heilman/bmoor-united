@@ -1,42 +1,16 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
+import { PlayerResponseRaw, GameResponseRaw, PlayerResponse, GameResponse } from './access.interface';
 const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
 
-const dataDir = path.join(__dirname, `../cache`);
-if (!fs.existsSync(dataDir)){
-    fs.mkdirSync(dataDir);
+export const cacheDir = path.join(__dirname, `../cache`);
+if (!fs.existsSync(cacheDir)){
+    fs.mkdirSync(cacheDir);
 }
 
-export interface PlayerResponse {
-    athlete?: {
-        id: string,
-        displayName: string,
-        position: {
-            abbreviation: string
-        },
-    },
-};
-
-export interface PlayerResponseRaw extends PlayerResponse {
-    athlete?: {
-        id: string,
-        displayName: string,
-        position: {
-            abbreviation: string
-        },
-        links: string[],
-    },
-    videos: string[],
-    playerSwitcher: string[],
-    quicklinks: string[],
-    links: string[],
-    ticketsInfo: string[],
-    standings: string[]
-};
-
 export async function readPlayer(playerId: string): Promise<PlayerResponse> {
-    const playersDir = `${dataDir}/players`;
+    const playersDir = `${cacheDir}/players`;
     if (!fs.existsSync(playersDir)){
         fs.mkdirSync(playersDir);
     }
@@ -51,151 +25,28 @@ export async function readPlayer(playerId: string): Promise<PlayerResponse> {
 
         const content: PlayerResponseRaw = await response.json();
         try {
-            delete content.athlete.links;
             delete content.videos;
             delete content.playerSwitcher;
             delete content.quicklinks;
             delete content.links;
             delete content.ticketsInfo;
             delete content.standings;
+            delete content.athlete.links;
 
-            console.log(`writing: ${content.athlete.displayName}`);
-            fs.writeFileSync(
-                playerPath,
-                JSON.stringify(content, null, 2),
-                {encoding: 'utf-8'}
-            );
+            console.log(`writing: ${content.athlete.displayName}`);  
         } catch(ex){
             console.log(playerId, Object.keys(content), content);
         }
+        // even save the bad cache
+        fs.writeFileSync(
+            playerPath,
+            JSON.stringify(content, null, 2),
+            {encoding: 'utf-8'}
+        );
 
         return content;
     }
 }
-
-export type TeamInfo = {
-    id: string,
-    abbreviation: string,
-}
-
-export type BoxscoreTeamInfo = {
-    team: TeamInfo,
-    statistics: {}
-}
-
-export type BoxscorePlayerStatistics = {
-    athlete: {
-        id: string,
-        displayName: string
-    },
-    stats: string[]
-}
-
-/*
-"name": "passing",
-            "keys": [
-              "completions/passingAttempts",
-              "passingYards",
-              "yardsPerPassAttempt",
-              "passingTouchdowns",
-              "interceptions",
-              "sacks-sackYardsLost",
-              "adjQBR",
-              "QBRating"
-            ],
-"name": "rushing",
-            "keys": [
-              "rushingAttempts",
-              "rushingYards",
-              "yardsPerRushAttempt",
-              "rushingTouchdowns",
-              "longRushing"
-            ],
-"name": "receiving",
-            "keys": [
-              "receptions",
-              "receivingYards",
-              "yardsPerReception",
-              "receivingTouchdowns",
-              "longReception",
-              "receivingTargets"
-            ],
-"name": "fumbles",
-            "keys": [
-              "fumbles",
-              "fumblesLost",
-              "fumblesRecovered"
-            ],
-"name": "defensive",
-            "keys": [
-              "totalTackles",
-              "soloTackles",
-              "sacks",
-              "tacklesForLoss",
-              "passesDefended",
-              "QBHits",
-              "defensiveTouchdowns"
-            ],
-*/
-export type BoxscorePlayerStatisticsGroup = {
-    name: string,
-    keys: string[],
-    athletes: BoxscorePlayerStatistics[]
-}
-
-export type BoxscorePlayersInfo = {
-    team: TeamInfo,
-    statistics: BoxscorePlayerStatisticsGroup[]
-}
-
-export type BoxscoreInfo = {
-    teams: BoxscoreTeamInfo[]
-    players: BoxscorePlayersInfo[]
-}
-
-export enum HomeAway {
-    home,
-    away
-}
-
-export type HeaderCompetitor = {
-    homeAway: HomeAway,
-    winner: boolean,
-    team: TeamInfo,
-    score: string
-};
-
-export type HeaderCompetion = {
-    neutralSite: boolean,
-    date: string,
-    competitors: HeaderCompetitor[]
-};
-
-export type HeaderInfo = {
-    id: string,
-    competitions: HeaderCompetion[],
-    season: {
-        year: number
-    },
-    week: number
-};
-
-export interface GameResponse {
-    header: HeaderInfo
-    boxscore: BoxscoreInfo
-};
-
-export interface GameResponseRaw extends GameResponse {
-    leaders: string,
-    broadcasts: string,
-    pickcenter: string,
-    againstTheSpread: string,
-    odds: string,
-    news: string,
-    article: string,
-    videos: string,
-    standings: string
-};
 
 export async function readGame(gameId: string, weekDir?: string): Promise<GameResponse>{
     const gamePath = weekDir ? `${weekDir}/${gameId}.json` : null;
@@ -263,7 +114,7 @@ export async function readWeek(season: number, week: number, partOfSeason = 2){
         return regex.exec(item.$ref)[1];
     });
 
-    const gamesDir = `${dataDir}/games`;
+    const gamesDir = `${cacheDir}/games`;
     if (!fs.existsSync(gamesDir)){
         fs.mkdirSync(gamesDir);
     }
