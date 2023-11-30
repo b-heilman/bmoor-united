@@ -3,46 +3,51 @@ import * as path from 'path';
 import * as parquet from 'parquetjs-lite';
 import {DimensionalGraph, DimensionalGraphLoader, Interval, dump} from '@bmoor/graph-compute';
 
+import { TeamStats } from './convert.interface';
+
 const playerStats = [
-    "pass_cmp",
-    "pass_att",
-    "pass_yds",
-    "pass_td",
-    "pass_int",
-    "pass_sacked",
-    "pass_long",
-    "pass_rating",
-    "pass_target_yds",
-    "pass_poor_throws",
-    "pass_blitzed",
-    "pass_hurried",
-    "pass_scrambles",
-    "rush_att",
-    "rush_yds",
-    "rush_td",
-    "rush_long",
-    "rush_yds_before_contact",
-    "rush_yac",
-    "rush_broken_tackles",
-    "rec_att",
-    "rec_cmp", 
-    "rec_yds",
-    "rec_td",
-    "rec_drops",
-    "rec_long",
-    "rec_air_yds",
-    "rec_yac",
-    "fumbles_lost"
+    'passCmp',
+    'passAtt',
+    'passYds',
+    'passTd',
+    'passInt',
+    'passLong',
+    'passRating',
+    'passTargetYds',
+    // passPoor_throws"',
+    // passBlitzed',
+    // passHurried',
+    // passScrambles',
+    'rushAtt',
+    'rushYds',
+    'rushTd',
+    'rushLong',
+    'rushYdsBc',
+    'rushYdsAc',
+    'rushBrokenTackles',
+    'recAtt',
+    'recCmp', 
+    'recYds',
+    'recTd',
+    'recDrops',
+    'recLong',
+    'recDepth',
+    'recYac',
+    'sacked',
+    'fumbles',
+    'fumblesLost'
 ];
 
 type DataRow = {
-    'game_date': string, 
-    'season': string, 
-    'week': string, 
-    'game_id': string,
-    'team': string,
-    'player_id': string,
-    'pos': string
+    season: string, 
+    week: string, 
+    gameId: string,
+    gameDate: string, 
+    teamId: string,
+    teamDisplay: string,
+    playerId: string,
+    playerDisplay: string,
+    playerPosition: string,
 };
 
 const offUsages = {
@@ -98,7 +103,7 @@ async function run(){
     playerLoader.addNodeGenerator({
         type: 'team',
         ref: function(row: DataRow){
-            return row.team;
+            return row.teamId;
         }
     });
 
@@ -108,7 +113,7 @@ async function run(){
             return prev.ref;
         },
         ref: function(row: DataRow){
-            return row.team+':off';
+            return row.teamId+':off';
         },
         metadata: {
             side: 'off'
@@ -137,7 +142,7 @@ async function run(){
             return prev.ref;
         },
         ref: function(row: DataRow){
-            return row.team+':'+row.pos;
+            return row.teamId+':'+row.playerPosition;
         }
     });
 
@@ -147,11 +152,11 @@ async function run(){
             return prev.ref;
         },
         ref: function(row: DataRow){
-           return row.player_id;
+           return row.playerId;
         },
         metadata: {
             position: function(row: DataRow){
-                return row.pos;
+                return row.playerPosition;
             }
         }
     });
@@ -160,21 +165,21 @@ async function run(){
     playerLoader.addNodeGenerator({
         type: 'defense',
         parentRef: function(row: DataRow){
-            return row.team;
+            return row.teamId;
         },
         ref: function(row: DataRow){
-            return row.team+':def';
+            return row.teamId+':def';
         }
     });
 
     playerLoader.addEventGenerator({
         ref: function(row: DataRow){
-            return row.game_id;
+            return row.gameId;
         },
         connections: [
             {
                 nodeRef: function(row: DataRow){
-                    return row.player_id;
+                    return row.playerId;
                 },
                 features: playerStats,
                 featuresParser: (value) => {
@@ -192,9 +197,19 @@ async function run(){
     const rows = [];
     const cursor = reader.getCursor();
 
-    let record = null;
+    let record: TeamStats = null;
     while (record = await cursor.next()) {
-        rows.push(record);
+        for (const player of record.players){
+            player.season
+            player.week
+            player.gameId
+            player.gamePosition
+            player.playerId
+            player.playerDisplay
+            player.playerPosition
+
+            rows.push(record);
+        }
     }
 
     playerLoader.loadDimensionalJSON(graph, rows);
