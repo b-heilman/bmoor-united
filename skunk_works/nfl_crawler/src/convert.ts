@@ -38,16 +38,26 @@ async function recursiveFileStat(path: string): Promise<string[]>{
     }
 }
 
+const playerMap = new Map<string, string>();
+function playerLookup(id, display){
+    if (playerMap.has(id)){
+        return playerMap.get(id);
+    } else {
+        playerMap.set(id, display);
+        return display;
+    }
+}
+
 async function createPlayerRow(playerId: string): Promise<PlayerRow> {
     const player = await readPlayer(playerId);
 
     let playerDisplay = null;
     let playerPosition = null;
     if (player.athlete){
-        playerDisplay = player.athlete.displayName;
+        playerDisplay = playerLookup(playerId, player.athlete.displayName);
         playerPosition = player.athlete.position.abbreviation;
     } else {
-        playerDisplay = playerId;
+        playerDisplay = playerLookup(playerId, playerId);
         playerPosition = 'NA';
     }
 
@@ -131,6 +141,16 @@ function getGameName(game: GameResponse){
     return `${teams[0].team.abbreviation} vs ${teams[1].team.abbreviation}`;
 }
 
+const teamMap = new Map<string, string>();
+function teamLookup(id, display){
+    if (teamMap.has(id)){
+        return teamMap.get(id);
+    } else {
+        teamMap.set(id, display);
+        return display;
+    }
+}
+
 async function processGameStats(game: GameResponse): Promise<GameRow>{
     const gameName = getGameName(game);
     const competion = game.header.competitions[0];
@@ -149,12 +169,14 @@ async function processGameStats(game: GameResponse): Promise<GameRow>{
     };
 
     for (const competitor of competion.competitors){
+        const display = teamLookup(competitor.team.id, competitor.team.abbreviation);
+
         if (competitor.homeAway === 'home'){
             rtn.homeTeamId = competitor.team.id;
-            rtn.homeTeamDisplay = competitor.team.abbreviation;
+            rtn.homeTeamDisplay = display;
         } else {
             rtn.awayTeamId = competitor.team.id;
-            rtn.awayTeamDisplay = competitor.team.abbreviation;
+            rtn.awayTeamDisplay = display;
         }
     }
 
@@ -164,9 +186,13 @@ async function processGameStats(game: GameResponse): Promise<GameRow>{
 async function processGamePlayers(playersData: BoxscorePlayersInfo[]): Promise<InternalTeamStats[]>{
     return Promise.all(playersData.map(async (playersGroup) => {
         const playersBuilder = new Map<string, PlayerRow>();
+        const teamDisplay = teamLookup(
+            playersGroup.team.id,
+            playersGroup.team.abbreviation
+        );
         const teamInfo: InternalTeamStats = {
             teamId: playersGroup.team.id,
-            teamDisplay: playersGroup.team.abbreviation,
+            teamDisplay,
             players: []
         };
 
@@ -222,8 +248,8 @@ async function processGames(paths: string[]){
     const playerParquetPath = `${parquetDir}/players.parquet`;
     const knownTeams: Record<string, boolean> = {};
     const knownGames: Record<string, boolean> = {};
-    const existingTeams: TeamStats[] = [];
     const existingGames: Record<string, GameStats> = {};
+    const existingTeamsGames: TeamStats[] = [];
 
     try {
         if (fsSync.existsSync(playerParquetPath)){
@@ -234,7 +260,12 @@ async function processGames(paths: string[]){
             let record: TeamStats = null;
             while (record = await cursor.next()) {
                 knownTeams[record.gameId] = true;
-                existingTeams.push(record);
+                existingTeamsGames.push(record);
+
+                teamLookup(record.teamId, record.teamDisplay);
+                for (const player of record.players){
+                    playerLookup(player.playerId, player.playerDisplay);
+                }
             }
 
             await reader.close();
@@ -300,7 +331,7 @@ async function processGames(paths: string[]){
     try {
         const writer = await parquet.ParquetWriter.openFile(playerSchema, playerParquetPath);
         
-        for(const teamInfo of existingTeams.concat(teamResults.flat())){
+        for(const teamInfo of existingTeamsGames.concat(teamResults.flat())){
             await writer.appendRow(teamInfo);
         }
 

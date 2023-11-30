@@ -196,19 +196,40 @@ async function run(){
     // TODO: do this with a stream...
     const rows = [];
     const cursor = reader.getCursor();
+    const teamMap = new Map();
+    const playerMap = new Map();
 
     let record: TeamStats = null;
     while (record = await cursor.next()) {
-        for (const player of record.players){
-            player.season
-            player.week
-            player.gameId
-            player.gamePosition
-            player.playerId
-            player.playerDisplay
-            player.playerPosition
+        let teamDisplay = null;
+        // team displays can change, the team id shouldn't
+        if (teamMap.has(record.teamId)){
+            teamDisplay = teamMap.get(record.teamId);
+        } else {
+            teamDisplay = record.teamDisplay;
+            teamMap.set(record.teamId, teamDisplay);
+        }
 
-            rows.push(record);
+        for (const player of record.players){
+            let playerDisplay = null;
+            if (playerMap.has(player.playerId)){
+                playerDisplay = playerMap.get(player.playerId);
+            } else {
+                playerDisplay = player.playerDisplay;
+                playerMap.set(player.playerId, playerDisplay);
+            }
+
+            player.playerDisplay = playerDisplay;
+
+            rows.push(Object.assign({
+                season: record.season,
+                week: record.week,
+                gameDate: record.gameDate,
+                gameId: record.gameId,
+                gameDisplay: record.gameDisplay,
+                teamId: teamDisplay,
+                teamDisplay,
+            }, record));
         }
     }
 

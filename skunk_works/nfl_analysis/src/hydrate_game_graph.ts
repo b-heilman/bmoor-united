@@ -3,18 +3,20 @@ import * as path from 'path';
 import * as parquet from 'parquetjs-lite';
 import {DimensionalGraphLoader, Interval, dump, load} from '@bmoor/graph-compute';
 
+import { GameStats } from './convert.interface';
+
 type DataRow = {
-    'game_date': string, 
     'season': string, 
     'week': string, 
-    'game_id': string, 
+    'gameDate': string, 
+    'gameId': string, 
     // 'Vegas_Line': number,
     // 'Vegas_Favorite': string, 
     // 'Over_Under': number, 
-    'home_team': string, 
-    'home_score': number, 
-    'vis_team': string,
-    'vis_score': number
+    'homeTeamId': string, 
+    'homeScore': number, 
+    'awayTeamId': string,
+    'awayScore': number
 }
 
 async function run(){
@@ -33,11 +35,11 @@ async function run(){
     gameLoader.addNodeGenerator({
         type: 'team',
         ref: function(row: DataRow){
-            return row.home_team;
+            return row.homeTeamId;
         },
         edges: {
             opponent: function (row: DataRow) {
-                return [row.vis_team];
+                return [row.awayTeamId];
             },
         },
     });
@@ -45,11 +47,11 @@ async function run(){
     gameLoader.addNodeGenerator({
         type: 'offense',
         ref: function(row: DataRow){
-            return row.home_team+':off';
+            return row.homeTeamId+':off';
         },
         edges: {
             against: function (row: DataRow) {
-                return [row.vis_team+':def'];
+                return [row.awayTeamId+':def'];
             },
         },
     });
@@ -57,11 +59,11 @@ async function run(){
     gameLoader.addNodeGenerator({
         type: 'defense',
         ref: function(row: DataRow){
-            return row.home_team+':def';
+            return row.homeTeamId+':def';
         },
         edges: {
             against: function (row: DataRow) {
-                return [row.home_team+':off'];
+                return [row.homeTeamId+':off'];
             },
         },
     });
@@ -69,11 +71,11 @@ async function run(){
     gameLoader.addNodeGenerator({
         type: 'team',
         ref: function(row: DataRow){
-            return row.vis_team;
+            return row.awayTeamId;
         },
         edges: {
             opponent: function (row: DataRow) {
-                return [row.home_team];
+                return [row.homeTeamId];
             },
         },
     });
@@ -81,11 +83,11 @@ async function run(){
     gameLoader.addNodeGenerator({
         type: 'offense',
         ref: function(row: DataRow){
-            return row.vis_team+':off';
+            return row.awayTeamId+':off';
         },
         edges: {
             against: function (row: DataRow) {
-                return [row.home_team+':def'];
+                return [row.homeTeamId+':def'];
             },
         },
     });
@@ -93,38 +95,38 @@ async function run(){
     gameLoader.addNodeGenerator({
         type: 'defense',
         ref: function(row: DataRow){
-            return row.vis_team+':def';
+            return row.awayTeamId+':def';
         },
         edges: {
             against: function (row: DataRow) {
-                return [row.home_team+':off'];
+                return [row.homeTeamId+':off'];
             },
         },
     });
     
     gameLoader.addEventGenerator({
         ref: function(row: DataRow){
-            return row.game_id;
+            return row.gameId;
         },
         connections: [
             {
                 nodeRef: function(row: DataRow){
-                    return row.home_team;
+                    return row.homeTeamId;
                 },
                 featureValues: {
-                    score: (row: DataRow) => Number(row.home_score),
-                    win: (row: DataRow) => Number(row.home_score > row.vis_score),
-                    offset: (row: DataRow) => Number(row.home_score - row.vis_score)
+                    score: (row: DataRow) => Number(row.homeScore),
+                    win: (row: DataRow) => Number(row.homeScore > row.awayScore),
+                    offset: (row: DataRow) => Number(row.homeScore - row.awayScore)
                 }
             },
             {
                 nodeRef: function(row: DataRow){
-                    return row.vis_team;
+                    return row.awayTeamId;
                 },
                 featureValues: {
-                    score: (row: DataRow) => Number(row.vis_score),
-                    win: (row: DataRow) => Number(row.vis_score > row.home_score),
-                    offset: (row: DataRow) => Number(row.vis_score - row.home_score)
+                    score: (row: DataRow) => Number(row.awayScore),
+                    win: (row: DataRow) => Number(row.awayScore > row.homeScore),
+                    offset: (row: DataRow) => Number(row.awayScore - row.homeScore)
                 }
             },
         ]
@@ -137,10 +139,16 @@ async function run(){
     // TODO: do this with a stream...
     const rows = [];
     const cursor = reader.getCursor();
+    const teamMap = new Map();
 
-    let record = null;
+    let record: GameStats = null;
     while (record = await cursor.next()) {
-        rows.push(record);
+        for (const game of record.games){
+            rows.push(Object.assign(
+                {season: record.season, week: record.week},
+                record
+            ));
+        }
     }
 
     const graph = load(JSON.parse(
