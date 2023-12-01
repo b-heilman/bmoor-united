@@ -120,7 +120,14 @@ export class Graph implements GraphInterface {
 		if (selector.global) {
 			res = [this.root];
 		} else if (selector.reference) {
-			res = [this.getNode(selector.reference)];
+			const selected = this.getNode(selector.reference);
+
+			if (!selected){
+				console.log(Array.from(this.nodeDex.keys()));
+				throw new Error('Unable to select: '+selector.reference);
+			}
+
+			res = [selected];
 		} else {
 			res = this.types.get(selector.type);
 			select = Object.assign({}, selector, {type: null}); // so it doesn't run again

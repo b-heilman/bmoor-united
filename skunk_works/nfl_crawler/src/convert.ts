@@ -69,6 +69,46 @@ function playerLookup(id, display){
     }
 }
 
+const positionGroups = {
+    'qb': 'passing',
+    'rb': 'running',
+    'rb/w': 'running',
+    'hb': 'running',
+    'fb': 'running',
+    'fb/d': 'running',
+    'fb/r': 'running',
+    'wr': 'catching',
+    'wr/r': 'catching',
+    'te': 'catching',
+    // --- don't care about line yet
+    'ot': null,
+    'og': null,
+    'c': null,
+    'c/g': null,
+    'g': null,
+    'g/t': null,
+    't': null,
+    'ol': null,
+    // --- wtf
+    's': null,
+    'ss': null,
+    'fs': null,
+    'cb': null,
+    'db': null,
+    'lb': null,
+    'ls': null,
+    'lb/f': null,
+    'nt': null,
+    'de': null,
+    'dt': null,
+    'dl': null,
+    'k': null,
+    'p': null,
+    'pk': null,
+    'kr': null,
+    '-': 'junk'
+};
+
 async function createPlayerRow(playerId: string): Promise<PlayerRow> {
     const player = await readPlayer(playerId);
 
@@ -76,43 +116,46 @@ async function createPlayerRow(playerId: string): Promise<PlayerRow> {
     let playerPosition = null;
     if (player.athlete){
         playerDisplay = playerLookup(playerId, player.athlete.displayName);
-        playerPosition = player.athlete.position.abbreviation;
-    } else {
-        playerDisplay = playerLookup(playerId, playerId);
-        playerPosition = 'NA';
-    }
+        playerPosition = player.athlete.position.abbreviation.toLowerCase();
 
-    return {
-        playerId,
-        playerDisplay,
-        playerPosition,
-        passCmp: 0,
-        passAtt: 0,
-        passYds: 0,
-        passTd: 0,
-        passInt: 0,
-        passLong: 0,
-        passRating: 0,
-        passTargetYds: 0,
-        rushAtt: 0,
-        rushYds: 0,
-        rushTd: 0,
-        rushLong: 0,
-        rushYdsBc: 0,
-        rushYdsAc: 0,
-        rushBrokenTackles: 0,
-        recAtt: 0,
-        recCmp: 0, 
-        recYds: 0,
-        recTd: 0,
-        recDrops: 0,
-        recLong: 0,
-        recDepth: 0,
-        recYac: 0,
-        sacked: 0,
-        fumbles: 0,
-        fumblesLost: 0
-    };
+        const playerPositionGroup = positionGroups[playerPosition];
+        if (playerPositionGroup){
+            return {
+                playerId,
+                playerDisplay,
+                playerPosition,
+                playerPositionGroup,
+                passCmp: 0,
+                passAtt: 0,
+                passYds: 0,
+                passTd: 0,
+                passInt: 0,
+                passLong: 0,
+                passRating: 0,
+                passTargetYds: 0,
+                rushAtt: 0,
+                rushYds: 0,
+                rushTd: 0,
+                rushLong: 0,
+                rushYdsBc: 0,
+                rushYdsAc: 0,
+                rushBrokenTackles: 0,
+                recAtt: 0,
+                recCmp: 0, 
+                recYds: 0,
+                recTd: 0,
+                recDrops: 0,
+                recLong: 0,
+                recDepth: 0,
+                recYac: 0,
+                sacked: 0,
+                fumbles: 0,
+                fumblesLost: 0
+            };
+        }
+    } 
+    
+    return null;
 }
 
 function applyPassing(player: PlayerRow, stats: Record<string, string>){
@@ -256,7 +299,7 @@ async function processGamePlayers(playersData: BoxscorePlayersInfo[]): Promise<I
             }
         }
 
-        teamInfo.players = Array.from(playersBuilder.values());
+        teamInfo.players = Array.from(playersBuilder.values()).filter(player => player);
 
         return teamInfo;
     }));
@@ -376,6 +419,7 @@ async function processGames(paths: string[]){
         console.log('saved players parquet');
     } catch(ex){
         console.log('failed to write');
+        console.log(ex);
     }
 
     for (const game of games.filter(game => !knownGames[game.header.id])) {
@@ -416,7 +460,7 @@ async function processGames(paths: string[]){
     }
 }
 
-recursiveFileStat('/home/brian/development/bmoor-united/skunk_works/nfl_crawler/cache/games')
+recursiveFileStat('/home/brian/development/bmoor-united/skunk_works/nfl_crawler/cache/games/2023')
 .then(results => processGames(results));
 
 // processGames(['/home/brian/development/bmoor-united/skunk_works/nfl_crawler/cache/games/2023/11/401547545.json']);
