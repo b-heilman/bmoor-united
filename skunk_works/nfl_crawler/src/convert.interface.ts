@@ -1,8 +1,8 @@
 import * as parquet from 'parquetjs-lite';
 
 interface BaseIdetifiers {
-    season: number, 
-    week: number, 
+    season: string, 
+    week: string, 
 }
 
 export interface GameRow {
@@ -23,8 +23,8 @@ export interface GameStats extends BaseIdetifiers {
 }
 
 export const gameSchema = new parquet.ParquetSchema({
-    season: { type: 'INT32' }, 
-    week: { type: 'INT32' }, 
+    season: { type: 'UTF8' }, 
+    week: { type: 'UTF8' }, 
     
     games: { 
         repeated: true,
@@ -97,8 +97,8 @@ export interface TeamStats extends InternalTeamStats, BaseTeamIdentifiers {
 
 // TODO: Is there a way to generate this from an interface?
 export const playerSchema = new parquet.ParquetSchema({
-    season: { type: 'INT32' }, 
-    week: { type: 'INT32' }, 
+    season: { type: 'UTF8' }, 
+    week: { type: 'UTF8' }, 
     gameId: { type: 'UTF8' },
     gameDisplay: { type: 'UTF8' },
     gameDate: { type: 'UTF8' }, 

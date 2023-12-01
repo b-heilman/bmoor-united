@@ -1,5 +1,6 @@
 import {expect} from 'chai';
 
+import {Context} from '@bmoor/context';
 import {GraphDatum} from '@bmoor/graph';
 
 import {DimensionalGraph, load} from './graph';
@@ -414,13 +415,16 @@ describe('@bmoor/graph-compute::graph', function () {
 		},
 	};
 
+	let ctx: Context;
 	let iGraph: DimensionalGraph = null;
 	let i1: Interval = null;
 	let i2: Interval = null;
 	let i3: Interval = null;
 
 	beforeEach(function () {
-		iGraph = load(schema);
+		ctx = new Context({});
+
+		iGraph = load(ctx, schema);
 		i1 = iGraph.getInterval('d-1');
 		i2 = iGraph.getInterval('d-2');
 		i3 = iGraph.getInterval('d-3');

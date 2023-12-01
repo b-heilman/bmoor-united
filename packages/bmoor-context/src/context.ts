@@ -69,9 +69,13 @@ export class Context implements ContextSecurityInterface {
 		}
 	}
 
-	setError(error: Error) {
+	setError(error: Error, settings?: ErrorContext) {
 		if (!this.error) {
 			this.error = new ContextualError(error);
+		}
+
+		if (settings) {
+			this.addErrorContext(settings);
 		}
 
 		return this;

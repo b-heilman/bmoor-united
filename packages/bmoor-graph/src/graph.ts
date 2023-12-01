@@ -1,4 +1,5 @@
 import {DatumInterface} from '@bmoor/compute';
+import {Context} from '@bmoor/context';
 
 import {Event} from './event';
 import {
@@ -179,7 +180,11 @@ function addEventJSON(graph: Graph, eventInfo: EventJSON) {
 	}
 }
 
-export function applyBuilder(graph: Graph, builder: GraphBuilder) {
+export function applyBuilder(
+	ctx: Context,
+	graph: Graph,
+	builder: GraphBuilder,
+) {
 	for (const info of builder.nodes.values()) {
 		if (info.stub) {
 			throw new Error('node stubbed but never defined: ' + info.node.ref);
@@ -187,7 +192,16 @@ export function applyBuilder(graph: Graph, builder: GraphBuilder) {
 			continue;
 		}
 
-		graph.addNode(<Node>info.node);
+		try {
+			graph.addNode(<Node>info.node);
+		} catch (ex) {
+			ctx.setError(ex, {
+				code: 'GRAPH_ADD_NODE',
+				protected: info.node,
+			});
+
+			throw ex;
+		}
 	}
 
 	for (const eventInfo of builder.events) {
@@ -195,21 +209,40 @@ export function applyBuilder(graph: Graph, builder: GraphBuilder) {
 	}
 }
 
-export function load(source: GraphJSON): Graph {
+export function load(ctx: Context, source: GraphJSON): Graph {
 	const builder = {
 		nodes: new Map(),
 		events: source.events,
 	};
 
-	const root = loadNode(source.root, builder.nodes);
+	let root = null;
+	try {
+		root = loadNode(source.root, builder.nodes);
+	} catch (ex) {
+		ctx.setError(ex, {
+			code: 'GRAPH_ROOT_NODE',
+			protected: source.root,
+		});
+
+		throw ex;
+	}
 
 	const graph = new Graph(root);
 
 	for (const nodeInfo of source.nodes) {
-		loadNode(nodeInfo, builder.nodes);
+		try {
+			loadNode(nodeInfo, builder.nodes);
+		} catch (ex) {
+			ctx.setError(ex, {
+				code: 'GRAPH_LOAD_NODE',
+				protected: nodeInfo,
+			});
+
+			throw ex;
+		}
 	}
 
-	applyBuilder(graph, builder);
+	applyBuilder(ctx, graph, builder);
 
 	return graph;
 }

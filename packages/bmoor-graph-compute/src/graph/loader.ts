@@ -1,3 +1,4 @@
+import {Context} from '@bmoor/context';
 import {
 	GraphLoader,
 	GraphLoaderRow,
@@ -21,6 +22,7 @@ export class DimensionalGraphLoader extends GraphLoader {
 	}
 
 	loadDimensionalRow(
+		ctx: Context,
 		builder: DimensionalGraphBuilder,
 		row: GraphLoaderRow,
 	) {
@@ -39,7 +41,16 @@ export class DimensionalGraphLoader extends GraphLoader {
 			builder.set(interval.ref, builderInterval);
 		}
 
-		return super.loadRow(builderInterval, row);
+		try {
+			return super.loadRow(ctx, builderInterval, row);
+		} catch(ex) {
+			ctx.setError(ex, {
+				code: 'LOADER_LOADDIMROW',
+				protected: row
+			});
+
+			throw ex;
+		}
 	}
 
 	_prepareDimentionalBuilder(
@@ -62,21 +73,26 @@ export class DimensionalGraphLoader extends GraphLoader {
 		);
 	}
 
-	loadDimensionalJSON(dGraph: DimensionalGraph, arr: GraphLoaderRow[]) {
+	loadDimensionalJSON(
+		ctx: Context,
+		dGraph: DimensionalGraph,
+		arr: GraphLoaderRow[],
+	) {
 		const builder = this._prepareDimentionalBuilder(dGraph);
 
 		for (const rowInfo of arr) {
-			this.loadDimensionalRow(builder, rowInfo);
+			this.loadDimensionalRow(ctx, builder, rowInfo);
 		}
 
 		for (const page of builder.values()) {
 			const graph = dGraph.getGraph(<Interval>page.interval);
 
-			applyBuilder(graph, page);
+			applyBuilder(ctx, graph, page);
 		}
 	}
 
 	loadDimensionalArray(
+		ctx: Context,
 		dGraph: DimensionalGraph,
 		arr: GraphLoaderValue[][],
 		headers = null,
@@ -94,13 +110,13 @@ export class DimensionalGraphLoader extends GraphLoader {
 				rowInfo[headers[pos]] = row[pos];
 			}
 
-			this.loadDimensionalRow(builder, rowInfo);
+			this.loadDimensionalRow(ctx, builder, rowInfo);
 		}
 
 		for (const page of builder.values()) {
 			const graph = dGraph.getGraph(<Interval>page.interval);
 
-			applyBuilder(graph, page);
+			applyBuilder(ctx, graph, page);
 		}
 	}
 }

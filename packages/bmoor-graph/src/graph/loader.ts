@@ -1,3 +1,5 @@
+import {Context} from '@bmoor/context';
+
 import {EventFeaturesWriteMode, EventJSON} from '../event.interface';
 import {Graph, applyBuilder} from '../graph';
 import {GraphBuilder} from '../graph.interface';
@@ -176,16 +178,34 @@ export class GraphLoader {
 		};
 	}
 
-	loadRow(builder: GraphBuilder, row: GraphLoaderRow) {
+	loadRow(ctx: Context, builder: GraphBuilder, row: GraphLoaderRow) {
 		const nodes = this.settings.generateNodes(row);
 
 		for (const nodeJSON of nodes) {
-			loadNode(nodeJSON, builder.nodes);
+			try {
+				loadNode(nodeJSON, builder.nodes);
+			} catch (ex) {
+				ctx.setError(ex, {
+					code: 'LOADER_LOAD_NODE',
+					protected: nodeJSON,
+				});
+
+				throw ex;
+			}
 		}
 
-		builder.events = builder.events.concat(
-			this.settings.generateEvents(row),
-		);
+		try {
+			builder.events = builder.events.concat(
+				this.settings.generateEvents(row),
+			);
+		} catch (ex) {
+			ctx.setError(ex, {
+				code: 'LOADER_LOAD_EVENTS',
+				protected: row,
+			});
+
+			throw ex;
+		}
 	}
 
 	_prepareBuilder(graph: Graph): GraphBuilder {
@@ -205,17 +225,22 @@ export class GraphLoader {
 		};
 	}
 
-	loadJSON(graph: Graph, arr: GraphLoaderRow[]) {
+	loadJSON(ctx: Context, graph: Graph, arr: GraphLoaderRow[]) {
 		const builder = this._prepareBuilder(graph);
 
 		for (const rowInfo of arr) {
-			this.loadRow(builder, rowInfo);
+			this.loadRow(ctx, builder, rowInfo);
 		}
 
-		applyBuilder(graph, builder);
+		applyBuilder(ctx, graph, builder);
 	}
 
-	loadArray(graph: Graph, arr: GraphLoaderValue[][], headers = null) {
+	loadArray(
+		ctx: Context,
+		graph: Graph,
+		arr: GraphLoaderValue[][],
+		headers = null,
+	) {
 		const builder = this._prepareBuilder(graph);
 
 		if (!headers) {
@@ -229,9 +254,9 @@ export class GraphLoader {
 				rowInfo[headers[pos]] = row[pos];
 			}
 
-			this.loadRow(builder, rowInfo);
+			this.loadRow(ctx, builder, rowInfo);
 		}
 
-		applyBuilder(graph, builder);
+		applyBuilder(ctx, graph, builder);
 	}
 }

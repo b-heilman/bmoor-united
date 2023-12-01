@@ -1,5 +1,7 @@
 import {expect} from 'chai';
 
+import {Context} from '@bmoor/context';
+
 import {Event} from './event';
 import {Features} from './features';
 import {Graph, load} from './graph';
@@ -206,7 +208,8 @@ describe('@bmoor/graph', function () {
 	});
 
 	describe('Graph::select', function () {
-		const graph = load({
+		const ctx = new Context({});
+		const graph = load(ctx, {
 			root: {
 				ref: '__root__',
 				type: 'root',
@@ -346,7 +349,8 @@ describe('@bmoor/graph', function () {
 	});
 
 	describe('Graph::getEventFeatures', function () {
-		const graph = load({
+		const ctx = new Context({});
+		const graph = load(ctx, {
 			root: {
 				ref: '__root__',
 				type: 'root',

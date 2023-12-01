@@ -1,14 +1,18 @@
 import {expect} from 'chai';
 
+import {Context} from '@bmoor/context';
+
 import {DimensionalGraph} from '../graph';
 import {Interval} from '../interval';
 import {DimensionalGraphLoader} from './loader';
 
 describe('@bmoor/graph-compute::loader', function () {
+	let ctx: Context = null;
 	let graph: DimensionalGraph = null;
 	let loader: DimensionalGraphLoader = null;
 
 	beforeEach(function () {
+		ctx = new Context({});
 		graph = new DimensionalGraph();
 		loader = new DimensionalGraphLoader({
 			generateInterval: function (dict) {
@@ -66,7 +70,7 @@ describe('@bmoor/graph-compute::loader', function () {
 
 	describe('::load', function () {
 		it('should properly load a document to a graph structure', function () {
-			loader.loadDimensionalJSON(graph, [
+			loader.loadDimensionalJSON(ctx, graph, [
 				{
 					t: 'eagles',
 					p: 'qb',
@@ -279,7 +283,7 @@ describe('@bmoor/graph-compute::loader', function () {
 
 	describe('::fromArray', function () {
 		it('should properly load a document to a graph structure', function () {
-			loader.loadDimensionalArray(graph, [
+			loader.loadDimensionalArray(ctx, graph, [
 				[
 					't',
 					'p',
@@ -482,7 +486,7 @@ describe('@bmoor/graph-compute::loader', function () {
 		});
 
 		it('should work with multiple intervals', function () {
-			loader.loadDimensionalArray(graph, [
+			loader.loadDimensionalArray(ctx, graph, [
 				['t', 'p', 'name', 'game', 'week', 'passing', 'attempts'],
 				['team-1', 'qb', 'p-1-1', 'game-1', 1, 100, 112],
 				['team-1', 'wr', 'p-1-2', 'game-1', 1, 101, 101],
@@ -983,7 +987,7 @@ describe('@bmoor/graph-compute::loader', function () {
 				],
 			});
 
-			loader2.loadDimensionalJSON(graph, [
+			loader2.loadDimensionalJSON(ctx, graph, [
 				{
 					game: 'eag-v-chef',
 					week: '1',
@@ -996,7 +1000,7 @@ describe('@bmoor/graph-compute::loader', function () {
 				},
 			]);
 
-			loader.loadDimensionalJSON(graph, [
+			loader.loadDimensionalJSON(ctx, graph, [
 				{
 					t: 'eagles',
 					p: 'qb',

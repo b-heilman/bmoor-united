@@ -1,21 +1,24 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import * as parquet from 'parquetjs-lite';
+
+import { Context } from '@bmoor/context';
 import {DimensionalGraphLoader, Interval, dump, load} from '@bmoor/graph-compute';
 
 import { GameStats } from './convert.interface';
 
+// TODO: add row structure as type
 type DataRow = {
-    'season': string, 
-    'week': string, 
+    'season': number, 
+    'week': number, 
     'gameDate': string, 
     'gameId': string, 
     // 'Vegas_Line': number,
     // 'Vegas_Favorite': string, 
     // 'Over_Under': number, 
-    'homeTeamId': string, 
+    'homeTeamDisplay': string, 
     'homeScore': number, 
-    'awayTeamId': string,
+    'awayTeamDisplay': string,
     'awayScore': number
 }
 
@@ -35,11 +38,11 @@ async function run(){
     gameLoader.addNodeGenerator({
         type: 'team',
         ref: function(row: DataRow){
-            return row.homeTeamId;
+            return row.homeTeamDisplay;
         },
         edges: {
             opponent: function (row: DataRow) {
-                return [row.awayTeamId];
+                return [row.awayTeamDisplay];
             },
         },
     });
@@ -47,11 +50,11 @@ async function run(){
     gameLoader.addNodeGenerator({
         type: 'offense',
         ref: function(row: DataRow){
-            return row.homeTeamId+':off';
+            return row.homeTeamDisplay+':off';
         },
         edges: {
             against: function (row: DataRow) {
-                return [row.awayTeamId+':def'];
+                return [row.awayTeamDisplay+':def'];
             },
         },
     });
@@ -59,11 +62,11 @@ async function run(){
     gameLoader.addNodeGenerator({
         type: 'defense',
         ref: function(row: DataRow){
-            return row.homeTeamId+':def';
+            return row.homeTeamDisplay+':def';
         },
         edges: {
             against: function (row: DataRow) {
-                return [row.homeTeamId+':off'];
+                return [row.homeTeamDisplay+':off'];
             },
         },
     });
@@ -71,11 +74,11 @@ async function run(){
     gameLoader.addNodeGenerator({
         type: 'team',
         ref: function(row: DataRow){
-            return row.awayTeamId;
+            return row.awayTeamDisplay;
         },
         edges: {
             opponent: function (row: DataRow) {
-                return [row.homeTeamId];
+                return [row.homeTeamDisplay];
             },
         },
     });
@@ -83,11 +86,11 @@ async function run(){
     gameLoader.addNodeGenerator({
         type: 'offense',
         ref: function(row: DataRow){
-            return row.awayTeamId+':off';
+            return row.awayTeamDisplay+':off';
         },
         edges: {
             against: function (row: DataRow) {
-                return [row.homeTeamId+':def'];
+                return [row.homeTeamDisplay+':def'];
             },
         },
     });
@@ -95,11 +98,11 @@ async function run(){
     gameLoader.addNodeGenerator({
         type: 'defense',
         ref: function(row: DataRow){
-            return row.awayTeamId+':def';
+            return row.awayTeamDisplay+':def';
         },
         edges: {
             against: function (row: DataRow) {
-                return [row.homeTeamId+':off'];
+                return [row.homeTeamDisplay+':off'];
             },
         },
     });
@@ -111,7 +114,7 @@ async function run(){
         connections: [
             {
                 nodeRef: function(row: DataRow){
-                    return row.homeTeamId;
+                    return row.homeTeamDisplay;
                 },
                 featureValues: {
                     score: (row: DataRow) => Number(row.homeScore),
@@ -121,7 +124,7 @@ async function run(){
             },
             {
                 nodeRef: function(row: DataRow){
-                    return row.awayTeamId;
+                    return row.awayTeamDisplay;
                 },
                 featureValues: {
                     score: (row: DataRow) => Number(row.awayScore),
@@ -133,7 +136,7 @@ async function run(){
     });
    
     const reader = await parquet.ParquetReader.openFile(
-        path.join(__dirname, '../data/parquet/games.parquet')
+        path.join(__dirname, '../cache/games.parquet')
     )
 
     // TODO: do this with a stream...
@@ -146,22 +149,27 @@ async function run(){
         for (const game of record.games){
             rows.push(Object.assign(
                 {season: record.season, week: record.week},
-                record
+                game
             ));
         }
     }
 
-    const graph = load(JSON.parse(
-        fs.readFileSync(path.join(__dirname, `../data/graph.json`), {encoding: 'utf-8'}),
-    ));
+    const ctx = new Context({});
+    try{
+        const graph = load(ctx, JSON.parse(
+            fs.readFileSync(path.join(__dirname, `../data/graph.json`), {encoding: 'utf-8'}),
+        ));
 
-    gameLoader.loadDimensionalJSON(graph, rows);
+        gameLoader.loadDimensionalJSON(ctx, graph, rows);
 
-    fs.writeFileSync(
-        path.join(__dirname, `../data/graph.json`),
-        JSON.stringify(dump(graph), null, 2),
-        {encoding: 'utf-8'}
-    );
+        fs.writeFileSync(
+            path.join(__dirname, `../data/graph.json`),
+            JSON.stringify(dump(graph), null, 2),
+            {encoding: 'utf-8'}
+        );
+    } catch(ex){
+        ctx.close();
+    }
 }
 
 run();

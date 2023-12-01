@@ -20,6 +20,27 @@ if (!fsSync.existsSync(parquetDir)){
     fsSync.mkdirSync(parquetDir);
 }
 
+function formatSeason(season: string|number): string {
+    return String(season);
+}
+
+function formatWeek(week: string|number): string {
+    if (typeof(week) === 'string'){
+        if (week.length > 1){
+            return week;
+        } else {
+            return '0'+week;
+        }
+    } else {
+        if (week > 9){
+            return String(week);
+        } else {
+            return '0'+week;
+        }
+    }
+}
+
+
 async function sleep(ms) {
     return new Promise((resolve) => {
         setTimeout(resolve, ms);
@@ -174,9 +195,11 @@ async function processGameStats(game: GameResponse): Promise<GameRow>{
         if (competitor.homeAway === 'home'){
             rtn.homeTeamId = competitor.team.id;
             rtn.homeTeamDisplay = display;
+            rtn.homeScore = parseInt(competitor.score);
         } else {
             rtn.awayTeamId = competitor.team.id;
             rtn.awayTeamDisplay = display;
+            rtn.awayScore = parseInt(competitor.score);
         }
     }
 
@@ -310,22 +333,35 @@ async function processGames(paths: string[]){
     const teamResults: TeamStats[][] = [];
     for (const game of games.filter(game => !knownTeams[game.header.id])) { 
         const gameName = getGameName(game);
+        const season = formatSeason(game.header.season.year);
+        const week = formatWeek(game.header.week);
 
         const base: BaseTeamIdentifiers = {
-            season: game.header.season.year,
-            week: game.header.week, // TODO: this will fail when I start using post season
+            season,
+            week, // TODO: this will fail when I start using post season
             gameId: game.header.id,
             gameDisplay: gameName,
             gameDate: game.header.competitions[0].date,
         };
 
-        console.log('processing team', base);
-
         const playersData = await processGamePlayers(game.boxscore.players);
-        
-        teamResults.push(playersData.map(teamData => Object.assign(teamData, base)));
+        const results = playersData.map(
+            teamData => {
+                if (teamData.players && teamData.players.length){
+                    return Object.assign(teamData, base);
+                } else {
+                    return null;
+                }
+            }
+        ).filter(row => row);
 
-        await sleep(500 + 1500 * Math.random());
+        if (results.length){
+            teamResults.push(results);
+        } else {
+            console.log('failed to load player data', base);
+        }
+        
+        // await sleep(500 + 1500 * Math.random());
     }
 
     try {
@@ -342,8 +378,10 @@ async function processGames(paths: string[]){
         console.log('failed to write');
     }
 
-    for (const game of games.filter(game => !knownGames[game.header.id])) { 
-        const key = getGameKey(game.header.season.year, game.header.week);
+    for (const game of games.filter(game => !knownGames[game.header.id])) {
+        const season = formatSeason(game.header.season.year);
+        const week = formatWeek(game.header.week);
+        const key = getGameKey(season, week);
 
         let base: GameStats = null;
 
@@ -351,15 +389,14 @@ async function processGames(paths: string[]){
             base = existingGames[key];
         } else {
             base = {
-                season: game.header.season.year,
-                week: game.header.week, // TODO: this will fail when I start using post season
+                season,
+                week, // TODO: this will fail when I start using post season
                 games: []
             };
 
             existingGames[key] = base;
         }
 
-        console.log('processing game', key);
         base.games.push(await processGameStats(game));
         // I don't need to pause here since the game SHOULD be cached already
     }

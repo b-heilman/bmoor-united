@@ -1,4 +1,5 @@
 import {DatumInterface, EnvironmentRangeSettings} from '@bmoor/compute';
+import {Context} from '@bmoor/context';
 import {
 	Graph,
 	GraphDatum,
@@ -197,7 +198,10 @@ export function dump(graph: DimensionalGraph): DimensionalGraphJSON {
 	return graph.toJSON();
 }
 
-export function load(schema: DimensionalGraphJSON): DimensionalGraph {
+export function load(
+	ctx: Context,
+	schema: DimensionalGraphJSON,
+): DimensionalGraph {
 	const graph = new DimensionalGraph();
 
 	for (const input of schema.intervals) {
@@ -207,7 +211,10 @@ export function load(schema: DimensionalGraphJSON): DimensionalGraph {
 	for (const intervalRef in schema.graphs) {
 		const graphInput = schema.graphs[intervalRef];
 
-		graph.addGraph(graph.getInterval(intervalRef), loadGraph(graphInput));
+		graph.addGraph(
+			graph.getInterval(intervalRef),
+			loadGraph(ctx, graphInput),
+		);
 	}
 
 	return graph;

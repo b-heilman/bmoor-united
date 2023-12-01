@@ -1,6 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
+import { Context } from '@bmoor/context';
 import {mean, sum} from '@bmoor/compute';
 import {
 	DimensionalDatumAccessor as Accessor,
@@ -10,45 +11,9 @@ import {
 	load,
 } from '@bmoor/graph-compute';
 
-type PlayerEvent = {
-	pass_cmp: number;
-	pass_att: number;
-	pass_yds: number;
-	pass_td: number;
-	pass_int: number;
-	pass_sacked: number;
-	pass_long: number;
-	pass_rating: number;
-	pass_target_yds: number;
-	pass_poor_throws: number;
-	pass_blitzed: number;
-	pass_hurried: number;
-	pass_scrambles: number;
-	rush_att: number;
-	rush_yds: number;
-	rush_td: number;
-	rush_long: number;
-	rush_yds_before_contact: number;
-	rush_yac: number;
-	rush_broken_tackles: number;
-	rec_att: number;
-	rec_cmp: number;
-	rec_yds: number;
-	rec_td: number;
-	rec_drops: number;
-	rec_long: number;
-	rec_air_yds: number;
-	rec_yac: number;
-	fumbles_lost: number;
-};
-
-type GameEvent = {
-	score: number;
-	win: boolean;
-	offset: number;
-};
-
+const ctx = new Context({});
 const graph = load(
+	ctx,
 	JSON.parse(
 		fs.readFileSync(path.join(__dirname, `../data/graph.json`), {
 			encoding: 'utf-8',
@@ -61,7 +26,7 @@ export const executor = new DimensionalExecutor(graph);
 export const offPass = new Processor('off-pass', sum, [
 	{
 		input: new Accessor({
-			value: 'pass_yds',
+			value: 'passYds',
 		}),
 		select: {
 			type: 'player',
@@ -79,7 +44,7 @@ export const offPassMean = new Processor('off-pass-mean', mean, [
 export const offRush = new Processor('off-rush', sum, [
 	{
 		input: new Accessor({
-			value: 'rush_yds',
+			value: 'rushYds',
 		}),
 		select: {
 			type: 'player',

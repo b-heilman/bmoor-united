@@ -1,13 +1,17 @@
 import {expect} from 'chai';
 
+import {Context} from '@bmoor/context';
+
 import {Graph} from '../graph';
 import {GraphLoader} from './loader';
 
 describe('@bmoor/graph::loader', function () {
+	let ctx: Context = null;
 	let graph: Graph = null;
 	let loader: GraphLoader = null;
 
 	beforeEach(function () {
+		ctx = new Context({});
 		graph = new Graph();
 		loader = new GraphLoader({});
 
@@ -65,7 +69,7 @@ describe('@bmoor/graph::loader', function () {
 
 	describe('::load', function () {
 		it('should properly load a document to a graph structure', function () {
-			loader.loadJSON(graph, [
+			loader.loadJSON(ctx, graph, [
 				{
 					t: 'eagles',
 					p: 'qb',
@@ -239,7 +243,7 @@ describe('@bmoor/graph::loader', function () {
 
 	describe('::fromArray', function () {
 		it('should properly load a document to a graph structure', function () {
-			loader.loadArray(graph, [
+			loader.loadArray(ctx, graph, [
 				[
 					't',
 					'p',
@@ -424,7 +428,7 @@ describe('@bmoor/graph::loader', function () {
 		});
 
 		it('should work with multiple intervals', function () {
-			loader.loadArray(graph, [
+			loader.loadArray(ctx, graph, [
 				[
 					't',
 					'p',
@@ -817,7 +821,7 @@ describe('@bmoor/graph::loader', function () {
 				],
 			});
 
-			loader2.loadJSON(graph, [
+			loader2.loadJSON(ctx, graph, [
 				{
 					game: 'eag-v-chef',
 					week: '1',
@@ -830,7 +834,7 @@ describe('@bmoor/graph::loader', function () {
 				},
 			]);
 
-			loader.loadJSON(graph, [
+			loader.loadJSON(ctx, graph, [
 				{
 					t: 'eagles',
 					p: 'qb',

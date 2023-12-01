@@ -1,6 +1,7 @@
 import {expect} from 'chai';
 
 import {mean, sum} from '@bmoor/compute';
+import {Context} from '@bmoor/context';
 import {GraphDatum} from '@bmoor/graph';
 
 import {
@@ -15,6 +16,8 @@ import {
 } from './index';
 
 describe('bmoor/graph-compute', function () {
+	let ctx: Context = null;
+
 	let i1: Interval = null;
 	let i2: Interval = null;
 	let i3: Interval = null;
@@ -33,6 +36,7 @@ describe('bmoor/graph-compute', function () {
 	 * adding tests for low level features.
 	 */
 	beforeEach(function () {
+		ctx = new Context({});
 		graph = new DimensionalGraph();
 		loader = new DimensionalGraphLoader({
 			generateInterval: function (dict) {
@@ -112,7 +116,7 @@ describe('bmoor/graph-compute', function () {
 			],
 		});
 
-		loader.loadDimensionalArray(graph, [
+		loader.loadDimensionalArray(ctx, graph, [
 			[
 				'week',
 				'game',

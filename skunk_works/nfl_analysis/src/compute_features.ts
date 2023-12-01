@@ -3,6 +3,10 @@ import {
 	DimensionalDatumAccessor as Accessor
 } from '@bmoor/graph-compute';
 import {
+    offPass,
+    offPassMean,
+    defPass,
+    defPassMean,
     executor, 
     qualityWins, 
     expectedWins, 
@@ -54,13 +58,19 @@ executor.calculate(
 */
 const ctx3 = new Context({flags: {verbose: true/*, reference: 'PHI'*/}});
 executor.calculate(
-    executor.env.getInterval('2022-09'), 
+    executor.env.getInterval('2023-10'), 
     // all of these are calculated as of after this week's game since I removed offsets
     new Accessor({
+        offPass,
+        offPassMean,
+        defPass,
+        defPassMean,
+        /*
         defPassSuccessRank,
         defRushSuccessRank,
         offPassSuccessRank,
         offRushSuccessRank,
+        */
     }), 
     {reference: 'PHI'},
     ctx3

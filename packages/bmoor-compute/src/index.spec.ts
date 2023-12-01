@@ -651,7 +651,7 @@ describe('@bmoor/compute', function () {
 					fn: (value: number) => {
 						return value > 105;
 					},
-					droppedValue: 3
+					droppedValue: 3,
 				},
 				select: {
 					parent: {
@@ -710,7 +710,7 @@ describe('@bmoor/compute', function () {
 					fn: (value: number, stats: {limit: number}) => {
 						return value > stats.limit;
 					},
-					droppedValue: 3
+					droppedValue: 3,
 				},
 				select: {
 					parent: {
