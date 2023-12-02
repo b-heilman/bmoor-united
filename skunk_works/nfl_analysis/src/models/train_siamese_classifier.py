@@ -1,44 +1,80 @@
+import json
 import torch
-import torch.nn as nn
-import torch.optim as optim
-from torch.utils.data import Dataset, DataLoader
-from torchvision import transforms
-from torchvision.datasets import MNIST
 
-# Siamese Network Definition
-class SiameseNetwork(nn.Module):
-    def __init__(self):
+from sklearn.preprocessing import LabelEncoder
+from sklearn.preprocessing import MinMaxScaler
+
+from lib.common import (
+    load_training_data, 
+    create_training_info, 
+    calc_statistics,
+    train_model,
+    FeatureSet,
+    TrainingPair,
+    TrainingStats,
+    ModelAbstract
+)
+
+le = LabelEncoder()
+
+def reduce_features(features: FeatureSet):
+    rtn = []
+    for feature in features:
+        rtn.append(feature['compare'])
+        rtn.append(feature['against'])
+
+    return rtn
+
+def format_features(features: FeatureSet, scaler: MinMaxScaler):
+    rtn = []
+    for feature in features:
+        rtn.append(
+            scaler.transform([feature['compare'], feature['against']])
+        )
+
+    return rtn
+
+class SiameseNetwork(torch.nn.Module):
+    def __init__(self, stats: TrainingStats):
         super(SiameseNetwork, self).__init__()
 
-        self.cnn = nn.Sequential(
-            nn.Conv2d(1, 64, kernel_size=10),
-            nn.ReLU(inplace=True),
-            nn.MaxPool2d(2),
-            nn.Conv2d(64, 128, kernel_size=7),
-            nn.ReLU(inplace=True),
-            nn.MaxPool2d(2),
+        n_input = stats["features"]
+        n_hidden = n_input**2
+        n_embeddings = 3
+        n_hidden2 = n_embeddings**2
+        n_out = 1
+
+        self.cnn = torch.nn.Sequential(
+            torch.nn.Linear(n_input, n_hidden),
+            torch.nn.ReLU(inplace=True),
+            torch.nn.Linear(n_hidden, n_hidden),
+            torch.nn.ReLU(inplace=True),
+            torch.nn.Linear(n_hidden, n_embeddings),
         )
 
-        self.fc = nn.Sequential(
-            nn.Linear(128 * 6 * 6, 500),
-            nn.ReLU(inplace=True),
-            nn.Linear(500, 500),
-            nn.ReLU(inplace=True),
-            nn.Linear(500, 5),
+        self.fc = torch.nn.Sequential(
+            torch.nn.Linear(n_embeddings, n_hidden2),
+            torch.nn.ReLU(inplace=True),
+            torch.nn.Linear(n_hidden2, n_hidden2),
+            torch.nn.ReLU(inplace=True),
+            torch.nn.Linear(n_hidden2, n_out),
         )
+
+        self.sigmoid = torch.nn.Sigmoid()
 
     # https://github.com/pytorch/examples/blob/main/siamese_network/main.py
     
-    def forward_once(self, x):
-        output = self.cnn(x)
+    def forward_once(self, input):
+        output = self.cnn(input)
         output = output.view(output.size()[0], -1)
 
         return output
 
-    def forward(self, input1, input2):
+    def forward(self, input):
+        print('input', input)
         # get two images' features
-        output1 = self.forward_once(input1)
-        output2 = self.forward_once(input2)
+        output1 = self.forward_once(input[0])
+        output2 = self.forward_once(input[1])
 
         # concatenate both images' features
         output = torch.cat((output1, output2), 1)
@@ -50,83 +86,135 @@ class SiameseNetwork(nn.Module):
         output = self.sigmoid(output)
         
         return output
+        
 
+class NeuralClassifier(ModelAbstract):
+    model: torch.nn.Sequential
+    scaler: MinMaxScaler
 
-# Contrastive Loss
-class ContrastiveLoss(nn.Module):
-    def __init__(self, margin=2.0):
-        super(ContrastiveLoss, self).__init__()
-        self.margin = margin
+    # https://www.datatechnotes.com/2019/07/classification-example-with.html
+    def create(self, stats: TrainingStats):
+       self.model = SiameseNetwork(stats)
 
-    def forward(self, output1, output2, label):
-        euclidean_distance = F.pairwise_distance(output1, output2, keepdim=True)
-        loss_contrastive = torch.mean((1 - label) * torch.pow(euclidean_distance, 2) +
-                                      (label) * torch.pow(torch.clamp(self.margin - euclidean_distance, min=0.0), 2))
-        return loss_contrastive
+    def fit(self, training: TrainingPair, validation: TrainingPair):
+        # https://pytorch.org/tutorials/beginner/introyt/modelsyt_tutorial.html
+        learning_rate = 0.01
+        epochs = 5000
 
+        self.scaler = MinMaxScaler()
+        base_features = reduce_features(training["features"])
+        self.scaler.fit(base_features)
 
-# Custom Dataset
-class SiameseDataset(Dataset):
-    def __init__(self, dataset):
-        self.dataset = dataset
-        self.transform = transforms.Compose([
-            transforms.ToTensor(),
-            transforms.Normalize((0.5,), (0.5,))
-        ])
+        training_input = torch.FloatTensor(
+            format_features(training["features"], self.scaler)
+        )
+        training_output = torch.FloatTensor(training["labels"])
 
-    def __getitem__(self, index):
-        img1, label1 = self.dataset[index]
-        # Ensure that both samples are from the same class for positive samples
-        should_get_same_class = torch.rand(1).item() > 0.5
-        if should_get_same_class:
-            while True:
-                index2 = index
-                img2, label2 = self.dataset[index2]
-                if label1 == label2:
-                    break
-        else:
-            index2 = index
-            while index2 == index:
-                index2 = torch.randint(len(self.dataset), size=(1,)).item()
-            img2, label2 = self.dataset[index2]
+        validation_input = torch.FloatTensor(
+            format_features(validation["features"], self.scaler)
+        )
+        validation_output = torch.FloatTensor(validation["labels"])
 
-        img1 = self.transform(img1)
-        img2 = self.transform(img2)
+        loss_fn = torch.nn.MSELoss()
+        optimizer = torch.optim.SGD(self.model.parameters(), lr=learning_rate)
 
-        # Return image pair and a label (1 for same class, 0 for different classes)
-        return img1, img2, torch.tensor([int(label1 == label2)], dtype=torch.float32)
+        print("-- model created --")
+        self.model.eval()
+        predictions = self.model(validation_input)
+        train = loss_fn(predictions, validation_output)
+        print('Test loss before training' , train.item())
+        print('--training data--')
+        print(training_input.size())
+        print(training_output.size())
 
-    def __len__(self):
-        return len(self.dataset)
+        self.model.train()
+        losses = []
+        for epoch in range(epochs):
+            predictions = self.model(training_input)
+            loss = loss_fn(predictions, training_output)
+            loss_value = loss.item()
+            losses.append(loss.item())
 
+            if epoch % 500 == 0:
+                #print(list(model.parameters())[0])
+                print(f'Epoch {epoch}: train loss: {loss_value}')
 
-# Training
-def train_siamese_network(siamese_net, train_loader, criterion, optimizer, num_epochs=10):
-    for epoch in range(num_epochs):
-        for batch in train_loader:
-            input1, input2, label = batch
-            output1, output2 = siamese_net(input1, input2)
-            loss = criterion(output1, output2, label)
-
-            optimizer.zero_grad()
+            self.model.zero_grad()
             loss.backward()
+
             optimizer.step()
+        
+        self.model.eval()
+        predictions = self.model(validation_input)
+        train = loss_fn(predictions, validation_output)
+        print('Test loss after training' , train.item())
 
-        print(f"Epoch {epoch+1}/{num_epochs}, Loss: {loss.item()}")
+    def get_feature_importances(self):
+        return []
+        
+    def predict(self, features: FeatureSet):
+        features = torch.FloatTensor(
+            format_features(features, self.scaler)
+        )
 
-# Example usage
+        return list(map(lambda arr: arr[0], self.model(features).detach().numpy()))
+
+# TODO: need to integrate this
+def train(args, model, device, train_loader, optimizer, epoch):
+    model.train()
+
+    # we aren't using `TripletLoss` as the MNIST dataset is simple, so `BCELoss` can do the trick.
+    criterion = nn.BCELoss()
+
+    for batch_idx, (images_1, images_2, targets) in enumerate(train_loader):
+        images_1, images_2, targets = images_1.to(device), images_2.to(device), targets.to(device)
+        optimizer.zero_grad()
+        outputs = model(images_1, images_2).squeeze()
+        loss = criterion(outputs, targets)
+        loss.backward()
+        optimizer.step()
+        if batch_idx % args.log_interval == 0:
+            print('Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
+                epoch, batch_idx * len(images_1), len(train_loader.dataset),
+                100. * batch_idx / len(train_loader), loss.item()))
+            if args.dry_run:
+                break
+
+
+def test(model, device, test_loader):
+    model.eval()
+    test_loss = 0
+    correct = 0
+
+    # we aren't using `TripletLoss` as the MNIST dataset is simple, so `BCELoss` can do the trick.
+    criterion = nn.BCELoss()
+
+    with torch.no_grad():
+        for (images_1, images_2, targets) in test_loader:
+            images_1, images_2, targets = images_1.to(device), images_2.to(device), targets.to(device)
+            outputs = model(images_1, images_2).squeeze()
+            test_loss += criterion(outputs, targets).sum().item()  # sum up batch loss
+            pred = torch.where(outputs > 0.5, 1, 0)  # get the index of the max log-probability
+            correct += pred.eq(targets.view_as(pred)).sum().item()
+
+    test_loss /= len(test_loader.dataset)
+
+    # for the 1st epoch, the average loss is 0.0001 and the accuracy 97-98%
+    # using default settings. After completing the 10th epoch, the average
+    # loss is 0.0000 and the accuracy 99.5-100% using default settings.
+    print('\nTest set: Average loss: {:.4f}, Accuracy: {}/{} ({:.0f}%)\n'.format(
+        test_loss, correct, len(test_loader.dataset),
+        100. * correct / len(test_loader.dataset)))
+
+train():
+    model = SiameseNetwork()
+    optimizer = optim.Adadelta(model.parameters(), lr=args.lr)
+
+    scheduler = StepLR(optimizer, step_size=1, gamma=args.gamma)
+    for epoch in range(1, 500 + 1):
+        train(args, model, device, train_loader, optimizer, epoch)
+        test(model, device, test_loader)
+        scheduler.step()
+
 if __name__ == "__main__":
-    # Load MNIST dataset
-    mnist_dataset = MNIST(root='./data', train=True, download=True)
-
-    # Create Siamese Dataset
-    siamese_dataset = SiameseDataset(mnist_dataset)
-    siamese_loader = DataLoader(siamese_dataset, shuffle=True, batch_size=64)
-
-    # Initialize Siamese Network, Loss, and Optimizer
-    siamese_net = SiameseNetwork()
-    criterion = ContrastiveLoss()
-    optimizer = optim.Adam(siamese_net.parameters(), lr=0.001)
-
-    # Train the Siamese Network
-    train_siamese_network(siamese_net, siamese_loader, criterion, optimizer, num_epochs=5)
+    train_model(NeuralClassifier)
