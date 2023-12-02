@@ -3,6 +3,7 @@ import * as path from 'path';
 
 import { Context } from '@bmoor/context';
 import {mean, sum} from '@bmoor/compute';
+import {GraphDatum} from '@bmoor/graph';
 import {
 	DimensionalDatumAccessor as Accessor,
 	DimensionalExecutor,
@@ -12,7 +13,7 @@ import {
 } from '@bmoor/graph-compute';
 
 const ctx = new Context({});
-const graph = load(
+export const graph = load(
 	ctx,
 	JSON.parse(
 		fs.readFileSync(path.join(__dirname, `../data/graph.json`), {
@@ -20,7 +21,15 @@ const graph = load(
 		}),
 	),
 );
-
+/*
+console.log('-----');
+console.log(
+	(<GraphDatum>graph.select(graph.getInterval('2023-12'), {reference: 'PHI:def'})[0]).node
+);
+console.log(
+	(<GraphDatum>graph.select(graph.getInterval('2023-12'), {reference: 'PHI:off'})[0]).node
+);
+*/
 export const executor = new DimensionalExecutor(graph);
 
 export const offPass = new Processor('off-pass', sum, [
@@ -63,7 +72,7 @@ export const defRush = new Processor('def-rush', v => v[0], [
 	{
 		input: offRush,
 		select: {
-			parent: 'defense',
+			assume: 'defense',
 			edge: 'against'
 		},
 	}
@@ -74,7 +83,7 @@ export const defRushMean = new Processor('def-rush-mean', mean, [
 		input: defRush,
 		range:  5,
 		select: {
-			parent: 'defense' // make this implicit
+			assume: 'defense' // make this implicit
 		}
 	},
 ]);
@@ -84,7 +93,7 @@ export const defPass = new Processor('def-pass', v => v[0], [
 	{
 		input: offPass,
 		select: {
-			parent: 'defense', // how can I make this implicit?
+			assume: 'defense', // how can I make this implicit?
 			edge: 'against'
 		},
 	}
@@ -96,7 +105,7 @@ export const defPassMean = new Processor('def-pass-mean', mean, [
 		input: defPass,
 		range:  5,
 		select: {
-			parent: 'defense' // make this implicit
+			assume: 'defense' // make this implicit
 		}
 	},
 ]);
@@ -104,7 +113,7 @@ export const defPassMean = new Processor('def-pass-mean', mean, [
 export const offRushRank = new Ranker(
 	'off-rush-rank', 
 	{
-		bucketsCount: 8,
+		bucketsCount: 6,
 		select: {
 			global: true,
 			type: 'offense'
@@ -119,7 +128,7 @@ export const offRushRank = new Ranker(
 export const offPassRank = new Ranker(
 	'off-pass-rank', 
 	{
-		bucketsCount: 8,
+		bucketsCount: 6,
 		select: {
 			global: true,
 			type: 'offense'
@@ -135,7 +144,7 @@ export const offRank = new Ranker(
 	'off-rank', 
 	{
 		asc: true,
-		bucketsCount: 8,
+		bucketsCount: 6,
 		select: {
 			global: true,
 			type: 'offense'
@@ -151,7 +160,7 @@ export const offRank = new Ranker(
 export const defRushRank = new Ranker(
 	'def-rush-rank', 
 	{
-		bucketsCount: 8,
+		bucketsCount: 6,
 		select: {
 			global: true,
 			type: 'defense'
@@ -166,7 +175,7 @@ export const defRushRank = new Ranker(
 export const defPassRank = new Ranker(
 	'def-pass-rank', 
 	{
-		bucketsCount: 8,
+		bucketsCount: 6,
 		select: {
 			global: true,
 			type: 'defense'
@@ -182,7 +191,7 @@ export const defRank = new Ranker(
 	'def-rank', 
 	{
 		asc: true,
-		bucketsCount: 8,
+		bucketsCount: 6,
 		select: {
 			global: true,
 			type: 'defense'
@@ -211,6 +220,206 @@ export const teamRank = new Ranker(
 		{ input: offRank, select: {type: 'offense'} }
 	]
 );
+
+export const offRushWin = new Processor('off-rush-win', 
+	(
+		[our]: {yards: number, rank: number}[],
+		[their]: {mean: number, rank: number}[]
+	) => {
+		if (our.rank < their.rank){
+			return our.yards > their.mean ? 2 : -1;
+		} else if (our.rank > their.rank){
+			return our.yards > their.mean ? 1 : -2;
+		} else {
+			return our.yards > their.mean ? 1 : 0;
+		}
+
+		return 0;
+	}, [
+		{
+			input: new Accessor({
+				yards: offRush,
+				rank: offRushRank
+			}),
+			select: {
+				assume: 'team',
+				type: 'offense'
+			},
+		},
+		{
+			input: new Accessor({
+				mean: defRushMean,
+				rank: defRushRank,
+			}),
+			select: {
+				assume: 'team',
+				edge: 'opponent',
+				type: 'defense'
+			},
+		},
+	]
+);
+
+export const offRushWins = new Processor('off-rush-win-mean', mean, [
+	// TODO: this should be on the defense, ideally...
+	{
+		input: offRushWin,
+		range:  5,
+		select: {
+			assume: 'team' // make this implicit
+		}
+	},
+]);
+
+export const offPassWin = new Processor('off-pass-win', 
+	(
+		[our]: {yards: number, rank: number}[],
+		[their]: {mean: number, rank: number}[]
+	) => {
+		if (our.rank < their.rank){
+			return our.yards > their.mean ? 2 : -1;
+		} else if (our.rank > their.rank){
+			return our.yards > their.mean ? 1 : -2;
+		} else {
+			return our.yards > their.mean ? 1 : 0;
+		}
+
+		return 0;
+	}, [
+		{
+			input: new Accessor({
+				yards: offPass,
+				rank: offPassRank
+			}),
+			select: {
+				assume: 'team',
+				type: 'offense'
+			},
+		},
+		{
+			input: new Accessor({
+				mean: defPassMean,
+				rank: defPassRank,
+			}),
+			select: {
+				assume: 'team',
+				edge: 'opponent',
+				type: 'defense'
+			},
+		},
+	]
+);
+
+export const offPassWins = new Processor('off-pass-win-mean', mean, [
+	// TODO: this should be on the defense, ideally...
+	{
+		input: offPassWin,
+		range:  5,
+		select: {
+			assume: 'team' // make this implicit
+		}
+	},
+]);
+
+export const defRushWin = new Processor('def-rush-win', 
+	(
+		[our]: {yards: number, rank: number}[],
+		[their]: {mean: number, rank: number}[]
+	) => {
+		if (our.rank < their.rank){
+			return our.yards < their.mean ? 2 : -1;
+		} else if (our.rank > their.rank){
+			return our.yards < their.mean ? 1 : -2;
+		} else {
+			return our.yards < their.mean ? 1 : 0;
+		}
+
+		return 0;
+	}, [
+		{
+			input: new Accessor({
+				yards: defRush,
+				rank: defRushRank
+			}),
+			select: {
+				assume: 'team',
+				type: 'defense',
+			},
+		},
+		{
+			input: new Accessor({
+				mean: offRushMean,
+				rank: offRushRank,
+			}),
+			select: {
+				assume: 'team',
+				edge: 'opponent',
+				type: 'offense'
+			},
+		},
+	]
+);
+
+export const defRushWins = new Processor('def-rush-win-mean', mean, [
+	// TODO: this should be on the defense, ideally...
+	{
+		input: defRushWin,
+		range:  5,
+		select: {
+			assume: 'team' // make this implicit
+		}
+	},
+]);
+
+export const defPassWin = new Processor('def-pass-win', 
+	(
+		[our]: {yards: number, rank: number}[],
+		[their]: {mean: number, rank: number}[]
+	) => {
+		if (our.rank < their.rank){
+			return our.yards < their.mean ? 2 : -1;
+		} else if (our.rank > their.rank){
+			return our.yards < their.mean ? 1 : -2;
+		} else {
+			return our.yards < their.mean ? 1 : 0;
+		}
+
+		return 0;
+	}, [
+		{
+			input: new Accessor({
+				yards: defPass,
+				rank: defPassRank
+			}),
+			select: {
+				assume: 'team',
+				type: 'defense',
+			},
+		},
+		{
+			input: new Accessor({
+				mean: offPassMean,
+				rank: offPassRank,
+			}),
+			select: {
+				assume: 'team',
+				edge: 'opponent',
+				type: 'offense'
+			},
+		},
+	]
+);
+
+export const defPassWins = new Processor('def-pass-win-mean', mean, [
+	// TODO: this should be on the defense, ideally...
+	{
+		input: defPassWin,
+		range:  5,
+		select: {
+			assume: 'team' // make this implicit
+		}
+	},
+]);
 
 export const gameExpectation = new Processor('game-expectation', 
 	(
@@ -475,15 +684,15 @@ export const defRushSucceed = new Processor(
 	{
 		input: offRush,
 		select: {
-			edge: 'opponent',
-			type: 'offense',
+			assume: 'offense',
+			edge: 'opponent'
 		},
 	},
 	{
 		input: offRushMean,
 		select: {
+			assume: 'offense',
 			edge: 'opponent',
-			type: 'offense',
 		},
 	}
 ]);
@@ -494,7 +703,7 @@ export const defRushSuccesses = new Processor(
 		input: defRushSucceed,
 		range:  5,
 		select: {
-			parent: 'team' // make this implicit
+			assume: 'team' // make this implicit
 		}
 	},
 ]);
@@ -510,13 +719,13 @@ export const offPassSucceed = new Processor(
 	{
 		input: offPass,
 		select: {
-			type: 'offense',
+			assume: 'offense',
 		},
 	},
 	{
 		input: offPassMean,
 		select: {
-			type: 'offense',
+			assume: 'offense',
 		},
 	}
 ]);
@@ -527,7 +736,7 @@ export const offPassSuccesses = new Processor(
 		input: offPassSucceed,
 		range:  5,
 		select: {
-			parent: 'team' // make this implicit
+			assume: 'team' // make this implicit
 		}
 	},
 ]);
@@ -543,13 +752,13 @@ export const offRushSucceed = new Processor(
 	{
 		input: offRush,
 		select: {
-			type: 'offense',
+			assume: 'offense',
 		},
 	},
 	{
 		input: offRushMean,
 		select: {
-			type: 'offense',
+			assume: 'offense',
 		},
 	}
 ]);
@@ -560,7 +769,7 @@ export const offRushSuccesses = new Processor(
 		input: offRushSucceed,
 		range:  5,
 		select: {
-			parent: 'team' // make this implicit
+			assume: 'team' // make this implicit
 		}
 	},
 ]);

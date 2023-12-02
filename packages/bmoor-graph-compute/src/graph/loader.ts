@@ -43,10 +43,10 @@ export class DimensionalGraphLoader extends GraphLoader {
 
 		try {
 			return super.loadRow(ctx, builderInterval, row);
-		} catch(ex) {
+		} catch (ex) {
 			ctx.setError(ex, {
 				code: 'LOADER_LOADDIMROW',
-				protected: row
+				protected: row,
 			});
 
 			throw ex;

@@ -108,15 +108,26 @@ async function loadProcessorRequirement<
 			ctx.log('-> process:select', newDatum.ref, newInterval.ref, req);
 		}
 
-		let subDatums = null;
+		let subDatums: DatumInterface<NodeSelector>[] = null;
 		try {
 			subDatums = newDatum.select(req.select);
+
+			if (shouldVerbose(ctx, datum)) {
+				ctx.log(
+					'-> process:select:response',
+					newDatum.ref,
+					newInterval.ref,
+					subDatums.map((node) => node.ref),
+				);
+			}
 		} catch (ex) {
 			ctx.setError(ex).addErrorContext({
 				code: 'PROCESSOR_SELECT_FAIL',
 				protected: {
 					ref: newDatum.ref,
 					select: req.select,
+					requestInterval: interval,
+					newInterval,
 				},
 			});
 
@@ -300,12 +311,25 @@ export class Executor<GraphSelector, NodeSelector, IntervalRef, Order> {
 							processor.name,
 							pairings,
 						);
+						ctx.log('rank by', length);
 					}
 
 					pairings.map(({datum}, i) => {
 						// Don't to 'rank 0', bump by 1
 						results.set(datum.ref, Math.floor(i / length) + 1);
 					});
+
+					if (shouldVerbose(ctx, datum)) {
+						ctx.log(
+							'-> rank',
+							datum.ref,
+							interval.ref,
+							processor.name,
+							pairings,
+						);
+						ctx.log('rank by', length);
+						ctx.log(results);
+					}
 
 					return results;
 				});

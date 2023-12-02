@@ -122,9 +122,9 @@ export class Graph implements GraphInterface {
 		} else if (selector.reference) {
 			const selected = this.getNode(selector.reference);
 
-			if (!selected){
+			if (!selected) {
 				console.log(Array.from(this.nodeDex.keys()));
-				throw new Error('Unable to select: '+selector.reference);
+				throw new Error('Unable to select: ' + selector.reference);
 			}
 
 			res = [selected];
@@ -133,9 +133,17 @@ export class Graph implements GraphInterface {
 			select = Object.assign({}, selector, {type: null}); // so it doesn't run again
 		}
 
-		const rtn = [...new Set(res.flatMap((node) => node.select(select)))];
+		let rtn: GraphDatum[] = [
+			...new Set(res.flatMap((node) => node.select(select))),
+		].map((node) => new GraphDatum(node, this));
 
-		return rtn.map((node) => new GraphDatum(node, this));
+		if (selector.and) {
+			for (const subSelector of selector.and) {
+				rtn = rtn.concat(<GraphDatum[]>this.select(subSelector));
+			}
+		}
+
+		return rtn;
 	}
 
 	toJSON(): GraphJSON {

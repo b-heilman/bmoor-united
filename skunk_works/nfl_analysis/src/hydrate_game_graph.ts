@@ -66,7 +66,7 @@ async function run(){
         },
         edges: {
             against: function (row: DataRow) {
-                return [row.homeTeamDisplay+':off'];
+                return [row.awayTeamDisplay+':off'];
             },
         },
     });
@@ -117,6 +117,7 @@ async function run(){
                     return row.homeTeamDisplay;
                 },
                 featureValues: {
+                    display: (row: DataRow) => row.homeTeamDisplay,
                     score: (row: DataRow) => Number(row.homeScore),
                     win: (row: DataRow) => Number(row.homeScore > row.awayScore),
                     offset: (row: DataRow) => Number(row.homeScore - row.awayScore)
@@ -127,6 +128,7 @@ async function run(){
                     return row.awayTeamDisplay;
                 },
                 featureValues: {
+                    display: (row: DataRow) => row.awayTeamDisplay,
                     score: (row: DataRow) => Number(row.awayScore),
                     win: (row: DataRow) => Number(row.awayScore > row.homeScore),
                     offset: (row: DataRow) => Number(row.awayScore - row.homeScore)

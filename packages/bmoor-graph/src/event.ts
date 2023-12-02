@@ -6,7 +6,7 @@ import {
 	EventReference,
 } from './event.interface';
 import {Features} from './features';
-import {NodeInterface, NodeReference} from './node.interface';
+import {NodeInterface, NodeReference, NodeType} from './node.interface';
 
 export class Event implements EventInterface {
 	ref: EventReference;
@@ -60,6 +60,18 @@ export class Event implements EventInterface {
 	getNodeFeatures(node: NodeInterface | NodeReference): Features {
 		return this.nodeInfo.get(typeof node === 'string' ? node : node.ref)
 			.features;
+	}
+
+	getNodesByType(type: NodeType): NodeInterface[] {
+		const rtn = [];
+
+		for (const {node} of this.nodeInfo.values()){
+			if (node.type === type){
+				rtn.push(node);
+			}
+		}
+
+		return rtn;
 	}
 
 	hasNodeFeature(

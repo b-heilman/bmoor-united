@@ -1,12 +1,19 @@
 import { Context } from '@bmoor/context';
 import {
+    NodeValueSelector
+} from '@bmoor/graph';
+import {
 	DimensionalDatumAccessor as Accessor
 } from '@bmoor/graph-compute';
 import {
-    offPass,
     offPassMean,
-    defPass,
+    offRushMean,
+    offPassWins,
+    offRushWins,
     defPassMean,
+    defRushMean,
+    defPassWins,
+    defRushWins,
     executor, 
     qualityWins, 
     expectedWins, 
@@ -25,6 +32,7 @@ import {
     offPassSuccessRank,
     offRushSuccessRank,
 } from './features';
+import { exit } from 'process';
 /*
 const ctx1 = new Context({flags: {verbose: true}});
 executor.calculate(
@@ -56,29 +64,73 @@ executor.calculate(
     ctx2.close();
 });
 */
-const ctx3 = new Context({flags: {verbose: true/*, reference: 'PHI'*/}});
-executor.calculate(
-    executor.env.getInterval('2023-10'), 
-    // all of these are calculated as of after this week's game since I removed offsets
-    new Accessor({
-        offPass,
-        offPassMean,
-        defPass,
-        defPassMean,
-        /*
-        defPassSuccessRank,
-        defRushSuccessRank,
-        offPassSuccessRank,
-        offRushSuccessRank,
-        */
-    }), 
-    {reference: 'PHI'},
-    ctx3
-).then(res => {
-    console.log(
-        'Philly', 
-        res
-    );
-}).finally(() => {
-    ctx3.close();
-});
+
+
+export async function calculateCompare(interval, team1, team2){
+    const ctx3 = new Context({flags: {verbose: false/*, reference: 'PHI'*/}});
+
+    const rtn = executor.calculate(
+        executor.env.getInterval(interval), 
+        // all of these are calculated as of after this week's game since I removed offsets
+        new Accessor({
+            name: 'display',
+            score: 'score',
+            offPassMean,
+            offRushMean,
+            defPassMean,
+            defRushMean,
+            offPassWins,
+            offRushWins,
+            defPassWins,
+            defRushWins,
+            expectedWins,
+            qualityWins,
+            expectedLosses,
+            qualityLosses,
+            defPassSuccesses,
+            defRushSuccesses,
+            offPassSuccesses,
+            offRushSuccesses,
+            defPassSuccessRank,
+            defRushSuccessRank,
+            offPassSuccessRank,
+            offRushSuccessRank,
+        }, {
+            name: NodeValueSelector.event,
+            score: NodeValueSelector.event,
+        }), 
+        {reference: team1, and: [
+            {reference:team2}
+        ]},
+        ctx3
+    ).then((res: Record<string, number>[]) => {
+        const keys = Object.keys(res[0]).slice(2);
+        const compare = [];
+    
+        for (const row of res){
+            const values = [];
+            for (const key of keys){
+                values.push(row[key]);
+            }
+    
+            compare.push(values);
+        }
+    
+        return {
+            metadata: {
+                keys
+            },
+            compare,
+            label: res[0].score > res[1].score
+        };
+    });
+    
+    rtn.finally(() => {
+        ctx3.close();
+    });
+
+    return rtn;
+}
+
+calculateCompare('2023-12', 'PHI', 'SF')
+.then(res => console.log(res));

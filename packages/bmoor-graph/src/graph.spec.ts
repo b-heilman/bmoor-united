@@ -262,6 +262,22 @@ describe('@bmoor/graph', function () {
 			events: [],
 		});
 
+		it('should allow selections combined with .and', function () {
+			const select1 = graph.select({
+				reference: 'node-a',
+				and: [
+					{
+						reference: 'node-b',
+					},
+				],
+			});
+
+			expect(select1.map((node) => node.ref)).to.deep.equal([
+				'node-a',
+				'node-b',
+			]);
+		});
+
 		it('should allow selection with .type', function () {
 			const select1 = graph.select({
 				reference: 'node-a',

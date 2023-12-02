@@ -237,7 +237,7 @@ export class Node implements NodeInterface {
 				root = this.selectParent({parent: selector.assume});
 
 				if (!root) {
-					const check = this.selectChildren({type: selector.type}, true);
+					const check = this.selectChildren({type: selector.assume}, true);
 
 					if (check.length === 0) {
 						throw new Error('unable to assume: ' + selector.assume);
@@ -374,28 +374,36 @@ export class Node implements NodeInterface {
 		mount: string,
 		selector: NodeValueSelector,
 	): Promise<FeatureValue> {
-		return selector === NodeValueSelector.node
-			? this.getWeight(mount)
-			: Promise.all(
-					Array.from(this.events.values()).map((event) =>
-						event.getNodeFeatures(this.ref).get(mount),
-					),
-			  ).then((values) =>
-					values.reduce(
+		if (selector === NodeValueSelector.node) {
+			return this.getWeight(mount);
+		} else {
+			return Promise.all(
+				Array.from(this.events.values()).map((event) =>
+					event.getNodeFeatures(this.ref).get(mount),
+				),
+			).then((values) => {
+				if (values.length > 1) {
+					return values.reduce(
 						(sum: number, value: number | boolean) => sum + +value,
 						0,
-					),
-			  );
+					);
+				} else {
+					return values[0] || 0;
+				}
+			});
+		}
 	}
 
 	// allows access to either current node or event features
 	hasValue(mount: string, selector: NodeValueSelector): boolean {
-		return selector === NodeValueSelector.node
-			? this.hasWeight(mount)
-			: Array.from(this.events.values()).reduce(
-					(prev, event) => prev || event.hasNodeFeature(this.ref, mount),
-					false,
-			  );
+		if (selector === NodeValueSelector.node) {
+			return this.hasWeight(mount);
+		} else {
+			return Array.from(this.events.values()).reduce(
+				(prev, event) => prev || event.hasNodeFeature(this.ref, mount),
+				false,
+			);
+		}
 	}
 
 	// allow access to just current values

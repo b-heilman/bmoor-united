@@ -18,6 +18,7 @@ import {
 export interface GraphNodeSelector extends NodeSelector {
 	global?: boolean;
 	reference?: NodeReference;
+	and?: GraphNodeSelector[];
 }
 
 export type GraphSelector = GraphNodeSelector;
