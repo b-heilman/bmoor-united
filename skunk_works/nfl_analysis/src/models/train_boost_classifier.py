@@ -3,31 +3,55 @@ import json
 from xgboost import XGBClassifier 
 from sklearn.preprocessing import LabelEncoder
 
-from lib.common import load_training_data, create_training_info, calc_statistics
+from lib.common import (
+    load_training_data, 
+    create_training_info, 
+    calc_statistics,
+    train_model,
+    FeatureSet,
+    TrainingPair,
+    TrainingStats,
+    ModelAbstract
+)
 le = LabelEncoder()
 
-# https://www.datatechnotes.com/2019/07/classification-example-with.html
-def create_model(info):
-    # ---- Model
-    model = XGBClassifier(objective="reg:logistic", silent=True, verbosity=0)
+def format_features(features: FeatureSet):
+    rtn = []
+    for feature in features:
+        rtnRow = []
+        for i, value1 in enumerate(feature['compare']):
+            value2 = feature['against'][i]
 
-    model.fit(
-        info["inputs"]["training"],
-        le.fit_transform(info["outputs"]["training"]),
-        eval_set=[(info["inputs"]["validation"], info["outputs"]["validation"])],
-    )
+            rtnRow.append(value1 - value2)
 
-    print("-- model created --")
-    return model
+        rtn.append(rtnRow)
 
-def run():
-    info = create_training_info(load_training_data())
+    return rtn
 
-    model = create_model(info)
+class XgboostClassifier(ModelAbstract):
+    model: XGBClassifier
 
-    stats = calc_statistics(info, model)
+    # https://www.datatechnotes.com/2019/07/classification-example-with.html
+    def create(self, stats: TrainingStats):
+        self.model = XGBClassifier(objective="reg:logistic", silent=True, verbosity=0)
 
-    print(json.dumps(stats, ensure_ascii=False, indent="\t", skipkeys=True))
+    def fit(self, training: TrainingPair, validation: TrainingPair):
+        self.model.fit(
+            format_features(training["features"]),
+            le.fit_transform(training["labels"]),
+            eval_set=[(
+                format_features(validation["features"]), 
+                validation["labels"]
+            )],
+        )
+
+    def get_feature_importances(self):
+        return self.model.feature_importances_
+        
+    def predict(self, features: FeatureSet):
+        features = format_features(features)
+
+        return self.model.predict(features)
 
 if __name__ == "__main__":
-    run()
+    train_model(XgboostClassifier)
