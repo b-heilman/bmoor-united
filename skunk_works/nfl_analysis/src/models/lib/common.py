@@ -126,7 +126,8 @@ def calc_statistics(info: TrainingInfo, model: ModelAbstract):
     predictions = model.predict(info["analysis"]["features"])
     correct = 0
     for i, pred in enumerate(predictions):
-        if pred > 0 and info["analysis"]["labels"][i]:
+        print('?', pred, info["analysis"]["labels"][i])
+        if pred > 0 and info["analysis"]["labels"][i] == 1:
             correct = correct + 1
 
     score = correct / len(predictions)

@@ -1,5 +1,6 @@
 import json
 import torch
+import numpy as np
 
 from sklearn.preprocessing import LabelEncoder
 from sklearn.preprocessing import MinMaxScaler
@@ -26,13 +27,16 @@ def reduce_features(features: FeatureSet):
     return rtn
 
 def format_features(features: FeatureSet, scaler: MinMaxScaler):
-    rtn = []
+    compares = []
+    againsts = []
     for feature in features:
-        rtn.append(
-            scaler.transform([feature['compare'], feature['against']])
-        )
+        compares.append(feature['compare'])
+        againsts.append(feature['against'])
 
-    return rtn
+    return np.array([
+        scaler.transform(compares), 
+        scaler.transform(againsts)
+    ])
 
 class SiameseNetwork(torch.nn.Module):
     def __init__(self, stats: TrainingStats):
@@ -44,6 +48,14 @@ class SiameseNetwork(torch.nn.Module):
         n_hidden2 = n_embeddings**2
         n_out = 1
 
+        print({
+            'input': n_input,
+            'hidden': n_hidden,
+            'embedding': n_embeddings,
+            'hidden2': n_hidden2,
+            'out': n_out
+        })
+
         self.cnn = torch.nn.Sequential(
             torch.nn.Linear(n_input, n_hidden),
             torch.nn.ReLU(inplace=True),
@@ -53,7 +65,7 @@ class SiameseNetwork(torch.nn.Module):
         )
 
         self.fc = torch.nn.Sequential(
-            torch.nn.Linear(n_embeddings, n_hidden2),
+            torch.nn.Linear(n_embeddings*2, n_hidden2),
             torch.nn.ReLU(inplace=True),
             torch.nn.Linear(n_hidden2, n_hidden2),
             torch.nn.ReLU(inplace=True),
@@ -68,16 +80,18 @@ class SiameseNetwork(torch.nn.Module):
         output = self.cnn(input)
         output = output.view(output.size()[0], -1)
 
-        return output
+        return output # n x 3
 
     def forward(self, input):
-        print('input', input)
         # get two images' features
-        output1 = self.forward_once(input[0])
-        output2 = self.forward_once(input[1])
+        input1 = input[0]
+        input2 = input[1]
+        
+        output1 = self.forward_once(input1)
+        output2 = self.forward_once(input2)
 
         # concatenate both images' features
-        output = torch.cat((output1, output2), 1)
+        output = torch.cat((output1, output2), 1) # n x 6
 
         # pass the concatenation to the linear layers
         output = self.fc(output)
@@ -98,7 +112,7 @@ class NeuralClassifier(ModelAbstract):
 
     def fit(self, training: TrainingPair, validation: TrainingPair):
         # https://pytorch.org/tutorials/beginner/introyt/modelsyt_tutorial.html
-        learning_rate = 0.01
+        learning_rate = 0.03
         epochs = 5000
 
         self.scaler = MinMaxScaler()
@@ -115,6 +129,12 @@ class NeuralClassifier(ModelAbstract):
         )
         validation_output = torch.FloatTensor(validation["labels"])
 
+        new_shape = (len(training["labels"]), 1)
+        training_output = training_output.view(new_shape)
+
+        new_shape = (len(validation["labels"]), 1)
+        validation_output = validation_output.view(new_shape)
+        
         loss_fn = torch.nn.MSELoss()
         optimizer = torch.optim.SGD(self.model.parameters(), lr=learning_rate)
 
@@ -122,6 +142,7 @@ class NeuralClassifier(ModelAbstract):
         self.model.eval()
         predictions = self.model(validation_input)
         train = loss_fn(predictions, validation_output)
+        
         print('Test loss before training' , train.item())
         print('--training data--')
         print(training_input.size())
@@ -158,63 +179,6 @@ class NeuralClassifier(ModelAbstract):
         )
 
         return list(map(lambda arr: arr[0], self.model(features).detach().numpy()))
-
-# TODO: need to integrate this
-def train(args, model, device, train_loader, optimizer, epoch):
-    model.train()
-
-    # we aren't using `TripletLoss` as the MNIST dataset is simple, so `BCELoss` can do the trick.
-    criterion = nn.BCELoss()
-
-    for batch_idx, (images_1, images_2, targets) in enumerate(train_loader):
-        images_1, images_2, targets = images_1.to(device), images_2.to(device), targets.to(device)
-        optimizer.zero_grad()
-        outputs = model(images_1, images_2).squeeze()
-        loss = criterion(outputs, targets)
-        loss.backward()
-        optimizer.step()
-        if batch_idx % args.log_interval == 0:
-            print('Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
-                epoch, batch_idx * len(images_1), len(train_loader.dataset),
-                100. * batch_idx / len(train_loader), loss.item()))
-            if args.dry_run:
-                break
-
-
-def test(model, device, test_loader):
-    model.eval()
-    test_loss = 0
-    correct = 0
-
-    # we aren't using `TripletLoss` as the MNIST dataset is simple, so `BCELoss` can do the trick.
-    criterion = nn.BCELoss()
-
-    with torch.no_grad():
-        for (images_1, images_2, targets) in test_loader:
-            images_1, images_2, targets = images_1.to(device), images_2.to(device), targets.to(device)
-            outputs = model(images_1, images_2).squeeze()
-            test_loss += criterion(outputs, targets).sum().item()  # sum up batch loss
-            pred = torch.where(outputs > 0.5, 1, 0)  # get the index of the max log-probability
-            correct += pred.eq(targets.view_as(pred)).sum().item()
-
-    test_loss /= len(test_loader.dataset)
-
-    # for the 1st epoch, the average loss is 0.0001 and the accuracy 97-98%
-    # using default settings. After completing the 10th epoch, the average
-    # loss is 0.0000 and the accuracy 99.5-100% using default settings.
-    print('\nTest set: Average loss: {:.4f}, Accuracy: {}/{} ({:.0f}%)\n'.format(
-        test_loss, correct, len(test_loader.dataset),
-        100. * correct / len(test_loader.dataset)))
-
-train():
-    model = SiameseNetwork()
-    optimizer = optim.Adadelta(model.parameters(), lr=args.lr)
-
-    scheduler = StepLR(optimizer, step_size=1, gamma=args.gamma)
-    for epoch in range(1, 500 + 1):
-        train(args, model, device, train_loader, optimizer, epoch)
-        test(model, device, test_loader)
-        scheduler.step()
 
 if __name__ == "__main__":
     train_model(NeuralClassifier)

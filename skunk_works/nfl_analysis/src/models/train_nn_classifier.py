@@ -82,12 +82,21 @@ class NeuralClassifier(ModelAbstract):
         validation_input = torch.FloatTensor(self.scaler.transform(format_features(validation["features"])))
         validation_output = torch.FloatTensor(validation["labels"])
 
+        new_shape = (len(training["labels"]), 1)
+        training_output = training_output.view(new_shape)
+
+        new_shape = (len(validation["labels"]), 1)
+        validation_output = validation_output.view(new_shape)
+
         loss_fn = torch.nn.MSELoss()
         optimizer = torch.optim.SGD(self.model.parameters(), lr=learning_rate)
-
+        
         print("-- model created --")
         self.model.eval()
         predictions = self.model(validation_input)
+        print('==sanity==')
+        print(predictions.size())
+        print(validation_output.size())
         train = loss_fn(predictions, validation_output)
         print('Test loss before training' , train.item())
         print('--training data--')
