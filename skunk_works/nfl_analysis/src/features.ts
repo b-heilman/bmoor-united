@@ -43,9 +43,16 @@ export const offPass = new Processor('off-pass', sum, [
 	},
 ]);
 
+export const offPassLast = new Processor('off-pass-last', ((d: number) => d), [
+	{
+		offset: -1,
+		input: offPass,
+	},
+]);
+
 export const offPassMean = new Processor('off-pass-mean', mean, [
 	{
-		input: offPass,
+		input: offPassLast,
 		range: 5,
 	},
 ]);
@@ -61,29 +68,43 @@ export const offRush = new Processor('off-rush', sum, [
 	},
 ]);
 
+export const offRushLast = new Processor('off-rush-last', ((d: number) => d), [
+	{
+		offset: -1,
+		input: offRush,
+	},
+]);
+
 export const offRushMean = new Processor('off-rush-mean', mean, [
 	{
-		input: offRush,
+		input: offRushLast,
 		range:  5,
 	},
 ]);
 
 export const defRush = new Processor('def-rush', v => v[0], [
 	{
-		input: offRush,
+		input: offRushLast,
 		select: {
 			assume: 'defense',
 			edge: 'against'
 		},
 	}
-])
+]);
+
+export const defRushLast = new Processor('def-rush-last', (d: number) => d, [
+	{
+		offset: -1,
+		input: defRush,
+	},
+]);
 
 export const defRushMean = new Processor('def-rush-mean', mean, [
 	{
-		input: defRush,
+		input: defRushLast,
 		range:  5,
 		select: {
-			assume: 'defense' // make this implicit
+			assume: 'defense'
 		}
 	},
 ]);
@@ -93,19 +114,26 @@ export const defPass = new Processor('def-pass', v => v[0], [
 	{
 		input: offPass,
 		select: {
-			assume: 'defense', // how can I make this implicit?
+			assume: 'defense',
 			edge: 'against'
 		},
 	}
-])
+]);
+
+export const defPassLast = new Processor('def-pass-last', (d: number) => d, [
+	{
+		offset: -1,
+		input: defPass,
+	},
+]);
 
 export const defPassMean = new Processor('def-pass-mean', mean, [
 	// TODO: this should be on the defense, ideally...
 	{
-		input: defPass,
+		input: defPassLast,
 		range:  5,
 		select: {
-			assume: 'defense' // make this implicit
+			assume: 'defense'
 		}
 	},
 ]);

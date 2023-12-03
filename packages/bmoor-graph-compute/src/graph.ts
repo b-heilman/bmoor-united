@@ -166,9 +166,13 @@ export class DimensionalGraph implements DimensionalGraphInterface {
 	}
 
 	offsetInterval(interval: Interval, offset: number): Interval {
-		return this.getInterval(
-			this.graphs.getTagOffset(interval.ref, offset),
-		);
+		try {
+			return this.getInterval(
+				this.graphs.getTagOffset(interval.ref, offset),
+			);
+		} catch(ex){
+			throw new Error(`failed to find offset (${interval.ref}) + ${offset}`);
+		}
 	}
 
 	getPrevInterval(interval: Interval): Interval {
@@ -204,15 +208,23 @@ export function load(
 ): DimensionalGraph {
 	const graph = new DimensionalGraph();
 
+	const intervals = [];
 	for (const input of schema.intervals) {
-		graph.addInterval(new Interval(input.ref, input.order, input.label));
+		intervals.push(new Interval(input.ref, input.order, input.label));
 	}
 
-	for (const intervalRef in schema.graphs) {
-		const graphInput = schema.graphs[intervalRef];
+	intervals.sort((a: Interval, b: Interval) => a.order - b.order).forEach(interval => {
+		console.log(interval);
+		graph.addInterval(interval);
+	});
+
+	// TODO: I need to do this where I can sort the intervals after insertion easier, so insert
+	//   order doesn't matter.  This works for now, but isn't sound logically.
+	for (const interval of intervals) {
+		const graphInput = schema.graphs[interval.ref];
 
 		graph.addGraph(
-			graph.getInterval(intervalRef),
+			graph.getInterval(interval.ref),
 			loadGraph(ctx, graphInput),
 		);
 	}
