@@ -45,6 +45,7 @@ class SiameseNetwork(torch.nn.Module):
         n_input = stats["features"]
         n_hidden = n_input**2
         n_embeddings = 3
+        n_input2 = (n_embeddings) * 2 + 1
         n_hidden2 = n_embeddings**2
         n_out = 1
 
@@ -52,6 +53,7 @@ class SiameseNetwork(torch.nn.Module):
             'input': n_input,
             'hidden': n_hidden,
             'embedding': n_embeddings,
+            'input2': n_input2,
             'hidden2': n_hidden2,
             'out': n_out
         })
@@ -65,12 +67,14 @@ class SiameseNetwork(torch.nn.Module):
         )
 
         self.fc = torch.nn.Sequential(
-            torch.nn.Linear(n_embeddings*2, n_hidden2),
+            torch.nn.Linear(n_input2, n_hidden2),
             torch.nn.ReLU(inplace=True),
             torch.nn.Linear(n_hidden2, n_hidden2),
             torch.nn.ReLU(inplace=True),
             torch.nn.Linear(n_hidden2, n_out),
         )
+
+        self.distance = torch.nn.PairwiseDistance(p=2)
 
         self.sigmoid = torch.nn.Sigmoid()
 
@@ -91,7 +95,9 @@ class SiameseNetwork(torch.nn.Module):
         output2 = self.forward_once(input2)
 
         # concatenate both images' features
-        output = torch.cat((output1, output2), 1) # n x 6
+        distance = self.distance(output1, output2)
+        distance = distance.view(distance.size()[0], -1)
+        output = torch.cat((output1, output2, distance), 1) # n x 7
 
         # pass the concatenation to the linear layers
         output = self.fc(output)
@@ -112,7 +118,7 @@ class NeuralClassifier(ModelAbstract):
 
     def fit(self, training: TrainingPair, validation: TrainingPair):
         # https://pytorch.org/tutorials/beginner/introyt/modelsyt_tutorial.html
-        learning_rate = 0.03
+        learning_rate = 0.05
         epochs = 5000
 
         self.scaler = MinMaxScaler()
