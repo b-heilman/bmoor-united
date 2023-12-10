@@ -214,7 +214,6 @@ export function load(
 	}
 
 	intervals.sort((a: Interval, b: Interval) => a.order - b.order).forEach(interval => {
-		console.log(interval);
 		graph.addInterval(interval);
 	});
 

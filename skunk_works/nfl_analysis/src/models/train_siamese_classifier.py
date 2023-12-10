@@ -141,7 +141,7 @@ class NeuralClassifier(ModelAbstract):
         new_shape = (len(validation["labels"]), 1)
         validation_output = validation_output.view(new_shape)
         
-        loss_fn = torch.nn.MSELoss()
+        loss_fn = torch.nn.BCELoss()
         optimizer = torch.optim.SGD(self.model.parameters(), lr=learning_rate)
 
         print("-- model created --")

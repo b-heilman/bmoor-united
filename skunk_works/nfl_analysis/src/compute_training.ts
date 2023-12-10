@@ -8,6 +8,7 @@ async function run(){
     const rtn = [];
 
     for (const interval of graph.intervals.values()){
+        console.log(interval);
         const weekGraph = graph.getGraph(interval);
 
         for (const event of weekGraph.eventDex.values()){

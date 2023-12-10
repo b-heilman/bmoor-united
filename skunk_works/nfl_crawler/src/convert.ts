@@ -47,16 +47,23 @@ async function sleep(ms) {
     });
 }
 
-async function recursiveFileStat(path: string): Promise<string[]>{
-    const stats = await fs.stat(path);
-
-    if (stats.isDirectory()){
-        const children = await fs.readdir(path);
-
-        return (await Promise.all(children.map(child => recursiveFileStat(path+'/'+child)))).flat();
-    } else {
-        return [path];
+async function recursiveFileStat(path: string | string[] ): Promise<string[]>{
+    if (typeof(path) === 'string'){
+        path = [path]
     }
+
+    return (await Promise.all(path.map(async(p) => {
+        const stats = await fs.stat(p);
+
+        if (stats.isDirectory()){
+            const children = await fs.readdir(p);
+
+            return (await Promise.all(children.map(child => recursiveFileStat(p+'/'+child)))).flat();
+        } else {
+            return [p];
+        }
+    }))).flat();
+    
 }
 
 const playerMap = new Map<string, string>();
@@ -460,7 +467,11 @@ async function processGames(paths: string[]){
     }
 }
 
-recursiveFileStat('/home/brian/development/bmoor-united/skunk_works/nfl_crawler/cache/games/2023')
+recursiveFileStat([
+    '/home/brian/development/bmoor-united/skunk_works/nfl_crawler/cache/games/2023',
+    '/home/brian/development/bmoor-united/skunk_works/nfl_crawler/cache/games/2022',
+    '/home/brian/development/bmoor-united/skunk_works/nfl_crawler/cache/games/2021'
+])
 .then(results => processGames(results));
 
 // processGames(['/home/brian/development/bmoor-united/skunk_works/nfl_crawler/cache/games/2023/11/401547545.json']);

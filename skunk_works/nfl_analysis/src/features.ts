@@ -84,7 +84,7 @@ export const offRushMean = new Processor('off-rush-mean', mean, [
 
 export const defRush = new Processor('def-rush', v => v[0], [
 	{
-		input: offRushLast,
+		input: offRush,
 		select: {
 			assume: 'defense',
 			edge: 'against'
