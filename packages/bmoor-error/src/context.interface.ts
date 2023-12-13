@@ -1,7 +1,7 @@
 // This should be defined in the code
 export interface ErrorContext {
-	response?: string;
 	code: string;
+	response?: string;
 	status?: number;
 	// eslint-disable-next-line  @typescript-eslint/no-explicit-any
 	context?: any;

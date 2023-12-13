@@ -14,6 +14,7 @@ import {DatumRanker} from './datum/ranker';
 import {EnvironmentInterface} from './environment.interface';
 import {ExecutorAction, ExecutorResponse} from './executor.interface';
 import {IntervalInterface} from './interval.interface';
+import {ComputeUnknownInterval} from './error/unknownInterval';
 
 function shouldVerbose(ctx: Context, datum: {ref: string}) {
 	return (
@@ -50,9 +51,25 @@ async function loadProcessorRequirement<
 	datum: DatumInterface<NodeSelector>,
 	interval: IntervalInterface<IntervalRef, Order>,
 ): Promise<DatumProcessorRequirementsResponse> {
-	const newInterval = req.offset
+	let newInterval = null;
+	
+	try {
+		newInterval = req.offset
 		? exe.env.offsetInterval(interval, req.offset)
 		: interval;
+	} catch(ex) {
+		// TODO: I need to look into handling this up higher in the stack.  This over weights the 
+		// oldest data, I should just reduce the range or offset.  This only effects the tail of
+		// our data, so I just drop the tail from analysis
+		if (ex instanceof ComputeUnknownInterval){
+			ctx.log('unknown offset', interval, req.offset);
+
+			newInterval = interval;
+		} else {
+			throw ex;
+		}
+	}
+
 	const newDatum = exe.env.intervalSelect(
 		datum,
 		newInterval,
@@ -177,11 +194,26 @@ async function runProcessor<
 		);
 	}
 
-	const reqs = await Promise.all(
-		requirements.map((req) =>
-			loadProcessorRequirement(ctx, exe, req, datum, interval),
-		),
-	);
+	let reqs = null;
+	try {
+		reqs = await Promise.all(
+			requirements.map((req) =>
+				loadProcessorRequirement(ctx, exe, req, datum, interval),
+			),
+		);
+	} catch(ex){
+		ctx.setError(ex, {
+			code: 'BMOOR_COMPUTE_FAILED_PROC',
+			protected: {
+				ref: datum.ref,
+				interval: interval.ref,
+				processor: processor.name,
+			}
+		});
+
+		throw ex;
+	}
+	
 
 	if (shouldVerbose(ctx, datum)) {
 		ctx.log(

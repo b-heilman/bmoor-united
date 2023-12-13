@@ -58,22 +58,24 @@ def load_training_data() -> TrainingData:
         f'../../../data/training.json'
     )))
 
-    keys = incoming[0]['metadata']['keys']
+    keys = incoming['keys']
     labels: LabelSet = []
     features: FeatureSet = []
-    for row in incoming:
+    for row in incoming['training']:
+        compare = row[0]
+        label = row[1]
         features.append({
-            'compare': row['compare'][0],
-            'against': row['compare'][1]
+            'compare': compare[0],
+            'against': compare[1]
         })
-        labels.append(1 if row['label'] else 0)
+        labels.append(1 if label else 0)
 
         #----- reverse it
         features.append({
-            'compare': row['compare'][1],
-            'against': row['compare'][0]
+            'compare': compare[1],
+            'against': compare[0]
         })
-        labels.append(0 if row['label'] else 1)
+        labels.append(0 if label else 1)
 
     return {
         'keys': keys,
@@ -224,3 +226,28 @@ def train_model(Model_Class) -> ModelAbstract:
     print(json.dumps(stats, ensure_ascii=False, indent="\t", skipkeys=True))
 
     return model
+
+def load_analysis_info():
+    return json.load(open(os.path.join(
+        os.path.dirname(__file__),
+        f'../../../data/analysis.json'
+    )))
+
+def analyze_model(model: ModelAbstract):
+    analysis_data = load_analysis_info()
+
+    labels: LabelSet = []
+    features: FeatureSet = []
+    for row in analysis_data['analysis']:
+        compare = row[0]
+        label = row[1]
+        features.append({
+            'compare': compare[0],
+            'against': compare[1]
+        })
+        labels.append(label)
+
+    predictions = model.predict(features)
+
+    for i, label in enumerate(labels):
+        print('>>', label, predictions[i])

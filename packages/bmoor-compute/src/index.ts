@@ -13,3 +13,5 @@ export {DatumProcessor} from './datum/processor';
 export {DatumRanker} from './datum/ranker';
 
 export * from './transform';
+
+export {ComputeUnknownInterval} from './error/unknownInterval'

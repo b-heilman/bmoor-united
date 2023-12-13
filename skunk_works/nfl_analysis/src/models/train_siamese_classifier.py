@@ -1,6 +1,9 @@
+import os
 import json
 import torch
 import numpy as np
+import pickle
+import random as rd
 
 from sklearn.preprocessing import LabelEncoder
 from sklearn.preprocessing import MinMaxScaler
@@ -10,6 +13,7 @@ from lib.common import (
     create_training_info, 
     calc_statistics,
     train_model,
+    analyze_model,
     FeatureSet,
     TrainingPair,
     TrainingStats,
@@ -17,6 +21,12 @@ from lib.common import (
 )
 
 le = LabelEncoder()
+
+saveDir = os.path.abspath(os.path.dirname(__file__)+'../../../cache')
+
+STATS_PATH = saveDir+'/stats.json'
+MODEL_PATH = saveDir+'/model.torch'
+SCALAR_PATH = saveDir+'/transformer.pkl'
 
 def reduce_features(features: FeatureSet):
     rtn = []
@@ -109,16 +119,21 @@ class SiameseNetwork(torch.nn.Module):
         
 
 class NeuralClassifier(ModelAbstract):
+    stats: TrainingStats
     model: torch.nn.Sequential
     scaler: MinMaxScaler
 
     # https://www.datatechnotes.com/2019/07/classification-example-with.html
     def create(self, stats: TrainingStats):
+       self.stats = stats
        self.model = SiameseNetwork(stats)
 
     def fit(self, training: TrainingPair, validation: TrainingPair):
+        torch.manual_seed(42)
+        rd.seed(42)
+
         # https://pytorch.org/tutorials/beginner/introyt/modelsyt_tutorial.html
-        learning_rate = 0.05
+        learning_rate = 0.02
         epochs = 5000
 
         self.scaler = MinMaxScaler()
@@ -156,7 +171,7 @@ class NeuralClassifier(ModelAbstract):
 
         self.model.train()
         losses = []
-        for epoch in range(epochs):
+        for epoch in range(epochs + 1):
             predictions = self.model(training_input)
             loss = loss_fn(predictions, training_output)
             loss_value = loss.item()
@@ -185,6 +200,28 @@ class NeuralClassifier(ModelAbstract):
         )
 
         return list(map(lambda arr: arr[0], self.model(features).detach().numpy()))
+    
+    def save(self):
+        with open(STATS_PATH, 'w', encoding='utf-8') as file:
+            json.dump(self.stats, file)
+
+        torch.save(self.model.state_dict(), MODEL_PATH)
+
+        pickle.dump(self.scaler, open(SCALAR_PATH, 'wb'))
+    
+    def load(self):
+        with open(STATS_PATH, 'r', encoding='utf-8') as file:
+            stats = json.load(file)
+
+        self.create(stats)
+
+        self.model.load_state_dict(torch.load(MODEL_PATH))
+        self.scaler = pickle.load(open(SCALAR_PATH, 'rb'))
 
 if __name__ == "__main__":
-    train_model(NeuralClassifier)
+    model = train_model(NeuralClassifier)
+
+    model.save()
+
+    analyze_model(model)
+

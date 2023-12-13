@@ -5,5 +5,5 @@
   },
   "include": [
     "src"
-  ]
+, "../bmoor-compute/src/error"  ]
 }

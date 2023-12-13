@@ -8,6 +8,7 @@ import {
 	load as loadGraph,
 } from '@bmoor/graph';
 import {OrderedMap} from '@bmoor/index';
+import {ComputeUnknownInterval} from '@bmoor/compute';
 
 import {
 	DimensionalGraphInterface,
@@ -37,7 +38,7 @@ export class DimensionalGraph implements DimensionalGraphInterface {
 		const rtn = this.intervals.get(intervalRef);
 
 		if (!rtn) {
-			throw new Error('unknown interval: ' + intervalRef);
+			throw new ComputeUnknownInterval('unknown interval: ' + intervalRef);
 		}
 
 		return rtn;
@@ -171,7 +172,11 @@ export class DimensionalGraph implements DimensionalGraphInterface {
 				this.graphs.getTagOffset(interval.ref, offset),
 			);
 		} catch(ex){
-			throw new Error(`failed to find offset (${interval.ref}) + ${offset}`);
+			if (ex instanceof ComputeUnknownInterval){
+				throw new ComputeUnknownInterval(`failed to find offset (${interval.ref}) + ${offset}`);
+			} else {
+				throw ex;
+			}
 		}
 	}
 
