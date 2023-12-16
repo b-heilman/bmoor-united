@@ -1,6 +1,7 @@
 import * as fs from 'fs/promises';
 import * as fsSync from 'fs';
 import * as parquet from 'parquetjs-lite';
+import {resolve} from 'path';
 
 import { readPlayer, cacheDir } from './access';
 import { GameResponse, BoxscorePlayersInfo } from './access.interface';
@@ -467,11 +468,15 @@ async function processGames(paths: string[]){
     }
 }
 
-recursiveFileStat([
-    '/home/brian/development/bmoor-united/skunk_works/nfl_crawler/cache/games/2023',
-    '/home/brian/development/bmoor-united/skunk_works/nfl_crawler/cache/games/2022',
-    '/home/brian/development/bmoor-united/skunk_works/nfl_crawler/cache/games/2021'
-])
-.then(results => processGames(results));
+const gamesDir = resolve(__dirname+'/../cache/games');
 
-// processGames(['/home/brian/development/bmoor-united/skunk_works/nfl_crawler/cache/games/2023/11/401547545.json']);
+/*
+recursiveFileStat([
+    gamesDir+'/2023',
+    gamesDir+'/2022',
+    // gamesDir+'/2021'
+]);
+*/
+
+recursiveFileStat(gamesDir)
+.then(results => processGames(results));
