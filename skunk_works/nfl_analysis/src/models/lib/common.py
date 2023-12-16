@@ -64,6 +64,7 @@ def load_training_data() -> TrainingData:
     for row in incoming['training']:
         compare = row[0]
         label = row[1]
+        
         features.append({
             'compare': compare[0],
             'against': compare[1]
@@ -199,18 +200,18 @@ def calc_statistics(info: TrainingInfo, model: ModelAbstract):
 
     return {
         "score": score,
-        'confusion': {
-            'tp': tp,
-            'fp': fp,
-            'fn': fn,
-            'tn': tn,
-        },
         'prediction': buckets,
         "dimensions": {
             "features": info['stats']['features'],
             "training": len(info["training"]['labels']),
             "validation": len(info["validation"]['labels']),
             "analysis": len(info["analysis"]['labels']),
+        },
+        'confusion': {
+            'tp': tp,
+            'fp': fp,
+            'fn': fn,
+            'tn': tn,
         }
     }
 

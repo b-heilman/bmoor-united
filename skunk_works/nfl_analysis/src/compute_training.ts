@@ -139,24 +139,15 @@ async function createAnalysis(request: AnalysisRequest[]){
 }
 
 const available = Array.from(graph.intervals.values());
-const intervals = available.slice(11, available.length-1);
+const intervals = available.slice(10);
 
 createTraining(intervals)
 .then(() => createAnalysis([
     {
-        interval: '2023-12',
+        interval: '2023-13',
         compare: [{
             team1: 'PHI', 
-            team2: 'SF' // win
-        }, {
-            team1: 'PHI', 
             team2: 'DAL' // win
-        },{
-            team1: 'PHI', // theory
-            team2: 'NYG'
-        }, {
-            team1: 'PHI', // theory
-            team2: 'NYJ'
         }, {
             team1: 'NE', // win
             team2: 'PIT'
@@ -196,6 +187,58 @@ createTraining(intervals)
         }, {
             team1: 'GB', 
             team2: 'NYG' // win
+        }]
+    },
+    {
+        interval: '2023-14',
+        compare: [{
+            team1: 'LAC', 
+            team2: 'LV' 
+        },{
+            team1: 'MIN', 
+            team2: 'CIN' 
+        },{
+            team1: 'PIT',
+            team2: 'IND'
+        }, {
+            team1: 'DEN',
+            team2: 'DET'
+        }, {
+            team1: 'NYG', 
+            team2: 'NO'
+        }, {
+            team1: 'CHI', 
+            team2: 'CLE'
+        }, {
+            team1: 'ATL',
+            team2: 'CAR' 
+        }, {
+            team1: 'TB',
+            team2: 'GB' 
+        }, {
+            team1: 'NYJ',
+            team2: 'MIA' 
+        }, {
+            team1: 'KC',
+            team2: 'NE' 
+        }, {
+            team1: 'HOU',
+            team2: 'TEN' 
+        }, {
+            team1: 'SF', 
+            team2: 'ARI' 
+        }, {
+            team1: 'WSH', 
+            team2: 'LAR' 
+        }, {
+            team1: 'DAL',
+            team2: 'BUF' 
+        }, {
+            team1: 'BAL',
+            team2: 'JAX' 
+        }, {
+            team1: 'PHI',
+            team2: 'SEA' 
         }]
     }
 ]))

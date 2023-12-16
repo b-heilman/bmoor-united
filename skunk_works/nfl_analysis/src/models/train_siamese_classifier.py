@@ -55,7 +55,7 @@ class SiameseNetwork(torch.nn.Module):
         n_input = stats["features"]
         n_hidden = n_input**2
         n_embeddings = 3
-        n_input2 = (n_embeddings) * 2 + 1
+        n_input2 = (n_embeddings) * 2
         n_hidden2 = n_embeddings**2
         n_out = 1
 
@@ -105,9 +105,9 @@ class SiameseNetwork(torch.nn.Module):
         output2 = self.forward_once(input2)
 
         # concatenate both images' features
-        distance = self.distance(output1, output2)
-        distance = distance.view(distance.size()[0], -1)
-        output = torch.cat((output1, output2, distance), 1) # n x 7
+        # distance = self.distance(output1, output2)
+        # distance = distance.view(distance.size()[0], -1)
+        output = torch.cat((output1, output2), 1)
 
         # pass the concatenation to the linear layers
         output = self.fc(output)
@@ -129,13 +129,11 @@ class NeuralClassifier(ModelAbstract):
        self.model = SiameseNetwork(stats)
 
     def fit(self, training: TrainingPair, validation: TrainingPair):
-        torch.manual_seed(42)
-        rd.seed(42)
-
         # https://pytorch.org/tutorials/beginner/introyt/modelsyt_tutorial.html
-        learning_rate = 0.02
+        learning_rate = 0.05
         epochs = 5000
 
+        #--- Prep ---
         self.scaler = MinMaxScaler()
         base_features = reduce_features(training["features"])
         self.scaler.fit(base_features)
@@ -156,9 +154,11 @@ class NeuralClassifier(ModelAbstract):
         new_shape = (len(validation["labels"]), 1)
         validation_output = validation_output.view(new_shape)
         
+        #--- Config --- 
         loss_fn = torch.nn.BCELoss()
         optimizer = torch.optim.SGD(self.model.parameters(), lr=learning_rate)
 
+        #--- Baseline --- 
         print("-- model created --")
         self.model.eval()
         predictions = self.model(validation_input)
@@ -169,9 +169,12 @@ class NeuralClassifier(ModelAbstract):
         print(training_input.size())
         print(training_output.size())
 
+        #--- Training --- 
         self.model.train()
         losses = []
         for epoch in range(epochs + 1):
+            optimizer.zero_grad()
+
             predictions = self.model(training_input)
             loss = loss_fn(predictions, training_output)
             loss_value = loss.item()
@@ -180,12 +183,12 @@ class NeuralClassifier(ModelAbstract):
             if epoch % 500 == 0:
                 #print(list(model.parameters())[0])
                 print(f'Epoch {epoch}: train loss: {loss_value}')
-
-            self.model.zero_grad()
+            
             loss.backward()
 
             optimizer.step()
         
+        #--- Analysis --- 
         self.model.eval()
         predictions = self.model(validation_input)
         train = loss_fn(predictions, validation_output)
@@ -219,6 +222,9 @@ class NeuralClassifier(ModelAbstract):
         self.scaler = pickle.load(open(SCALAR_PATH, 'rb'))
 
 if __name__ == "__main__":
+    torch.manual_seed(42)
+    rd.seed(42)
+    
     model = train_model(NeuralClassifier)
 
     model.save()
