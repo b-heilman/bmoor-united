@@ -37,13 +37,23 @@ async function createTraining(intervals){
                 
                         compare.push(values);
                     }
+
+                    const diff = res[0].score - res[1].score;
+                    const labels = [
+                        diff > 0 ? 1 : 0, // win
+                        diff >= 4 ? 1 : 0, // win by 4
+                        diff >= 7 ? 1 : 0, // win by 7
+                        diff <= -7 ? 1 : 0, // lost by 7
+                        diff <= -4 ? 1 : 0, // lost by 4
+                        diff < 0 ? 1 : 0, // lost
+                    ]
                 
                     return {
                         metadata: {
                             keys
                         },
                         compare,
-                        label: res[0].score > res[1].score
+                        labels
                     };
                 })
             );
@@ -55,7 +65,7 @@ async function createTraining(intervals){
                     rtn.keys = row.metadata.keys
                 }
 
-                rtn.training.push([row.compare, row.label]);
+                rtn.training.push([row.compare, row.labels]);
             }
         });
     }
@@ -139,7 +149,7 @@ async function createAnalysis(request: AnalysisRequest[]){
 }
 
 const available = Array.from(graph.intervals.values());
-const intervals = available.slice(10);
+const intervals = available.slice(11);
 
 createTraining(intervals)
 .then(() => createAnalysis([

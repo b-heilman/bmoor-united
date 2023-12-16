@@ -69,14 +69,15 @@ def load_training_data() -> TrainingData:
             'compare': compare[0],
             'against': compare[1]
         })
-        labels.append(1 if label else 0)
+        labels.append(label)
 
         #----- reverse it
         features.append({
             'compare': compare[1],
             'against': compare[0]
         })
-        labels.append(0 if label else 1)
+        reversed_label = list(map(lambda x: 0 if x == 1 else 1, label))
+        labels.append(reversed_label)
 
     return {
         'keys': keys,
@@ -134,20 +135,22 @@ def calc_statistics(info: TrainingInfo, model: ModelAbstract):
     fn = 0
     tn = 0
     for i, pred in enumerate(predictions):
-        is_true = info["analysis"]["labels"][i] == 1
-        if pred > 0.5 and is_true:
+        is_true = info["analysis"]["labels"][i][0] == 1
+        pred_value = pred[0]
+        pred_true = pred_value > 0.5
+        if pred_true and is_true:
             tp += 1
             correct = correct + 1
             correctness.append({
-                'prediction': pred,
+                'prediction': pred_value,
                 'correct': True,
                 'label': True
             })
-        elif pred < 0.5 and not is_true:
+        elif not (pred_true or is_true):
             tn += 1
             correct = correct + 1
             correctness.append({
-                'prediction': pred,
+                'prediction': pred_value,
                 'correct': True,
                 'label': False
             })
@@ -158,7 +161,7 @@ def calc_statistics(info: TrainingInfo, model: ModelAbstract):
                 fp += 1
 
             correctness.append({
-                'prediction': pred,
+                'prediction': pred_value,
                 'correct': False,
                 'label': is_true
             })
@@ -199,7 +202,6 @@ def calc_statistics(info: TrainingInfo, model: ModelAbstract):
     })
 
     return {
-        "score": score,
         'prediction': buckets,
         "dimensions": {
             "features": info['stats']['features'],
@@ -207,6 +209,7 @@ def calc_statistics(info: TrainingInfo, model: ModelAbstract):
             "validation": len(info["validation"]['labels']),
             "analysis": len(info["analysis"]['labels']),
         },
+        "score": score,
         'confusion': {
             'tp': tp,
             'fp': fp,

@@ -57,7 +57,7 @@ class SiameseNetwork(torch.nn.Module):
         n_embeddings = 3
         n_input2 = (n_embeddings) * 2
         n_hidden2 = n_embeddings**2
-        n_out = 1
+        n_out = 6 # number of labels we'r trying to match
 
         print({
             'input': n_input,
@@ -78,8 +78,6 @@ class SiameseNetwork(torch.nn.Module):
 
         self.fc = torch.nn.Sequential(
             torch.nn.Linear(n_input2, n_hidden2),
-            torch.nn.ReLU(inplace=True),
-            torch.nn.Linear(n_hidden2, n_hidden2),
             torch.nn.ReLU(inplace=True),
             torch.nn.Linear(n_hidden2, n_out),
         )
@@ -130,7 +128,7 @@ class NeuralClassifier(ModelAbstract):
 
     def fit(self, training: TrainingPair, validation: TrainingPair):
         # https://pytorch.org/tutorials/beginner/introyt/modelsyt_tutorial.html
-        learning_rate = 0.05
+        learning_rate = 0.2
         epochs = 5000
 
         #--- Prep ---
@@ -148,11 +146,11 @@ class NeuralClassifier(ModelAbstract):
         )
         validation_output = torch.FloatTensor(validation["labels"])
 
-        new_shape = (len(training["labels"]), 1)
-        training_output = training_output.view(new_shape)
+        #new_shape = (len(training["labels"]), 1)
+        #training_output = training_output.view(new_shape)
 
-        new_shape = (len(validation["labels"]), 1)
-        validation_output = validation_output.view(new_shape)
+        #new_shape = (len(validation["labels"]), 1)
+        #validation_output = validation_output.view(new_shape)
         
         #--- Config --- 
         loss_fn = torch.nn.BCELoss()
@@ -202,7 +200,7 @@ class NeuralClassifier(ModelAbstract):
             format_features(features, self.scaler)
         )
 
-        return list(map(lambda arr: arr[0], self.model(features).detach().numpy()))
+        return list(self.model(features).detach().numpy())
     
     def save(self):
         with open(STATS_PATH, 'w', encoding='utf-8') as file:

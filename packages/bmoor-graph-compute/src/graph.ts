@@ -76,8 +76,37 @@ export class DimensionalGraph implements DimensionalGraphInterface {
 	select(
 		interval: Interval,
 		selector: GraphSelector,
+		strict = false,
 	): DatumInterface<NodeSelector>[] {
-		return this.graphs.get(interval.ref).select(selector);
+		// TODO: I should be able to do this cleaner...
+		try {
+			return this.graphs.get(interval.ref).select(selector);
+		} catch(ex) {
+			if (strict){
+				throw ex;
+			} else {
+				let res = null;
+				let cur = this.graphs.getPrevTag(interval.ref);
+				let error = null;
+
+				while (cur && !res) {
+					try {
+						res = this.graphs.get(cur).select(selector);
+					} catch(ex){
+						error = ex;
+						cur = this.graphs.getPrevTag(cur);
+						res = null;
+					}
+				}
+
+				if (!res){
+					console.log(cur, res, error);
+					throw error;
+				}
+
+				return res;
+			}
+		}
 	}
 
 	intervalSelect(
@@ -96,12 +125,12 @@ export class DimensionalGraph implements DimensionalGraphInterface {
 					interval.ref,
 			);
 		} else {
-			let cur = this.graphs.getNextTag(interval.ref);
+			let cur = this.graphs.getPrevTag(interval.ref);
 			while (cur && !node) {
 				graph = this.graphs.get(cur);
 				node = graph.getNode(datum.node.ref);
 
-				cur = this.graphs.getNextTag(cur);
+				cur = this.graphs.getPrevTag(cur);
 			}
 
 			if (!node) {

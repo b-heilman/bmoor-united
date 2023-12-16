@@ -123,7 +123,6 @@ export class Graph implements GraphInterface {
 			const selected = this.getNode(selector.reference);
 
 			if (!selected) {
-				console.log(Array.from(this.nodeDex.keys()));
 				throw new Error('Unable to select: ' + selector.reference);
 			}
 

@@ -1,3 +1,5 @@
+set -e
+
 # Expected to be run from script directory
 cd ../src
 
