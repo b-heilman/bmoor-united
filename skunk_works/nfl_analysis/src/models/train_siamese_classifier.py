@@ -1,9 +1,12 @@
 import os
 import json
+import math
 import torch
 import numpy as np
 import pickle
+import psutil
 import random as rd
+import multiprocessing as mp
 
 from sklearn.preprocessing import LabelEncoder
 from sklearn.preprocessing import MinMaxScaler
@@ -115,6 +118,32 @@ class SiameseNetwork(torch.nn.Module):
         
         return output
         
+def _train(model, shard_inputs, shard_ouputs, loss_fn, proc_id, seed, threads):
+    torch.manual_seed(seed)
+    rd.seed(seed)
+
+    epochs = 5000
+    learning_rate = 0.01
+
+    optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate)
+    torch.set_num_threads(threads)
+
+    losses = []
+    for epoch in range(epochs):
+        optimizer.zero_grad()
+
+        predictions = model(shard_inputs)
+        loss = loss_fn(predictions, shard_ouputs)
+        loss_value = loss.item()
+        losses.append(loss.item())
+
+        if epoch % 500 == 0:
+            #print(list(model.parameters())[0])
+            print(f'Epoch {proc_id}-{epoch}: train loss: {loss_value}')
+
+        loss.backward()
+
+        optimizer.step()
 
 class NeuralClassifier(ModelAbstract):
     stats: TrainingStats
@@ -126,10 +155,49 @@ class NeuralClassifier(ModelAbstract):
        self.stats = stats
        self.model = SiameseNetwork(stats)
 
+    def train(self, training_input, training_output, loss_fn, seed):
+        process = psutil.Process().memory_info()
+        system = psutil.virtual_memory()
+        cpus = int(mp.cpu_count())
+
+        available = math.floor(system.available / process.rss)
+        # processes needs to be based on memory footprint
+        processes = available + 1  # math.floor(len(training_chunks) / cpus)
+        if processes < 2:
+            processes = 1
+
+        # can't overload the CPU
+        threads = math.floor(cpus / processes)
+        if threads == 0:
+            threads = 1
+
+        shards = [
+            [training_input, training_output]
+        ]
+
+        print('--processing--', processes, threads)
+
+        self.model.train()
+        self.model.share_memory()
+        processes = []
+        for i, shard in enumerate(shards):
+            print("spawning", i)
+            p = mp.Process(target=_train, args=(
+                self.model, shard[0], shard[1], loss_fn, i, seed, threads
+            ))
+            p.start()
+            processes.append(p)
+
+        for p in processes:
+            p.join()
+
+        print('-- model trained --')
+
     def fit(self, training: TrainingPair, validation: TrainingPair):
+        seed = 42
+
+        rd.seed(seed)
         # https://pytorch.org/tutorials/beginner/introyt/modelsyt_tutorial.html
-        learning_rate = 0.2
-        epochs = 5000
 
         #--- Prep ---
         self.scaler = MinMaxScaler()
@@ -154,7 +222,6 @@ class NeuralClassifier(ModelAbstract):
         
         #--- Config --- 
         loss_fn = torch.nn.BCELoss()
-        optimizer = torch.optim.SGD(self.model.parameters(), lr=learning_rate)
 
         #--- Baseline --- 
         print("-- model created --")
@@ -168,23 +235,7 @@ class NeuralClassifier(ModelAbstract):
         print(training_output.size())
 
         #--- Training --- 
-        self.model.train()
-        losses = []
-        for epoch in range(epochs + 1):
-            optimizer.zero_grad()
-
-            predictions = self.model(training_input)
-            loss = loss_fn(predictions, training_output)
-            loss_value = loss.item()
-            losses.append(loss.item())
-
-            if epoch % 500 == 0:
-                #print(list(model.parameters())[0])
-                print(f'Epoch {epoch}: train loss: {loss_value}')
-            
-            loss.backward()
-
-            optimizer.step()
+        self.train(training_input, training_output, loss_fn, seed)
         
         #--- Analysis --- 
         self.model.eval()
@@ -220,9 +271,6 @@ class NeuralClassifier(ModelAbstract):
         self.scaler = pickle.load(open(SCALAR_PATH, 'rb'))
 
 if __name__ == "__main__":
-    torch.manual_seed(42)
-    rd.seed(42)
-    
     model = train_model(NeuralClassifier)
 
     model.save()

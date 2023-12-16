@@ -1,5 +1,8 @@
 import json
+import math
 import torch
+import psutil
+import multiprocessing as mp
 
 from sklearn.preprocessing import LabelEncoder
 from sklearn.preprocessing import MinMaxScaler
@@ -58,6 +61,29 @@ class NeuralNetwork(torch.nn.Module):
         
         return output
         
+def _train(model, shard_inputs, shard_ouputs, loss_fn):
+    epochs = 5000
+    learning_rate = 0.01
+
+    optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate)
+
+    model.train()
+    losses = []
+    for epoch in range(epochs):
+        optimizer.zero_grad()
+
+        predictions = model(shard_inputs)
+        loss = loss_fn(predictions, shard_ouputs)
+        loss_value = loss.item()
+        losses.append(loss.item())
+
+        if epoch % 500 == 0:
+            #print(list(model.parameters())[0])
+            print(f'Epoch {epoch}: train loss: {loss_value}')
+
+        loss.backward()
+
+        optimizer.step()
 
 class NeuralClassifier(ModelAbstract):
     model: torch.nn.Sequential
@@ -67,11 +93,42 @@ class NeuralClassifier(ModelAbstract):
     def create(self, stats: TrainingStats):
        self.model = NeuralNetwork(stats)
 
+    def train(self, training_input, training_output, loss_fn):
+        process = psutil.Process().memory_info()
+        system = psutil.virtual_memory()
+        cpus = int(mp.cpu_count())
+
+        available = math.floor(system.available / process.rss)
+        # processes needs to be based on memory footprint
+        processes = available + 1  # math.floor(len(training_chunks) / cpus)
+        if processes < 2:
+            processes = 2
+
+        # can't overload the CPU
+        threads = math.floor(cpus / processes)
+        if threads == 0:
+            threads = 1
+
+        shards = [
+            [training_input, training_output]
+        ]
+
+        self.model.train()
+        self.model.share_memory()
+        processes = []
+        for i, shard in enumerate(shards):
+            print("spawning", i)
+            p = mp.Process(target=_train, args=(self.model, shard, i, seed, threads))
+            p.start()
+            processes.append(p)
+
+        for p in processes:
+            p.join()
+
+        print('-- model trained --')
+
     def fit(self, training: TrainingPair, validation: TrainingPair):
         # https://pytorch.org/tutorials/beginner/introyt/modelsyt_tutorial.html
-        learning_rate = 0.01
-        epochs = 5000
-
         self.scaler = MinMaxScaler()
         base_features = format_features(training["features"])
         self.scaler.fit(base_features)
@@ -89,7 +146,6 @@ class NeuralClassifier(ModelAbstract):
         validation_output = validation_output.view(new_shape)
 
         loss_fn = torch.nn.MSELoss()
-        optimizer = torch.optim.SGD(self.model.parameters(), lr=learning_rate)
         
         print("-- model created --")
         self.model.eval()
@@ -103,22 +159,7 @@ class NeuralClassifier(ModelAbstract):
         print(training_input.size())
         print(training_output.size())
 
-        self.model.train()
-        losses = []
-        for epoch in range(epochs):
-            predictions = self.model(training_input)
-            loss = loss_fn(predictions, training_output)
-            loss_value = loss.item()
-            losses.append(loss.item())
-
-            if epoch % 500 == 0:
-                #print(list(model.parameters())[0])
-                print(f'Epoch {epoch}: train loss: {loss_value}')
-
-            self.model.zero_grad()
-            loss.backward()
-
-            optimizer.step()
+        self.train(training_input, training_output, loss_fn)
         
         self.model.eval()
         predictions = self.model(validation_input)
