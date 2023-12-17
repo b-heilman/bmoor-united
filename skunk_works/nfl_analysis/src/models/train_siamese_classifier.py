@@ -145,6 +145,42 @@ def _train(model, shard_inputs, shard_ouputs, loss_fn, proc_id, seed, threads):
 
         optimizer.step()
 
+# I'll evolve this over time
+def create_shards(inputs, outputs, min_size = 100):
+    input_count = len(inputs)
+    shard_target = math.floor(input_count / min_size)
+
+    process = psutil.Process().memory_info()
+    system = psutil.virtual_memory()
+    cpus = int(mp.cpu_count())
+
+    # divide by 2 because I want two threads per process at the least
+    available = math.floor((system.available / process.rss) / 2)
+    
+    # processes needs to be based on memory footprint
+    ideal = math.floor(shard_target / cpus)
+
+    processes = ideal if ideal < available else available
+    if processes < 2:
+        processes = 2
+
+    # can't overload the CPU
+    threads = math.floor(cpus / processes)
+    if threads == 0:
+        processes = 1
+        threads = cpus
+
+    shard_size = math.ceil(input_count / processes)
+
+    print('--processing--', input_count, processes, threads, shard_size)
+
+    shards = []
+    for x in range(0, input_count, shard_size):
+        shards.append([inputs[x:x+shard_size], outputs[x:x+shard_size]])
+
+    return shards, threads
+
+
 class NeuralClassifier(ModelAbstract):
     stats: TrainingStats
     model: torch.nn.Sequential
@@ -156,26 +192,7 @@ class NeuralClassifier(ModelAbstract):
        self.model = SiameseNetwork(stats)
 
     def train(self, training_input, training_output, loss_fn, seed):
-        process = psutil.Process().memory_info()
-        system = psutil.virtual_memory()
-        cpus = int(mp.cpu_count())
-
-        available = math.floor(system.available / process.rss)
-        # processes needs to be based on memory footprint
-        processes = available + 1  # math.floor(len(training_chunks) / cpus)
-        if processes < 2:
-            processes = 1
-
-        # can't overload the CPU
-        threads = math.floor(cpus / processes)
-        if threads == 0:
-            threads = 1
-
-        shards = [
-            [training_input, training_output]
-        ]
-
-        print('--processing--', processes, threads)
+        shards, threads = create_shards(training_input, training_output)
 
         self.model.train()
         self.model.share_memory()
