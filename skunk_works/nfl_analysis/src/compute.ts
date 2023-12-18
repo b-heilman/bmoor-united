@@ -39,6 +39,35 @@ import {
     offRushSuccessRank,
 } from './features';
 import { exit } from 'process';
+
+export const offenseProperties = {
+    offPassMean,
+    offRushMean,
+    offPassWins,
+    offRushWins,
+    offPassSuccesses,
+    offRushSuccesses,
+    offPassSuccessRank,
+    offRushSuccessRank,
+};
+
+export const defenseProperties = {
+    defPassMean,
+    defRushMean,
+    defPassWins,
+    defRushWins,
+    defPassSuccesses,
+    defRushSuccesses,
+    defPassSuccessRank,
+    defRushSuccessRank,
+};
+
+export const teamProperties = {
+    qualityWins, 
+    expectedWins, 
+    qualityLosses, 
+    expectedLosses,
+};
 /*
 const ctx1 = new Context({flags: {verbose: true}});
 executor.calculate(
@@ -78,37 +107,20 @@ export async function calculateCompare(interval, team1, team2){
     const rtn = executor.calculate(
         executor.env.getInterval(interval), 
         // all of these are calculated as of after this week's game since I removed offsets
-        new Accessor({
-            name: 'display',
-            score: 'score',
-            // offPass,
-            // offPassLast,
-            offPassMean,
-            offRushMean,
-            // defPass,
-            // defPassLast,
-            defPassMean,
-            defRushMean,
-            offPassWins,
-            offRushWins,
-            defPassWins,
-            defRushWins,
-            expectedWins,
-            qualityWins,
-            expectedLosses,
-            qualityLosses,
-            defPassSuccesses,
-            defRushSuccesses,
-            offPassSuccesses,
-            offRushSuccesses,
-            defPassSuccessRank,
-            defRushSuccessRank,
-            offPassSuccessRank,
-            offRushSuccessRank,
-        }, {
-            name: NodeValueSelector.event,
-            score: NodeValueSelector.event,
-        }), 
+        new Accessor(
+            Object.assign(
+                {
+                    name: 'display',
+                    score: 'score',
+                }, 
+                teamProperties, 
+                offenseProperties, 
+                defenseProperties
+            ), {
+                name: NodeValueSelector.event,
+                score: NodeValueSelector.event,
+            }
+        ), 
         {reference: team1, and: [
             {reference:team2}
         ]},

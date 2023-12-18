@@ -1,20 +1,57 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
-console.log('fresh', process.memoryUsage());
 import {graph} from './features';
-import {calculateCompare} from './compute';
-console.log('loaded', process.memoryUsage());
+import {
+    calculateCompare,
+    offenseProperties,
+    defenseProperties,
+    teamProperties
+} from './compute';
+
+function reducePairing(res: Record<string, number>[]){
+    const compare = [];
+                
+    for (const row of res){
+        const offProps = []
+        for (const key in Object.keys(offenseProperties)){
+            offProps.push(row[key]);
+        }
+
+        const defProps = []
+        for (const key in Object.keys(defenseProperties)){
+            defProps.push(row[key]);
+        }
+
+        const teamProps = []
+        for (const key in Object.keys(teamProperties)){
+            teamProps.push(row[key]);
+        }
+
+        compare.push([
+            offProps,
+            defProps,
+            teamProps
+        ]);
+    }
+
+    return compare;
+}
+
+const keys = [
+    Object.keys(offenseProperties),
+    Object.keys(defenseProperties),
+    Object.keys(teamProperties)
+];
 
 async function createTraining(intervals){
     const rtn = {
-        keys: null,
+        keys,
         training: []
     };
 
     for (const interval of intervals){
         console.log(interval);
-        console.log(process.memoryUsage());
         const weekGraph = graph.getGraph(interval);
 
         const proc = [];
@@ -26,17 +63,7 @@ async function createTraining(intervals){
                 calculateCompare(interval.ref, nodes[0].ref, nodes[1].ref)
                 .then((res: Record<string, number>[]) => {
                     // This is where I drop name and score
-                    const keys = Object.keys(res[0]).slice(2);
-                    const compare = [];
-                
-                    for (const row of res){
-                        const values = [];
-                        for (const key of keys){
-                            values.push(row[key]);
-                        }
-                
-                        compare.push(values);
-                    }
+                    const compare = reducePairing(res)
 
                     const diff = res[0].score - res[1].score;
                     const labels = [
@@ -61,10 +88,6 @@ async function createTraining(intervals){
 
         await Promise.all(proc).then(rows => {
             for (const row of rows){
-                if (!rtn.keys){
-                    rtn.keys = row.metadata.keys
-                }
-
                 rtn.training.push([row.compare, row.labels]);
             }
         });
@@ -97,7 +120,6 @@ async function createAnalysis(request: AnalysisRequest[]){
         const interval = graph.getInterval(intervalReq.interval);
 
         console.log(interval);
-        console.log(process.memoryUsage());
 
         const proc = [];
         for (const cmp of intervalReq.compare){
@@ -105,17 +127,7 @@ async function createAnalysis(request: AnalysisRequest[]){
                 calculateCompare(interval.ref, cmp.team1, cmp.team2)
                 .then((res: Record<string, number>[]) => {
                     // This is where I drop name and score
-                    const keys = Object.keys(res[0]).slice(2);
-                    const compare = [];
-                
-                    for (const row of res){
-                        const values = [];
-                        for (const key of keys){
-                            values.push(row[key]);
-                        }
-                
-                        compare.push(values);
-                    }
+                    const compare = reducePairing(res);
                 
                     return {
                         metadata: {
@@ -130,10 +142,6 @@ async function createAnalysis(request: AnalysisRequest[]){
 
         await Promise.all(proc).then(rows => {
             for (const row of rows){
-                if (!rtn.keys){
-                    rtn.keys = row.metadata.keys
-                }
-
                 rtn.analysis.push([row.compare, row.label]);
             }
         });
