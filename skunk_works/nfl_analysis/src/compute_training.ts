@@ -14,17 +14,17 @@ function reducePairing(res: Record<string, number>[]){
                 
     for (const row of res){
         const offProps = []
-        for (const key in Object.keys(offenseProperties)){
+        for (const key of Object.keys(offenseProperties)){
             offProps.push(row[key]);
         }
 
         const defProps = []
-        for (const key in Object.keys(defenseProperties)){
+        for (const key of Object.keys(defenseProperties)){
             defProps.push(row[key]);
         }
 
         const teamProps = []
-        for (const key in Object.keys(teamProperties)){
+        for (const key of Object.keys(teamProperties)){
             teamProps.push(row[key]);
         }
 

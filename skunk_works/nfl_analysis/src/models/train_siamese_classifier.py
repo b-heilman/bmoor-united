@@ -3,22 +3,27 @@ import json
 import math
 import torch
 import numpy as np
+import numpy.typing as npt
 import pickle
 import psutil
 import random as rd
-import multiprocessing as mp
+import torch.multiprocessing as mp
 
+from typing import List, Tuple
 from sklearn.preprocessing import LabelEncoder
 from sklearn.preprocessing import MinMaxScaler
 
 from lib.common import (
-    load_training_data, 
-    create_training_info, 
-    calc_statistics,
+    FEATURES_POS,
+    LABEL_POS,
+    STATS_POS,
+    KEYS_POS,
+    train_scaler,
+    scale_processing,
     train_model,
     analyze_model,
     FeatureSet,
-    TrainingPair,
+    ProcessingPair,
     TrainingStats,
     ModelAbstract
 )
@@ -31,36 +36,24 @@ STATS_PATH = saveDir+'/stats.json'
 MODEL_PATH = saveDir+'/model.torch'
 SCALAR_PATH = saveDir+'/transformer.pkl'
 
-def reduce_features(features: FeatureSet):
-    rtn = []
-    for feature in features:
-        rtn.append(feature['compare'])
-        rtn.append(feature['against'])
-
-    return rtn
-
-def format_features(features: FeatureSet, scaler: MinMaxScaler):
-    compares = []
-    againsts = []
-    for feature in features:
-        compares.append(feature['compare'])
-        againsts.append(feature['against'])
-
-    return np.array([
-        scaler.transform(compares), 
-        scaler.transform(againsts)
-    ])
+FeaturesShape = List[Tuple[List[float], List[float]]]
+LabelsShape = List[float]
+IncomingShape = Tuple[FeaturesShape, LabelsShape]
+IncomingStats = dict
 
 class SiameseNetwork(torch.nn.Module):
-    def __init__(self, stats: TrainingStats):
+    def __init__(self, stats: IncomingStats):
         super(SiameseNetwork, self).__init__()
 
-        n_input = stats["features"]
-        n_hidden = n_input**2
+        # TODO: I will split these in the next iteration
+        # np.arange(16.0).reshape(4, 4)
+        # np.hsplit(x, np.array([3, 6]))
+        n_input = stats["offense"] + stats["defense"] + stats["team"]
+        n_hidden = math.ceil(n_input**2)
         n_embeddings = 3
         n_input2 = (n_embeddings) * 2
-        n_hidden2 = n_embeddings**2
-        n_out = 6 # number of labels we'r trying to match
+        n_hidden2 = math.ceil(n_embeddings**2)
+        n_out = stats['label'] # number of labels we'r trying to match
 
         print({
             'input': n_input,
@@ -97,78 +90,91 @@ class SiameseNetwork(torch.nn.Module):
 
         return output # n x 3
 
-    def forward(self, input):
+    def forward(self, input: FeatureSet):
         # get two images' features
         input1 = input[0]
         input2 = input[1]
         
         output1 = self.forward_once(input1)
         output2 = self.forward_once(input2)
-
+        
         # concatenate both images' features
         # distance = self.distance(output1, output2)
         # distance = distance.view(distance.size()[0], -1)
         output = torch.cat((output1, output2), 1)
-
+        
         # pass the concatenation to the linear layers
         output = self.fc(output)
-
+        
         # pass the out of the linear layers to sigmoid layer
         output = self.sigmoid(output)
         
         return output
         
 def _train(model, shard_inputs, shard_ouputs, loss_fn, proc_id, seed, threads):
+    shard_inputs = torch.FloatTensor(np.array(shard_inputs))
+    shard_ouputs = torch.FloatTensor(np.array(shard_ouputs))
+
+    print(f'--training data-- {proc_id}')
+    print(shard_inputs.size())
+    print(shard_ouputs.size())
+
     torch.manual_seed(seed)
     rd.seed(seed)
 
-    epochs = 5000
-    learning_rate = 0.01
+    epochs = 10000
+    learning_rate = 0.05
 
     optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate)
     torch.set_num_threads(threads)
 
-    losses = []
-    for epoch in range(epochs):
+    for epoch in range(epochs+1):
         optimizer.zero_grad()
-
         predictions = model(shard_inputs)
+        
         loss = loss_fn(predictions, shard_ouputs)
         loss_value = loss.item()
-        losses.append(loss.item())
-
+        
         if epoch % 500 == 0:
             #print(list(model.parameters())[0])
             print(f'Epoch {proc_id}-{epoch}: train loss: {loss_value}')
 
+        
         loss.backward()
 
         optimizer.step()
 
 # I'll evolve this over time
-def create_shards(inputs, outputs, min_size = 100):
-    input_count = len(inputs)
+def create_shards(inputs, outputs, min_size = 100, simple=False):
+    base = inputs[0]
+    compare = inputs[1]
+
+    input_count = len(base)
     shard_target = math.floor(input_count / min_size)
 
     process = psutil.Process().memory_info()
     system = psutil.virtual_memory()
     cpus = int(mp.cpu_count())
-
-    # divide by 2 because I want two threads per process at the least
-    available = math.floor((system.available / process.rss) / 2)
     
-    # processes needs to be based on memory footprint
-    ideal = math.floor(shard_target / cpus)
-
-    processes = ideal if ideal < available else available
-    if processes < 2:
-        processes = 2
-
-    # can't overload the CPU
-    threads = math.floor(cpus / processes)
-    if threads == 0:
+    if simple:
         processes = 1
         threads = cpus
+    else:
+        # divide by 2 because I want two threads per process at the least
+        available = math.floor((system.available / process.rss) / 2)
+        
+        # processes needs to be based on memory footprint
+        ideal = math.floor(shard_target / cpus)
+
+        processes = ideal if ideal < available else available
+        if processes < 2:
+            processes = 2
+
+        # can't overload the CPU
+        threads = math.floor(cpus / processes)
+        if threads == 0:
+            processes = 1
+            threads = cpus
 
     shard_size = math.ceil(input_count / processes)
 
@@ -176,9 +182,22 @@ def create_shards(inputs, outputs, min_size = 100):
 
     shards = []
     for x in range(0, input_count, shard_size):
-        shards.append([inputs[x:x+shard_size], outputs[x:x+shard_size]])
+        shards.append([
+            (np.copy(base[x:x+shard_size]), np.copy(compare[x:x+shard_size])), 
+            np.copy(outputs[x:x+shard_size])
+        ])
 
     return shards, threads
+
+def format_features(features: FeatureSet):
+    base = []
+    compare = []
+
+    for row in features:
+        base.append(row[0])
+        compare.append(row[1])
+
+    return np.array([base, compare])
 
 
 class NeuralClassifier(ModelAbstract):
@@ -192,44 +211,51 @@ class NeuralClassifier(ModelAbstract):
        self.model = SiameseNetwork(stats)
 
     def train(self, training_input, training_output, loss_fn, seed):
-        shards, threads = create_shards(training_input, training_output)
+        shards, threads = create_shards(training_input, training_output, simple=True)
 
         self.model.train()
-        self.model.share_memory()
+        
         processes = []
-        for i, shard in enumerate(shards):
-            print("spawning", i)
-            p = mp.Process(target=_train, args=(
-                self.model, shard[0], shard[1], loss_fn, i, seed, threads
-            ))
-            p.start()
-            processes.append(p)
 
-        for p in processes:
-            p.join()
+        if len(shards) > 1:
+            mp.set_start_method('spawn', force=True)
+            self.model.share_memory()
 
-        print('-- model trained --')
+            for i in range(len(shards)):
+                shard = shards[i]
+                print("spawning", i)
+                p = mp.Process(target=_train, args=(
+                    self.model, shard[0], shard[1], loss_fn, i, seed, threads
+                ))
+                p.start()
+                processes.append(p)
 
-    def fit(self, training: TrainingPair, validation: TrainingPair):
+            for p in processes:
+                p.join()
+        else:
+            shard = shards[0]
+            _train(self.model, shard[0], shard[1], loss_fn, 0, seed, threads)
+
+    def fit(self, training: ProcessingPair, validation: ProcessingPair):
         seed = 42
 
         rd.seed(seed)
         # https://pytorch.org/tutorials/beginner/introyt/modelsyt_tutorial.html
 
         #--- Prep ---
-        self.scaler = MinMaxScaler()
-        base_features = reduce_features(training["features"])
-        self.scaler.fit(base_features)
+        self.scaler = train_scaler(training)
 
-        training_input = torch.FloatTensor(
-            format_features(training["features"], self.scaler)
-        )
-        training_output = torch.FloatTensor(training["labels"])
+        scale_processing(training[FEATURES_POS], self.scaler)
+        scale_processing(validation[FEATURES_POS], self.scaler)
 
-        validation_input = torch.FloatTensor(
-            format_features(validation["features"], self.scaler)
-        )
-        validation_output = torch.FloatTensor(validation["labels"])
+        # We convert these into tensors after sharding
+        # If I create the tensors here and then shard, forking causes an error in
+        # memory
+        training_input = format_features(training[FEATURES_POS])
+        training_output = training[LABEL_POS]
+
+        validation_input = torch.FloatTensor(format_features(validation[FEATURES_POS]))
+        validation_output = torch.FloatTensor(validation[LABEL_POS])
 
         #new_shape = (len(training["labels"]), 1)
         #training_output = training_output.view(new_shape)
@@ -243,30 +269,33 @@ class NeuralClassifier(ModelAbstract):
         #--- Baseline --- 
         print("-- model created --")
         self.model.eval()
-        predictions = self.model(validation_input)
-        train = loss_fn(predictions, validation_output)
-        
-        print('Test loss before training' , train.item())
-        print('--training data--')
-        print(training_input.size())
-        print(training_output.size())
+        with torch.no_grad():
+            predictions = self.model(validation_input)
+            # print(validation_input.size())
+            # print(predictions.size())
+            before = loss_fn(predictions, validation_output)
+            
+            print('Test loss before training' , before.item())
 
         #--- Training --- 
         self.train(training_input, training_output, loss_fn, seed)
         
+        print('--trained--')
+
         #--- Analysis --- 
         self.model.eval()
-        predictions = self.model(validation_input)
-        train = loss_fn(predictions, validation_output)
-        print('Test loss after training' , train.item())
+        with torch.no_grad():
+            predictions = self.model(validation_input)
+            after = loss_fn(predictions, validation_output)
+            print('Test loss after training' , after.item())
 
     def get_feature_importances(self):
         return []
         
     def predict(self, features: FeatureSet):
-        features = torch.FloatTensor(
-            format_features(features, self.scaler)
-        )
+        scale_processing(features, self.scaler)
+
+        features = torch.FloatTensor(format_features(features))
 
         return list(self.model(features).detach().numpy())
     
