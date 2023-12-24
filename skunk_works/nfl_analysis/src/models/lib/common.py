@@ -66,20 +66,8 @@ def reduce_incoming(content: IncomingSet) -> ProcessingPair:
     stats = get_incoming_stats(content)
 
     for row in content:
-        features = row[FEATURES_POS]
-        labels = row[LABEL_POS]
-
-        rtn_labels.append(labels)
-        pairing = []
-
-        for piece in features:
-            pairing.append(
-                piece[OFFENSE_FEATURES_POS] + \
-                piece[DEFENSE_FEATURES_POS] + \
-                piece[TEAM_FEATURES_POS]
-            )
-
-        rtn_features.append(tuple(pairing))
+        rtn_labels.append(row[LABEL_POS])
+        rtn_features.append(tuple(row[FEATURES_POS]))
 
     return np.array(rtn_features), np.array(rtn_labels), stats, None
 

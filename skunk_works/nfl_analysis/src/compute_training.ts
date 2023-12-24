@@ -9,44 +9,32 @@ import {
     teamProperties
 } from './compute';
 
+const stats = {
+    offense: Object.keys(offenseProperties),
+    defense: Object.keys(defenseProperties),
+    team: Object.keys(teamProperties)
+};
+
+const keys = [].concat(stats.offense, stats.defense, stats.team);
+
 function reducePairing(res: Record<string, number>[]){
     const compare = [];
                 
     for (const row of res){
-        const offProps = []
-        for (const key of Object.keys(offenseProperties)){
-            offProps.push(row[key]);
+        const props = []
+        for (const key of keys){
+            props.push(row[key]);
         }
 
-        const defProps = []
-        for (const key of Object.keys(defenseProperties)){
-            defProps.push(row[key]);
-        }
-
-        const teamProps = []
-        for (const key of Object.keys(teamProperties)){
-            teamProps.push(row[key]);
-        }
-
-        compare.push([
-            offProps,
-            defProps,
-            teamProps
-        ]);
+        compare.push(props);
     }
 
     return compare;
 }
 
-const keys = [
-    Object.keys(offenseProperties),
-    Object.keys(defenseProperties),
-    Object.keys(teamProperties)
-];
-
 async function createTraining(intervals){
     const rtn = {
-        keys,
+        stats,
         training: []
     };
 
@@ -76,9 +64,6 @@ async function createTraining(intervals){
                     ]
                 
                     return {
-                        metadata: {
-                            keys
-                        },
                         compare,
                         labels
                     };
@@ -112,7 +97,7 @@ interface AnalysisRequest {
 
 async function createAnalysis(request: AnalysisRequest[]){
     const rtn = {
-        keys: null,
+        stats,
         analysis: []
     };
 
@@ -130,9 +115,6 @@ async function createAnalysis(request: AnalysisRequest[]){
                     const compare = reducePairing(res);
                 
                     return {
-                        metadata: {
-                            keys
-                        },
                         compare,
                         label: `${interval.ref}: ${res[0].name} vs ${res[1].name}`
                     };
