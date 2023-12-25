@@ -1,9 +1,8 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
-import { Context } from '@bmoor/context';
 import {mean, sum} from '@bmoor/compute';
-import {GraphDatum} from '@bmoor/graph';
+import {Context} from '@bmoor/context';
 import {
 	DimensionalDatumAccessor as Accessor,
 	DimensionalExecutor,
@@ -43,12 +42,16 @@ export const offPass = new Processor('off-pass', sum, [
 	},
 ]);
 
-export const offPassLast = new Processor('off-pass-last', ((d: number) => d), [
-	{
-		offset: -1,
-		input: offPass,
-	},
-]);
+export const offPassLast = new Processor(
+	'off-pass-last',
+	(d: number) => d,
+	[
+		{
+			offset: -1,
+			input: offPass,
+		},
+	],
+);
 
 export const offPassMean = new Processor('off-pass-mean', mean, [
 	{
@@ -68,210 +71,210 @@ export const offRush = new Processor('off-rush', sum, [
 	},
 ]);
 
-export const offRushLast = new Processor('off-rush-last', ((d: number) => d), [
-	{
-		offset: -1,
-		input: offRush,
-	},
-]);
+export const offRushLast = new Processor(
+	'off-rush-last',
+	(d: number) => d,
+	[
+		{
+			offset: -1,
+			input: offRush,
+		},
+	],
+);
 
 export const offRushMean = new Processor('off-rush-mean', mean, [
 	{
 		input: offRushLast,
-		range:  5,
+		range: 5,
 	},
 ]);
 
-export const defRush = new Processor('def-rush', v => v[0], [
+export const defRush = new Processor('def-rush', (v) => v[0], [
 	{
 		input: offRush,
 		select: {
 			assume: 'defense',
-			edge: 'against'
+			edge: 'against',
 		},
-	}
-]);
-
-export const defRushLast = new Processor('def-rush-last', (d: number) => d, [
-	{
-		offset: -1,
-		input: defRush,
 	},
 ]);
+
+export const defRushLast = new Processor(
+	'def-rush-last',
+	(d: number) => d,
+	[
+		{
+			offset: -1,
+			input: defRush,
+		},
+	],
+);
 
 export const defRushMean = new Processor('def-rush-mean', mean, [
 	{
 		input: defRushLast,
-		range:  5,
+		range: 5,
 		select: {
-			assume: 'defense'
-		}
+			assume: 'defense',
+		},
 	},
 ]);
 
-export const defPass = new Processor('def-pass', v => v[0], [
+export const defPass = new Processor('def-pass', (v) => v[0], [
 	// TODO: how do I make this always read from the defense?
 	{
 		input: offPass,
 		select: {
 			assume: 'defense',
-			edge: 'against'
+			edge: 'against',
 		},
-	}
-]);
-
-export const defPassLast = new Processor('def-pass-last', (d: number) => d, [
-	{
-		offset: -1,
-		input: defPass,
 	},
 ]);
+
+export const defPassLast = new Processor(
+	'def-pass-last',
+	(d: number) => d,
+	[
+		{
+			offset: -1,
+			input: defPass,
+		},
+	],
+);
 
 export const defPassMean = new Processor('def-pass-mean', mean, [
 	// TODO: this should be on the defense, ideally...
 	{
 		input: defPassLast,
-		range:  5,
+		range: 5,
 		select: {
-			assume: 'defense'
-		}
+			assume: 'defense',
+		},
 	},
 ]);
 
 export const offRushRank = new Ranker(
-	'off-rush-rank', 
+	'off-rush-rank',
 	{
 		bucketsCount: 6,
 		select: {
 			global: true,
-			type: 'offense'
-		}
+			type: 'offense',
+		},
 	},
 	(input: number) => input,
-	[
-		{ input: offRushMean }
-	]
+	[{input: offRushMean}],
 );
 
 export const offPassRank = new Ranker(
-	'off-pass-rank', 
+	'off-pass-rank',
 	{
 		bucketsCount: 6,
 		select: {
 			global: true,
-			type: 'offense'
-		}
+			type: 'offense',
+		},
 	},
 	(input: number) => input,
-	[
-		{ input: offPassMean }
-	]
+	[{input: offPassMean}],
 );
 
 export const offRank = new Ranker(
-	'off-rank', 
+	'off-rank',
 	{
 		asc: true,
 		bucketsCount: 6,
 		select: {
 			global: true,
-			type: 'offense'
-		}
+			type: 'offense',
+		},
 	},
 	(pass: number, rush: number) => pass + rush,
-	[
-		{ input: offPassRank },
-		{ input: offRushRank }
-	]
+	[{input: offPassRank}, {input: offRushRank}],
 );
 
 export const defRushRank = new Ranker(
-	'def-rush-rank', 
+	'def-rush-rank',
 	{
 		bucketsCount: 6,
 		select: {
 			global: true,
-			type: 'defense'
-		}
+			type: 'defense',
+		},
 	},
 	(input: number) => input,
-	[
-		{ input: defRushMean }
-	]
+	[{input: defRushMean}],
 );
 
 export const defPassRank = new Ranker(
-	'def-pass-rank', 
+	'def-pass-rank',
 	{
 		bucketsCount: 6,
 		select: {
 			global: true,
-			type: 'defense'
-		}
+			type: 'defense',
+		},
 	},
 	(input: number) => input,
-	[
-		{ input: defPassMean }
-	]
+	[{input: defPassMean}],
 );
 
 export const defRank = new Ranker(
-	'def-rank', 
+	'def-rank',
 	{
 		asc: true,
 		bucketsCount: 6,
 		select: {
 			global: true,
-			type: 'defense'
-		}
+			type: 'defense',
+		},
 	},
 	(pass: number, rush: number) => pass + rush,
-	[
-		{ input: defPassRank },
-		{ input: defRushRank }
-	]
+	[{input: defPassRank}, {input: defRushRank}],
 );
 
 export const teamRank = new Ranker(
-	'team-rank', 
+	'team-rank',
 	{
 		asc: true,
 		bucketsCount: 6,
 		select: {
 			global: true,
-			type: 'team'
-		}
+			type: 'team',
+		},
 	},
 	(def: number[], off: number[]) => def[0] + off[0],
 	[
-		{ input: defRank, select: {type: 'defense'} },
-		{ input: offRank, select: {type: 'offense'} }
-	]
+		{input: defRank, select: {type: 'defense'}},
+		{input: offRank, select: {type: 'offense'}},
+	],
 );
 
-export const offRushWin = new Processor('off-rush-win', 
+export const offRushWin = new Processor(
+	'off-rush-win',
 	(
-		[our]: {yards: number, rank: number}[],
-		[their]: {mean: number, rank: number}[]
+		[our]: {yards: number; rank: number}[],
+		[their]: {mean: number; rank: number}[],
 	) => {
-		if (our.rank < their.rank){
+		if (our.rank < their.rank) {
 			return our.yards > their.mean ? 2 : -1;
-		} else if (our.rank > their.rank){
+		} else if (our.rank > their.rank) {
 			return our.yards > their.mean ? 1 : -2;
 		} else {
 			return our.yards > their.mean ? 1 : 0;
 		}
 
 		return 0;
-	}, [
+	},
+	[
 		{
 			input: new Accessor({
 				yards: offRush,
-				rank: offRushRank
+				rank: offRushRank,
 			}),
 			select: {
 				assume: 'team',
-				type: 'offense'
+				type: 'offense',
 			},
 		},
 		{
@@ -282,46 +285,48 @@ export const offRushWin = new Processor('off-rush-win',
 			select: {
 				assume: 'team',
 				edge: 'opponent',
-				type: 'defense'
+				type: 'defense',
 			},
 		},
-	]
+	],
 );
 
 export const offRushWins = new Processor('off-rush-win-mean', mean, [
 	// TODO: this should be on the defense, ideally...
 	{
 		input: offRushWin,
-		range:  5,
+		range: 5,
 		select: {
-			assume: 'team' // make this implicit
-		}
+			assume: 'team', // make this implicit
+		},
 	},
 ]);
 
-export const offPassWin = new Processor('off-pass-win', 
+export const offPassWin = new Processor(
+	'off-pass-win',
 	(
-		[our]: {yards: number, rank: number}[],
-		[their]: {mean: number, rank: number}[]
+		[our]: {yards: number; rank: number}[],
+		[their]: {mean: number; rank: number}[],
 	) => {
-		if (our.rank < their.rank){
+		if (our.rank < their.rank) {
 			return our.yards > their.mean ? 2 : -1;
-		} else if (our.rank > their.rank){
+		} else if (our.rank > their.rank) {
 			return our.yards > their.mean ? 1 : -2;
 		} else {
 			return our.yards > their.mean ? 1 : 0;
 		}
 
 		return 0;
-	}, [
+	},
+	[
 		{
 			input: new Accessor({
 				yards: offPass,
-				rank: offPassRank
+				rank: offPassRank,
 			}),
 			select: {
 				assume: 'team',
-				type: 'offense'
+				type: 'offense',
 			},
 		},
 		{
@@ -332,42 +337,44 @@ export const offPassWin = new Processor('off-pass-win',
 			select: {
 				assume: 'team',
 				edge: 'opponent',
-				type: 'defense'
+				type: 'defense',
 			},
 		},
-	]
+	],
 );
 
 export const offPassWins = new Processor('off-pass-win-mean', mean, [
 	// TODO: this should be on the defense, ideally...
 	{
 		input: offPassWin,
-		range:  5,
+		range: 5,
 		select: {
-			assume: 'team' // make this implicit
-		}
+			assume: 'team', // make this implicit
+		},
 	},
 ]);
 
-export const defRushWin = new Processor('def-rush-win', 
+export const defRushWin = new Processor(
+	'def-rush-win',
 	(
-		[our]: {yards: number, rank: number}[],
-		[their]: {mean: number, rank: number}[]
+		[our]: {yards: number; rank: number}[],
+		[their]: {mean: number; rank: number}[],
 	) => {
-		if (our.rank < their.rank){
+		if (our.rank < their.rank) {
 			return our.yards < their.mean ? 2 : -1;
-		} else if (our.rank > their.rank){
+		} else if (our.rank > their.rank) {
 			return our.yards < their.mean ? 1 : -2;
 		} else {
 			return our.yards < their.mean ? 1 : 0;
 		}
 
 		return 0;
-	}, [
+	},
+	[
 		{
 			input: new Accessor({
 				yards: defRush,
-				rank: defRushRank
+				rank: defRushRank,
 			}),
 			select: {
 				assume: 'team',
@@ -382,42 +389,44 @@ export const defRushWin = new Processor('def-rush-win',
 			select: {
 				assume: 'team',
 				edge: 'opponent',
-				type: 'offense'
+				type: 'offense',
 			},
 		},
-	]
+	],
 );
 
 export const defRushWins = new Processor('def-rush-win-mean', mean, [
 	// TODO: this should be on the defense, ideally...
 	{
 		input: defRushWin,
-		range:  5,
+		range: 5,
 		select: {
-			assume: 'team' // make this implicit
-		}
+			assume: 'team', // make this implicit
+		},
 	},
 ]);
 
-export const defPassWin = new Processor('def-pass-win', 
+export const defPassWin = new Processor(
+	'def-pass-win',
 	(
-		[our]: {yards: number, rank: number}[],
-		[their]: {mean: number, rank: number}[]
+		[our]: {yards: number; rank: number}[],
+		[their]: {mean: number; rank: number}[],
 	) => {
-		if (our.rank < their.rank){
+		if (our.rank < their.rank) {
 			return our.yards < their.mean ? 2 : -1;
-		} else if (our.rank > their.rank){
+		} else if (our.rank > their.rank) {
 			return our.yards < their.mean ? 1 : -2;
 		} else {
 			return our.yards < their.mean ? 1 : 0;
 		}
 
 		return 0;
-	}, [
+	},
+	[
 		{
 			input: new Accessor({
 				yards: defPass,
-				rank: defPassRank
+				rank: defPassRank,
 			}),
 			select: {
 				assume: 'team',
@@ -432,82 +441,84 @@ export const defPassWin = new Processor('def-pass-win',
 			select: {
 				assume: 'team',
 				edge: 'opponent',
-				type: 'offense'
+				type: 'offense',
 			},
 		},
-	]
+	],
 );
 
 export const defPassWins = new Processor('def-pass-win-mean', mean, [
 	// TODO: this should be on the defense, ideally...
 	{
 		input: defPassWin,
-		range:  5,
+		range: 5,
 		select: {
-			assume: 'team' // make this implicit
-		}
+			assume: 'team', // make this implicit
+		},
 	},
 ]);
 
-export const gameExpectation = new Processor('game-expectation', 
+export const gameExpectation = new Processor(
+	'game-expectation',
 	(
-		[ourOff]: {total: number, rush: number, pass: number}[], 
-		[ourDef]: {total: number, rush: number, pass: number}[], 
-		[theirOff]: {total: number, rush: number, pass: number}[], 
-		[theirDef]: {total: number, rush: number, pass: number}[]
-	) => { 
+		[ourOff]: {total: number; rush: number; pass: number}[],
+		[ourDef]: {total: number; rush: number; pass: number}[],
+		[theirOff]: {total: number; rush: number; pass: number}[],
+		[theirDef]: {total: number; rush: number; pass: number}[],
+	) => {
 		let score = 0;
-        
+
 		// remember, ranks... lower is better
-		if (ourOff.total < theirDef.total){
+		if (ourOff.total < theirDef.total) {
 			score++;
-		} else if (ourOff.total > theirDef.total){
+		} else if (ourOff.total > theirDef.total) {
 			score--;
 		}
-		
-		if (ourOff.rush < theirDef.rush){
+
+		if (ourOff.rush < theirDef.rush) {
 			score++;
-		} else if (ourOff.rush > theirDef.rush){
+		} else if (ourOff.rush > theirDef.rush) {
 			score--;
 		}
-		
-		if (ourOff.pass < theirDef.pass){
+
+		if (ourOff.pass < theirDef.pass) {
 			score++;
-		} else if (ourOff.pass > theirDef.pass){
+		} else if (ourOff.pass > theirDef.pass) {
 			score--;
 		}
-		
-		if (ourDef.total < theirOff.total){
+
+		if (ourDef.total < theirOff.total) {
 			score++;
-		} else if (ourDef.total > theirOff.total){
+		} else if (ourDef.total > theirOff.total) {
 			score--;
 		}
-		
-		if (ourDef.rush < theirOff.rush){
+
+		if (ourDef.rush < theirOff.rush) {
 			score++;
-		} else if (ourDef.rush > theirOff.rush){
+		} else if (ourDef.rush > theirOff.rush) {
 			score--;
 		}
-		
-		if (ourDef.pass < theirOff.pass){
+
+		if (ourDef.pass < theirOff.pass) {
 			score++;
-		} else if (ourDef.pass > theirOff.pass){
+		} else if (ourDef.pass > theirOff.pass) {
 			score--;
 		}
-		
-		if (score > 2){
+
+		if (score > 2) {
 			return 1;
-		} else if (score < -2){
+		} else if (score < -2) {
 			return -1;
 		} else {
 			return 0;
 		}
-	}, [
+	},
+	[
 		{
 			input: new Accessor({
 				total: offRank,
 				rush: offRushRank,
-				pass: offPassRank
+				pass: offPassRank,
 			}),
 			select: {
 				type: 'offense',
@@ -517,7 +528,7 @@ export const gameExpectation = new Processor('game-expectation',
 			input: new Accessor({
 				total: defRank,
 				rush: defRushRank,
-				pass: defPassRank
+				pass: defPassRank,
 			}),
 			select: {
 				type: 'defense',
@@ -527,7 +538,7 @@ export const gameExpectation = new Processor('game-expectation',
 			input: new Accessor({
 				total: offRank,
 				rush: offRushRank,
-				pass: offPassRank
+				pass: offPassRank,
 			}),
 			select: {
 				edge: 'opponent',
@@ -538,332 +549,316 @@ export const gameExpectation = new Processor('game-expectation',
 			input: new Accessor({
 				total: defRank,
 				rush: defRushRank,
-				pass: defPassRank
+				pass: defPassRank,
 			}),
 			select: {
 				edge: 'opponent',
 				type: 'defense',
 			},
 		},
-	]
+	],
 );
 
-export const expectedWin = new Processor('team-expected-win', 
-	(
-		results: {win: boolean, expect: number}, 
-	) => {
-		if (results.win && results.expect > 0){
+export const expectedWin = new Processor(
+	'team-expected-win',
+	(results: {win: boolean; expect: number}) => {
+		if (results.win && results.expect > 0) {
 			return 1;
 		}
 
 		return 0;
-	}, [
+	},
+	[
 		{
 			input: new Accessor({
 				win: 'win',
-				expect: gameExpectation
+				expect: gameExpectation,
 			}),
-		}
-	]
+		},
+	],
 );
 
-export const qualityWin = new Processor('team-quality-win', 
-	(
-		results: {win: boolean, expect: number}, 
-	) => {
-		if (results.win && results.expect < 0){
+export const qualityWin = new Processor(
+	'team-quality-win',
+	(results: {win: boolean; expect: number}) => {
+		if (results.win && results.expect < 0) {
 			return 1;
 		}
 
 		return 0;
-	}, [
+	},
+	[
 		{
 			input: new Accessor({
 				win: 'win',
-				expect: gameExpectation
+				expect: gameExpectation,
 			}),
-		}
-	]
+		},
+	],
 );
 
-export const expectedLoss = new Processor('team-expected-loss', 
-	(
-		results: {win: boolean, offset: number, expect: number}, 
-	) => {
-		if (!results.win && results.expect < 0){
+export const expectedLoss = new Processor(
+	'team-expected-loss',
+	(results: {win: boolean; offset: number; expect: number}) => {
+		if (!results.win && results.expect < 0) {
 			return 1;
 		}
 
 		return 0;
-	}, [
-		{
-			input: new Accessor({
-				win: 'win',
-				offset: 'offset',
-				expect: gameExpectation
-			}),
-		}
-	]
-);
-
-export const qualityLoss = new Processor('team-quality-loss', 
-	(
-		results: {win: boolean, offset: number, expect: number}, 
-	) => {
-		if (!results.win && results.expect > 0){
-			return 1;
-		}
-
-		return 0;
-	}, [
+	},
+	[
 		{
 			input: new Accessor({
 				win: 'win',
 				offset: 'offset',
-				expect: gameExpectation
+				expect: gameExpectation,
 			}),
+		},
+	],
+);
+
+export const qualityLoss = new Processor(
+	'team-quality-loss',
+	(results: {win: boolean; offset: number; expect: number}) => {
+		if (!results.win && results.expect > 0) {
+			return 1;
 		}
-	]
+
+		return 0;
+	},
+	[
+		{
+			input: new Accessor({
+				win: 'win',
+				offset: 'offset',
+				expect: gameExpectation,
+			}),
+		},
+	],
 );
 
 export const qualityWins = new Processor('team-quality-wins', sum, [
 	{
 		input: qualityWin,
-		range:  5,
+		range: 5,
 		select: {
-			parent: 'team' // make this implicit
-		}
+			parent: 'team', // make this implicit
+		},
 	},
 ]);
 
 export const expectedWins = new Processor('team-expected-wins', sum, [
 	{
 		input: expectedWin,
-		range:  5,
+		range: 5,
 		select: {
-			parent: 'team' // make this implicit
-		}
+			parent: 'team', // make this implicit
+		},
 	},
 ]);
 
 export const qualityLosses = new Processor('team-quality-losses', sum, [
 	{
 		input: qualityLoss,
-		range:  5,
+		range: 5,
 		select: {
-			parent: 'team' // make this implicit
-		}
+			parent: 'team', // make this implicit
+		},
 	},
 ]);
 
 export const expectedLosses = new Processor('team-expected-losses', sum, [
 	{
 		input: expectedLoss,
-		range:  5,
+		range: 5,
 		select: {
-			parent: 'team' // make this implicit
-		}
+			parent: 'team', // make this implicit
+		},
 	},
 ]);
 
 export const defPassSucceed = new Processor(
-	'def-pass-succeed', 
-	(
-		[offenseAllowed]: number[],
-		[offenseUsual]: number[]
-	) => {
+	'def-pass-succeed',
+	([offenseAllowed]: number[], [offenseUsual]: number[]) => {
 		return offenseAllowed < offenseUsual;
-	}, [
-	{
-		input: offPass,
-		select: {
-			edge: 'opponent',
-			type: 'offense',
-		},
 	},
-	{
-		input: offPassMean,
-		select: {
-			edge: 'opponent',
-			type: 'offense',
+	[
+		{
+			input: offPass,
+			select: {
+				edge: 'opponent',
+				type: 'offense',
+			},
 		},
-	}
-]);
+		{
+			input: offPassMean,
+			select: {
+				edge: 'opponent',
+				type: 'offense',
+			},
+		},
+	],
+);
 
-export const defPassSuccesses = new Processor(
-	'def-pass-successes', sum, [
+export const defPassSuccesses = new Processor('def-pass-successes', sum, [
 	{
 		input: defPassSucceed,
-		range:  5,
+		range: 5,
 		select: {
-			parent: 'team' // make this implicit
-		}
+			parent: 'team', // make this implicit
+		},
 	},
 ]);
 
 export const defRushSucceed = new Processor(
-	'def-rush-succeed', 
-	(
-		[offenseAllowed]: number[],
-		[offenseUsual]: number[]
-	) => {
+	'def-rush-succeed',
+	([offenseAllowed]: number[], [offenseUsual]: number[]) => {
 		return offenseAllowed < offenseUsual;
-	}, [
-	{
-		input: offRush,
-		select: {
-			assume: 'offense',
-			edge: 'opponent'
-		},
 	},
-	{
-		input: offRushMean,
-		select: {
-			assume: 'offense',
-			edge: 'opponent',
+	[
+		{
+			input: offRush,
+			select: {
+				assume: 'offense',
+				edge: 'opponent',
+			},
 		},
-	}
-]);
+		{
+			input: offRushMean,
+			select: {
+				assume: 'offense',
+				edge: 'opponent',
+			},
+		},
+	],
+);
 
-export const defRushSuccesses = new Processor(
-	'def-rush-successes', sum, [
+export const defRushSuccesses = new Processor('def-rush-successes', sum, [
 	{
 		input: defRushSucceed,
-		range:  5,
+		range: 5,
 		select: {
-			assume: 'team' // make this implicit
-		}
+			assume: 'team', // make this implicit
+		},
 	},
 ]);
 
 export const offPassSucceed = new Processor(
-	'off-pass-succeed', 
-	(
-		[offenseAllowed]: number[],
-		[offenseUsual]: number[]
-	) => {
+	'off-pass-succeed',
+	([offenseAllowed]: number[], [offenseUsual]: number[]) => {
 		return offenseAllowed < offenseUsual;
-	}, [
-	{
-		input: offPass,
-		select: {
-			assume: 'offense',
-		},
 	},
-	{
-		input: offPassMean,
-		select: {
-			assume: 'offense',
+	[
+		{
+			input: offPass,
+			select: {
+				assume: 'offense',
+			},
 		},
-	}
-]);
+		{
+			input: offPassMean,
+			select: {
+				assume: 'offense',
+			},
+		},
+	],
+);
 
-export const offPassSuccesses = new Processor(
-	'off-pass-successes', sum, [
+export const offPassSuccesses = new Processor('off-pass-successes', sum, [
 	{
 		input: offPassSucceed,
-		range:  5,
+		range: 5,
 		select: {
-			assume: 'team' // make this implicit
-		}
+			assume: 'team', // make this implicit
+		},
 	},
 ]);
 
 export const offRushSucceed = new Processor(
-	'off-rush-succeed', 
-	(
-		[offenseAllowed]: number[],
-		[offenseUsual]: number[]
-	) => {
+	'off-rush-succeed',
+	([offenseAllowed]: number[], [offenseUsual]: number[]) => {
 		return offenseAllowed < offenseUsual;
-	}, [
-	{
-		input: offRush,
-		select: {
-			assume: 'offense',
-		},
 	},
-	{
-		input: offRushMean,
-		select: {
-			assume: 'offense',
+	[
+		{
+			input: offRush,
+			select: {
+				assume: 'offense',
+			},
 		},
-	}
-]);
+		{
+			input: offRushMean,
+			select: {
+				assume: 'offense',
+			},
+		},
+	],
+);
 
-export const offRushSuccesses = new Processor(
-	'off-rush-successes', sum, [
+export const offRushSuccesses = new Processor('off-rush-successes', sum, [
 	{
 		input: offRushSucceed,
-		range:  5,
+		range: 5,
 		select: {
-			assume: 'team' // make this implicit
-		}
+			assume: 'team', // make this implicit
+		},
 	},
 ]);
 
 export const defPassSuccessRank = new Ranker(
-	'def-pass-success-rank', 
+	'def-pass-success-rank',
 	{
 		asc: false, // higher is better
 		bucketsCount: 6,
 		select: {
 			global: true,
-			type: 'team'
-		}
+			type: 'team',
+		},
 	},
 	(def: number[]) => def[0],
-	[
-		{ input: defPassSuccesses, select: {type: 'team'} }
-	]
+	[{input: defPassSuccesses, select: {type: 'team'}}],
 );
 
 export const defRushSuccessRank = new Ranker(
-	'def-rush-success-rank', 
+	'def-rush-success-rank',
 	{
 		asc: false, // higher is better
 		bucketsCount: 6,
 		select: {
 			global: true,
-			type: 'team'
-		}
+			type: 'team',
+		},
 	},
 	(def: number[]) => def[0],
-	[
-		{ input: defRushSuccesses, select: {type: 'team'} }
-	]
+	[{input: defRushSuccesses, select: {type: 'team'}}],
 );
 
 export const offRushSuccessRank = new Ranker(
-	'off-rush-success-rank', 
+	'off-rush-success-rank',
 	{
 		asc: false, // higher is better
 		bucketsCount: 6,
 		select: {
 			global: true,
-			type: 'team'
-		}
+			type: 'team',
+		},
 	},
 	(def: number[]) => def[0],
-	[
-		{ input: offRushSuccesses, select: {type: 'team'} }
-	]
+	[{input: offRushSuccesses, select: {type: 'team'}}],
 );
 
 export const offPassSuccessRank = new Ranker(
-	'off-pass-success-rank', 
+	'off-pass-success-rank',
 	{
 		asc: false, // higher is better
 		bucketsCount: 6,
 		select: {
 			global: true,
-			type: 'team'
-		}
+			type: 'team',
+		},
 	},
 	(def: number[]) => def[0],
-	[
-		{ input: offPassSuccesses, select: {type: 'team'} }
-	]
+	[{input: offPassSuccesses, select: {type: 'team'}}],
 );
 
 /*

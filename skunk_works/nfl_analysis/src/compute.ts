@@ -1,72 +1,58 @@
+import {Context} from '@bmoor/context';
+import {NodeValueSelector} from '@bmoor/graph';
+import {DimensionalDatumAccessor as Accessor} from '@bmoor/graph-compute';
 
-
-import { Context } from '@bmoor/context';
 import {
-    NodeValueSelector
-} from '@bmoor/graph';
-import {
-	DimensionalDatumAccessor as Accessor
-} from '@bmoor/graph-compute';
-import {
-    offPass,
-    offPassLast,
-    offPassMean,
-    offRushMean,
-    offPassWins,
-    offRushWins,
-    defPass,
-    defPassLast,
-    defPassMean,
-    defRushMean,
-    defPassWins,
-    defRushWins,
-    executor, 
-    qualityWins, 
-    expectedWins, 
-    qualityLosses, 
-    expectedLosses,
-    defPassSucceed,
-    defRushSucceed,
-    offPassSucceed,
-    offRushSucceed,
-    defPassSuccesses,
-    defRushSuccesses,
-    offPassSuccesses,
-    offRushSuccesses,
-    defPassSuccessRank,
-    defRushSuccessRank,
-    offPassSuccessRank,
-    offRushSuccessRank,
+	defPassMean,
+	defPassSuccessRank,
+	defPassSuccesses,
+	defPassWins,
+	defRushMean,
+	defRushSuccessRank,
+	defRushSuccesses,
+	defRushWins,
+	executor,
+	expectedLosses,
+	expectedWins,
+	offPassMean,
+	offPassSuccessRank,
+	offPassSuccesses,
+	offPassWins,
+	offRushMean,
+	offRushSuccessRank,
+	offRushSuccesses,
+	offRushWins,
+	qualityLosses,
+	qualityWins,
 } from './features';
-import { exit } from 'process';
 
 export const offenseProperties = {
-    offPassMean,
-    offRushMean,
-    offPassWins,
-    offRushWins,
-    offPassSuccesses,
-    offRushSuccesses,
-    offPassSuccessRank,
-    offRushSuccessRank,
+	offPassMean,
+	offRushMean,
+	offPassWins,
+	offRushWins,
+	offPassSuccesses,
+	offRushSuccesses,
+	offPassSuccessRank,
+	offRushSuccessRank,
 };
 
 export const defenseProperties = {
-    defPassMean,
-    defRushMean,
-    defPassWins,
-    defRushWins,
-    defPassSuccesses,
-    defRushSuccesses,
-    defPassSuccessRank,
-    defRushSuccessRank,
+	defPassMean,
+	defRushMean,
+	defPassWins,
+	defRushWins,
+	defPassSuccesses,
+	defRushSuccesses,
+	defPassSuccessRank,
+	defRushSuccessRank,
 };
 
 export const teamProperties = {
-    qualityWins, 
-    expectedWins, 
-    qualityLosses, 
-    expectedLosses,
+	qualityWins,
+	expectedWins,
+	qualityLosses,
+	expectedLosses,
 };
 /*
 const ctx1 = new Context({flags: {verbose: true}});
@@ -100,36 +86,36 @@ executor.calculate(
 });
 */
 
+export async function calculateCompare(interval, team1, team2) {
+	const ctx3 = new Context({
+		flags: {verbose: false /*, reference: 'PHI'*/},
+	});
 
-export async function calculateCompare(interval, team1, team2){
-    const ctx3 = new Context({flags: {verbose: false/*, reference: 'PHI'*/}});
+	const rtn = executor.calculate(
+		executor.env.getInterval(interval),
+		// all of these are calculated as of after this week's game since I removed offsets
+		new Accessor(
+			Object.assign(
+				{
+					name: 'display',
+					score: 'score',
+				},
+				teamProperties,
+				offenseProperties,
+				defenseProperties,
+			),
+			{
+				name: NodeValueSelector.event,
+				score: NodeValueSelector.event,
+			},
+		),
+		{reference: team1, and: [{reference: team2}]},
+		ctx3,
+	);
 
-    const rtn = executor.calculate(
-        executor.env.getInterval(interval), 
-        // all of these are calculated as of after this week's game since I removed offsets
-        new Accessor(
-            Object.assign(
-                {
-                    name: 'display',
-                    score: 'score',
-                }, 
-                teamProperties, 
-                offenseProperties, 
-                defenseProperties
-            ), {
-                name: NodeValueSelector.event,
-                score: NodeValueSelector.event,
-            }
-        ), 
-        {reference: team1, and: [
-            {reference:team2}
-        ]},
-        ctx3
-    )
-    
-    rtn.finally(() => {
-        ctx3.close();
-    });
+	rtn.finally(() => {
+		ctx3.close();
+	});
 
-    return rtn;
+	return rtn;
 }

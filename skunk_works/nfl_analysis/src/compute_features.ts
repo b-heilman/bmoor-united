@@ -1,4 +1,3 @@
-import { calculateCompare } from "./compute";
+import {calculateCompare} from './compute';
 
-calculateCompare('2023-12', 'PHI', 'SF')
-.then(res => console.log(res));
+calculateCompare('2023-12', 'PHI', 'SF').then((res) => console.log(res));
