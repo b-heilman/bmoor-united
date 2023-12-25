@@ -14,14 +14,10 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn.preprocessing import MinMaxScaler
 
 from lib.common import (
-    train_scaler,
-    scale_processing,
     train_model,
     analyze_model,
-    FeatureSet,
     ProcessingPair,
     ProcessingStats,
-    TrainingStats,
     ModelAbstract,
 )
 
@@ -33,25 +29,20 @@ STATS_PATH = saveDir + "/stats.json"
 MODEL_PATH = saveDir + "/model.torch"
 SCALAR_PATH = saveDir + "/transformer.pkl"
 
-FeaturesShape = List[Tuple[List[float], List[float]]]
-LabelsShape = List[float]
-IncomingShape = Tuple[FeaturesShape, LabelsShape]
-IncomingStats = dict
-
 
 class SiameseNetwork(torch.nn.Module):
-    def __init__(self, stats: IncomingStats):
+    def __init__(self, stats: ProcessingStats):
         super(SiameseNetwork, self).__init__()
 
         # TODO: I will split these in the next iteration
         # np.arange(16.0).reshape(4, 4)
         # np.hsplit(x, np.array([3, 6]))
-        n_input = stats["offense"] + stats["defense"] + stats["team"]
+        n_input = len(stats["offense"]) + len(stats["defense"]) + len(stats["team"])
         n_hidden = math.ceil(n_input**2)
         n_embeddings = 3
         n_input2 = (n_embeddings) * 2
         n_hidden2 = math.ceil(n_embeddings**2)
-        n_out = stats["label"]  # number of labels we'r trying to match
+        n_out = len(stats["labels"])  # number of labels we'r trying to match
 
         print(
             {
@@ -90,7 +81,7 @@ class SiameseNetwork(torch.nn.Module):
 
         return output  # n x 3
 
-    def forward(self, input: FeatureSet):
+    def forward(self, input: torch.FloatTensor):
         # get two images' features
         input1 = input[0]
         input2 = input[1]
@@ -196,24 +187,13 @@ def create_shards(inputs, outputs, min_size=100, simple=False):
     return shards, threads
 
 
-def format_features(features: FeatureSet):
-    base = []
-    compare = []
-
-    for row in features:
-        base.append(row[0])
-        compare.append(row[1])
-
-    return np.array([base, compare])
-
-
 class NeuralClassifier(ModelAbstract):
-    stats: TrainingStats
+    stats: ProcessingStats
     model: SiameseNetwork
     scaler: MinMaxScaler
 
     # https://www.datatechnotes.com/2019/07/classification-example-with.html
-    def create(self, stats: TrainingStats):
+    def create(self, stats: ProcessingStats):
         self.stats = stats
         self.model = SiameseNetwork(stats)
 
@@ -256,16 +236,16 @@ class NeuralClassifier(ModelAbstract):
         # https://pytorch.org/tutorials/beginner/introyt/modelsyt_tutorial.html
 
         # --- Prep ---
-        self.scale(training)
-        self.scale(validation)
+        self.scale(training[0])
+        self.scale(validation[0])
 
         # We convert these into tensors after sharding
         # If I create the tensors here and then shard, forking causes an error in
         # memory
-        training_input = format_features(training[0])
+        training_input = training[0]
         training_output = training[1]
 
-        validation_input = torch.FloatTensor(format_features(validation[0]))
+        validation_input = torch.FloatTensor(validation[0])
         validation_output = torch.FloatTensor(validation[1])
 
         # new_shape = (len(training["labels"]), 1)
@@ -303,10 +283,10 @@ class NeuralClassifier(ModelAbstract):
     def get_feature_importances(self):
         return []
 
-    def predict(self, features: FeatureSet):
-        scale_processing(features, self.scaler)
+    def predict(self, content: npt.NDArray, stats: ProcessingStats):
+        self.scale(content)
 
-        features = torch.FloatTensor(format_features(features))
+        features = torch.FloatTensor(content)
 
         return list(self.model(features).detach().numpy())
 

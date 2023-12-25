@@ -32,7 +32,7 @@ class ProcessingStats(TypedDict):
     offense: List[str]
     defense: List[str]
     team: List[str]
-    label: int  # TODO: need to add how many labels are there...
+    labels: List[str]
 
 
 class IncomingContent(TypedDict):
@@ -49,18 +49,6 @@ class TrainingInfo(TypedDict):
     training: ProcessingPair
     validation: ProcessingPair
     analysis: ProcessingPair
-    stats: ProcessingStats
-
-
-def reduce_incoming(content: List[IncomingSet]) -> ProcessingPair:
-    rtn_labels: List[Labels] = []
-    rtn_features: List[IncomingFeatures] = []
-
-    for row in content:
-        rtn_features.append(row[0])
-        rtn_labels.append(row[1])
-
-    return np.array(rtn_features), np.array(rtn_labels)
 
 
 class ModelAbstract:
@@ -69,22 +57,16 @@ class ModelAbstract:
     def create(self):
         """Need tp write this"""
 
-    def fit_scaler(self, content: List[IncomingSet]):
+    def fit_scaler(self, content: npt.NDArray):
         scaler = Normalizer(copy=False)
-        features: List[Features] = []
 
-        for row in content:
-            row_features = row[0]
-
-            features.append(row_features[0])
-            features.append(row_features[1])
+        features = content[0] + content[1]
 
         scaler.fit(features)
 
         self.scaler = scaler
 
-    def scale(self, content: ProcessingPair):
-        features = content[0]
+    def scale(self, features: npt.NDArray):
         self.scaler.transform(features[0])
         self.scaler.transform(features[1])
 
@@ -99,50 +81,71 @@ class ModelAbstract:
     def get_feature_importances(self):
         """Need to write this"""
 
-    def predict(self, content: ProcessingPair, stats: ProcessingStats):
+    def predict(self, content: npt.NDArray, stats: ProcessingStats):
         """Need to write this"""
-
-
-def load_training_data() -> ProcessingContent:
-    incoming = json.load(
-        open(os.path.join(os.path.dirname(__file__), f"../../../data/training.json"))
-    )
-
-    processed = reduce_incoming(incoming["training"])
-
-    return (processed[0], processed[1], incoming["stats"])
 
 
 def get_keys_from_stats(stats: ProcessingStats) -> List[str]:
     return stats["offense"] + stats["defense"] + stats["team"]
 
 
-def create_training_info(training_set: ProcessingContent) -> TrainingInfo:
-    # Split the
-    training_inputs = training_set[0]
-    training_labels = training_set[1]
-    training_stats = training_set[2]
+def processing_pair(
+    features: List[IncomingFeatures], labels: List[Labels]
+) -> ProcessingPair:
+    base_features: List[Features] = []
+    compare_features: List[Features] = []
+
+    for feature_row in features:
+        base_features.append(feature_row[0])
+        compare_features.append(feature_row[1])
+
+    return np.array([base_features, compare_features]), np.array(labels)
+
+
+def reduce_for_training(content: List[IncomingSet]) -> TrainingInfo:
+    features = []
+    labels = []
+
+    for row in content:
+        features.append(row[0])
+        labels.append(row[1])
 
     # _inputs => training sets
     # _outputs => training values
     train_inputs, val_inputs, train_labels, val_labels = train_test_split(
-        training_inputs, training_labels, test_size=0.3, random_state=42, shuffle=True
+        features, labels, test_size=0.3, random_state=42, shuffle=True
     )
     val_inputs, analysis_inputs, val_labels, analysis_labels = train_test_split(
         val_inputs, val_labels, test_size=0.2, random_state=42, shuffle=True
     )
 
     return {
-        "training": (train_inputs, train_labels),
-        "validation": (val_inputs, val_labels),
-        "analysis": (analysis_inputs, analysis_labels),
-        "stats": training_stats,
+        "training": processing_pair(train_inputs, train_labels),
+        "validation": processing_pair(val_inputs, val_labels),
+        "analysis": processing_pair(analysis_inputs, analysis_labels),
     }
 
 
-def calc_statistics(info: TrainingInfo, model: ModelAbstract):
+def reduce_for_processing(content: List[IncomingSet]) -> ProcessingPair:
+    rtn_labels: List[Labels] = []
+    base_features: List[Features] = []
+    compare_features: List[Features] = []
+
+    for row in content:
+        base_features.append(row[0][0])
+        compare_features.append(row[0][1])
+
+        if 1 in row:
+            rtn_labels.append(row[1])
+        else:
+            rtn_labels.append([])
+
+    return np.array([base_features, compare_features]), np.array(rtn_labels)
+
+
+def calc_statistics(info: TrainingInfo, model: ModelAbstract, stats: ProcessingStats):
     content = info["analysis"]
-    predictions = model.predict(content, info["stats"])
+    predictions = model.predict(content[0], stats)
     correct = 0
     correctness = []
     tp = 0
@@ -217,7 +220,7 @@ def calc_statistics(info: TrainingInfo, model: ModelAbstract):
     return {
         "prediction": buckets,
         "dimensions": {
-            "features": get_keys_from_stats(info["stats"]),
+            "features": get_keys_from_stats(stats),
             "training": len(info["training"][1]),
             "validation": len(info["validation"][1]),
             "analysis": len(info["analysis"][1]),
@@ -233,17 +236,20 @@ def calc_statistics(info: TrainingInfo, model: ModelAbstract):
 
 
 def train_model(Model_Class) -> ModelAbstract:
-    content = load_training_data()
+    incoming: IncomingContent = json.load(
+        open(os.path.join(os.path.dirname(__file__), f"../../../data/training.json"))
+    )
 
     model = Model_Class()
-    model.create(content[2])
-    model.fit_scaler(content[0])
+    stats = incoming["stats"]
+    model.create(stats)
 
-    info = create_training_info(content)
+    info = reduce_for_training(incoming["content"])
+    model.fit_scaler(info["training"][0])
 
-    model.fit(info["training"], info["analysis"])
+    model.fit(info["training"], info["analysis"], stats)
 
-    stats = calc_statistics(info, model)
+    stats = calc_statistics(info, model, stats)
 
     print(json.dumps(stats, ensure_ascii=False, indent="\t", skipkeys=True))
 
@@ -251,13 +257,14 @@ def train_model(Model_Class) -> ModelAbstract:
 
 
 def analyze_model(model: ModelAbstract):
-    incoming = json.load(
+    incoming: IncomingContent = json.load(
         open(os.path.join(os.path.dirname(__file__), f"../../../data/analysis.json"))
     )
 
-    processed = reduce_incoming(incoming["content"])
+    content = incoming["content"]
+    processed = reduce_for_processing(content)
 
-    predictions = model.predict(processed, incoming["stats"])
+    predictions = model.predict(processed[0], incoming["stats"])
 
     for i, label in enumerate(processed[1]):
         print(">>", label, predictions[i])

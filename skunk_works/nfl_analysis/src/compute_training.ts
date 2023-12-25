@@ -13,6 +13,14 @@ const stats = {
 	offense: Object.keys(offenseProperties),
 	defense: Object.keys(defenseProperties),
 	team: Object.keys(teamProperties),
+	labels: [
+		'win',
+		'win by 4',
+		'win by 7',
+		'lose by 7',
+		'lose by 4',
+		'lose',
+	],
 };
 
 const keys = [].concat(stats.offense, stats.defense, stats.team);
