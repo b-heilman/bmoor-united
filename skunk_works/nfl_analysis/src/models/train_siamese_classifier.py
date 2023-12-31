@@ -30,6 +30,23 @@ MODEL_PATH = saveDir + "/model.torch"
 SCALAR_PATH = saveDir + "/transformer.pkl"
 
 
+class Encoder(torch.nn.Module):
+    def __init__(self, n_input, n_ouput):
+        super(Encoder, self).__init__()
+        n_hidden = n_input**2
+
+        self.encode = torch.nn.Sequential(
+            torch.nn.Linear(n_input, n_hidden),
+            torch.nn.ReLU(inplace=True),
+            torch.nn.Linear(n_hidden, n_hidden),
+            torch.nn.ReLU(inplace=True),
+            torch.nn.Linear(n_hidden, n_ouput),
+        )
+
+    def forward(self, input: torch.FloatTensor):
+        return self.encode(input)
+
+
 class SiameseNetwork(torch.nn.Module):
     def __init__(self, stats: ProcessingStats):
         super(SiameseNetwork, self).__init__()
@@ -37,36 +54,42 @@ class SiameseNetwork(torch.nn.Module):
         # TODO: I will split these in the next iteration
         # np.arange(16.0).reshape(4, 4)
         # np.hsplit(x, np.array([3, 6]))
-        n_input = len(stats["offense"]) + len(stats["defense"]) + len(stats["team"])
-        n_hidden = math.ceil(n_input**2)
+        n_offense_input = len(stats["offense"])
+        self.n_offense_input = n_offense_input
+
+        n_defense_input = len(stats["defense"])
+        self.n_defense_input = n_defense_input
+
+        n_team_input = len(stats["team"])
+        self.n_team_input = n_team_input
+
         n_embeddings = 3
         n_input2 = (n_embeddings) * 2
-        n_hidden2 = math.ceil(n_embeddings**2)
+        n_compare_hidden = math.ceil(n_embeddings**2)
         n_out = len(stats["labels"])  # number of labels we'r trying to match
 
         print(
             {
-                "input": n_input,
-                "hidden": n_hidden,
+                "offense": n_offense_input,
+                "defense": n_defense_input,
+                "team": n_team_input,
                 "embedding": n_embeddings,
                 "input2": n_input2,
-                "hidden2": n_hidden2,
+                "hidden2": n_compare_hidden,
                 "out": n_out,
             }
         )
 
-        self.cnn = torch.nn.Sequential(
-            torch.nn.Linear(n_input, n_hidden),
-            torch.nn.ReLU(inplace=True),
-            torch.nn.Linear(n_hidden, n_hidden),
-            torch.nn.ReLU(inplace=True),
-            torch.nn.Linear(n_hidden, n_embeddings),
-        )
+        self.offsense_encoder = Encoder(n_offense_input, 1)
 
-        self.fc = torch.nn.Sequential(
-            torch.nn.Linear(n_input2, n_hidden2),
+        self.defense_encoder = Encoder(n_defense_input, 1)
+
+        self.team_encoder = Encoder(n_team_input, 1)
+
+        self.compare = torch.nn.Sequential(
+            torch.nn.Linear(n_input2, n_compare_hidden),
             torch.nn.ReLU(inplace=True),
-            torch.nn.Linear(n_hidden2, n_out),
+            torch.nn.Linear(n_compare_hidden, n_out),
         )
 
         self.distance = torch.nn.PairwiseDistance(p=2)
@@ -76,8 +99,21 @@ class SiameseNetwork(torch.nn.Module):
     # https://github.com/pytorch/examples/blob/main/siamese_network/main.py
 
     def forward_once(self, input):
-        output = self.cnn(input)
-        output = output.view(output.size()[0], -1)
+        o_pos = self.n_offense_input
+        d_pos = self.n_defense_input
+
+        offense, defense, team = torch.tensor_split(
+            input, (o_pos, o_pos + d_pos), dim=1
+        )
+
+        output = torch.cat(
+            (
+                self.offsense_encoder(offense),
+                self.defense_encoder(defense),
+                self.team_encoder(team),
+            ),
+            1,
+        ).view(output.size()[0], -1)
 
         return output  # n x 3
 
@@ -95,7 +131,7 @@ class SiameseNetwork(torch.nn.Module):
         output = torch.cat((output1, output2), 1)
 
         # pass the concatenation to the linear layers
-        output = self.fc(output)
+        output = self.compare(output)
 
         # pass the out of the linear layers to sigmoid layer
         output = self.sigmoid(output)
