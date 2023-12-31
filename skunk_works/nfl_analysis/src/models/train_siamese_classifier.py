@@ -51,9 +51,6 @@ class SiameseNetwork(torch.nn.Module):
     def __init__(self, stats: ProcessingStats):
         super(SiameseNetwork, self).__init__()
 
-        # TODO: I will split these in the next iteration
-        # np.arange(16.0).reshape(4, 4)
-        # np.hsplit(x, np.array([3, 6]))
         n_offense_input = len(stats["offense"])
         self.n_offense_input = n_offense_input
 
@@ -63,7 +60,8 @@ class SiameseNetwork(torch.nn.Module):
         n_team_input = len(stats["team"])
         self.n_team_input = n_team_input
 
-        n_embeddings = 3
+        n_embeddings_per = 1
+        n_embeddings = 3 * n_embeddings_per
         n_input2 = (n_embeddings) * 2
         n_compare_hidden = math.ceil(n_embeddings**2)
         n_out = len(stats["labels"])  # number of labels we'r trying to match
@@ -113,9 +111,9 @@ class SiameseNetwork(torch.nn.Module):
                 self.team_encoder(team),
             ),
             1,
-        ).view(output.size()[0], -1)
+        )
 
-        return output  # n x 3
+        return output.view(output.size()[0], -1)
 
     def forward(self, input: torch.FloatTensor):
         # get two images' features
@@ -150,7 +148,7 @@ def _train(model, shard_inputs, shard_ouputs, loss_fn, proc_id, seed, threads):
     torch.manual_seed(seed)
     rd.seed(seed)
 
-    epochs = 10000
+    epochs = 100000
     learning_rate = 0.05
 
     optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate)

@@ -135,7 +135,7 @@ def reduce_for_processing(content: List[IncomingSet]) -> ProcessingPair:
         base_features.append(row[0][0])
         compare_features.append(row[0][1])
 
-        if 1 in row:
+        if len(row) > 1:
             rtn_labels.append(row[1])
         else:
             rtn_labels.append([])
@@ -218,13 +218,13 @@ def calc_statistics(info: TrainingInfo, model: ModelAbstract, stats: ProcessingS
     )
 
     return {
-        "prediction": buckets,
         "dimensions": {
             "features": get_keys_from_stats(stats),
             "training": len(info["training"][1]),
             "validation": len(info["validation"][1]),
             "analysis": len(info["analysis"][1]),
         },
+        "prediction": buckets,
         "score": score,
         "confusion": {
             "tp": tp,
