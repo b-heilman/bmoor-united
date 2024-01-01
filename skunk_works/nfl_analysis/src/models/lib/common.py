@@ -116,7 +116,7 @@ def reduce_for_training(content: List[IncomingSet]) -> TrainingInfo:
         features, labels, test_size=0.3, random_state=42, shuffle=True
     )
     val_inputs, analysis_inputs, val_labels, analysis_labels = train_test_split(
-        val_inputs, val_labels, test_size=0.2, random_state=42, shuffle=True
+        val_inputs, val_labels, test_size=0.5, random_state=42, shuffle=True
     )
 
     return {

@@ -15,11 +15,11 @@ const stats = {
 	team: Object.keys(teamProperties),
 	labels: [
 		'win',
-		'win by 4',
-		'win by 7',
-		'lose by 7',
-		'lose by 4',
-		'lose',
+		// 'win by 4',
+		// 'win by 7',
+		// 'lose by 7',
+		// 'lose by 4',
+		// 'lose',
 	],
 };
 
@@ -64,11 +64,11 @@ async function createTraining(intervals) {
 						const diff = res[0].score - res[1].score;
 						const labels = [
 							diff > 0 ? 1 : 0, // win
-							diff >= 4 ? 1 : 0, // win by 4
-							diff >= 7 ? 1 : 0, // win by 7
-							diff <= -7 ? 1 : 0, // lost by 7
-							diff <= -4 ? 1 : 0, // lost by 4
-							diff < 0 ? 1 : 0, // lost
+							// diff >= 4 ? 1 : 0, // win by 4
+							// diff >= 7 ? 1 : 0, // win by 7
+							// diff <= -7 ? 1 : 0, // lost by 7
+							// diff <= -4 ? 1 : 0, // lost by 4
+							// diff < 0 ? 1 : 0, // lost
 						];
 
 						return {

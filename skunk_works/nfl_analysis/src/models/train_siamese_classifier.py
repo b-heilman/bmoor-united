@@ -33,12 +33,13 @@ SCALAR_PATH = saveDir + "/transformer.pkl"
 class Encoder(torch.nn.Module):
     def __init__(self, n_input, n_ouput):
         super(Encoder, self).__init__()
-        n_hidden = n_input**2
+        n_hidden = n_input * 4
 
         self.encode = torch.nn.Sequential(
+            # I'm doing feature engineering leading into the model, so I don't think 
+            # dropout will help me here.
+            # torch.nn.Dropout(p=0.2),
             torch.nn.Linear(n_input, n_hidden),
-            torch.nn.ReLU(inplace=True),
-            torch.nn.Linear(n_hidden, n_hidden),
             torch.nn.ReLU(inplace=True),
             torch.nn.Linear(n_hidden, n_ouput),
         )
@@ -60,7 +61,7 @@ class SiameseNetwork(torch.nn.Module):
         n_team_input = len(stats["team"])
         self.n_team_input = n_team_input
 
-        n_embeddings_per = 1
+        n_embeddings_per = 2
         n_embeddings = 3 * n_embeddings_per
         n_input2 = (n_embeddings) * 2
         n_compare_hidden = math.ceil(n_embeddings**2)
@@ -78,11 +79,11 @@ class SiameseNetwork(torch.nn.Module):
             }
         )
 
-        self.offsense_encoder = Encoder(n_offense_input, 1)
+        self.offsense_encoder = Encoder(n_offense_input, n_embeddings_per)
 
-        self.defense_encoder = Encoder(n_defense_input, 1)
+        self.defense_encoder = Encoder(n_defense_input, n_embeddings_per)
 
-        self.team_encoder = Encoder(n_team_input, 1)
+        self.team_encoder = Encoder(n_team_input, n_embeddings_per)
 
         self.compare = torch.nn.Sequential(
             torch.nn.Linear(n_input2, n_compare_hidden),
@@ -135,6 +136,9 @@ class SiameseNetwork(torch.nn.Module):
         output = self.sigmoid(output)
 
         return output
+    
+    def encode(self, input: torch.FloatTensor):
+        return self.forward_once(input)
 
 
 def _train(model, shard_inputs, shard_ouputs, loss_fn, proc_id, seed, threads):
@@ -301,6 +305,9 @@ class NeuralClassifier(ModelAbstract):
             before = loss_fn(predictions, validation_output)
 
             print("Test loss before training", before.item())
+            print("--encodings--")
+            print(self.model.encode(validation_input[1][0:4]))
+
 
         # --- Training ---
         self.train(training_input, training_output, loss_fn, seed)
@@ -313,6 +320,8 @@ class NeuralClassifier(ModelAbstract):
             predictions = self.model(validation_input)
             after = loss_fn(predictions, validation_output)
             print("Test loss after training", after.item())
+            print("--encodings--")
+            print(self.model.encode(validation_input[1][0:4]))
 
     def get_feature_importances(self):
         return []
