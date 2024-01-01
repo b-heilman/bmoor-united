@@ -42,6 +42,7 @@ class Encoder(torch.nn.Module):
             torch.nn.Linear(n_input, n_hidden),
             torch.nn.ReLU(inplace=True),
             torch.nn.Linear(n_hidden, n_ouput),
+            torch.nn.Sigmoid()
         )
 
     def forward(self, input: torch.FloatTensor):
@@ -63,7 +64,7 @@ class SiameseNetwork(torch.nn.Module):
 
         n_embeddings_per = 2
         n_embeddings = 3 * n_embeddings_per
-        n_input2 = (n_embeddings) * 2
+        n_input2 = (n_embeddings)
         n_compare_hidden = math.ceil(n_embeddings**2)
         n_out = len(stats["labels"])  # number of labels we'r trying to match
 
@@ -88,6 +89,8 @@ class SiameseNetwork(torch.nn.Module):
         self.compare = torch.nn.Sequential(
             torch.nn.Linear(n_input2, n_compare_hidden),
             torch.nn.ReLU(inplace=True),
+            torch.nn.Linear(n_compare_hidden, n_compare_hidden),
+            torch.nn.ReLU(inplace=True),
             torch.nn.Linear(n_compare_hidden, n_out),
         )
 
@@ -105,29 +108,34 @@ class SiameseNetwork(torch.nn.Module):
             input, (o_pos, o_pos + d_pos), dim=1
         )
 
-        output = torch.cat(
-            (
-                self.offsense_encoder(offense),
-                self.defense_encoder(defense),
-                self.team_encoder(team),
-            ),
-            1,
-        )
+        #output = torch.cat(
+        #    (
+        #        self.offsense_encoder(offense),
+        #        self.defense_encoder(defense),
+        #        self.team_encoder(team),
+        #    ),
+        #    1,
+        #)
 
-        return output.view(output.size()[0], -1)
+        #return output.view(output.size()[0], -1)
+
+        return self.offsense_encoder(offense), self.defense_encoder(defense), self.team_encoder(team)
 
     def forward(self, input: torch.FloatTensor):
         # get two images' features
         input1 = input[0]
         input2 = input[1]
 
-        output1 = self.forward_once(input1)
-        output2 = self.forward_once(input2)
+        off_1, def_1, team_1 = self.forward_once(input1)
+        off_2, def_2, team_2 = self.forward_once(input2)
 
-        # concatenate both images' features
+        compare_1 = off_1 - def_2
+        compare_2 = def_1 - off_2
+        compare_3 = team_1 - team_2
+
         # distance = self.distance(output1, output2)
         # distance = distance.view(distance.size()[0], -1)
-        output = torch.cat((output1, output2), 1)
+        output = torch.cat((compare_1, compare_2, compare_3), 1)
 
         # pass the concatenation to the linear layers
         output = self.compare(output)
@@ -153,13 +161,12 @@ def _train(model, shard_inputs, shard_ouputs, loss_fn, proc_id, seed, threads):
     rd.seed(seed)
 
     epochs = 100000
-    learning_rate = 0.05
+    learning_rate = 0.2
 
     optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate)
     torch.set_num_threads(threads)
 
     for epoch in range(epochs + 1):
-        optimizer.zero_grad()
         predictions = model(shard_inputs)
 
         loss = loss_fn(predictions, shard_ouputs)
@@ -169,8 +176,8 @@ def _train(model, shard_inputs, shard_ouputs, loss_fn, proc_id, seed, threads):
             # print(list(model.parameters())[0])
             print(f"Epoch {proc_id}-{epoch}: train loss: {loss_value}")
 
+        optimizer.zero_grad()
         loss.backward()
-
         optimizer.step()
 
 
