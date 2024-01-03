@@ -96,7 +96,7 @@ class SiameseNetwork(torch.nn.Module):
 
         self.distance = torch.nn.PairwiseDistance(p=2)
 
-        self.sigmoid = torch.nn.Sigmoid()
+        self.format = torch.nn.Sigmoid()
 
     # https://github.com/pytorch/examples/blob/main/siamese_network/main.py
 
@@ -129,9 +129,9 @@ class SiameseNetwork(torch.nn.Module):
         off_1, def_1, team_1 = self.forward_once(input1)
         off_2, def_2, team_2 = self.forward_once(input2)
 
-        compare_1 = off_1 - def_2
-        compare_2 = def_1 - off_2
-        compare_3 = team_1 - team_2
+        compare_1 = torch.sub(off_1, def_2)
+        compare_2 = torch.sub(def_1, off_2)
+        compare_3 = torch.sub(team_1, team_2)
 
         # distance = self.distance(output1, output2)
         # distance = distance.view(distance.size()[0], -1)
@@ -141,7 +141,7 @@ class SiameseNetwork(torch.nn.Module):
         output = self.compare(output)
 
         # pass the out of the linear layers to sigmoid layer
-        output = self.sigmoid(output)
+        output = self.format(output)
 
         return output
     
@@ -160,8 +160,8 @@ def _train(model, shard_inputs, shard_ouputs, loss_fn, proc_id, seed, threads):
     torch.manual_seed(seed)
     rd.seed(seed)
 
-    epochs = 100000
-    learning_rate = 0.2
+    epochs = 300000
+    learning_rate = 0.1
 
     optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate)
     torch.set_num_threads(threads)
@@ -339,6 +339,35 @@ class NeuralClassifier(ModelAbstract):
         features = torch.FloatTensor(content)
 
         return list(self.model(features).detach().numpy())
+    
+    def show_distribution(self, content: npt.NDArray):
+        input_1 = torch.FloatTensor(content[0]+content[1])
+
+        offense, defense, team = self.model.encode(input_1)
+        
+        offense = offense.detach().numpy()
+        defense = defense.detach().numpy()
+        team = team.detach().numpy()
+
+        return {
+            'offense': {
+                'max': np.max(offense, axis=0).tolist(),
+                'min': np.min(offense, axis=0).tolist(),
+                'mean': np.mean(offense, axis=0).tolist()
+            },
+            'defense': {
+                'max': np.max(defense, axis=0).tolist(),
+                'min': np.min(defense, axis=0).tolist(),
+                'mean': np.mean(defense, axis=0).tolist()
+            },
+            'team': {
+                'max': np.max(team, axis=0).tolist(),
+                'min': np.min(team, axis=0).tolist(),
+                'mean': np.mean(team, axis=0).tolist()
+            }
+        }
+
+
 
     def save(self):
         with open(STATS_PATH, "w", encoding="utf-8") as file:

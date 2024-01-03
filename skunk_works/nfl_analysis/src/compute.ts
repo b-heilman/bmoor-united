@@ -3,57 +3,54 @@ import {NodeValueSelector} from '@bmoor/graph';
 import {DimensionalDatumAccessor as Accessor} from '@bmoor/graph-compute';
 
 import {
-	defPassMean,
-	defPassSuccessRank,
-	defPassSuccesses,
-	defPassWins,
-	defRushMean,
-	defRushSuccessRank,
-	defRushSuccesses,
-	defRushWins,
 	executor,
-	expectedLosses,
-	expectedWins,
 	offPassMean,
-	offPassSuccessRank,
-	offPassSuccesses,
-	offPassWins,
+	offPassRank,
+	offPassBeatMean,
+	offPassBeatRank,
 	offRushMean,
-	offRushSuccessRank,
-	offRushSuccesses,
-	offRushWins,
-	qualityLosses,
-	qualityWins,
+	offRushRank,
+	offRushBeatMean,
+	offRushBeatRank,
+	defPassMean,
+	defPassRank,
+	defPassBeatMean,
+	defPassBeatRank,
+	defRushMean,
+	defRushRank,
+	defRushBeatMean,
+	defRushBeatRank,
+	wins,
+	losses
 } from './features';
 
 export const offenseProperties = {
 	offPassMean,
+	offPassRank,
+	offPassBeatMean,
+	offPassBeatRank,
 	offRushMean,
-	offPassWins,
-	offRushWins,
-	offPassSuccesses,
-	offRushSuccesses,
-	offPassSuccessRank,
-	offRushSuccessRank,
+	offRushRank,
+	offRushBeatMean,
+	offRushBeatRank,
 };
 
 export const defenseProperties = {
 	defPassMean,
+	defPassRank,
 	defRushMean,
-	defPassWins,
-	defRushWins,
-	defPassSuccesses,
-	defRushSuccesses,
-	defPassSuccessRank,
-	defRushSuccessRank,
+	defRushRank,
+	defPassBeatMean,
+	defPassBeatRank,
+	defRushBeatMean,
+	defRushBeatRank,
 };
 
 export const teamProperties = {
-	qualityWins,
-	expectedWins,
-	qualityLosses,
-	expectedLosses,
+	wins,
+	losses
 };
+
 /*
 const ctx1 = new Context({flags: {verbose: true}});
 executor.calculate(

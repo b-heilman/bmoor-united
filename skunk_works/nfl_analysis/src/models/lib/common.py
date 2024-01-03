@@ -14,13 +14,15 @@ if sys.version_info >= (3, 8):
 else:
     from typing_extensions import TypedDict
 
-from typing import List, Tuple
+from typing import List, Tuple, Dict
 
 Features = List[float]
 Labels = List[bool]
 
 IncomingFeatures = Tuple[Features, Features]
-IncomingSet = Tuple[IncomingFeatures, Labels]
+IncomingIndex = Dict[str, Dict[str, Features]]
+IncomingReference = Tuple[Tuple[str, str], Labels, str]
+IncomingSet = Tuple[IncomingFeatures, Labels, str]
 
 # FeaturePair = Tuple[Features, Features]
 # FeatureSet = Tuple[FeaturePair, Labels]
@@ -101,13 +103,17 @@ def processing_pair(
 
     return np.array([base_features, compare_features]), np.array(labels)
 
+def read_from_index(index: IncomingIndex, path: str):
+    pieces = path.split('.')
 
-def reduce_for_training(content: List[IncomingSet]) -> TrainingInfo:
+    return index[pieces[0]][pieces[1]]
+
+def reduce_for_training(index: IncomingIndex, content: List[IncomingReference]) -> TrainingInfo:
     features = []
     labels = []
 
     for row in content:
-        features.append(row[0])
+        features.append((read_from_index(index, row[0][0]), read_from_index(index, row[0][1])))
         labels.append(row[1])
 
     # _inputs => training sets
@@ -135,8 +141,8 @@ def reduce_for_processing(content: List[IncomingSet]) -> ProcessingPair:
         base_features.append(row[0][0])
         compare_features.append(row[0][1])
 
-        if len(row) > 1:
-            rtn_labels.append(row[1])
+        if len(row) > 2:
+            rtn_labels.append(row[2])
         else:
             rtn_labels.append([])
 
@@ -244,7 +250,8 @@ def train_model(Model_Class) -> ModelAbstract:
     stats = incoming["stats"]
     model.create(stats)
 
-    info = reduce_for_training(incoming["content"])
+    lookup = incoming['features']
+    info = reduce_for_training(lookup, incoming["pairings"])
     model.fit_scaler(info["training"][0])
 
     model.fit(info["training"], info["analysis"], stats)
@@ -268,3 +275,6 @@ def analyze_model(model: ModelAbstract):
 
     for i, label in enumerate(processed[1]):
         print(">>", label, predictions[i])
+
+    print('>> distribution')
+    print(json.dumps(model.show_distribution(processed[0]), indent=2))

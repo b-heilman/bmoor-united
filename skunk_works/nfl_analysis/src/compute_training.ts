@@ -41,14 +41,21 @@ function reducePairing(res: Record<string, number>[]) {
 }
 
 async function createTraining(intervals) {
+	const intervalRefs = [];
 	const rtn = {
 		stats,
-		content: [],
+		intervals: intervalRefs,
+		features: {}, // [interval.ref][node.name]
+		pairings: [
+			// [${interval.ref}.${node.name}, ${interval.ref}.${node.name}]
+		]
 	};
 
 	for (const interval of intervals) {
 		console.log(interval);
 		const weekGraph = graph.getGraph(interval);
+
+		intervalRefs.push(interval.ref);
 
 		const proc = [];
 
@@ -71,9 +78,19 @@ async function createTraining(intervals) {
 							// diff < 0 ? 1 : 0, // lost
 						];
 
+						let intervalSpace = rtn.features[interval.ref];
+						if (!intervalSpace){
+							intervalSpace = {}
+							rtn.features[interval.ref] = intervalSpace;
+						}
+
+						intervalSpace[res[0].name] = compare[0];
+						intervalSpace[res[1].name] = compare[1];
+
 						return {
-							compare,
+							compare: [`${interval.ref}.${res[0].name}`, `${interval.ref}.${res[1].name}`],
 							labels,
+							tag: `${interval.ref}: ${res[0].name} vs ${res[1].name} => ${res[0].score} - ${res[1].score} ${diff}`,
 						};
 					},
 				),
@@ -82,7 +99,7 @@ async function createTraining(intervals) {
 
 		await Promise.all(proc).then((rows) => {
 			for (const row of rows) {
-				rtn.content.push([row.compare, row.labels]);
+				rtn.pairings.push([row.compare, row.labels, row.tag]);
 			}
 		});
 	}
@@ -122,10 +139,11 @@ async function createAnalysis(request: AnalysisRequest[]) {
 					(res: Record<string, number>[]) => {
 						// This is where I drop name and score
 						const compare = reducePairing(res);
+						const diff = res[0].score - res[1].score;
 
 						return {
 							compare,
-							label: `${interval.ref}: ${res[0].name} vs ${res[1].name}`,
+							tag: `base on ${interval.ref} predict ${res[0].name} vs ${res[1].name}`,
 						};
 					},
 				),
@@ -134,7 +152,7 @@ async function createAnalysis(request: AnalysisRequest[]) {
 
 		await Promise.all(proc).then((rows) => {
 			for (const row of rows) {
-				rtn.content.push([row.compare, row.label]);
+				rtn.content.push([row.compare, null, row.tag]);
 			}
 		});
 	}
@@ -149,7 +167,7 @@ async function createAnalysis(request: AnalysisRequest[]) {
 }
 
 const available = Array.from(graph.intervals.values());
-const intervals = available.slice(11);
+const intervals = available.slice(13);
 
 createTraining(intervals)
 	.then(() =>

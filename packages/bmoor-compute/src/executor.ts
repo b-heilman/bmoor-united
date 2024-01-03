@@ -268,6 +268,8 @@ export class Executor<GraphSelector, NodeSelector, IntervalRef, Order> {
 			}
 
 			if (!found) {
+				// This should be a custom error being thrown or something else... it's silently failing
+				// somewhere right now
 				if (shouldVerbose(ctx, datum)) {
 					ctx.log(
 						'-> miss',

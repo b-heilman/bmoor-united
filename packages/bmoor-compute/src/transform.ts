@@ -20,26 +20,26 @@ export function mean(datums: {value: number}[] | number[]) {
 	return values.reduce((agg, value) => agg + value, 0) / values.length;
 }
 
-export function momentum(datums: {value: number}[] | number[]) {
-	const values = normalize(datums);
-
-	let old = values[0];
-	let score = 0;
-
-	for (let i = 1; i < values.length; i++) {
-		const cur = values[i];
-
-		if (cur > old) {
-			score++;
-		} else {
-			score--;
+export function reduce(fn: (agg: number, cur: number, prev: number) => number){
+	return function summarizer(datums: {value: number}[] | number[]) {
+		const values = normalize(datums);
+	
+		let old = null;
+		let score = 0;
+	
+		for (let i = 0; i < values.length; i++) {
+			const cur = values[i];
+	
+			score = fn(score, cur, old);
+	
+			old = cur;
 		}
-
-		old = cur;
-	}
-
-	return score;
+	
+		return score;
+	};
 }
+
+export const momentum = reduce((agg, cur, old) => old === null ? 0 : (cur > old ? agg++ : agg--));
 
 export function change(datums: {value: number}[] | number[]) {
 	const values = normalize(datums);
