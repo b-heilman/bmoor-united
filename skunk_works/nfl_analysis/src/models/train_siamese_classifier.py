@@ -37,13 +37,13 @@ class Encoder(torch.nn.Module):
         n_hidden = n_input * 4
 
         self.encode = torch.nn.Sequential(
-            # I'm doing feature engineering leading into the model, so I don't think 
+            # I'm doing feature engineering leading into the model, so I don't think
             # dropout will help me here.
             # torch.nn.Dropout(p=0.2),
             torch.nn.Linear(n_input, n_hidden),
             torch.nn.ReLU(inplace=True),
             torch.nn.Linear(n_hidden, n_ouput),
-            torch.nn.Sigmoid()
+            torch.nn.Sigmoid(),
         )
 
     def forward(self, input: torch.FloatTensor):
@@ -65,7 +65,7 @@ class SiameseNetwork(torch.nn.Module):
 
         n_embeddings_per = 2
         n_embeddings = 3 * n_embeddings_per
-        n_input2 = (n_embeddings)
+        n_input2 = n_embeddings
         n_compare_hidden = math.ceil(n_embeddings**2)
         n_out = len(stats["labels"])  # number of labels we'r trying to match
 
@@ -109,18 +109,22 @@ class SiameseNetwork(torch.nn.Module):
             input, (o_pos, o_pos + d_pos), dim=1
         )
 
-        #output = torch.cat(
+        # output = torch.cat(
         #    (
         #        self.offsense_encoder(offense),
         #        self.defense_encoder(defense),
         #        self.team_encoder(team),
         #    ),
         #    1,
-        #)
+        # )
 
-        #return output.view(output.size()[0], -1)
+        # return output.view(output.size()[0], -1)
 
-        return self.offsense_encoder(offense), self.defense_encoder(defense), self.team_encoder(team)
+        return (
+            self.offsense_encoder(offense),
+            self.defense_encoder(defense),
+            self.team_encoder(team),
+        )
 
     def forward(self, input: torch.FloatTensor):
         # get two images' features
@@ -145,7 +149,7 @@ class SiameseNetwork(torch.nn.Module):
         output = self.format(output)
 
         return output
-    
+
     def encode(self, input: torch.FloatTensor):
         return self.forward_once(input)
 
@@ -188,6 +192,7 @@ def _train(model, shard_inputs, shard_ouputs, loss_fn, proc_id, seed, threads):
 
     model.load_state_dict(best_state)
     # torch.save(model.state_dict(), 'best-model-parameters.pt')
+
 
 # I'll evolve this over time
 def create_shards(inputs, outputs, min_size=100, simple=False):
@@ -323,7 +328,6 @@ class NeuralClassifier(ModelAbstract):
             print("--encodings--")
             print(self.model.encode(validation_input[1][0:4]))
 
-
         # --- Training ---
         self.train(training_input, training_output, loss_fn, seed)
 
@@ -347,35 +351,33 @@ class NeuralClassifier(ModelAbstract):
         features = torch.FloatTensor(content)
 
         return list(self.model(features).detach().numpy())
-    
+
     def show_distribution(self, content: npt.NDArray):
-        input_1 = torch.FloatTensor(content[0]+content[1])
+        input_1 = torch.FloatTensor(content[0] + content[1])
 
         offense, defense, team = self.model.encode(input_1)
-        
+
         offense = offense.detach().numpy()
         defense = defense.detach().numpy()
         team = team.detach().numpy()
 
         return {
-            'offense': {
-                'max': np.max(offense, axis=0).tolist(),
-                'min': np.min(offense, axis=0).tolist(),
-                'mean': np.mean(offense, axis=0).tolist()
+            "offense": {
+                "max": np.max(offense, axis=0).tolist(),
+                "min": np.min(offense, axis=0).tolist(),
+                "mean": np.mean(offense, axis=0).tolist(),
             },
-            'defense': {
-                'max': np.max(defense, axis=0).tolist(),
-                'min': np.min(defense, axis=0).tolist(),
-                'mean': np.mean(defense, axis=0).tolist()
+            "defense": {
+                "max": np.max(defense, axis=0).tolist(),
+                "min": np.min(defense, axis=0).tolist(),
+                "mean": np.mean(defense, axis=0).tolist(),
             },
-            'team': {
-                'max': np.max(team, axis=0).tolist(),
-                'min': np.min(team, axis=0).tolist(),
-                'mean': np.mean(team, axis=0).tolist()
-            }
+            "team": {
+                "max": np.max(team, axis=0).tolist(),
+                "min": np.min(team, axis=0).tolist(),
+                "mean": np.mean(team, axis=0).tolist(),
+            },
         }
-
-
 
     def save(self):
         with open(STATS_PATH, "w", encoding="utf-8") as file:

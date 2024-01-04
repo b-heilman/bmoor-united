@@ -1,4 +1,5 @@
 import {DatumInterface, EnvironmentRangeSettings} from '@bmoor/compute';
+import {ComputeUnknownInterval} from '@bmoor/compute';
 import {Context} from '@bmoor/context';
 import {
 	Graph,
@@ -8,7 +9,6 @@ import {
 	load as loadGraph,
 } from '@bmoor/graph';
 import {OrderedMap} from '@bmoor/index';
-import {ComputeUnknownInterval} from '@bmoor/compute';
 
 import {
 	DimensionalGraphInterface,
@@ -81,8 +81,8 @@ export class DimensionalGraph implements DimensionalGraphInterface {
 		// TODO: I should be able to do this cleaner...
 		try {
 			return this.graphs.get(interval.ref).select(selector);
-		} catch(ex) {
-			if (strict){
+		} catch (ex) {
+			if (strict) {
 				throw ex;
 			} else {
 				let res = null;
@@ -92,14 +92,14 @@ export class DimensionalGraph implements DimensionalGraphInterface {
 				while (cur && !res) {
 					try {
 						res = this.graphs.get(cur).select(selector);
-					} catch(ex){
+					} catch (ex) {
 						error = ex;
 						cur = this.graphs.getPrevTag(cur);
 						res = null;
 					}
 				}
 
-				if (!res){
+				if (!res) {
 					console.log(cur, res, error);
 					throw error;
 				}
@@ -200,9 +200,11 @@ export class DimensionalGraph implements DimensionalGraphInterface {
 			return this.getInterval(
 				this.graphs.getTagOffset(interval.ref, offset),
 			);
-		} catch(ex){
-			if (ex instanceof ComputeUnknownInterval){
-				throw new ComputeUnknownInterval(`failed to find offset (${interval.ref}) + ${offset}`);
+		} catch (ex) {
+			if (ex instanceof ComputeUnknownInterval) {
+				throw new ComputeUnknownInterval(
+					`failed to find offset (${interval.ref}) + ${offset}`,
+				);
 			} else {
 				throw ex;
 			}
@@ -247,9 +249,11 @@ export function load(
 		intervals.push(new Interval(input.ref, input.order, input.label));
 	}
 
-	intervals.sort((a: Interval, b: Interval) => a.order - b.order).forEach(interval => {
-		graph.addInterval(interval);
-	});
+	intervals
+		.sort((a: Interval, b: Interval) => a.order - b.order)
+		.forEach((interval) => {
+			graph.addInterval(interval);
+		});
 
 	// TODO: I need to do this where I can sort the intervals after insertion easier, so insert
 	//   order doesn't matter.  This works for now, but isn't sound logically.

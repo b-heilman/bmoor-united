@@ -103,17 +103,23 @@ def processing_pair(
 
     return np.array([base_features, compare_features]), np.array(labels)
 
+
 def read_from_index(index: IncomingIndex, path: str):
-    pieces = path.split('.')
+    pieces = path.split(".")
 
     return index[pieces[0]][pieces[1]]
 
-def reduce_for_training(index: IncomingIndex, content: List[IncomingReference]) -> TrainingInfo:
+
+def reduce_for_training(
+    index: IncomingIndex, content: List[IncomingReference]
+) -> TrainingInfo:
     features = []
     labels = []
 
     for row in content:
-        features.append((read_from_index(index, row[0][0]), read_from_index(index, row[0][1])))
+        features.append(
+            (read_from_index(index, row[0][0]), read_from_index(index, row[0][1]))
+        )
         labels.append(row[1])
 
     # _inputs => training sets
@@ -250,7 +256,7 @@ def train_model(Model_Class) -> ModelAbstract:
     stats = incoming["stats"]
     model.create(stats)
 
-    lookup = incoming['features']
+    lookup = incoming["features"]
     info = reduce_for_training(lookup, incoming["pairings"])
     model.fit_scaler(info["training"][0])
 
@@ -276,5 +282,5 @@ def analyze_model(model: ModelAbstract):
     for i, label in enumerate(processed[1]):
         print(">>", label, predictions[i])
 
-    print('>> distribution')
+    print(">> distribution")
     print(json.dumps(model.show_distribution(processed[0]), indent=2))

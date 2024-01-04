@@ -1,4 +1,1 @@
-
-export class ComputeUnknownInterval extends Error {
-
-}
+export class ComputeUnknownInterval extends Error {}

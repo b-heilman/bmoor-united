@@ -65,8 +65,8 @@ export class Event implements EventInterface {
 	getNodesByType(type: NodeType): NodeInterface[] {
 		const rtn = [];
 
-		for (const {node} of this.nodeInfo.values()){
-			if (node.type === type){
+		for (const {node} of this.nodeInfo.values()) {
+			if (node.type === type) {
 				rtn.push(node);
 			}
 		}

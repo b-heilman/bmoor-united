@@ -14,4 +14,4 @@ export {DatumRanker} from './datum/ranker';
 
 export * from './transform';
 
-export {ComputeUnknownInterval} from './error/unknownInterval'
+export {ComputeUnknownInterval} from './error/unknownInterval';
