@@ -1,4 +1,5 @@
 import os
+import copy
 import json
 import math
 import torch
@@ -161,10 +162,13 @@ def _train(model, shard_inputs, shard_ouputs, loss_fn, proc_id, seed, threads):
     rd.seed(seed)
 
     epochs = 300000
-    learning_rate = 0.1
+    learning_rate = 0.05
 
     optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate)
     torch.set_num_threads(threads)
+
+    best_loss = 1
+    best_state = None
 
     for epoch in range(epochs + 1):
         predictions = model(shard_inputs)
@@ -172,14 +176,18 @@ def _train(model, shard_inputs, shard_ouputs, loss_fn, proc_id, seed, threads):
         loss = loss_fn(predictions, shard_ouputs)
         loss_value = loss.item()
 
-        if epoch % 500 == 0:
+        if loss_value < best_loss:
+            best_state = copy.deepcopy(model.state_dict())
+            best_loss = loss_value
             # print(list(model.parameters())[0])
-            print(f"Epoch {proc_id}-{epoch}: train loss: {loss_value}")
+            print(f"Epoch {proc_id}-{epoch}: train loss: {best_loss}")
 
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
 
+    model.load_state_dict(best_state)
+    # torch.save(model.state_dict(), 'best-model-parameters.pt')
 
 # I'll evolve this over time
 def create_shards(inputs, outputs, min_size=100, simple=False):

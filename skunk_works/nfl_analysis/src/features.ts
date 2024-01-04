@@ -31,61 +31,36 @@ console.log(
 */
 export const executor = new DimensionalExecutor(graph);
 
-function buildBasePlayerCalcs(baseLabel: string, field: string){
-	const calc = new Processor(baseLabel, calcSum, [
+function buildTeamCalcs(
+	baseLabel: string,
+	field: string
+){
+	const off = new Processor('off-'+baseLabel, calcSum, [
 		{
 			input: new Accessor({
 				value: field,
 			}),
 			select: {
+				assume: 'team',
 				type: 'player',
 			},
 		},
 	]);
 
-	const last = new Processor(
-		baseLabel+'-last',
+	const offLast = new Processor(
+		'off-'+baseLabel+'-last',
 		(d: number) => d,
 		[
 			{
 				offset: -1,
-				input: calc,
+				input: off,
 			},
 		],
 	);
-	
-	const mean = new Processor(baseLabel+'-mean', calcMean, [
-		{
-			input: last,
-			range: 5,
-		},
-	]);
 
-	const rank = new Ranker(
-		baseLabel+'-rank',
+	const def = new Processor('def-'+baseLabel, (v) => v[0], [
 		{
-			bucketsCount: 6,
-			select: {
-				global: true,
-				type: 'team',
-			},
-		},
-		(input: number) => input,
-		[{input: mean}],
-	);
-
-	return {
-		calc,
-		last,
-		mean,
-		rank
-	};
-}
-
-function buildDefenseCalcs(baseLabel: string, input: Processor){
-	const calc = new Processor(baseLabel, (v) => v[0], [
-		{
-			input,
+			input: off,
 			select: {
 				assume: 'defense',
 				edge: 'against',
@@ -93,31 +68,42 @@ function buildDefenseCalcs(baseLabel: string, input: Processor){
 		},
 	]);
 
-	const last = new Processor(
-		baseLabel+'-last',
+	const defLast = new Processor(
+		'def-'+baseLabel+'-last',
 		(d: number) => d,
 		[
 			{
 				offset: -1,
-				input: calc,
+				input: def,
 			},
 		],
 	);
-	
+
+	return {
+		off,
+		offLast,
+		def,
+		defLast
+	};
+}
+
+function buildTeamStats(
+	baseLabel: string, 
+	input: Processor,
+	range: number = 5, 
+	bucketsCount: number = 6
+){	
 	const mean = new Processor(baseLabel+'-mean', calcMean, [
 		{
-			input: last,
-			range: 5,
-			select: {
-				assume: 'defense',
-			},
+			input,
+			range,
 		},
 	]);
 
 	const rank = new Ranker(
 		baseLabel+'-rank',
 		{
-			bucketsCount: 6,
+			bucketsCount,
 			select: {
 				global: true,
 				type: 'team',
@@ -128,14 +114,16 @@ function buildDefenseCalcs(baseLabel: string, input: Processor){
 	);
 
 	return {
-		calc,
-		last,
 		mean,
 		rank
-	}
+	};
 }
 
-function buildCompare(baseLabel: string, ours: Processor, theirs: Processor){
+function buildBeatCalc(
+	baseLabel: string, 
+	ours: Processor, 
+	theirs: Processor, 
+){
 	const calc = new Processor(
 		baseLabel,
 		(
@@ -175,93 +163,206 @@ function buildCompare(baseLabel: string, ours: Processor, theirs: Processor){
 			},
 		],
 	);
-	
-	const mean = new Processor(baseLabel+'-mean', calcMean, [
-		{
-			input: last,
-			range: 5,
-			select: {
-				assume: 'team',
-			},
-		},
-	]);
-
-	const rank = new Ranker(
-		baseLabel+'-rank',
-		{
-			bucketsCount: 6,
-			select: {
-				global: true,
-				type: 'team',
-			},
-		},
-		(input: number) => input,
-		[{input: mean}],
-	);
 
 	return {
 		calc,
-		last,
-		mean,
-		rank
-	}
+		last
+	};
 }
 
 export const {
-	calc: offPass, 
-	last: offPassLast, 
-	mean: offPassMean, 
-	rank: offPassRank
-} = buildBasePlayerCalcs('off-pass', 'passYds');
+	off: offPass, 
+	offLast: offPassLast, 
+	def: defPass, 
+	defLast: defPassLast
+} = buildTeamCalcs('pass', 'passYds');
 
 export const {
-	calc: offRush, 
-	last: offRushLast, 
-	mean: offRushMean, 
-	rank: offRushRank
-} = buildBasePlayerCalcs('off-rush', 'rushYds');
+	off: offRush, 
+	offLast: offRushLast, 
+	def: defRush, 
+	defLast: defRushLast
+} = buildTeamCalcs('rush', 'rushYds');
 
 export const {
-	calc: defPass, 
-	last: defPassLast, 
-	mean: defPassMean, 
-	rank: defPassRank
-} = buildDefenseCalcs('def-rush', offRush);
+	mean: offPassMean5, 
+	rank: offPassRank5
+} = buildTeamStats('off-pass-5', offPass, 5);
 
 export const {
-	calc: defRush, 
-	last: defRushLast, 
-	mean: defRushMean, 
-	rank: defRushRank
-} = buildDefenseCalcs('def-rush', offPass);
+	mean: offRushMean5, 
+	rank: offRushRank5
+} = buildTeamStats('off-rush-5', offRush, 5);
 
 export const {
-	calc: offPassBeat, 
-	last: offPassBeatLast,  
-	mean: offPassBeatMean,
-	rank: offPassBeatRank
-} = buildCompare('off-pass-beat', offPass, defPassMean);
+	mean: offPassMean3, 
+	rank: offPassRank3
+} = buildTeamStats('off-pass-3', offPass, 3);
 
 export const {
-	calc: offRushBeat, 
-	last: offRushBeatLast,  
-	mean: offRushBeatMean,
-	rank: offRushBeatRank
-} = buildCompare('off-rush-beat', offRush, defRushMean);
+	mean: offRushMean3, 
+	rank: offRushRank3
+} = buildTeamStats('off-rush-3', offRush, 3);
 
 export const {
-	calc: defPassBeat, 
-	last: defPassBeatLast,  
-	mean: defPassBeatMean,
-	rank: defPassBeatRank
-} = buildCompare('def-pass-beat', defPass, offPassMean);
+	mean: offPassMean2, 
+	rank: offPassRank2
+} = buildTeamStats('off-pass-2', offPass, 2);
 
 export const {
-	calc: defRushBeat, 
-	last: defRushBeatLast,  
-	mean: defRushBeatMean,
-	rank: defRushBeatRank
-} = buildCompare('def-rush-beat', defRush, offRushMean);
+	mean: offRushMean2, 
+	rank: offRushRank2
+} = buildTeamStats('off-rush-2', offRush, 2);
+
+export const {
+	mean: defPassMean5, 
+	rank: defPassRank5
+} = buildTeamStats('def-pass-5', defPass, 5);
+
+export const {
+	mean: defRushMean5, 
+	rank: defRushRank5
+} = buildTeamStats('def-rush-5', defRush, 5);
+
+export const {
+	mean: defPassMean3, 
+	rank: defPassRank3
+} = buildTeamStats('def-pass-3', defPass, 3);
+
+export const {
+	mean: defRushMean3, 
+	rank: defRushRank3
+} = buildTeamStats('def-rush-3', defRush, 3);
+
+export const {
+	mean: defPassMean2, 
+	rank: defPassRank2
+} = buildTeamStats('def-pass-2', defPass, 2);
+
+export const {
+	mean: defRushMean2, 
+	rank: defRushRank2
+} = buildTeamStats('def-rush-2', defRush, 2);
+
+export const {
+	calc: offPassBeat5, 
+	last: offPassBeatLast5, 
+} = buildBeatCalc('off-pass-beat-5', offPass, defPassMean5);
+
+export const {
+	calc: offRushBeat5, 
+	last: offRushBeatLast5,
+} = buildBeatCalc('off-rush-beat-5', offRush, defRushMean5);
+
+export const {
+	calc: offPassBeat3, 
+	last: offPassBeatLast3, 
+} = buildBeatCalc('off-pass-beat-3', offPass, defPassMean3);
+
+export const {
+	calc: offRushBeat3,
+	last: offRushBeatLast3,
+} = buildBeatCalc('off-rush-beat-3', offRush, defRushMean3);
+
+export const {
+	calc: offPassBeat2, 
+	last: offPassBeatLast2, 
+} = buildBeatCalc('off-pass-beat-2', offPass, defPassMean2);
+
+export const {
+	calc: offRushBeat2, 
+	last: offRushBeatLast2,
+} = buildBeatCalc('off-rush-beat-2', offRush, defRushMean2);
+
+export const {
+	calc: defPassBeat5, 
+	last: defPassBeatLast5,  
+} = buildBeatCalc('def-pass-beat-5', defPass, offPassMean5);
+
+export const {
+	calc: defRushBeat5, 
+	last: defRushBeatLast5,  
+} = buildBeatCalc('def-rush-beat-5', defRush, offRushMean5);
+
+export const {
+	calc: defPassBeat3, 
+	last: defPassBeatLast3,  
+} = buildBeatCalc('def-pass-beat-3', defPass, offPassMean3);
+
+export const {
+	calc: defRushBeat3, 
+	last: defRushBeatLast3,  
+} = buildBeatCalc('def-rush-beat-3', defRush, offRushMean3);
+
+export const {
+	calc: defPassBeat2, 
+	last: defPassBeatLast2,  
+} = buildBeatCalc('def-pass-beat-2', defPass, offPassMean2);
+
+export const {
+	calc: defRushBeat2,
+	last: defRushBeatLast2,  
+} = buildBeatCalc('def-rush-beat-2', defRush, offRushMean2);
+
+export const {
+	mean: offPassBeatMean5, 
+	rank: offPassBeatRank5
+} = buildTeamStats('off-pass-beat-5', offRushBeat5, 5);
+
+export const {
+	mean: offPassBeatMean3, 
+	rank: offPassBeatRank3
+} = buildTeamStats('off-pass-beat-3', offRushBeat5, 3);
+
+export const {
+	mean: offPassBeatMean2, 
+	rank: offPassBeatRank2
+} = buildTeamStats('off-pass-beat-2', offRushBeat2, 2);
+
+export const {
+	mean: offRushBeatMean5, 
+	rank: offRushBeatRank5
+} = buildTeamStats('off-rush-beat-5', offRushBeat5, 5);
+
+export const {
+	mean: offRushBeatMean3, 
+	rank: offRushBeatRank3
+} = buildTeamStats('off-rush-beat-3', offRushBeat5, 3);
+
+export const {
+	mean: offRushBeatMean2, 
+	rank: offRushBeatRank2
+} = buildTeamStats('off-rush-beat-2', offRushBeat2, 2);
+
+export const {
+	mean: defPassBeatMean5, 
+	rank: defPassBeatRank5
+} = buildTeamStats('def-pass-beat-5', defRushBeat5, 5);
+
+export const {
+	mean: defPassBeatMean3, 
+	rank: defPassBeatRank3
+} = buildTeamStats('def-pass-beat-3', defRushBeat5, 3);
+
+export const {
+	mean: defPassBeatMean2, 
+	rank: defPassBeatRank2
+} = buildTeamStats('def-pass-beat-2', defRushBeat2, 2);
+
+export const {
+	mean: defRushBeatMean5, 
+	rank: defRushBeatRank5
+} = buildTeamStats('def-rush-beat-5', defRushBeat5, 5);
+
+export const {
+	mean: defRushBeatMean3, 
+	rank: defRushBeatRank3
+} = buildTeamStats('def-rush-beat-3', defRushBeat5, 3);
+
+export const {
+	mean: defRushBeatMean2, 
+	rank: defRushBeatRank2
+} = buildTeamStats('def-rush-beat-2', defRushBeat2, 2);
 
 export const wins = new Processor('team-wins', reduce((agg, cur) => cur ? agg+1 : agg), [
 	{
@@ -293,51 +394,6 @@ export const losses = new Processor('team-losses', reduce((agg, cur) => !cur ? a
  * Old calculations from first pass, might want to reuse
  * 
  * 
-export const offRank = new Ranker(
-	'off-rank',
-	{
-		asc: true,
-		bucketsCount: 6,
-		select: {
-			global: true,
-			type: 'offense',
-		},
-	},
-	(pass: number, rush: number) => pass + rush,
-	[{input: offPassRank}, {input: offRushRank}],
-);
-
-export const defRank = new Ranker(
-	'def-rank',
-	{
-		asc: true,
-		bucketsCount: 6,
-		select: {
-			global: true,
-			type: 'defense',
-		},
-	},
-	(pass: number, rush: number) => pass + rush,
-	[{input: defPassRank}, {input: defRushRank}],
-);
-
-export const teamRank = new Ranker(
-	'team-rank',
-	{
-		asc: true,
-		bucketsCount: 6,
-		select: {
-			global: true,
-			type: 'team',
-		},
-	},
-	(def: number[], off: number[]) => def[0] + off[0],
-	[
-		{input: defRank, select: {type: 'defense'}},
-		{input: offRank, select: {type: 'offense'}},
-	],
-);
-
 export const offRushWin = new Processor(
 	'off-rush-win',
 	(
