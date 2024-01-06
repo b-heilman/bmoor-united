@@ -34,20 +34,37 @@ SCALAR_PATH = saveDir + "/transformer.pkl"
 class Encoder(torch.nn.Module):
     def __init__(self, n_input, n_ouput):
         super(Encoder, self).__init__()
-        n_hidden = n_input * 4
+        # n_hidden = n_input * 4
+
+        heads = 3
+
+        print(heads, n_input)
+
+        if heads < n_input:
+            self.transformer_encoder = torch.nn.TransformerEncoder(
+                torch.nn.TransformerEncoderLayer(
+                    d_model=n_input, nhead=heads, dropout=0.05
+                ),
+                num_layers=4
+            )
+        else:
+            print(math.floor(n_input/2))
+            self.transformer_encoder = torch.nn.TransformerEncoder(
+                torch.nn.TransformerEncoderLayer(
+                    d_model=n_input, nhead=math.floor(n_input/2), dropout=0.05
+                ),
+                num_layers=4
+            )
 
         self.encode = torch.nn.Sequential(
-            # I'm doing feature engineering leading into the model, so I don't think
-            # dropout will help me here.
-            # torch.nn.Dropout(p=0.2),
-            torch.nn.Linear(n_input, n_hidden),
-            torch.nn.ReLU(inplace=True),
-            torch.nn.Linear(n_hidden, n_ouput),
+            torch.nn.Linear(n_input, n_ouput),
             torch.nn.Sigmoid(),
         )
 
     def forward(self, input: torch.FloatTensor):
-        return self.encode(input)
+        transformed = self.transformer_encoder(input)
+
+        return self.encode(transformed)
 
 
 class SiameseNetwork(torch.nn.Module):
@@ -165,7 +182,7 @@ def _train(model, shard_inputs, shard_ouputs, loss_fn, proc_id, seed, threads):
     torch.manual_seed(seed)
     rd.seed(seed)
 
-    epochs = 300000
+    epochs = 10000
     learning_rate = 0.05
 
     optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate)

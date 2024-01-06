@@ -1,8 +1,8 @@
-import { EventReference } from "../event.interface";
-import { NodeInterface, NodeReference } from "../node.interface";
-import { Graph } from "../graph";
-import { Node } from "../node";
-import { Features } from "../features";
+import {EventReference} from '../event.interface';
+import {Features} from '../features';
+import {Graph} from '../graph';
+import {Node} from '../node';
+import {NodeInterface, NodeReference} from '../node.interface';
 
 export class GraphView {
 	nodes: NodeInterface[];
@@ -12,6 +12,7 @@ export class GraphView {
 	>;
 
 	constructor(root: Node | Node[]) {
+		console.log(root);
 		this.nodes = [];
 		this.connections = new Map();
 
@@ -42,6 +43,7 @@ export class GraphView {
 			const events = graph.getEvents(node.ref);
 			const connections = this.connections.get(node.ref);
 
+			console.log('->', node.ref, connections);
 			for (const event of events) {
 				const features = event.getNodeFeatures(node.ref);
 
@@ -53,14 +55,33 @@ export class GraphView {
 					for (const info of event.nodeInfo.values()) {
 						const otherNode = info.node;
 
-						if (otherNode !== node) {
-							eventConnections.set(otherNode.ref, features);
-						}
+						eventConnections.set(otherNode.ref, features);
 
 						this.addNode(otherNode);
 					}
 				}
 			}
 		}
+	}
+
+	toJSON() {
+		const rtn = {};
+
+		for (const [nodeRef, eventMap] of this.connections.entries()) {
+			const events = {};
+			for (const [eventRef, connectionMap] of eventMap.entries()) {
+				const features = {};
+
+				for (const [otherRef, featureData] of connectionMap.entries()) {
+					features[otherRef] = featureData.toJSON();
+				}
+
+				events[eventRef] = features;
+			}
+
+			rtn[nodeRef] = events;
+		}
+
+		return rtn;
 	}
 }
