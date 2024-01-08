@@ -2,6 +2,7 @@ import {expect} from 'chai';
 
 import {Context} from '@bmoor/context';
 
+import {Features} from '../features';
 import {Graph} from '../graph';
 import {GraphLoader} from './loader';
 import {GraphView} from './view';
@@ -45,9 +46,7 @@ describe('@bmoor/graph::view', function () {
 				},
 			],
 		});
-	});
 
-	it('should properly load a document to a graph structure', function () {
 		loader.loadJSON(ctx, week1, [
 			{
 				team: 'team-1',
@@ -140,26 +139,390 @@ describe('@bmoor/graph::view', function () {
 				score: 17,
 			},
 		]);
+	});
 
-		const view = new GraphView(week1.getNode('team-1'));
+	describe('::getConnected', function () {
+		it('should properly format with depth 1', function () {
+			const view = new GraphView();
 
-		view.addGraph(week1);
-		view.addGraph(week2);
-		view.addGraph(week3);
+			view.addGraph(week1);
 
-		console.log(JSON.stringify(view.toJSON()));
-		expect(view.toJSON()).to.deep.equal({
-			'team-1': {
-				'1-1': {'team-1': {score: 7}, 'team-2': {score: 7}},
-				'2-1': {'team-1': {score: 7}, 'team-3': {score: 7}},
-				'3-1': {'team-1': {score: 7}, 'team-4': {score: 7}},
-			},
-			'team-2': {
-				'2-2': {'team-2': {score: 10}, 'team-4': {score: 10}},
-				'3-2': {'team-3': {score: 17}, 'team-2': {score: 17}},
-			},
-			'team-3': {'3-2': {'team-3': {score: 10}, 'team-2': {score: 10}}},
-			'team-4': {'3-1': {'team-1': {score: 3}, 'team-4': {score: 3}}},
+			expect(view.getConnected('team-1')).to.deep.equal([
+				'team-1',
+				'team-2',
+			]);
+		});
+
+		it('should properly format with depth 2', function () {
+			const view = new GraphView();
+
+			view.addGraph(week1);
+			view.addGraph(week2);
+
+			// view.render('team-1');
+
+			expect(view.getConnected('team-1')).to.deep.equal([
+				'team-1',
+				'team-2',
+				'team-4',
+				'team-3',
+			]);
+
+			expect(view.getConnected('team-1', 1)).to.deep.equal([
+				'team-1',
+				'team-2',
+				'team-3',
+			]);
+		});
+
+		it('should properly format with depth 2 - after render', function () {
+			const view = new GraphView();
+
+			view.addGraph(week1);
+			view.addGraph(week2);
+
+			view.render('team-1');
+
+			expect(view.getConnected('team-1')).to.deep.equal([
+				'team-1',
+				'team-2',
+				'team-4',
+				'team-3',
+			]);
+
+			expect(view.getConnected('team-1', 1)).to.deep.equal([
+				'team-1',
+				'team-2',
+				'team-3',
+			]);
+		});
+
+		it('should properly format with depth 3', function () {
+			const view = new GraphView();
+
+			view.addGraph(week1);
+			view.addGraph(week2);
+			view.addGraph(week3);
+
+			expect(view.getConnected('team-1')).to.deep.equal([
+				'team-1',
+				'team-2',
+				'team-4',
+				'team-3',
+			]);
+		});
+	});
+
+	describe('::getAllPaths', function () {
+		it('should properly format with depth 1', function () {
+			const view = new GraphView();
+
+			view.addGraph(week1);
+
+			view.render('team-1');
+
+			expect(view.getAllPaths('team-1', 'team-4')).to.deep.equal([]);
+
+			expect(view.getAllPaths('team-1', 'team-2')).to.deep.equal([
+				['team-1', 'team-2'],
+			]);
+		});
+
+		it('should properly format with depth 2', function () {
+			const view = new GraphView();
+
+			view.addGraph(week1);
+			view.addGraph(week2);
+
+			view.render('team-1');
+
+			expect(view.getAllPaths('team-1', 'team-4')).to.deep.equal([
+				['team-1', 'team-2', 'team-4'],
+			]);
+
+			expect(view.getAllPaths('team-1', 'team-2')).to.deep.equal([
+				['team-1', 'team-2'],
+			]);
+		});
+
+		it('should properly format with depth 3', function () {
+			const view = new GraphView();
+
+			view.addGraph(week1);
+			view.addGraph(week2);
+			view.addGraph(week3);
+
+			view.render('team-1');
+
+			expect(view.getAllPaths('team-1', 'team-4')).to.deep.equal([
+				['team-1', 'team-2', 'team-4'],
+				['team-1', 'team-3', 'team-2', 'team-4'],
+				['team-1', 'team-4'],
+			]);
+
+			expect(view.getAllPaths('team-1', 'team-2')).to.deep.equal([
+				['team-1', 'team-2'],
+				['team-1', 'team-3', 'team-2'],
+				['team-1', 'team-4', 'team-2'],
+			]);
+		});
+
+		it('should properly format with depth 3 - full render', function () {
+			const view = new GraphView();
+
+			view.addGraph(week1);
+			view.addGraph(week2);
+			view.addGraph(week3);
+
+			view.render(view.getConnected('team-1'));
+			
+			expect(view.getAllPaths('team-1', 'team-4')).to.deep.equal([
+				['team-1', 'team-2', 'team-4'],
+				['team-1', 'team-2', 'team-3', 'team-4'],
+				['team-1', 'team-3', 'team-4'],
+				['team-1', 'team-3', 'team-2', 'team-4'],
+				['team-1', 'team-4'],
+			]);
+
+			expect(view.getAllPaths('team-1', 'team-2', 2)).to.deep.equal([
+				['team-1', 'team-2'],
+				['team-1', 'team-3', 'team-2'],
+				['team-1', 'team-4', 'team-2'],
+			]);
+
+			expect(view.getAllPaths('team-1', 'team-2', 1)).to.deep.equal([
+				['team-1', 'team-2'],
+			]);
+		});
+	});
+
+	describe('::toJSON', function () {
+		it('should properly format - two levels', function () {
+			const view = new GraphView();
+
+			view.addGraph(week1);
+			view.addGraph(week2);
+
+			view.render('team-1');
+
+			expect(view.toJSON()).to.deep.equal({
+				'team-1': {
+					'team-2': {
+						'1-1': {
+							score: 7,
+						},
+					},
+					'team-3': {
+						'2-1': {
+							score: 7,
+						},
+					},
+				},
+				'team-2': {
+					'team-1': {
+						'1-1': {
+							score: 3,
+						},
+					},
+					'team-4': {
+						'2-2': {
+							score: 10,
+						},
+					},
+				},
+				'team-3': {
+					'team-1': {
+						'2-1': {
+							score: 3,
+						},
+					},
+				},
+				'team-4': {
+					'team-2': {
+						'2-2': {
+							score: 17,
+						},
+					},
+				},
+			});
+		});
+
+		it('should properly format', function () {
+			const view = new GraphView();
+
+			view.addGraph(week1);
+			view.addGraph(week2);
+			view.addGraph(week3);
+
+			view.render('team-1');
+
+			expect(view.toJSON()).to.deep.equal({
+				'team-1': {
+					'team-2': {
+						'1-1': {
+							score: 7,
+						},
+					},
+					'team-3': {
+						'2-1': {
+							score: 7,
+						},
+					},
+					'team-4': {
+						'3-1': {
+							score: 7,
+						},
+					},
+				},
+				'team-2': {
+					'team-1': {
+						'1-1': {
+							score: 3,
+						},
+					},
+					'team-4': {
+						'2-2': {
+							score: 10,
+						},
+					},
+					'team-3': {
+						'3-2': {
+							score: 17,
+						},
+					},
+				},
+				'team-3': {
+					'team-1': {
+						'2-1': {
+							score: 3,
+						},
+					},
+					'team-2': {
+						'3-2': {
+							score: 10,
+						},
+					},
+				},
+				'team-4': {
+					'team-2': {
+						'2-2': {
+							score: 17,
+						},
+					},
+					'team-1': {
+						'3-1': {
+							score: 3,
+						},
+					},
+				},
+			});
+		});
+
+		it('should properly format - with list for root', function () {
+			const view = new GraphView();
+
+			view.addGraph(week1);
+			view.addGraph(week2);
+			view.addGraph(week3);
+
+			view.render(view.getConnected('team-1'));
+
+			expect(view.toJSON()).to.deep.equal({
+				'team-1': {
+					'team-2': {
+						'1-1': {
+							score: 7,
+						},
+					},
+					'team-3': {
+						'2-1': {
+							score: 7,
+						},
+					},
+					'team-4': {
+						'3-1': {
+							score: 7,
+						},
+					},
+				},
+				'team-2': {
+					'team-1': {
+						'1-1': {
+							score: 3,
+						},
+					},
+					'team-4': {
+						'2-2': {
+							score: 10,
+						},
+					},
+					'team-3': {
+						'3-2': {
+							score: 17,
+						},
+					},
+				},
+				'team-3': {
+					'team-4': {
+						'1-2': {
+							score: 10,
+						},
+					},
+					'team-1': {
+						'2-1': {
+							score: 3,
+						},
+					},
+					'team-2': {
+						'3-2': {
+							score: 10,
+						},
+					},
+				},
+				'team-4': {
+					'team-3': {
+						'1-2': {
+							score: 17,
+						},
+					},
+					'team-2': {
+						'2-2': {
+							score: 17,
+						},
+					},
+					'team-1': {
+						'3-1': {
+							score: 3,
+						},
+					},
+				},
+			});
+		});
+	});
+
+	describe('::toMatrix', function () {
+		it('should properly format', function () {
+			const view = new GraphView();
+
+			view.addGraph(week1);
+			view.addGraph(week2);
+			view.addGraph(week3);
+
+			view.render('team-1');
+
+			expect(
+				view.toMatrix((inputs: Features[]) =>
+					inputs.reduce(
+						(agg, input) => agg + <number>input.get('score'),
+						0,
+					),
+				),
+			).to.deep.equal([
+				[0, 7, 7, 7],
+				[3, 0, 17, 10],
+				[3, 10, 0, 0],
+				[3, 17, 0, 0],
+			]);
 		});
 	});
 });

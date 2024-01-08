@@ -3,11 +3,7 @@ import {DatumInterface, FeatureValue} from '@bmoor/compute';
 import {GraphInterface} from '../graph.interface';
 import {GraphSelector} from '../graph.interface';
 import {Node} from '../node';
-import {
-	NodeReference,
-	NodeSelector,
-	NodeValueSelector,
-} from '../node.interface';
+import {NodeReference, NodeValueSelector} from '../node.interface';
 
 export class GraphDatum implements DatumInterface<GraphSelector> {
 	ref: NodeReference;
