@@ -275,7 +275,7 @@ describe('@bmoor/graph::view', function () {
 			view.addGraph(week3);
 
 			view.render(view.getConnected('team-1'));
-			
+
 			expect(view.getAllPaths('team-1', 'team-4')).to.deep.equal([
 				['team-1', 'team-2', 'team-4'],
 				['team-1', 'team-2', 'team-3', 'team-4'],
@@ -293,6 +293,42 @@ describe('@bmoor/graph::view', function () {
 			expect(view.getAllPaths('team-1', 'team-2', 1)).to.deep.equal([
 				['team-1', 'team-2'],
 			]);
+		});
+	});
+
+	describe('::sumEdges', function () {
+		it('should work on a basic example', function () {
+			const view = new GraphView();
+
+			view.addGraph(week1);
+			view.addGraph(week2);
+			view.addGraph(week3);
+
+			view.render(view.getConnected('team-1'));
+
+			expect(
+				view.sumEdges(
+					[['team-1', 'team-2', 'team-3', 'team-4']],
+					(from, to) =>
+						<number>from.get('score') - <number>to.get('score'),
+				),
+			).to.deep.equal([4]);
+
+			expect(
+				view.sumEdges(
+					[['team-1', 'team-2', 'team-4']],
+					(from, to) =>
+						<number>from.get('score') - <number>to.get('score'),
+				),
+			).to.deep.equal([-3]);
+
+			expect(
+				view.sumEdges(
+					[['team-1', 'team-4']],
+					(from, to) =>
+						<number>from.get('score') - <number>to.get('score'),
+				),
+			).to.deep.equal([4]);
 		});
 	});
 

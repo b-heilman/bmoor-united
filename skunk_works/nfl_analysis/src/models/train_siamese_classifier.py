@@ -36,7 +36,8 @@ class Encoder(torch.nn.Module):
         super(Encoder, self).__init__()
         # n_hidden = n_input * 4
 
-        heads = 3
+        # TODO...
+        heads = 5
 
         print(heads, n_input)
 

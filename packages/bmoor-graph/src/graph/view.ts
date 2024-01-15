@@ -2,6 +2,7 @@ import {EventReference} from '../event.interface';
 import {Features} from '../features';
 import {Graph} from '../graph';
 import {NodeReference} from '../node.interface';
+import {NodePath} from './view.interface';
 
 function searchGraphs(
 	graphs: Graph[],
@@ -103,16 +104,16 @@ export class GraphView {
 	getAllPaths(
 		from: NodeReference,
 		to: NodeReference,
-		depth=4,
+		depth = 4,
 		path: NodeReference[] = [],
-		visited = null
-	): NodeReference[][] {
+		visited = null,
+	): NodePath[] {
 		let paths = [];
 
-		if (!visited){
+		if (!visited) {
 			visited = new Set<NodeReference>();
 		}
-		
+
 		visited.add(from);
 		path.push(from);
 
@@ -129,7 +130,7 @@ export class GraphView {
 						to,
 						depth,
 						path,
-						visited
+						visited,
 					);
 					paths = paths.concat(extendedPaths);
 				}
@@ -142,26 +143,36 @@ export class GraphView {
 		return paths;
 	}
 
-	/*
-	sumEdges(from: Node, to: Node, fn: (from: Features, to: Features) => number){
-		const search = [from];
-		const state = {events:{}, values:{[to.ref] : 0}};
-		
-		while(search.length){
-			const cur = search.shift();
+	sumEdges(
+		paths: NodePath[],
+		fn: (from: Features, to: Features) => number,
+	): number[] {
+		return paths.map((path) => {
+			let sum = 0;
+			let prevRef = path[0];
+			let prev = this.connections.get(path[0]);
 
-			const eventMap = this.connections.get(cur.ref);
+			for (let i = 1; i < path.length; i++) {
+				const curRef = path[i];
+				const cur = this.connections.get(curRef);
 
-			for (const [eventRef, connectionMap] of eventMap.entries()) {
-				for (const [otherRef, featureData] of connectionMap.entries()) {
-					const otherDex = getDex(otherRef);
+				const prevEvent = prev.get(curRef);
+				const curEvent = cur.get(prevRef);
 
-					rtn[nodeDex][otherDex] += fn(connectionMap.get(otherRef));
-				}
+				sum += Array.from(prevEvent.entries()).reduce(
+					(agg, [eventRef, prevFeatures]) => {
+						return agg + fn(prevFeatures, curEvent.get(eventRef));
+					},
+					0,
+				);
+
+				prev = cur;
+				prevRef = curRef;
 			}
-		}
+
+			return sum;
+		});
 	}
-	*/
 
 	// This is the matrix view of the graph, direction in both ways
 	toMatrix(fn: (features: Features[]) => number): number[][] {
