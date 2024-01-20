@@ -1,5 +1,5 @@
 import {Context} from '@bmoor/context';
-import {NodeValueSelector} from '@bmoor/graph';
+import {NodeValueSelector, GraphView} from '@bmoor/graph';
 import {DimensionalDatumAccessor as Accessor} from '@bmoor/graph-compute';
 
 import {
@@ -147,7 +147,7 @@ executor.calculate(
 });
 */
 
-export async function calculateCompare(interval, team1, team2) {
+export async function calculateCompare(view: GraphView, interval: string, team1: string, team2: string) {
 	const ctx3 = new Context({
 		flags: {verbose: false /*, reference: 'PHI'*/},
 	});

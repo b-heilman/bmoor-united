@@ -8,6 +8,7 @@ import {
 	teamProperties,
 } from './compute';
 import {graph} from './features';
+import { GraphView } from '@bmoor/graph';
 
 const stats = {
 	offense: Object.keys(offenseProperties),
@@ -50,6 +51,7 @@ async function createTraining(intervals) {
 			// [${interval.ref}.${node.name}, ${interval.ref}.${node.name}]
 		]
 	};
+	const history = []
 
 	for (const interval of intervals) {
 		console.log(interval);
@@ -58,12 +60,13 @@ async function createTraining(intervals) {
 		intervalRefs.push(interval.ref);
 
 		const proc = [];
+		const view = new GraphView();
 
 		for (const event of weekGraph.eventDex.values()) {
 			const nodes = event.getNodesByType('team');
 
 			proc.push(
-				calculateCompare(interval.ref, nodes[0].ref, nodes[1].ref).then(
+				calculateCompare(view, interval.ref, nodes[0].ref, nodes[1].ref).then(
 					(res: Record<string, number>[]) => {
 						// This is where I drop name and score
 						const compare = reducePairing(res);
@@ -133,9 +136,11 @@ async function createAnalysis(request: AnalysisRequest[]) {
 		console.log(interval);
 
 		const proc = [];
+		const view = new GraphView();
+
 		for (const cmp of intervalReq.compare) {
 			proc.push(
-				calculateCompare(interval.ref, cmp.team1, cmp.team2).then(
+				calculateCompare(view, interval.ref, cmp.team1, cmp.team2).then(
 					(res: Record<string, number>[]) => {
 						// This is where I drop name and score
 						const compare = reducePairing(res);
