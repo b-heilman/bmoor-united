@@ -62,11 +62,20 @@ async function createTraining(intervals) {
 		const proc = [];
 		const view = new GraphView();
 
+		for (const ig of graph.getGraphSeries(
+            interval, 
+            graph.offsetInterval(interval, 5)
+        )){
+            view.addGraph(ig);
+        };
+
+        view.render();
+
 		for (const event of weekGraph.eventDex.values()) {
 			const nodes = event.getNodesByType('team');
 
 			proc.push(
-				calculateCompare(view, interval.ref, nodes[0].ref, nodes[1].ref).then(
+				calculateCompare(view, interval, nodes[0].ref, nodes[1].ref).then(
 					(res: Record<string, number>[]) => {
 						// This is where I drop name and score
 						const compare = reducePairing(res);
@@ -138,9 +147,18 @@ async function createAnalysis(request: AnalysisRequest[]) {
 		const proc = [];
 		const view = new GraphView();
 
+		for (const ig of graph.getGraphSeries(
+            interval, 
+            graph.offsetInterval(interval, 5)
+        )){
+            view.addGraph(ig);
+        };
+
+        view.render();
+
 		for (const cmp of intervalReq.compare) {
 			proc.push(
-				calculateCompare(view, interval.ref, cmp.team1, cmp.team2).then(
+				calculateCompare(view, interval, cmp.team1, cmp.team2).then(
 					(res: Record<string, number>[]) => {
 						// This is where I drop name and score
 						const compare = reducePairing(res);

@@ -1,6 +1,6 @@
 import {Context} from '@bmoor/context';
 import {NodeValueSelector, GraphView} from '@bmoor/graph';
-import {DimensionalDatumAccessor as Accessor} from '@bmoor/graph-compute';
+import {DimensionalDatumAccessor as Accessor, DimensionalGraph, Interval} from '@bmoor/graph-compute';
 
 import {
 	executor,
@@ -112,9 +112,72 @@ export const defenseProperties = {
 
 export const teamProperties = {
 	wins,
-	losses
+	losses,
+    'direct': function(ctx, state, view, fromTeam, toTeam){
+        const paths = view.getAllPaths(fromTeam, toTeam, 5);
+
+        const dex = paths.reduce(
+            (agg, path) => {
+                agg[path.length].push(path);
+
+                return agg;
+            }, {
+                '2': [],
+                '3': [],
+                '4': [],
+                '5': []
+            }
+        );
+
+        state.pathDex = dex;
+
+        return view.sumEdges(
+            dex['2'],
+            (from, to) => <number>from.get('score') - <number>to.get('score'),
+        );
+    },
+    'offset-3': function(ctx, state, view, fromTeam, toTeam){
+        return view.sumEdges(
+            state.dex['3'],
+            (from, to) => <number>from.get('score') - <number>to.get('score'),
+        );
+    },
+    'offset-4': function(ctx, state, view, fromTeam, toTeam){
+        return view.sumEdges(
+            state.dex['4'],
+            (from, to) => <number>from.get('score') - <number>to.get('score'),
+        );
+    },
+    'offset-5': function(ctx, state, view, fromTeam, toTeam){
+        return view.sumEdges(
+            state.dex['5'],
+            (from, to) => <number>from.get('score') - <number>to.get('score'),
+        );
+    }
 };
 
+function filter(properties: object){
+    const calculated = {};
+    const functional = {};
+
+    for (const key in properties){
+        const value = properties[key];
+
+        if (typeof value === 'function'){
+            functional[key] = value;
+        } else {
+            calculated[key] = value;
+        }
+    }
+    return {
+        calculated,
+        functional
+    }
+}
+
+const {calculated: offsenseCalculated, functional: offenseFunctions} = filter(offenseProperties);
+const {calculated: defenseCalculated, functional: defenseFunctions} = filter(defenseProperties);
+const {calculated: teamCalculated, functional: teamFunctions} = filter(teamProperties);
 /*
 const ctx1 = new Context({flags: {verbose: true}});
 executor.calculate(
@@ -147,13 +210,23 @@ executor.calculate(
 });
 */
 
-export async function calculateCompare(view: GraphView, interval: string, team1: string, team2: string) {
-	const ctx3 = new Context({
+const state = {
+    interval: null,
+    view: null
+};
+
+export async function calculateCompare(
+    view: GraphView, 
+    interval: Interval, 
+    team1: string, 
+    team2: string
+) {
+	const ctx = new Context({
 		flags: {verbose: false /*, reference: 'PHI'*/},
 	});
 
 	const rtn = executor.calculate(
-		executor.env.getInterval(interval),
+		executor.env.getInterval(interval.ref),
 		// all of these are calculated as of after this week's game since I removed offsets
 		new Accessor(
 			Object.assign(
@@ -161,9 +234,9 @@ export async function calculateCompare(view: GraphView, interval: string, team1:
 					name: 'display',
 					score: 'score',
 				},
-				teamProperties,
-				offenseProperties,
-				defenseProperties,
+				teamCalculated,
+				offsenseCalculated,
+				defenseCalculated,
 			),
 			{
 				name: NodeValueSelector.event,
@@ -171,11 +244,24 @@ export async function calculateCompare(view: GraphView, interval: string, team1:
 			},
 		),
 		{reference: team1, and: [{reference: team2}]},
-		ctx3,
-	);
+		ctx,
+	).then(rtn => {
+        const [team1Res, team2Res] = rtn;
 
+        [offenseFunctions, defenseFunctions, teamFunctions].forEach(
+            functions => {
+                for (const key in functions){
+                    team1Res[key] = functions[key](ctx, state, view, team1, team2);
+                    team2Res[key] = functions[key](ctx, state, view, team2, team1);
+                }
+            }
+        );
+
+        return rtn;
+    });
+    
 	rtn.finally(() => {
-		ctx3.close();
+		ctx.close();
 	});
 
 	return rtn;

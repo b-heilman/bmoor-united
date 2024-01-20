@@ -55,10 +55,17 @@ export class GraphView {
 		return Array.from(visited.values());
 	}
 
-	render(root: NodeReference | NodeReference[]) {
+	render(root: NodeReference | NodeReference[] = null) {
 		this.connections = new Map();
 
-		if (!(root instanceof Array)) {
+		if (root === null){
+			const set = new Set(this.graphs[0].nodeDex.keys());
+			for (const item in this.graphs[1].nodeDex.keys()){
+				set.add(item)
+			}
+
+			root = Array.from(set);
+		} else if (!(root instanceof Array)) {
 			root = [root];
 		}
 
@@ -73,6 +80,10 @@ export class GraphView {
 				// I add below, so create copy to iterate through
 				const events = graph.getEvents(nodeRef);
 				const connections = this.connections.get(nodeRef);
+
+				if (!events){
+					continue;
+				}
 
 				for (const event of events) {
 					const features = event.getNodeFeatures(nodeRef);

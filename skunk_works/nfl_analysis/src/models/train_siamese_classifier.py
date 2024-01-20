@@ -46,15 +46,15 @@ class Encoder(torch.nn.Module):
                 torch.nn.TransformerEncoderLayer(
                     d_model=n_input, nhead=heads, dropout=0.05
                 ),
-                num_layers=4
+                num_layers=4,
             )
         else:
-            print(math.floor(n_input/2))
+            print(math.floor(n_input / 2))
             self.transformer_encoder = torch.nn.TransformerEncoder(
                 torch.nn.TransformerEncoderLayer(
-                    d_model=n_input, nhead=math.floor(n_input/2), dropout=0.05
+                    d_model=n_input, nhead=math.floor(n_input / 2), dropout=0.05
                 ),
-                num_layers=4
+                num_layers=4,
             )
 
         self.encode = torch.nn.Sequential(
