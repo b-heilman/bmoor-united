@@ -113,9 +113,11 @@ export const defenseProperties = {
 export const teamProperties = {
 	wins,
 	losses,
-    'direct': function(ctx, state, view, fromTeam, toTeam){
-        const paths = view.getAllPaths(fromTeam, toTeam, 5);
+    'direct': function(ctx, state: Record<string, any>, view: GraphView, fromTeam: string, toTeam: string){
+        console.log('getting all');
+		const paths = view.getAllPaths(fromTeam, toTeam, 5);
 
+		console.log('reducing');
         const dex = paths.reduce(
             (agg, path) => {
                 agg[path.length].push(path);
@@ -129,6 +131,7 @@ export const teamProperties = {
             }
         );
 
+		console.log('reduced');
         state.pathDex = dex;
 
         return view.sumEdges(
@@ -210,11 +213,6 @@ executor.calculate(
 });
 */
 
-const state = {
-    interval: null,
-    view: null
-};
-
 export async function calculateCompare(
     view: GraphView, 
     interval: Interval, 
@@ -225,6 +223,7 @@ export async function calculateCompare(
 		flags: {verbose: false /*, reference: 'PHI'*/},
 	});
 
+	const state = {};
 	const rtn = executor.calculate(
 		executor.env.getInterval(interval.ref),
 		// all of these are calculated as of after this week's game since I removed offsets

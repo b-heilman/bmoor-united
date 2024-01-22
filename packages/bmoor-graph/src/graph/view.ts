@@ -115,38 +115,40 @@ export class GraphView {
 	getAllPaths(
 		from: NodeReference,
 		to: NodeReference,
-		depth = 4,
-		path: NodeReference[] = [],
-		visited = null,
+		depth = 4
 	): NodePath[] {
-		let paths = [];
+		const toVisit: Record<NodeReference, number> = {
+			[from]: depth
+		};
+		const visited: Record<NodeReference, NodeReference[]> = {
+			[from]: [],
+			[to]: []
+		};
 
-		if (!visited) {
-			visited = new Set<NodeReference>();
-		}
+		let keys = Object.keys(toVisit);
+		while(keys.length){
+			const key = keys.shift();
+			const nextDepth = toVisit[key] - 1;
+			const myNext = visited[key];
 
-		visited.add(from);
-		path.push(from);
+			delete toVisit[key];
 
-		depth--;
-		if (from === to) {
-			// If we reached the destination, return the current path
-			paths = [path.slice()];
-		} else if (depth > -1) {
+			if (nextDepth === 0){
+				continue;
+			}
+
 			const connections = this.connections.get(from);
 			for (const [otherRef] of connections.entries()) {
-				if (!visited.has(otherRef)) {
-					const extendedPaths = this.getAllPaths(
-						otherRef,
-						to,
-						depth,
-						path,
-						visited,
-					);
-					paths = paths.concat(extendedPaths);
+				if (!visited[otherRef]) {
+					toVisit[otherRef] = nextDepth;
+					visited[otherRef] = [];
 				}
+
+				myNext.push(otherRef)
 			}
 		}
+		depth--;
+		
 
 		visited.delete(from);
 		path.pop();
