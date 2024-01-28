@@ -118,10 +118,12 @@ export class GraphView {
 		depth = 4,
 	): NodePath[] {
 		const rtn = [];
-		const queue = [{
-			ref: from,
-			path: new Set([from])
-		}];
+		const queue = [
+			{
+				ref: from,
+				path: new Set([from]),
+			},
+		];
 
 		while (queue.length > 0) {
 			const {ref, path} = queue.shift();
@@ -137,7 +139,7 @@ export class GraphView {
 
 						queue.push({
 							ref: nextRef,
-							path: newPath
+							path: newPath,
 						});
 					}
 				}
