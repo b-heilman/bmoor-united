@@ -58,10 +58,10 @@ export class GraphView {
 	render(root: NodeReference | NodeReference[] = null) {
 		this.connections = new Map();
 
-		if (root === null){
+		if (root === null) {
 			const set = new Set(this.graphs[0].nodeDex.keys());
-			for (const item in this.graphs[1].nodeDex.keys()){
-				set.add(item)
+			for (const item in this.graphs[1].nodeDex.keys()) {
+				set.add(item);
 			}
 
 			root = Array.from(set);
@@ -81,7 +81,7 @@ export class GraphView {
 				const events = graph.getEvents(nodeRef);
 				const connections = this.connections.get(nodeRef);
 
-				if (!events){
+				if (!events) {
 					continue;
 				}
 
@@ -115,45 +115,36 @@ export class GraphView {
 	getAllPaths(
 		from: NodeReference,
 		to: NodeReference,
-		depth = 4
+		depth = 4,
 	): NodePath[] {
-		const toVisit: Record<NodeReference, number> = {
-			[from]: depth
-		};
-		const visited: Record<NodeReference, NodeReference[]> = {
-			[from]: [],
-			[to]: []
-		};
+		const rtn = [];
+		const queue = [{
+			ref: from,
+			path: new Set([from])
+		}];
 
-		let keys = Object.keys(toVisit);
-		while(keys.length){
-			const key = keys.shift();
-			const nextDepth = toVisit[key] - 1;
-			const myNext = visited[key];
+		while (queue.length > 0) {
+			const {ref, path} = queue.shift();
 
-			delete toVisit[key];
+			if (ref === to) {
+				rtn.push(Array.from(path));
+			} else if (path.size < depth) {
+				const connections = this.connections.get(ref);
+				for (const [nextRef] of connections.entries()) {
+					if (!path.has(nextRef)) {
+						const newPath = new Set(path);
+						newPath.add(nextRef);
 
-			if (nextDepth === 0){
-				continue;
-			}
-
-			const connections = this.connections.get(from);
-			for (const [otherRef] of connections.entries()) {
-				if (!visited[otherRef]) {
-					toVisit[otherRef] = nextDepth;
-					visited[otherRef] = [];
+						queue.push({
+							ref: nextRef,
+							path: newPath
+						});
+					}
 				}
-
-				myNext.push(otherRef)
 			}
 		}
-		depth--;
-		
 
-		visited.delete(from);
-		path.pop();
-
-		return paths;
+		return rtn;
 	}
 
 	sumEdges(

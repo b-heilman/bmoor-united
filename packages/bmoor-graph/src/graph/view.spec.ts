@@ -255,9 +255,9 @@ describe('@bmoor/graph::view', function () {
 			view.render('team-1');
 
 			expect(view.getAllPaths('team-1', 'team-4')).to.deep.equal([
+				['team-1', 'team-4'],
 				['team-1', 'team-2', 'team-4'],
 				['team-1', 'team-3', 'team-2', 'team-4'],
-				['team-1', 'team-4'],
 			]);
 
 			expect(view.getAllPaths('team-1', 'team-2')).to.deep.equal([
@@ -277,20 +277,20 @@ describe('@bmoor/graph::view', function () {
 			view.render(view.getConnected('team-1'));
 
 			expect(view.getAllPaths('team-1', 'team-4')).to.deep.equal([
-				['team-1', 'team-2', 'team-4'],
-				['team-1', 'team-2', 'team-3', 'team-4'],
-				['team-1', 'team-3', 'team-4'],
-				['team-1', 'team-3', 'team-2', 'team-4'],
 				['team-1', 'team-4'],
+				['team-1', 'team-2', 'team-4'],
+				['team-1', 'team-3', 'team-4'],
+				['team-1', 'team-2', 'team-3', 'team-4'],
+				['team-1', 'team-3', 'team-2', 'team-4'],
 			]);
 
-			expect(view.getAllPaths('team-1', 'team-2', 2)).to.deep.equal([
+			expect(view.getAllPaths('team-1', 'team-2', 3)).to.deep.equal([
 				['team-1', 'team-2'],
 				['team-1', 'team-3', 'team-2'],
 				['team-1', 'team-4', 'team-2'],
 			]);
 
-			expect(view.getAllPaths('team-1', 'team-2', 1)).to.deep.equal([
+			expect(view.getAllPaths('team-1', 'team-2', 2)).to.deep.equal([
 				['team-1', 'team-2'],
 			]);
 		});
