@@ -64,7 +64,7 @@ async function createTraining(intervals) {
 
 		for (const ig of graph.getGraphSeries(
             interval, 
-            graph.offsetInterval(interval, 5)
+            graph.offsetInterval(interval, -5)
         )){
             view.addGraph(ig);
         };
@@ -146,12 +146,13 @@ async function createAnalysis(request: AnalysisRequest[]) {
 
 		for (const ig of graph.getGraphSeries(
             interval, 
-            graph.offsetInterval(interval, 5)
+			// TODO: this really should be positive, not negative
+            graph.offsetInterval(interval, -5)
         )){
             view.addGraph(ig);
         };
 
-        view.render();
+        view.render({type:'team'});
 
 		for (const cmp of intervalReq.compare) {
 			proc.push(
