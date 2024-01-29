@@ -114,11 +114,8 @@ export const teamProperties = {
 	wins,
 	losses,
     'direct': function(ctx, state: Record<string, any>, view: GraphView, fromTeam: string, toTeam: string){
-        console.log('getting all');
-		const paths = view.getAllPaths(fromTeam, toTeam, 5);
-
-		console.log('reducing');
-        const dex = paths.reduce(
+        const paths = view.getAllPaths(fromTeam, toTeam, 5);
+		const dex = paths.reduce(
             (agg, path) => {
                 agg[path.length].push(path);
 
@@ -131,8 +128,7 @@ export const teamProperties = {
             }
         );
 
-		console.log('reduced');
-        state.pathDex = dex;
+		state.dex = dex;
 
         return view.sumEdges(
             dex['2'],

@@ -181,7 +181,7 @@ describe('@bmoor/graph::view', function () {
 			view.addGraph(week1);
 			view.addGraph(week2);
 
-			view.render('team-1');
+			view.render({root: 'team-1'});
 
 			expect(view.getConnected('team-1')).to.deep.equal([
 				'team-1',
@@ -219,7 +219,7 @@ describe('@bmoor/graph::view', function () {
 
 			view.addGraph(week1);
 
-			view.render('team-1');
+			view.render({root: 'team-1'});
 
 			expect(view.getAllPaths('team-1', 'team-4')).to.deep.equal([]);
 
@@ -234,7 +234,7 @@ describe('@bmoor/graph::view', function () {
 			view.addGraph(week1);
 			view.addGraph(week2);
 
-			view.render('team-1');
+			view.render({root: 'team-1'});
 
 			expect(view.getAllPaths('team-1', 'team-4')).to.deep.equal([
 				['team-1', 'team-2', 'team-4'],
@@ -252,7 +252,7 @@ describe('@bmoor/graph::view', function () {
 			view.addGraph(week2);
 			view.addGraph(week3);
 
-			view.render('team-1');
+			view.render({root: 'team-1'});
 
 			expect(view.getAllPaths('team-1', 'team-4')).to.deep.equal([
 				['team-1', 'team-4'],
@@ -274,7 +274,7 @@ describe('@bmoor/graph::view', function () {
 			view.addGraph(week2);
 			view.addGraph(week3);
 
-			view.render(view.getConnected('team-1'));
+			view.render({root: view.getConnected('team-1')});
 
 			expect(view.getAllPaths('team-1', 'team-4')).to.deep.equal([
 				['team-1', 'team-4'],
@@ -304,7 +304,7 @@ describe('@bmoor/graph::view', function () {
 			view.addGraph(week2);
 			view.addGraph(week3);
 
-			view.render(view.getConnected('team-1'));
+			view.render({root: view.getConnected('team-1')});
 
 			expect(
 				view.sumEdges(
@@ -339,7 +339,7 @@ describe('@bmoor/graph::view', function () {
 			view.addGraph(week1);
 			view.addGraph(week2);
 
-			view.render('team-1');
+			view.render({root: 'team-1'});
 
 			expect(view.toJSON()).to.deep.equal({
 				'team-1': {
@@ -390,7 +390,7 @@ describe('@bmoor/graph::view', function () {
 			view.addGraph(week2);
 			view.addGraph(week3);
 
-			view.render('team-1');
+			view.render({root: 'team-1'});
 
 			expect(view.toJSON()).to.deep.equal({
 				'team-1': {
@@ -461,7 +461,7 @@ describe('@bmoor/graph::view', function () {
 			view.addGraph(week2);
 			view.addGraph(week3);
 
-			view.render(view.getConnected('team-1'));
+			view.render({root: view.getConnected('team-1')});
 
 			expect(view.toJSON()).to.deep.equal({
 				'team-1': {
@@ -544,7 +544,7 @@ describe('@bmoor/graph::view', function () {
 			view.addGraph(week2);
 			view.addGraph(week3);
 
-			view.render('team-1');
+			view.render({root: 'team-1'});
 
 			expect(
 				view.toMatrix((inputs: Features[]) =>

@@ -54,7 +54,7 @@ async function createTraining(intervals) {
 	const history = []
 
 	for (const interval of intervals) {
-		console.log(interval);
+		console.log('interval >', interval);
 		const weekGraph = graph.getGraph(interval);
 
 		intervalRefs.push(interval.ref);
@@ -69,7 +69,7 @@ async function createTraining(intervals) {
             view.addGraph(ig);
         };
 
-        view.render();
+        view.render({type:'team'});
 
 		for (const event of weekGraph.eventDex.values()) {
 			const nodes = event.getNodesByType('team');
@@ -141,11 +141,8 @@ async function createAnalysis(request: AnalysisRequest[]) {
 
 	for (const intervalReq of request) {
 		const interval = graph.getInterval(intervalReq.interval);
-
-		console.log(interval);
-
-		const proc = [];
 		const view = new GraphView();
+		const proc = [];
 
 		for (const ig of graph.getGraphSeries(
             interval, 

@@ -55,10 +55,14 @@ export class GraphView {
 		return Array.from(visited.values());
 	}
 
-	render(root: NodeReference | NodeReference[] = null) {
+	render(
+		settings: {root?: NodeReference | NodeReference[]; type?: string} = {},
+	) {
+		let root = settings.root;
+
 		this.connections = new Map();
 
-		if (root === null) {
+		if (!root) {
 			const set = new Set(this.graphs[0].nodeDex.keys());
 			for (const item in this.graphs[1].nodeDex.keys()) {
 				set.add(item);
@@ -90,6 +94,10 @@ export class GraphView {
 
 					for (const info of event.nodeInfo.values()) {
 						const otherNode = info.node;
+
+						if (settings.type && settings.type !== otherNode.type) {
+							continue;
+						}
 
 						if (otherNode.ref !== nodeRef) {
 							let connection = connections.get(otherNode.ref);
