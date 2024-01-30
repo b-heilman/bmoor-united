@@ -133,25 +133,25 @@ export const teamProperties = {
         return view.sumEdges(
             dex['2'],
             (from, to) => <number>from.get('score') - <number>to.get('score'),
-        );
+        ).reduce((agg, val) => agg + val, 0);
     },
     'offset-3': function(ctx, state, view, fromTeam, toTeam){
         return view.sumEdges(
             state.dex['3'],
             (from, to) => <number>from.get('score') - <number>to.get('score'),
-        );
+        ).reduce((agg, val) => agg + val, 0);
     },
     'offset-4': function(ctx, state, view, fromTeam, toTeam){
         return view.sumEdges(
             state.dex['4'],
             (from, to) => <number>from.get('score') - <number>to.get('score'),
-        );
+        ).reduce((agg, val) => agg + val, 0);
     },
     'offset-5': function(ctx, state, view, fromTeam, toTeam){
         return view.sumEdges(
             state.dex['5'],
             (from, to) => <number>from.get('score') - <number>to.get('score'),
-        );
+        ).reduce((agg, val) => agg + val, 0);
     }
 };
 
