@@ -34,28 +34,13 @@ SCALAR_PATH = saveDir + "/transformer.pkl"
 class Encoder(torch.nn.Module):
     def __init__(self, n_input, n_ouput):
         super(Encoder, self).__init__()
-        # n_hidden = n_input * 4
-
-        # TODO...
-        heads = 5
-
-        print(heads, n_input)
-
-        if heads < n_input:
-            self.transformer_encoder = torch.nn.TransformerEncoder(
-                torch.nn.TransformerEncoderLayer(
-                    d_model=n_input, nhead=heads, dropout=0.05
-                ),
-                num_layers=4,
-            )
-        else:
-            print(math.floor(n_input / 2))
-            self.transformer_encoder = torch.nn.TransformerEncoder(
-                torch.nn.TransformerEncoderLayer(
-                    d_model=n_input, nhead=math.floor(n_input / 2), dropout=0.05
-                ),
-                num_layers=4,
-            )
+        
+        self.transformer = torch.nn.Sequential(
+            torch.nn.Linear(n_input, n_input*2),
+            torch.nn.Linear(n_input*2, n_input*4),
+            torch.nn.Linear(n_input*4, n_input),
+            torch.nn.Sigmoid(),
+        )
 
         self.encode = torch.nn.Sequential(
             torch.nn.Linear(n_input, n_ouput),
@@ -63,7 +48,7 @@ class Encoder(torch.nn.Module):
         )
 
     def forward(self, input: torch.FloatTensor):
-        transformed = self.transformer_encoder(input)
+        transformed = self.transformer(input)
 
         return self.encode(transformed)
 
@@ -380,7 +365,7 @@ class NeuralClassifier(ModelAbstract):
         team = team.detach().numpy()
 
         return {
-            "offense": {
+            "offense": {s
                 "max": np.max(offense, axis=0).tolist(),
                 "min": np.min(offense, axis=0).tolist(),
                 "mean": np.mean(offense, axis=0).tolist(),
