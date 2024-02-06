@@ -16,19 +16,23 @@ class Model_Abstract:
     context: ModelContext
     network: ModelNetwork_Abstract
         
+    def build(
+        self,
+        context: ModelContext,
+        network: ModelNetwork_Abstract
+    ) -> None:
+        self.context = context
+        self.network = network
+
+        network.buld(context)
+
     # https://dagster.io/blog/python-type-hinting
     def train(
         self,
-        context: ModelContext, 
         training_loader: ModelLoader_Abstract, 
-        trainer: ModelTrainer_Abstract,
-        NetworkClass: Type[ModelNetwork_Abstract]
+        trainer: ModelTrainer_Abstract
     ) -> ModelTrainerResult:
-        self.context = context
-
-        trainer.build(context)
-
-        self.network = NetworkClass(context)
+        trainer.build(self.context)
 
         return trainer.train(training_loader, self.network)
     
