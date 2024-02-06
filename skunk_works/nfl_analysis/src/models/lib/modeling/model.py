@@ -1,12 +1,16 @@
 # This is meant as an extra layer of abstraction for the network and will act as the 
 # primary point of control for training it.
+import pickle
+
 from typing import Type
 
+from .loader import ModelLoader_Abstract
 from .context import ModelContext
 from .trainer import ModelTrainer_Abstract
+from .trainer_interface import ModelTrainerResult
 from .network import ModelNetwork_Abstract
 from .analyzer import ModelAnalyzer_Abstract
-from .model_interface import ModelData
+from .analyzer_interface import ModelAnalyzerResult
 
 class Model_Abstract:
     context: ModelContext
@@ -16,44 +20,44 @@ class Model_Abstract:
     def train(
         self,
         context: ModelContext, 
-        training_data: ModelData, 
+        training_loader: ModelLoader_Abstract, 
         trainer: ModelTrainer_Abstract,
         NetworkClass: Type[ModelNetwork_Abstract]
-    ) -> ModelTrainer_Abstract:
+    ) -> ModelTrainerResult:
         self.context = context
 
         trainer.build(context)
 
         self.network = NetworkClass(context)
 
-        trainer.train(training_data, self.network)
-
-        return trainer
+        return trainer.train(training_loader, self.network)
+    
     
     def analyze(
         self,
-        analysis_data: ModelData, 
+        analysis_loader: ModelLoader_Abstract, 
         analyzer: ModelAnalyzer_Abstract
-    ) -> ModelAnalyzer_Abstract:
+    ) -> ModelAnalyzerResult:
         analyzer.build(self.context)
 
-        analyzer.analyze(analysis_data, self.network)
-
-        return analyzer
+        return analyzer.analyze(analysis_loader, self.network)
+    
     
     def save(self, path: str):
-        self.context.save(path)
+        with open(path+'/context.pkl', 'wb') as fp:
+            pickle.dump(self.context, fp)
+
+        with open(path+'/network.pkl', 'wb') as fp:
+            pickle.dump(self.network, fp)
+
         self.network.save(path)
+
     
     def load(self, path: str):
-        self.context = ModelContext()
-        self.context.load(path)
+        with open(path+'/context.pkl', 'rb') as fp:
+            self.context = pickle.load(fp)
 
-        pickle = {
-            'config': {},
-            'NetworkClass': ModelNetwork_Abstract
-        }
+        with open(path+'/network.pkl', 'rb') as fp:
+            self.network = pickle.load(fp)
 
-        self.network = pickle['NetworkClass'](pickle['config'])
-
-        return self.network.load(path)
+        self.network.load(path)
