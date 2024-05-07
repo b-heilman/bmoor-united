@@ -147,12 +147,12 @@ export class ModelField implements ModelFieldInterface {
 		this.internalGetter = isFlat
 			? function (datum) {
 					return datum[settings.internal];
-			  }
+				}
 			: makeGetter(settings.internal);
 		this.internalSetter = isFlat
 			? function (datum, value) {
 					datum[settings.storage] = value;
-			  }
+				}
 			: makeSetter(settings.storage);
 
 		this.actions = buildActions(this);

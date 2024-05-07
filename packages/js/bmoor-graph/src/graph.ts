@@ -209,10 +209,12 @@ export function applyBuilder(
 		try {
 			graph.addNode(<Node>info.node);
 		} catch (ex) {
-			ctx.setError(ex, {
-				code: 'GRAPH_ADD_NODE',
-				protected: info.node,
-			});
+			if (ex instanceof Error) {
+				ctx.setError(ex, {
+					code: 'GRAPH_ADD_NODE',
+					protected: info.node,
+				});
+			}
 
 			throw ex;
 		}
@@ -233,10 +235,12 @@ export function load(ctx: Context, source: GraphJSON): Graph {
 	try {
 		root = loadNode(source.root, builder.nodes);
 	} catch (ex) {
-		ctx.setError(ex, {
-			code: 'GRAPH_ROOT_NODE',
-			protected: source.root,
-		});
+		if (ex instanceof Error) {
+			ctx.setError(ex, {
+				code: 'GRAPH_ROOT_NODE',
+				protected: source.root,
+			});
+		}
 
 		throw ex;
 	}
@@ -247,10 +251,12 @@ export function load(ctx: Context, source: GraphJSON): Graph {
 		try {
 			loadNode(nodeInfo, builder.nodes);
 		} catch (ex) {
-			ctx.setError(ex, {
-				code: 'GRAPH_LOAD_NODE',
-				protected: nodeInfo,
-			});
+			if (ex instanceof Error) {
+				ctx.setError(ex, {
+					code: 'GRAPH_LOAD_NODE',
+					protected: nodeInfo,
+				});
+			}
 
 			throw ex;
 		}

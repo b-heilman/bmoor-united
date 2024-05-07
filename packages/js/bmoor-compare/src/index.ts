@@ -87,10 +87,10 @@ export function isBoolean(value: unknown) {
  * @param {*} value The variable to test
  * @return {boolean}
  **/
-export function isArrayLike(value: object) {
+export function isArrayLike(value: unknown) {
 	// for me, if you have a length, I'm assuming you're array like, might change
 	if (value) {
-		return isObject(value) && 'length' in value;
+		return isObject(value) && 'length' in <object>value;
 	} else {
 		return false;
 	}
@@ -117,9 +117,9 @@ export function isArray(value: unknown) {
  * @param {*} value The variable to test
  * @return {boolean}
  **/
-export function isEmpty(value: object) {
+export function isEmpty(value: unknown) {
 	if (isObject(value)) {
-		for (const key in value) {
+		for (const key in <object>value) {
 			if (Object.prototype.hasOwnProperty.call(value, key)) {
 				return false;
 			}

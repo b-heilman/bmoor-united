@@ -29,8 +29,8 @@ export class Expressor {
 				pos === 0
 					? ExpressorExpressPosition.first
 					: pos === tokens.length - 1
-					? ExpressorExpressPosition.last
-					: ExpressorExpressPosition.middle;
+						? ExpressorExpressPosition.last
+						: ExpressorExpressPosition.middle;
 
 			return token.toExpressable(this.compiler, settings);
 		});

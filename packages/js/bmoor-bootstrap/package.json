@@ -1,9 +1,10 @@
 {
-  "name": "@bmoor/context",
-  "version": "0.1.1",
+  "name": "@bmoor/bootstrap",
   "type": "module",
-  "description": "Better ways to work with objects",
-  "main": "src/index.ts",
+  "version": "0.4.0",
+  "type": "module",
+  "description": "Methods used to bootstrap diffrent methods",
+  "main": "src/index.js",
   "files": [
     "src/*[!.spec].js",
     "src/**/*[!.spec].js"
@@ -17,13 +18,13 @@
   "bugs": {
     "url": "https://github.com/b-heilman/bmoor-united/issues"
   },
-  "homepage": "https://github.com/b-heilman/bmoor-united/blob/main/packages/bmoor-context/README.md",
+  "homepage": "https://github.com/b-heilman/bmoor-united/blob/main/packages/bmoor-compare/README.md",
   "dependencies": {},
   "scripts": {
     "build": "mkdir -p dist/; cp -r src/ dist/src;  cp package.json dist/package.json",
     "lint": "eslint ./src",
-    "test": "NODE_OPTIONS=\"--import=@bmoor/bootstrap/src/node-typescript.js\" mocha -r ts-node/register --recursive \"./src/**/*.spec.ts\"",
-    "publish": "echo \"context publishing...\""
+    "test": "echo \"Nothing to see here\"",
+    "publish": "echo \"compare publishing...\""
   },
   "keywords": []
 }

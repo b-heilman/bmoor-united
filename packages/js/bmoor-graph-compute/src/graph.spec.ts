@@ -1,7 +1,8 @@
 import {expect} from 'chai';
 
+import {DatumInterface} from '@bmoor/compute';
 import {Context} from '@bmoor/context';
-import {GraphDatum} from '@bmoor/graph';
+import {GraphDatum, NodeSelector} from '@bmoor/graph';
 
 import {DimensionalGraph, load} from './graph';
 import {NodeValueSelector} from './graph.interface';
@@ -442,9 +443,10 @@ describe('@bmoor/graph-compute::graph', function () {
 
 			expect(
 				await Promise.all(
-					res.map((v: GraphDatum) =>
-						v.getValue('foo-bar', NodeValueSelector.node),
-					),
+					res.map((v: DatumInterface<NodeSelector>) => {
+						const datum = <GraphDatum>v;
+						return datum.getValue('foo-bar', NodeValueSelector.node);
+					}),
 				),
 			).to.deep.equal([2]);
 		});
@@ -456,9 +458,10 @@ describe('@bmoor/graph-compute::graph', function () {
 
 			expect(
 				await Promise.all(
-					res.map((v: GraphDatum) =>
-						v.getValue('passing', NodeValueSelector.event),
-					),
+					res.map((v: DatumInterface<NodeSelector>) => {
+						const datum = <GraphDatum>v;
+						return datum.getValue('passing', NodeValueSelector.event);
+					}),
 				),
 			).to.deep.equal([120]);
 		});
@@ -476,9 +479,10 @@ describe('@bmoor/graph-compute::graph', function () {
 
 			expect(
 				await Promise.all(
-					res.map((v: GraphDatum) =>
-						v.getValue('passing', NodeValueSelector.event),
-					),
+					res.map((v: DatumInterface<NodeSelector>) => {
+						const datum = <GraphDatum>v;
+						return datum.getValue('passing', NodeValueSelector.event);
+					}),
 				),
 			).to.deep.equal([120, 220]);
 		});

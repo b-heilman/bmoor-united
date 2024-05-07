@@ -132,11 +132,13 @@ function createArrayWriter(
 	};
 }
 
-function writeArray(
-	obj,
+function writeArray<T = unknown>(
+	obj: T,
 	arr: PathContent[],
-	[fn, ...rest]: WriterFunction,
-): WriterFunction {
+	rest: WriterFunction[],
+): T {
+	const fn = rest.shift();
+
 	for (let i = 0, c = arr.length; i < c; i++) {
 		const value = arr[i];
 		const tgt = obj[i];

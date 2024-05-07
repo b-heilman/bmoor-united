@@ -1,8 +1,5 @@
 import {FeatureReference, FeatureValue} from '../datum.interface';
-import {
-	DatumAccessorInterface,
-	DatumAccessorResponse,
-} from './accessor.interface';
+import {DatumAccessorInterface} from './accessor.interface';
 
 export interface DatumProcessorSelect<NodeSelector, IntervalRef> {
 	input?:
@@ -29,25 +26,28 @@ export type DatumProcessorRequirement<NodeSelector, IntervalRef> =
 	| DatumProcessorSelectAcross<NodeSelector, IntervalRef>
 	| DatumProcessorSelectRange<NodeSelector, IntervalRef>;
 
-export type DatumProcessorRequirementsResponse =
-	| DatumAccessorResponse
-	| DatumAccessorResponse[]
-	| DatumProcessorResponse
-	| DatumProcessorResponse[];
+// https://www.typescriptlang.org/docs/handbook/2/mapped-types.html
+// https://www.rst.software/blog/advanced-typing-in-typescript-with-generics
 
-export type DatumProcessorFunction = (
-	...args: DatumProcessorRequirementsResponse[]
+export type DatumProcessorFunction<ResponseIndex> = (
+	args: ResponseIndex,
 ) => FeatureValue;
 
 export type DatumProcessorResponse = FeatureValue;
 
-export interface DatumProcessorInterface<NodeSelector, IntervalRef> {
-	name: FeatureReference;
+export interface DatumProcessorInterface<
+	NodeSelector,
+	IntervalRef,
+	ResponseIndex = Record<string, unknown>,
+> {
+	name: FeatureReference;  
 
-	getRequirements(): DatumProcessorRequirement<
-		NodeSelector,
-		IntervalRef
-	>[];
+	getRequirements(): {
+		[Property in keyof ResponseIndex]: DatumProcessorRequirement<
+			NodeSelector,
+			IntervalRef
+		>;
+	};
 
-	process(...DatumProcessorRequirementsResponse): DatumProcessorResponse;
+	process(ResponseIndex): DatumProcessorResponse;
 }

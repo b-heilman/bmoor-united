@@ -364,7 +364,7 @@ export class Node implements NodeInterface {
 			? this.setWeight(mount, value)
 			: Array.from(this.events.values()).map((event) =>
 					event.getNodeFeatures(this.ref).set(mount, value),
-			  );
+				);
 
 		return true;
 	}

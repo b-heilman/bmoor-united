@@ -8,23 +8,26 @@ function normalize(datums: {value: number}[] | number[]): number[] {
 	return <number[]>datums;
 }
 
-export function sum(datums: {value: number}[] | number[]) {
-	const values = normalize(datums);
+// TODO: normalize might no longer be needed?
+export function sum(datums: {sum: {value: number}[] | number[]}) {
+	const values = normalize(datums.sum);
 
+	console.log('sum', values);
 	return values.reduce((agg, value) => agg + value, 0);
 }
 
-export function mean(datums: {value: number}[] | number[]) {
-	const values = normalize(datums);
+export function mean(datums: {mean: {value: number}[] | number[]}) {
+	const values = normalize(datums.mean);
 
+	console.log('mean', values);
 	return values.reduce((agg, value) => agg + value, 0) / values.length;
 }
 
 export function reduce(
 	fn: (agg: number, cur: number, prev: number) => number,
 ) {
-	return function summarizer(datums: {value: number}[] | number[]) {
-		const values = normalize(datums);
+	return function summarizer(datums: {reduce: {value: number}[] | number[]}) {
+		const values = normalize(datums.reduce);
 
 		let old = null;
 		let score = 0;

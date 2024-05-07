@@ -14,9 +14,13 @@ import {
 
 class Accessor extends DatumAccessor<DatumSelector, Interval> {}
 
-class Processor extends DatumProcessor<DatumSelector, Interval> {}
+class Processor<Types> extends DatumProcessor<
+	DatumSelector,
+	Interval,
+	Types
+> {}
 
-class Ranker extends DatumRanker<DatumSelector, Interval> {}
+class Ranker<Types> extends DatumRanker<DatumSelector, Interval, Types> {}
 
 describe('@bmoor/compute', function () {
 	let env: Environment = null;
@@ -239,46 +243,46 @@ describe('@bmoor/compute', function () {
 
 		// bar1
 
-		proc1 = new Processor(
+		proc1 = new Processor<{eins: {value: number}; zwei: {value: number}}>(
 			'mean-between',
-			(arg1: {value: number}, arg2: {value: number}) => {
-				return (arg1.value + arg2.value) / 2;
+			(args) => {
+				return (args.eins.value + args.zwei.value) / 2;
 			},
-			[
-				{
+			{
+				eins: {
 					input: accessFoo,
 					offset: -1,
 				},
-				{
+				zwei: {
 					input: accessFoo,
 					offset: -2,
 				},
-			],
+			},
 		);
 
-		proc2 = new Processor('mean-3', mean, [
-			{
+		proc2 = new Processor<{mean: number[]}>('mean-3', mean, {
+			mean: {
 				input: accessFoo,
 				range: 3,
 			},
-		]);
+		});
 
-		proc3 = new Processor(
+		proc3 = new Processor<{data: {arg1: number; arg2: number}}>(
 			'compared-means',
-			(data: {arg1: number; arg2: number}) => (data.arg1 + data.arg2) / 2,
-			[
-				{
+			({data}) => (data.arg1 + data.arg2) / 2,
+			{
+				data: {
 					offset: -2,
 					input: new Accessor({
 						arg1: proc1,
 						arg2: proc2,
 					}),
 				},
-			],
+			},
 		);
 
-		proc4 = new Processor('p-means', mean, [
-			{
+		proc4 = new Processor('p-means', mean, {
+			mean: {
 				input: accessFoo,
 				select: {
 					metadata: {
@@ -286,10 +290,10 @@ describe('@bmoor/compute', function () {
 					},
 				},
 			},
-		]);
+		});
 
-		proc5 = new Processor('p-proc', mean, [
-			{
+		proc5 = new Processor('p-proc', mean, {
+			mean: {
 				input: proc2,
 				select: {
 					metadata: {
@@ -297,11 +301,11 @@ describe('@bmoor/compute', function () {
 					},
 				},
 			},
-		]);
+	});
 
-		proc6 = new Processor(
+		proc6 = new Processor<{inputs: {foo: number, bar: number}[]}>(
 			'cross',
-			(inputs: {foo: number; bar: number}[]) => {
+			({inputs}: {inputs: {foo: number; bar: number}[]}) => {
 				return (
 					inputs.reduce(
 						(agg, input) => agg + (input.foo + input.bar) / 2,
@@ -309,8 +313,8 @@ describe('@bmoor/compute', function () {
 					) / inputs.length
 				);
 			},
-			[
-				{
+			{
+				inputs: {
 					input: new Accessor({
 						foo: 'foo',
 						bar: 'bar',
@@ -321,15 +325,15 @@ describe('@bmoor/compute', function () {
 						},
 					},
 				},
-			],
+			},
 		);
 
-		proc7 = new Processor('range', mean, [
-			{
+		proc7 = new Processor('range', mean, {
+			mean: {
 				input: proc6,
 				range: 3,
 			},
-		]);
+		});
 	});
 
 	it('should work with a simple execution', async function () {
@@ -406,7 +410,7 @@ describe('@bmoor/compute', function () {
 	});
 
 	it('should allow ranking across nodes', async function () {
-		const rank = new Ranker(
+		const rank = new Ranker<{foo: number}>(
 			'rank-across-foo',
 			{
 				select: {
@@ -421,13 +425,13 @@ describe('@bmoor/compute', function () {
 			(input: {foo: number}) => {
 				return input.foo;
 			},
-			[
-				{
+			{
+				rank: {
 					input: new Accessor({
 						foo: 'foo',
 					}),
 				},
-			],
+			},
 		);
 
 		const v1 = await executor.calculate({ref: 'eins', order: 0}, rank, {
@@ -462,16 +466,16 @@ describe('@bmoor/compute', function () {
 					},
 				},
 			},
-			(input: {foo: number}) => {
+			({input}: {input: {foo: number}}) => {
 				return input.foo;
 			},
-			[
-				{
+			{
+				input: {
 					input: new Accessor({
 						foo: 'foo',
 					}),
 				},
-			],
+			},
 		);
 
 		const v1 = await executor.calculate({ref: 'eins', order: 0}, rank, {
@@ -507,16 +511,16 @@ describe('@bmoor/compute', function () {
 					},
 				},
 			},
-			(input: {foo: number}) => {
+			({input}: {input: {foo: number}}) => {
 				return input.foo;
 			},
-			[
-				{
+			{
+				input: {
 					input: new Accessor({
 						foo: 'foo',
 					}),
 				},
-			],
+			},
 		);
 
 		const v1 = await executor.calculate({ref: 'eins', order: 0}, rank, {
@@ -552,16 +556,16 @@ describe('@bmoor/compute', function () {
 					},
 				},
 			},
-			(input: {foo: number}) => {
+			({input}: {input: {foo: number}}) => {
 				return input.foo;
 			},
-			[
-				{
+			{
+				input: {
 					input: new Accessor({
 						foo: 'foo',
 					}),
 				},
-			],
+			},
 		);
 
 		const v1 = await executor.calculate({ref: 'eins', order: 0}, rank, {
@@ -604,16 +608,16 @@ describe('@bmoor/compute', function () {
 					},
 				},
 			},
-			(input: {foo: number}) => {
+			({input}: {input: {foo: number}}) => {
 				return input.foo;
 			},
-			[
-				{
+			{
+				input: {
 					input: new Accessor({
 						foo: 'foo',
 					}),
 				},
-			],
+			},
 		);
 
 		const v1 = await executor.calculate({ref: 'eins', order: 0}, rank, {
@@ -648,7 +652,8 @@ describe('@bmoor/compute', function () {
 				asc: true,
 				bucketsCount: 2,
 				filter: {
-					fn: (value: number) => {
+					fn: (input) => {
+						const value = <number>input;
 						return value > 105;
 					},
 					droppedValue: 3,
@@ -662,16 +667,16 @@ describe('@bmoor/compute', function () {
 					},
 				},
 			},
-			(input: {foo: number}) => {
+			({input}: {input: {foo: number}}) => {
 				return input.foo;
 			},
-			[
-				{
+			{
+				input: {
 					input: new Accessor({
 						foo: 'foo',
 					}),
 				},
-			],
+			},
 		);
 
 		const v1 = await executor.calculate({ref: 'eins', order: 0}, rank, {
@@ -707,7 +712,11 @@ describe('@bmoor/compute', function () {
 				bucketsCount: 2,
 				filter: {
 					stats: () => ({limit: 105}),
-					fn: (value: number, stats: {limit: number}) => {
+					// TODO: fix this nonsense
+					fn: (input, inStats) => {
+						const value = <number>input;
+						const stats = <{limit: number}>inStats;
+
 						return value > stats.limit;
 					},
 					droppedValue: 3,
@@ -721,16 +730,16 @@ describe('@bmoor/compute', function () {
 					},
 				},
 			},
-			(input: {foo: number}) => {
+			({input}: {input: {foo: number}}) => {
 				return input.foo;
 			},
-			[
-				{
+			{
+				input: {
 					input: new Accessor({
 						foo: 'foo',
 					}),
 				},
-			],
+			},
 		);
 
 		const v1 = await executor.calculate({ref: 'eins', order: 0}, rank, {

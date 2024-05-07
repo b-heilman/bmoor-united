@@ -7,7 +7,6 @@ import {DatumAccessorResponse} from './datum/accessor.interface';
 import {DatumProcessor} from './datum/processor';
 import {
 	DatumProcessorRequirement,
-	DatumProcessorRequirementsResponse,
 	DatumProcessorResponse,
 } from './datum/processor.interface';
 import {DatumRanker} from './datum/ranker';
@@ -50,7 +49,7 @@ async function loadProcessorRequirement<
 	req: DatumProcessorRequirement<NodeSelector, IntervalRef>,
 	datum: DatumInterface<NodeSelector>,
 	interval: IntervalInterface<IntervalRef, Order>,
-): Promise<DatumProcessorRequirementsResponse> {
+): Promise<unknown> {
 	let newInterval = null;
 
 	try {
@@ -101,14 +100,16 @@ async function loadProcessorRequirement<
 				strict: req.strict,
 			});
 		} catch (ex) {
-			ctx.setError(ex).addErrorContext({
-				code: 'PROCESSOR_RANGE_FAIL',
-				protected: {
-					ref: newDatum.ref,
-					interval: newInterval,
-					range: req.range,
-				},
-			});
+			if (ex instanceof Error) {
+				ctx.setError(ex).addErrorContext({
+					code: 'PROCESSOR_RANGE_FAIL',
+					protected: {
+						ref: newDatum.ref,
+						interval: newInterval,
+						range: req.range,
+					},
+				});
+			}
 
 			throw ex;
 		}
@@ -138,15 +139,17 @@ async function loadProcessorRequirement<
 				);
 			}
 		} catch (ex) {
-			ctx.setError(ex).addErrorContext({
-				code: 'PROCESSOR_SELECT_FAIL',
-				protected: {
-					ref: newDatum.ref,
-					select: req.select,
-					requestInterval: interval,
-					newInterval,
-				},
-			});
+			if (ex instanceof Error) {
+				ctx.setError(ex).addErrorContext({
+					code: 'PROCESSOR_SELECT_FAIL',
+					protected: {
+						ref: newDatum.ref,
+						select: req.select,
+						requestInterval: interval,
+						newInterval,
+					},
+				});
+			}
 
 			throw ex;
 		}
@@ -196,20 +199,27 @@ async function runProcessor<
 
 	let reqs = null;
 	try {
-		reqs = await Promise.all(
-			requirements.map((req) =>
+		const values = await Promise.all(
+			Object.values(requirements).map((req) =>
 				loadProcessorRequirement(ctx, exe, req, datum, interval),
 			),
 		);
+
+		reqs = Object.keys(requirements).reduce((agg, v, i) => {
+			agg[v] = values[i];
+			return agg;
+		}, {});
 	} catch (ex) {
-		ctx.setError(ex, {
-			code: 'BMOOR_COMPUTE_FAILED_PROC',
-			protected: {
-				ref: datum.ref,
-				interval: interval.ref,
-				processor: processor.name,
-			},
-		});
+		if (ex instanceof Error) {
+			ctx.setError(ex, {
+				code: 'BMOOR_COMPUTE_FAILED_PROC',
+				protected: {
+					ref: datum.ref,
+					interval: interval.ref,
+					processor: processor.name,
+				},
+			});
+		}
 
 		throw ex;
 	}
@@ -224,7 +234,7 @@ async function runProcessor<
 		);
 	}
 
-	return processor.process(...reqs);
+	return processor.process(reqs);
 }
 
 export class Executor<GraphSelector, NodeSelector, IntervalRef, Order> {
@@ -309,7 +319,7 @@ export class Executor<GraphSelector, NodeSelector, IntervalRef, Order> {
 						const stats = processor.settings.filter.stats
 							? processor.settings.filter.stats(
 									pairings.map((pair) => pair.value),
-							  )
+								)
 							: null;
 
 						const fn = processor.settings.filter.fn;
@@ -333,8 +343,10 @@ export class Executor<GraphSelector, NodeSelector, IntervalRef, Order> {
 					const length = processor.settings.bucketSize
 						? processor.settings.bucketSize
 						: processor.settings.bucketsCount
-						? Math.ceil(pairings.length / processor.settings.bucketsCount)
-						: 1;
+							? Math.ceil(
+									pairings.length / processor.settings.bucketsCount,
+								)
+							: 1;
 
 					if (shouldVerbose(ctx, datum)) {
 						ctx.log(

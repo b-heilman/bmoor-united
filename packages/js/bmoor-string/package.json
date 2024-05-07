@@ -1,6 +1,7 @@
 {
   "name": "@bmoor/string",
-  "version": "0.0.1",
+  "version": "0.4.0",
+  "type": "module",
   "description": "Better ways to work with objects",
   "main": "src/index.ts",
   "files": [
@@ -18,9 +19,9 @@
   },
   "homepage": "https://github.com/b-heilman/bmoor-united/blob/main/packages/bmoor-streaming/README.md",
   "scripts": {
-    "build": "mkdir dist/; cp -r src/ dist/src;  cp package.json dist/package.json",
+    "build": "mkdir -p dist/; cp -r src/ dist/src;  cp package.json dist/package.json",
     "lint": "eslint ./src",
-    "test": "mocha -r ts-node/register --recursive \"./src/**/*.spec.ts\"",
+    "test": "NODE_OPTIONS=\"--import=@bmoor/bootstrap/src/node-typescript.js\" mocha -r ts-node/register --recursive \"./src/**/*.spec.ts\"",
     "publish": "echo \"streaming publishing...\""
   },
   "keywords": [],

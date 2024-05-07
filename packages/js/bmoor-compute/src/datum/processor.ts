@@ -3,34 +3,49 @@ import {
 	DatumProcessorFunction,
 	DatumProcessorInterface,
 	DatumProcessorRequirement,
-	DatumProcessorRequirementsResponse,
 } from './processor.interface';
 
-export class DatumProcessor<NodeSelector, IntervalRef>
-	implements DatumProcessorInterface<NodeSelector, IntervalRef>
+export class DatumProcessor<
+	NodeSelector,
+	IntervalRef,
+	RequirementIndex = unknown,
+> implements
+		DatumProcessorInterface<NodeSelector, IntervalRef, RequirementIndex>
 {
-	fn: DatumProcessorFunction;
+	fn: DatumProcessorFunction<RequirementIndex>;
 	name: FeatureReference;
-	requirements: DatumProcessorRequirement<NodeSelector, IntervalRef>[];
+	requirements: {
+		[Property in keyof RequirementIndex]: DatumProcessorRequirement<
+			NodeSelector,
+			IntervalRef
+		>;
+	};
 
 	constructor(
 		name: FeatureReference,
-		fn: DatumProcessorFunction,
-		reqs: DatumProcessorRequirement<NodeSelector, IntervalRef>[],
+		fn: DatumProcessorFunction<RequirementIndex>,
+		reqs: {
+			[Property in keyof RequirementIndex]: DatumProcessorRequirement<
+				NodeSelector,
+				IntervalRef
+			>;
+		},
 	) {
 		this.fn = fn;
 		this.name = name;
 		this.requirements = reqs;
 	}
 
-	getRequirements(): DatumProcessorRequirement<
-		NodeSelector,
-		IntervalRef
-	>[] {
+	getRequirements(): {
+		[Property in keyof RequirementIndex]: DatumProcessorRequirement<
+			NodeSelector,
+			IntervalRef
+		>;
+	} {
 		return this.requirements;
 	}
 
-	process(...args: DatumProcessorRequirementsResponse[]): FeatureValue {
-		return this.fn(...args);
+	process(args: RequirementIndex): FeatureValue {
+		return this.fn(args);
 	}
 }

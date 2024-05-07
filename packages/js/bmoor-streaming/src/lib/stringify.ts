@@ -83,7 +83,7 @@ export async function stringify(
 			return stringify(res, write, onFlush);
 		} else if (Array.isArray(value)) {
 			write('[');
-			await value.reduce(async (prom: Promise<null>, v, i) => {
+			await value.reduce(async (prom: Promise<void>, v, i) => {
 				await prom;
 
 				if (i !== 0) {
@@ -96,7 +96,7 @@ export async function stringify(
 		} else {
 			write('{');
 			await Object.keys(value).reduce(
-				async (prom: Promise<null>, key, i) => {
+				async (prom: Promise<void>, key, i) => {
 					await prom;
 
 					if (i !== 0) {

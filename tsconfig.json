@@ -1,21 +1,37 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
-    "composite": true,
+    "rootDirs": ["src"],
+    "outDir": "dist",
+    "lib": ["es2020"],
+    "target": "es2020",
+    "module": "esnext",
     "moduleResolution": "node",
-    "removeComments": true,
-
-    "noEmit": true,
-    "noEmitOnError": true,
-    "noImplicitReturns": true,
-    "noFallthroughCasesInSwitch": true,
-
-    "target": "es2019",
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
-    "lib": [
-      "es2019"
+    "removeComments": true,
+    "noImplicitAny": false,
+    "noImplicitThis": false,
+    "noEmit": true,
+    "noEmitOnError": true,
+    "noImplicitReturns": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "noFallthroughCasesInSwitch": true,
+    "experimentalDecorators": true,
+    "strict": true,
+    "alwaysStrict": true,
+    "strictNullChecks": false,
+    "strictPropertyInitialization": false,
+    "types": ["node", "mocha"],
+    "typeRoots": [
+      "./node_modules/@types"
     ]
+  },
+  "ts-node": {
+    "esm": true,
+    "experimentalSpecifierResolution": "node"
   }
 }

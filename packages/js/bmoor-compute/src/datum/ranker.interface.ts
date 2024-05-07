@@ -1,7 +1,7 @@
 import {FeatureValue} from '../datum.interface';
 import {DatumProcessorFunction} from './processor.interface';
 
-export type DatumRankerFunction = DatumProcessorFunction;
+export type DatumRankerFunction<DatumShape> = DatumProcessorFunction<{rank: unknown}>;
 
 export type DatumRankerStats = Record<string, FeatureValue>;
 
