@@ -1,56 +1,35 @@
-import {DatumAccessor as DatumAccess} from '../datum.interface';
-import {
-	DatumAccessorInterface,
-	DatumAccessorRequest,
-	DatumAccessorResponse,
-} from './accessor.interface';
-import {DatumProcessorInterface} from './processor.interface';
+import { DatumAccessorSettings, DatumAccessorContext } from "./accessor.interface";
+import { DatumAction } from './action';
+import { DatumActionRequirements } from "./action.interface";
+import { IDatum, FeatureReference } from "../datum.interface";
 
-export class DatumAccessor<NodeSelector, IntervalRef>
-	implements DatumAccessorInterface<NodeSelector, IntervalRef>
-{
-	request: DatumAccessorRequest<NodeSelector, IntervalRef>;
-	requirements: DatumProcessorInterface<NodeSelector, IntervalRef>[];
+/***
+ * Allows you to run a action against a datum, but it is offset from 0
+ */
+export class DatumAccessor<
+	RequirementT,
+	ContextT extends DatumAccessorContext
+> extends DatumAction<RequirementT, ContextT> {
+	settings: DatumAccessorSettings
 
-	constructor(attrs: DatumAccessorRequest<NodeSelector, IntervalRef>) {
-		this.request = attrs;
-		this.requirements = <
-			DatumProcessorInterface<NodeSelector, IntervalRef>[]
-		>Object.values(attrs).filter((attr) => typeof attr != 'string');
+	// This should calculate the offset defined... somewhere?
+	constructor(
+		name: FeatureReference,
+        requirements: DatumActionRequirements<RequirementT, ContextT>,
+		settings: DatumAccessorSettings
+	){
+		super(name, requirements);
+
+		this.settings = settings;
 	}
 
-	getRequirements(): DatumProcessorInterface<NodeSelector, IntervalRef>[] {
-		return this.requirements;
+	select(ctx: ContextT, datums: IDatum[]): IDatum[] {
+		return datums.map(datum => {
+			return ctx.offset(datum, this.settings.offset, !!this.settings.strict);
+		});
 	}
 
-	isReady(datum: DatumAccess) {
-		const args = Object.values(this.request);
-
-		for (const arg of args) {
-			const attr = typeof arg == 'string' ? arg : arg.name;
-			if (!datum.hasValue(attr)) {
-				return false;
-			}
-		}
-
-		return true;
-	}
-
-	async read(datum: DatumAccess): Promise<DatumAccessorResponse> {
-		const args = Object.values(this.request);
-
-		const values = await Promise.all(
-			args.map((arg) => {
-				const attr = typeof arg == 'string' ? arg : arg.name;
-
-				return datum.getValue(attr);
-			}),
-		);
-
-		return Object.keys(this.request).reduce((agg, key, i) => {
-			agg[key] = values[i];
-
-			return agg;
-		}, {});
+	async process(ctx: ContextT, datums: IDatum[]): Promise<RequirementT[]> {
+		return super.process(ctx, this.select(ctx, datums));
 	}
 }

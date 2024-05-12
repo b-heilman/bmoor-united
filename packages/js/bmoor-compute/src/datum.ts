@@ -7,7 +7,7 @@ import {
 
 export class Datum implements DatumInterface<DatumSelector> {
 	ref: string;
-	awaiting: Map<string, Promise<FeatureValue>>;
+	awaiting: Map<string, Promise<unknown>>;
 	features: Map<string, FeatureValue>;
 	metadata: Record<string, string>;
 	children: Map<string, Datum>;
@@ -60,25 +60,18 @@ export class Datum implements DatumInterface<DatumSelector> {
 		return this.features.has(attr) || this.awaiting.has(attr);
 	}
 
-	async getValue(attr: string) {
+	async getValue<ExpectedT>(attr: string, generator: () => Promise<ExpectedT>): Promise<ExpectedT> {
 		if (this.awaiting.has(attr)) {
-			return this.awaiting.get(attr);
+			return <Promise<ExpectedT>>this.awaiting.get(attr);
+		} else if (this.features.has(attr)){
+			return <ExpectedT>this.features.get(attr);
 		} else {
-			return this.features.get(attr);
+			const rtn = generator();
+
+			this.awaiting.set(attr, rtn);
+
+			return rtn;
 		}
-	}
-
-	async awaitValue(
-		attr: string,
-		prom: Promise<FeatureValue>,
-	): Promise<boolean> {
-		if (this.features.has(attr)) {
-			this.features.delete(attr);
-		}
-
-		this.awaiting.set(attr, prom);
-
-		return prom.then((value) => this.setValue(attr, value));
 	}
 
 	async setValue(attr: string, value: FeatureValue) {

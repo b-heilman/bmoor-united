@@ -1,6 +1,6 @@
 export * from './datum.interface';
 export * from './datum/accessor.interface';
-export * from './datum/processor.interface';
+export * from './datum/range.interface';
 export * from './environment.interface';
 export * from './interval.interface';
 

@@ -1,5 +1,5 @@
 import {FeatureValue} from '../datum.interface';
-import {DatumProcessorFunction} from './processor.interface';
+import {DatumProcessorFunction} from './range.interface';
 
 export type DatumRankerFunction<DatumShape> = DatumProcessorFunction<{rank: unknown}>;
 

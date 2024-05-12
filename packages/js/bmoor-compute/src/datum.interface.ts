@@ -15,24 +15,19 @@ export interface DatumSelector {
 	parent?: Record<string, string>;
 }
 
-export interface DatumAccessor {
+export interface IDatum {
 	hasValue(attr: FeatureReference): boolean;
 
 	// get the value, could be an async source
-	getValue(attr: FeatureReference): Promise<FeatureValue>;
-
-	awaitValue(
-		attr: FeatureReference,
-		prom: Promise<FeatureValue>,
-	): Promise<boolean>;
+	getValue(attr: FeatureReference, generator: () => Promise<FeatureValue>): Promise<FeatureValue>;
 
 	// set the value
 	setValue(attr: FeatureReference, value: FeatureValue): Promise<boolean>;
 
-	equals(other: DatumAccessor): boolean;
+	equals(other: IDatum): boolean;
 }
 
-export interface DatumInterface<NodeSelector> extends DatumAccessor {
+export interface DatumInterface<NodeSelector> extends IDatum {
 	ref: DatumReference;
 
 	select(select: NodeSelector): DatumInterface<NodeSelector>[];

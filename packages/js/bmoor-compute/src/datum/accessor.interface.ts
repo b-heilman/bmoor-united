@@ -1,18 +1,10 @@
-import {
-	DatumAccessor,
-	FeatureReference,
-	FeatureValue,
-} from '../datum.interface';
-import {DatumProcessorInterface} from './processor.interface';
+import { IDatum } from "../datum.interface";
 
-export type DatumAccessorRequest<NodeSelector, IntervalRef> = Record<
-	FeatureReference,
-	DatumProcessorInterface<NodeSelector, IntervalRef> | FeatureReference
->;
-export type DatumAccessorResponse = Record<FeatureReference, FeatureValue>;
+export interface DatumAccessorSettings {
+    offset: number;
+    strict?: boolean;
+}
 
-export interface DatumAccessorInterface<NodeSelector, IntervalRef> {
-	getRequirements(): DatumProcessorInterface<NodeSelector, IntervalRef>[];
-
-	read(datum: DatumAccessor): Promise<DatumAccessorResponse>;
+export interface DatumAccessorContext {
+    offset: (datum: IDatum, shift: number, strict: boolean) => IDatum
 }

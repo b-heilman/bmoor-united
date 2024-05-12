@@ -1,51 +1,28 @@
-import {FeatureReference, FeatureValue} from '../datum.interface';
-import {
-	DatumProcessorFunction,
-	DatumProcessorInterface,
-	DatumProcessorRequirement,
-} from './processor.interface';
+import {Context} from '@bmoor/context';
+
+import {DatumAction} from './action';
+import {IDatum, FeatureReference} from '../datum.interface';
+import { DatumActionInterface, DatumActionRequirements } from './action.interface';
 
 export class DatumProcessor<
-	NodeSelector,
-	IntervalRef,
-	RequirementIndex = unknown,
-> implements
-		DatumProcessorInterface<NodeSelector, IntervalRef, RequirementIndex>
+	ResponseT, ContextT, RequirementT
+> implements DatumActionInterface<ResponseT, ContextT>
 {
-	fn: DatumProcessorFunction<RequirementIndex>;
-	name: FeatureReference;
-	requirements: {
-		[Property in keyof RequirementIndex]: DatumProcessorRequirement<
-			NodeSelector,
-			IntervalRef
-		>;
-	};
+	action: DatumAction<RequirementT, ContextT>;
+	reducer: (args: RequirementT) => ResponseT;
 
 	constructor(
-		name: FeatureReference,
-		fn: DatumProcessorFunction<RequirementIndex>,
-		reqs: {
-			[Property in keyof RequirementIndex]: DatumProcessorRequirement<
-				NodeSelector,
-				IntervalRef
-			>;
-		},
-	) {
-		this.fn = fn;
-		this.name = name;
-		this.requirements = reqs;
-	}
+        name: FeatureReference,
+        requirements: DatumActionRequirements<RequirementT, ContextT>,
+        reducer: (args: RequirementT) => ResponseT
+    ){
+		this.action = new DatumAction(name, requirements);
+		this.reducer = reducer;
+    }
 
-	getRequirements(): {
-		[Property in keyof RequirementIndex]: DatumProcessorRequirement<
-			NodeSelector,
-			IntervalRef
-		>;
-	} {
-		return this.requirements;
-	}
+	async process(ctx: ContextT, datums: IDatum[]): Promise<ResponseT[]> {
+		const res = await this.action.process(ctx, datums);
 
-	process(args: RequirementIndex): FeatureValue {
-		return this.fn(args);
+		return res.map(res => this.reducer(res));
 	}
 }
