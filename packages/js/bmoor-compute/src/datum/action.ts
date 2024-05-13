@@ -18,7 +18,7 @@ export class DatumAction<RequirementT, ContextT>
         this.requirements = requirements;
     }
 
-    process(ctx: ContextT, datums: IDatum[]): Promise<RequirementT[]> {
+    process(ctx: ContextT, reference: FeatureReference, datums: IDatum[]): Promise<RequirementT[]> {
         return Promise.all(
             datums.map(async (datum) => {
                 // load requirements
@@ -30,7 +30,7 @@ export class DatumAction<RequirementT, ContextT>
                         if (req instanceof DatumAction){
                             return datum.getValue(
                                 req.name, 
-                                async () => (await req.process(ctx, [datum]))[0]
+                                async () => (await req.process(ctx, req.name, [datum]))[0]
                             );
                         } else {
                             return datum.getValue(req, () => null)

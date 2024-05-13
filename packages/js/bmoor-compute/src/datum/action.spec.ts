@@ -25,7 +25,7 @@ describe('@bmoor/compute - datum/action', function () {
 			'helloWorld': child
 		});
 
-		expect(await top.process({}, [datum])).to.deep.equal([
+		expect(await top.process({}, 'test', [datum])).to.deep.equal([
 			{
 				foo: 1,
 				bar: 2,

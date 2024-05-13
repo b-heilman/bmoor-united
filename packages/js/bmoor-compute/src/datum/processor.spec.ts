@@ -28,7 +28,7 @@ describe('@bmoor/compute - datum/processor', function () {
 			return <number>foo + <number>bar + helloWorld.hello + helloWorld.world;
 		});
 
-		expect(await top.process({}, [datum])).to.deep.equal([
+		expect(await top.process({}, 'test', [datum])).to.deep.equal([
 			10
 		]);
 	});

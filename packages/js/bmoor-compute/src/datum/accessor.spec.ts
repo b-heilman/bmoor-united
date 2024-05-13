@@ -46,7 +46,7 @@ describe('@bmoor/compute - datum/accessor', function () {
 
 					return datumPast;
 				}
-			}, [datumNow])
+			}, 'test', [datumNow])
 		).to.deep.equal([
 			{
 				foo: 1,

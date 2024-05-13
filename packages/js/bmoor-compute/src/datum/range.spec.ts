@@ -65,7 +65,7 @@ describe('@bmoor/compute - datum/range', function () {
 
 					return datumPast;
 				}
-			}, [datumNow])
+			}, 'test', [datumNow])
 		).to.deep.equal([
 			14
 		])

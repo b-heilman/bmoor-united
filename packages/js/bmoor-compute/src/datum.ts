@@ -2,13 +2,13 @@ import {
 	DatumInterface,
 	DatumSelector,
 	DatumSettings,
-	FeatureValue,
+	FeatureValue
 } from './datum.interface';
 
 export class Datum implements DatumInterface<DatumSelector> {
 	ref: string;
 	awaiting: Map<string, Promise<unknown>>;
-	features: Map<string, FeatureValue>;
+	features: Map<string, unknown>;
 	metadata: Record<string, string>;
 	children: Map<string, Datum>;
 	parent: Datum;
@@ -60,11 +60,11 @@ export class Datum implements DatumInterface<DatumSelector> {
 		return this.features.has(attr) || this.awaiting.has(attr);
 	}
 
-	async getValue<ExpectedT>(attr: string, generator: () => Promise<ExpectedT>): Promise<ExpectedT> {
+	async getValue(attr: string, generator: () => Promise<FeatureValue>): Promise<FeatureValue> {
 		if (this.awaiting.has(attr)) {
-			return <Promise<ExpectedT>>this.awaiting.get(attr);
+			return <Promise<FeatureValue>>this.awaiting.get(attr);
 		} else if (this.features.has(attr)){
-			return <ExpectedT>this.features.get(attr);
+			return <FeatureValue>this.features.get(attr);
 		} else {
 			const rtn = generator();
 

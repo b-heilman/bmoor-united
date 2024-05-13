@@ -69,7 +69,7 @@ describe('@bmoor/compute - datum/across', function () {
 
 					return datumPast;
 				}
-			}, [datumNow])
+			}, 'test', [datumNow])
 		).to.deep.equal([
 			14
 		])

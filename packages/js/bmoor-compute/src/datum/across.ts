@@ -28,7 +28,7 @@ export class DatumAcross<
 		});
 	}
 
-	async process(ctx: ContextT, datums: IDatum[]): Promise<ResponseT[]> {
+	async process(ctx: ContextT, reference: FeatureReference, datums: IDatum[]): Promise<ResponseT[]> {
 		const selected = this.select(ctx, datums);
 
 		return Promise.all(
@@ -36,7 +36,7 @@ export class DatumAcross<
 				// This will apply the offset.  Technically this is not optimal but I'm gonna
 				// let it go for now.  Optimal would be offset => range
 				return this.reducer(
-					await this.accessor.process(ctx, datumAcross)
+					await this.accessor.process(ctx, reference, datumAcross)
 				);
 			})
 		);

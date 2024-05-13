@@ -29,7 +29,7 @@ export class DatumAccessor<
 		});
 	}
 
-	async process(ctx: ContextT, datums: IDatum[]): Promise<RequirementT[]> {
-		return super.process(ctx, this.select(ctx, datums));
+	async process(ctx: ContextT, reference: FeatureReference, datums: IDatum[]): Promise<RequirementT[]> {
+		return super.process(ctx, reference, this.select(ctx, datums));
 	}
 }

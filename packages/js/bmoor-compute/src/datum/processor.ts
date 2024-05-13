@@ -20,8 +20,8 @@ export class DatumProcessor<
 		this.reducer = reducer;
     }
 
-	async process(ctx: ContextT, datums: IDatum[]): Promise<ResponseT[]> {
-		const res = await this.action.process(ctx, datums);
+	async process(ctx: ContextT, reference: FeatureReference, datums: IDatum[]): Promise<ResponseT[]> {
+		const res = await this.action.process(ctx, reference, datums);
 
 		return res.map(res => this.reducer(res));
 	}
