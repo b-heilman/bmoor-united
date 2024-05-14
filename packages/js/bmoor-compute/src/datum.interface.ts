@@ -19,7 +19,10 @@ export interface IDatum {
 	hasValue(attr: FeatureReference): boolean;
 
 	// get the value, could be an async source
-	getValue(attr: FeatureReference, generator: () => Promise<FeatureValue>): Promise<FeatureValue>;
+	getValue(
+		attr: FeatureReference,
+		generator: () => Promise<FeatureValue>,
+	): Promise<FeatureValue>;
 
 	// set the value
 	setValue(attr: FeatureReference, value: FeatureValue): Promise<boolean>;

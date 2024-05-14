@@ -26,7 +26,9 @@ export function mean(datums: {mean: {value: number}[] | number[]}) {
 export function reduce(
 	fn: (agg: number, cur: number, prev: number) => number,
 ) {
-	return function summarizer(datums: {reduce: {value: number}[] | number[]}) {
+	return function summarizer(datums: {
+		reduce: {value: number}[] | number[];
+	}) {
 		const values = normalize(datums.reduce);
 
 		let old = null;

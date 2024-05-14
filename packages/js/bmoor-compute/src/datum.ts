@@ -2,7 +2,7 @@ import {
 	DatumInterface,
 	DatumSelector,
 	DatumSettings,
-	FeatureValue
+	FeatureValue,
 } from './datum.interface';
 
 export class Datum implements DatumInterface<DatumSelector> {
@@ -60,10 +60,13 @@ export class Datum implements DatumInterface<DatumSelector> {
 		return this.features.has(attr) || this.awaiting.has(attr);
 	}
 
-	async getValue(attr: string, generator: () => Promise<FeatureValue>): Promise<FeatureValue> {
+	async getValue(
+		attr: string,
+		generator: () => Promise<FeatureValue>,
+	): Promise<FeatureValue> {
 		if (this.awaiting.has(attr)) {
 			return <Promise<FeatureValue>>this.awaiting.get(attr);
-		} else if (this.features.has(attr)){
+		} else if (this.features.has(attr)) {
 			return <FeatureValue>this.features.get(attr);
 		} else {
 			const rtn = generator();

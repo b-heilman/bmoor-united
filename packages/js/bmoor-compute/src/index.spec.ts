@@ -301,9 +301,9 @@ describe('@bmoor/compute', function () {
 					},
 				},
 			},
-	});
+		});
 
-		proc6 = new Processor<{inputs: {foo: number, bar: number}[]}>(
+		proc6 = new Processor<{inputs: {foo: number; bar: number}[]}>(
 			'cross',
 			({inputs}: {inputs: {foo: number; bar: number}[]}) => {
 				return (
