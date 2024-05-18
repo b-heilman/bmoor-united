@@ -30,8 +30,10 @@ export interface IDatum {
 	equals(other: IDatum): boolean;
 }
 
-export interface DatumInterface<NodeSelector> extends IDatum {
+export interface DatumInterface extends IDatum {
 	ref: DatumReference;
+	children: Map<DatumReference, DatumInterface>;
 
-	select(select: NodeSelector): DatumInterface<NodeSelector>[];
+	select(selector: DatumSelector): DatumInterface[];
+	addChild(child: DatumInterface);
 }

@@ -9,15 +9,15 @@ import {
 /***
  * Allows you to variable from a datum and load in requirements
  */
-export class DatumAction<RequirementT, EnvT>
-	implements DatumActionInterface<RequirementT, EnvT>
+export class DatumAction<RequirementT, DatumT extends IDatum, EnvT>
+	implements DatumActionInterface<RequirementT, DatumT, EnvT>
 {
 	name: FeatureReference;
-	requirements: DatumActionRequirements<RequirementT, EnvT>;
+	requirements: DatumActionRequirements<RequirementT, DatumT, EnvT>;
 
 	constructor(
 		name: FeatureReference,
-		requirements: DatumActionRequirements<RequirementT, EnvT>,
+		requirements: DatumActionRequirements<RequirementT, DatumT, EnvT>,
 	) {
 		this.name = name;
 		this.requirements = requirements;

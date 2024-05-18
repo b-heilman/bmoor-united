@@ -10,23 +10,24 @@ import {DatumRangeContext, DatumRangeSettings} from './range.interface';
 
 export class DatumRange<
 	ResponseT,
-	EnvT extends DatumRangeContext,
+	DatumT extends IDatum,
+	EnvT extends DatumRangeContext<DatumT>,
 	RequirementT,
-> implements DatumActionInterface<ResponseT, EnvT>
+> implements DatumActionInterface<ResponseT, DatumT, EnvT>
 {
 	name: string;
-	accessor: DatumAccessor<RequirementT, EnvT>;
+	accessor: DatumAccessor<RequirementT, DatumT, EnvT>;
 	settings: DatumRangeSettings;
 	reducer: (args: RequirementT[]) => ResponseT;
 
 	constructor(
 		name: FeatureReference,
-		requirements: DatumActionRequirements<RequirementT, EnvT>,
+		requirements: DatumActionRequirements<RequirementT, DatumT, EnvT>,
 		settings: DatumRangeSettings,
 		reducer: (args: RequirementT[]) => ResponseT,
 	) {
 		this.name = name;
-		this.accessor = new DatumAccessor<RequirementT, EnvT>(
+		this.accessor = new DatumAccessor<RequirementT, DatumT, EnvT>(
 			name,
 			requirements,
 			settings,
@@ -35,16 +36,16 @@ export class DatumRange<
 		this.reducer = reducer;
 	}
 
-	select(ctx: EnvT, datums: IDatum[]): IDatum[][] {
+	select(ctx: EnvT, datums: DatumT[]): DatumT[][] {
 		return datums.map((datum) => {
-			return ctx.range(datum, this.settings.range);
+			return ctx.range(datum, this.settings.range, this.settings.strict);
 		});
 	}
 
 	async process(
 		ctx: Context,
 		env: EnvT,
-		datums: IDatum[],
+		datums: DatumT[],
 	): Promise<ResponseT[]> {
 		const selected = this.select(env, datums);
 

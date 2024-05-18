@@ -5,6 +5,6 @@ export interface DatumAccessorSettings {
 	strict?: boolean;
 }
 
-export interface DatumAccessorContext {
-	offset: (datum: IDatum, shift: number, strict: boolean) => IDatum;
+export interface DatumAccessorContext<DatumT extends IDatum> {
+	offset: (datum: DatumT, shift: number, strict?: boolean) => DatumT;
 }

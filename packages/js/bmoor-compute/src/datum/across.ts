@@ -11,23 +11,24 @@ import {
 export class DatumAcross<
 	SelectT,
 	ResponseT,
-	EnvT extends DatumAcrossContext<SelectT>,
+	DatumT extends IDatum,
+	EnvT extends DatumAcrossContext<SelectT, DatumT>,
 	RequirementT,
-> implements DatumActionInterface<ResponseT, EnvT>
+> implements DatumActionInterface<ResponseT, DatumT, EnvT>
 {
 	name: string;
-	accessor: DatumAccessor<RequirementT, EnvT>;
+	accessor: DatumAccessor<RequirementT, DatumT, EnvT>;
 	settings: DatumAcrossSettings<SelectT>;
 	reducer: (args: RequirementT[]) => ResponseT;
 
 	constructor(
 		name: FeatureReference,
-		requirements: DatumActionRequirements<RequirementT, EnvT>,
+		requirements: DatumActionRequirements<RequirementT, DatumT, EnvT>,
 		settings: DatumAcrossSettings<SelectT>,
 		reducer: (args: RequirementT[]) => ResponseT,
 	) {
 		this.name = name;
-		this.accessor = new DatumAccessor<RequirementT, EnvT>(
+		this.accessor = new DatumAccessor<RequirementT, DatumT, EnvT>(
 			name,
 			requirements,
 			settings,
@@ -36,7 +37,7 @@ export class DatumAcross<
 		this.reducer = reducer;
 	}
 
-	select(ctx: EnvT, datums: IDatum[]): IDatum[][] {
+	select(ctx: EnvT, datums: DatumT[]): DatumT[][] {
 		return datums.map((datum) => {
 			return ctx.select(datum, this.settings.select);
 		});
@@ -45,7 +46,7 @@ export class DatumAcross<
 	async process(
 		ctx: Context,
 		env: EnvT,
-		datums: IDatum[],
+		datums: DatumT[],
 	): Promise<ResponseT[]> {
 		const selected = this.select(env, datums);
 

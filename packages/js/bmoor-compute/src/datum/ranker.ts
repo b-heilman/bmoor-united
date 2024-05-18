@@ -10,23 +10,24 @@ import {DatumRankerContext, DatumRankerSettings} from './ranker.interface';
 
 export class DatumRanker<
 	SelectT,
-	EnvT extends DatumRankerContext<SelectT>,
+	DatumT extends IDatum,
+	EnvT extends DatumRankerContext<SelectT, DatumT>,
 	RequirementT,
-> implements DatumActionInterface<number, EnvT>
+> implements DatumActionInterface<number, DatumT, EnvT>
 {
 	name: string;
-	accessor: DatumAccessor<RequirementT, EnvT>;
+	accessor: DatumAccessor<RequirementT, DatumT, EnvT>;
 	settings: DatumRankerSettings<SelectT>;
 	reducer: (args: RequirementT) => number;
 
 	constructor(
 		name: FeatureReference,
-		requirements: DatumActionRequirements<RequirementT, EnvT>,
+		requirements: DatumActionRequirements<RequirementT, DatumT, EnvT>,
 		settings: DatumRankerSettings<SelectT>,
 		reducer: (args: RequirementT) => number,
 	) {
 		this.name;
-		this.accessor = new DatumAccessor<RequirementT, EnvT>(
+		this.accessor = new DatumAccessor<RequirementT, DatumT, EnvT>(
 			name,
 			requirements,
 			settings,
@@ -35,7 +36,7 @@ export class DatumRanker<
 		this.reducer = reducer;
 	}
 
-	select(ctx: EnvT, datums: IDatum[]): IDatum[][] {
+	select(ctx: EnvT, datums: DatumT[]): DatumT[][] {
 		return datums.map((datum) => {
 			return ctx.select(datum, this.settings.select);
 		});
@@ -44,7 +45,7 @@ export class DatumRanker<
 	async process(
 		ctx: Context,
 		env: EnvT,
-		datums: IDatum[],
+		datums: DatumT[],
 	): Promise<number[]> {
 		const selected = this.select(env, datums);
 

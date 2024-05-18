@@ -9,6 +9,7 @@ export interface DatumAcrossSettings<SelectT>
 	select: SelectT;
 }
 
-export interface DatumAcrossContext<SelectT> extends DatumAccessorContext {
-	select: (datum: IDatum, select: SelectT) => IDatum[];
+export interface DatumAcrossContext<SelectT, DatumT extends IDatum>
+	extends DatumAccessorContext<DatumT> {
+	select: (datum: DatumT, select: SelectT) => DatumT[];
 }

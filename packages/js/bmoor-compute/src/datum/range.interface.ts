@@ -6,8 +6,10 @@ import {
 
 export interface DatumRangeSettings extends DatumAccessorSettings {
 	range: number;
+	strict: boolean;
 }
 
-export interface DatumRangeContext extends DatumAccessorContext {
-	range: (datum: IDatum, depth: number) => IDatum[];
+export interface DatumRangeContext<DatumT extends IDatum>
+	extends DatumAccessorContext<DatumT> {
+	range: (datum: DatumT, depth: number, strict: boolean) => DatumT[];
 }

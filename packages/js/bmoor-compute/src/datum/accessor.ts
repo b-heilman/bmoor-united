@@ -13,14 +13,15 @@ import {DatumActionRequirements} from './action.interface';
  */
 export class DatumAccessor<
 	RequirementT,
-	EnvT extends DatumAccessorContext,
-> extends DatumAction<RequirementT, EnvT> {
+	DatumT extends IDatum,
+	EnvT extends DatumAccessorContext<DatumT>,
+> extends DatumAction<RequirementT, DatumT, EnvT> {
 	settings: DatumAccessorSettings;
 
 	// This should calculate the offset defined... somewhere?
 	constructor(
 		name: FeatureReference,
-		requirements: DatumActionRequirements<RequirementT, EnvT>,
+		requirements: DatumActionRequirements<RequirementT, DatumT, EnvT>,
 		settings: DatumAccessorSettings,
 	) {
 		super(name, requirements);
@@ -28,7 +29,7 @@ export class DatumAccessor<
 		this.settings = settings;
 	}
 
-	select(ctx: EnvT, datums: IDatum[]): IDatum[] {
+	select(ctx: EnvT, datums: DatumT[]): DatumT[] {
 		return datums.map((datum) => {
 			return ctx.offset(
 				datum,
@@ -41,7 +42,7 @@ export class DatumAccessor<
 	async process(
 		ctx: Context,
 		env: EnvT,
-		datums: IDatum[],
+		datums: DatumT[],
 	): Promise<RequirementT[]> {
 		return super.process(ctx, env, this.select(env, datums));
 	}

@@ -7,16 +7,20 @@ import {
 	DatumActionRequirements,
 } from './action.interface';
 
-export class DatumProcessor<ResponseT, EnvT, RequirementT>
-	implements DatumActionInterface<ResponseT, EnvT>
+export class DatumProcessor<
+	ResponseT,
+	DatumT extends IDatum,
+	EnvT,
+	RequirementT,
+> implements DatumActionInterface<ResponseT, DatumT, EnvT>
 {
 	name: string;
-	action: DatumAction<RequirementT, EnvT>;
+	action: DatumAction<RequirementT, DatumT, EnvT>;
 	reducer: (args: RequirementT) => ResponseT;
 
 	constructor(
 		name: FeatureReference,
-		requirements: DatumActionRequirements<RequirementT, EnvT>,
+		requirements: DatumActionRequirements<RequirementT, DatumT, EnvT>,
 		reducer: (args: RequirementT) => ResponseT,
 	) {
 		this.name;

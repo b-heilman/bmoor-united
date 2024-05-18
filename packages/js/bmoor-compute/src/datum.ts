@@ -5,7 +5,7 @@ import {
 	FeatureValue,
 } from './datum.interface';
 
-export class Datum implements DatumInterface<DatumSelector> {
+export class Datum implements DatumInterface {
 	ref: string;
 	awaiting: Map<string, Promise<unknown>>;
 	features: Map<string, unknown>;
@@ -87,7 +87,7 @@ export class Datum implements DatumInterface<DatumSelector> {
 		return true;
 	}
 
-	select(selector: DatumSelector) {
+	select(selector: DatumSelector): Datum[] {
 		const clone = Object.assign({}, selector);
 
 		let base: Datum = null;

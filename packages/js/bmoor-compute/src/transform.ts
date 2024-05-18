@@ -1,28 +1,22 @@
-function normalize(datums: {value: number}[] | number[]): number[] {
-	if (datums.length) {
-		if (typeof datums[0] == 'object') {
-			return datums.map((datum) => datum.value);
-		}
-	}
-
-	return <number[]>datums;
-}
-
-// TODO: normalize might no longer be needed?
-export function sum(datums: {sum: {value: number}[] | number[]}) {
-	const values = normalize(datums.sum);
+export function sum(datums: {sum: {value: number} | number}[]) {
+	const values = datums.map((v) =>
+		typeof v.sum === 'number' ? v.sum : v.sum.value,
+	);
 
 	console.log('sum', values);
 	return values.reduce((agg, value) => agg + value, 0);
 }
 
-export function mean(datums: {mean: {value: number}[] | number[]}) {
-	const values = normalize(datums.mean);
+export function mean(datums: {mean: {value: number} | number}[]) {
+	const values = datums.map((v) =>
+		typeof v.mean === 'number' ? v.mean : v.mean.value,
+	);
 
 	console.log('mean', values);
 	return values.reduce((agg, value) => agg + value, 0) / values.length;
 }
 
+/*
 export function reduce(
 	fn: (agg: number, cur: number, prev: number) => number,
 ) {
@@ -57,3 +51,4 @@ export function change(datums: {value: number}[] | number[]) {
 
 	return (old - cur) / values.length;
 }
+*/

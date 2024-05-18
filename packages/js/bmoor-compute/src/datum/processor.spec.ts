@@ -17,7 +17,7 @@ describe('@bmoor/compute - datum/processor', function () {
 			},
 		});
 
-		const child = new DatumAction<{hello: number; world: number}, object>(
+		const child = new DatumAction<{hello: number; world: number}, Datum, object>(
 			'hello-world',
 			{
 				hello: 'hello',
