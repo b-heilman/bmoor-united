@@ -63,6 +63,7 @@ export class Datum implements DatumInterface {
 	async getValue(
 		attr: string,
 		generator: () => Promise<FeatureValue>,
+		save=true
 	): Promise<FeatureValue> {
 		if (this.awaiting.has(attr)) {
 			return <Promise<FeatureValue>>this.awaiting.get(attr);
@@ -70,6 +71,16 @@ export class Datum implements DatumInterface {
 			return <FeatureValue>this.features.get(attr);
 		} else {
 			const rtn = generator();
+
+			rtn.then((val) => {
+				this.awaiting.delete(attr);
+
+				if (save) {
+					this.features.set(attr, val);
+				}
+
+				return val;
+			});
 
 			this.awaiting.set(attr, rtn);
 

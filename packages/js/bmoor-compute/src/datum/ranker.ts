@@ -11,29 +11,26 @@ import {DatumRankerContext, DatumRankerSettings} from './ranker.interface';
 export class DatumRanker<
 	RequirementT,
 	DatumT extends IDatum,
-	EnvT extends DatumRankerContext<SelectT, DatumT>,
+	EnvT extends DatumRankerContext<DatumT, SelectT>,
 	SelectT,
 > implements DatumActionInterface<number, DatumT, EnvT>
 {
 	name: string;
 	accessor: DatumAccessor<RequirementT, DatumT, EnvT>;
-	settings: DatumRankerSettings<SelectT>;
-	reducer: (args: RequirementT) => number;
+	settings: DatumRankerSettings<RequirementT, SelectT>;
 
 	constructor(
 		name: FeatureReference,
 		requirements: DatumActionRequirements<RequirementT, DatumT, EnvT>,
-		settings: DatumRankerSettings<SelectT>,
-		reducer: (args: RequirementT) => number,
+		settings: DatumRankerSettings<RequirementT, SelectT>,
 	) {
-		this.name;
+		this.name = name;
 		this.accessor = new DatumAccessor<RequirementT, DatumT, EnvT>(
 			name,
 			requirements,
 			settings,
 		);
 		this.settings = settings;
-		this.reducer = reducer;
 	}
 
 	select(ctx: EnvT, datums: DatumT[]): DatumT[][] {
@@ -58,7 +55,7 @@ export class DatumRanker<
 				const compare = await Promise.all(
 					toRank.map(async (datum) => ({
 						datum,
-						value: this.reducer(
+						value: this.settings.reducer(
 							(await this.accessor.process(ctx, env, [datum]))[0],
 						),
 					})),

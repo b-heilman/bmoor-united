@@ -8,7 +8,6 @@ import {
 	DatumProcessor,
 	DatumRange,
 	DatumRanker,
-	DatumSelector,
 	Executor,
 	IntervalDatum,
 	IntervalDatumInterface,
@@ -21,42 +20,42 @@ import {
 class Accessor<RequirementT> extends DatumAccessor<
 	RequirementT,
 	IntervalDatumInterface,
-	IntervalEnvironment<IntervalEnvironmentSelector, IntervalDatumInterface>
+	IntervalEnvironment<IntervalDatumInterface, IntervalEnvironmentSelector>
 > {}
 class Across<RequirementT, ResponseT> extends DatumAcross<
 	RequirementT,
 	IntervalDatumInterface,
-	IntervalEnvironment<IntervalEnvironmentSelector, IntervalDatumInterface>,
+	IntervalEnvironment<IntervalDatumInterface, IntervalEnvironmentSelector>,
 	ResponseT,
 	IntervalEnvironmentSelector
 > {}
 class Action<RequirementT> extends DatumAction<
 	RequirementT,
 	IntervalDatumInterface,
-	IntervalEnvironment<IntervalEnvironmentSelector, IntervalDatumInterface>
+	IntervalEnvironment<IntervalDatumInterface, IntervalEnvironmentSelector>
 > {}
 class Compute<RequirementT, ResponseT> extends DatumCompute<
 	RequirementT,
 	IntervalDatumInterface,
-	IntervalEnvironment<IntervalEnvironmentSelector, IntervalDatumInterface>,
+	IntervalEnvironment<IntervalDatumInterface, IntervalEnvironmentSelector>,
 	ResponseT
 > {}
 class Processor<RequirementT, ResponseT> extends DatumProcessor<
 	RequirementT,
 	IntervalDatumInterface,
-	IntervalEnvironment<IntervalEnvironmentSelector, IntervalDatumInterface>,
+	IntervalEnvironment<IntervalDatumInterface, IntervalEnvironmentSelector>,
 	ResponseT
 > {}
 class Range<RequirementT, ResponseT> extends DatumRange<
 	RequirementT,
 	IntervalDatumInterface,
-	IntervalEnvironment<IntervalEnvironmentSelector, IntervalDatumInterface>,
+	IntervalEnvironment<IntervalDatumInterface, IntervalEnvironmentSelector>,
 	ResponseT
 > {}
 class Ranker<RequirementT> extends DatumRanker<
 	RequirementT,
 	IntervalDatumInterface,
-	IntervalEnvironment<IntervalEnvironmentSelector, IntervalDatumInterface>,
+	IntervalEnvironment<IntervalDatumInterface, IntervalEnvironmentSelector>,
 	IntervalEnvironmentSelector
 > {}
 
@@ -66,8 +65,8 @@ describe('@bmoor/compute', function () {
 		IntervalEnvironmentSelector,
 		IntervalDatumInterface,
 		IntervalEnvironment<
-			IntervalEnvironmentSelector,
-			IntervalDatumInterface
+			IntervalDatumInterface,
+			IntervalEnvironmentSelector
 		>
 	>;
 
@@ -85,7 +84,7 @@ describe('@bmoor/compute', function () {
 	beforeEach(function () {
 		env = new IntervalEnvironment({
 			factory: (interval) => {
-				return function (name, settings){
+				return function (name, settings) {
 					if (settings) {
 						return new IntervalDatum(name, settings);
 					} else {
@@ -293,12 +292,12 @@ describe('@bmoor/compute', function () {
 			IntervalEnvironmentSelector,
 			IntervalDatumInterface,
 			IntervalEnvironment<
-				IntervalEnvironmentSelector,
-				IntervalDatumInterface
+				IntervalDatumInterface,
+				IntervalEnvironmentSelector
 			>
 		>(env);
 
-		accessFoo = new Accessor('get-foo-1', {value: 'foo'}, {offset: 0});
+		accessFoo = new Accessor('get-foo', {value: 'foo'}, {offset: 0});
 		accessFoo1 = new Accessor('get-foo-1', {value: 'foo'}, {offset: 1});
 		accessFoo2 = new Accessor('get-foo-2', {value: 'foo'}, {offset: 2});
 
@@ -313,8 +312,10 @@ describe('@bmoor/compute', function () {
 				eins: accessFoo1,
 				zwei: accessFoo2,
 			},
-			(args) => {
-				return (args.eins.value + args.zwei.value) / 2;
+			{
+				reducer: (args) => {
+					return (args.eins.value + args.zwei.value) / 2;
+				}
 			},
 		);
 
@@ -327,10 +328,10 @@ describe('@bmoor/compute', function () {
 				range: 3,
 				strict: false,
 				offset: 0,
+				reducer: mean
 			},
-			mean,
 		);
-		
+
 		proc3 = new Compute<{arg1: number; arg2: number}, number>(
 			'compared-means',
 			{
@@ -338,34 +339,43 @@ describe('@bmoor/compute', function () {
 				arg2: proc2,
 			},
 			{
-				offset: 2
-			},
-			(data) => (data.arg1 + data.arg2) / 2,
+				offset: 2,
+				reducer: (data) => {
+					return (data.arg1 + data.arg2) / 2;
+				},
+			}
+		);
+
+		
+		proc4 = new Across('p-means', 
+			{
+				mean: accessFoo,
+			}, {
+				offset: 0,
+				select: {
+					metadata: {
+						type: 'p',
+					},
+				},
+				reducer: mean
+			}
+		);
+
+		proc5 = new Across('p-proc',
+			{
+				mean: proc2,
+			}, {
+				offset: 0,
+				select: {
+					metadata: {
+						type: 'p',
+					},
+				},
+				reducer: mean
+			}, 
 		);
 
 		/*
-		proc4 = new Processor('p-means', mean, {
-			mean: {
-				input: accessFoo,
-				select: {
-					metadata: {
-						type: 'p',
-					},
-				},
-			},
-		});
-
-		proc5 = new Processor('p-proc', mean, {
-			mean: {
-				input: proc2,
-				select: {
-					metadata: {
-						type: 'p',
-					},
-				},
-			},
-		});
-
 		proc6 = new Processor<{inputs: {foo: number; bar: number}[]}>(
 			'cross',
 			({inputs}: {inputs: {foo: number; bar: number}[]}) => {

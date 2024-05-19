@@ -12,20 +12,20 @@ export type EnvironmentDatumFactory<DatumT, SettingsT> = (
 
 export interface EnvironmentSettings<
 	DatumT extends DatumInterface,
-	SettingsT extends DatumSettings
+	SettingsT extends DatumSettings,
 > {
 	content: Record<DatumReference, SettingsT>;
 	factory: EnvironmentDatumFactory<DatumT, SettingsT>;
 }
 
 export interface EnvironmentSelector extends DatumSelector {
-	reference: string;
+	reference?: string;
 }
 
 // interface which allows local methods to be defined
 export interface EnvironmentInterface<
-	SelectorT extends EnvironmentSelector,
 	DatumT extends DatumInterface,
+	SelectorT extends EnvironmentSelector,
 > {
 	select(base: DatumT, select: SelectorT): DatumT[];
 }

@@ -11,21 +11,20 @@ import {
 export class DatumAcross<
 	RequirementT,
 	DatumT extends IDatum,
-	EnvT extends DatumAcrossContext<SelectT, DatumT>,
+	EnvT extends DatumAcrossContext<DatumT, SelectT>,
 	ResponseT,
 	SelectT,
 > implements DatumActionInterface<ResponseT, DatumT, EnvT>
 {
 	name: string;
 	accessor: DatumAccessor<RequirementT, DatumT, EnvT>;
-	settings: DatumAcrossSettings<SelectT>;
+	settings: DatumAcrossSettings<RequirementT, ResponseT, SelectT>;
 	reducer: (args: RequirementT[]) => ResponseT;
 
 	constructor(
 		name: FeatureReference,
 		requirements: DatumActionRequirements<RequirementT, DatumT, EnvT>,
-		settings: DatumAcrossSettings<SelectT>,
-		reducer: (args: RequirementT[]) => ResponseT,
+		settings: DatumAcrossSettings<RequirementT, ResponseT, SelectT>,
 	) {
 		this.name = name;
 		this.accessor = new DatumAccessor<RequirementT, DatumT, EnvT>(
@@ -34,7 +33,6 @@ export class DatumAcross<
 			settings,
 		);
 		this.settings = settings;
-		this.reducer = reducer;
 	}
 
 	select(ctx: EnvT, datums: DatumT[]): DatumT[][] {
@@ -54,7 +52,7 @@ export class DatumAcross<
 			selected.map(async (datumAcross) => {
 				// This will apply the offset.  Technically this is not optimal but I'm gonna
 				// let it go for now.  Optimal would be offset => range
-				return this.reducer(
+				return this.settings.reducer(
 					await this.accessor.process(ctx, env, datumAcross),
 				);
 			}),

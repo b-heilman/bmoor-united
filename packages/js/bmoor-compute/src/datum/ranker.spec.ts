@@ -44,13 +44,14 @@ describe('@bmoor/compute - datum/across', function () {
 			},
 		});
 
-		const child = new DatumAction<{hello: number; world: number}, Datum, object>(
-			'hello-world',
-			{
-				hello: 'hello',
-				world: 'world',
-			},
-		);
+		const child = new DatumAction<
+			{hello: number; world: number},
+			Datum,
+			object
+		>('hello-world', {
+			hello: 'hello',
+			world: 'world',
+		});
 
 		const top = new DatumRanker(
 			'foo-bar',
@@ -62,8 +63,8 @@ describe('@bmoor/compute - datum/across', function () {
 					something: 2,
 				},
 				offset: 3,
+				reducer: (v) => v.helloWorld.hello + v.helloWorld.world,
 			},
-			(v) => v.helloWorld.hello + v.helloWorld.world,
 		);
 
 		expect(
@@ -123,8 +124,8 @@ describe('@bmoor/compute - datum/across', function () {
 					something: 2,
 				},
 				offset: 3,
+				reducer: (v) => v.helloWorld.hello + v.helloWorld.world,
 			},
-			(v) => v.helloWorld.hello + v.helloWorld.world,
 		);
 
 		expect(

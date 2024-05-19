@@ -35,13 +35,14 @@ describe('@bmoor/compute - datum/range', function () {
 			},
 		});
 
-		const child = new DatumAction<{hello: number; world: number}, Datum, object>(
-			'hello-world',
-			{
-				hello: 'hello',
-				world: 'world',
-			},
-		);
+		const child = new DatumAction<
+			{hello: number; world: number},
+			Datum,
+			object
+		>('hello-world', {
+			hello: 'hello',
+			world: 'world',
+		});
 
 		const top = new DatumRange(
 			'foo-bar',
@@ -51,13 +52,13 @@ describe('@bmoor/compute - datum/range', function () {
 			{
 				range: 4,
 				offset: 3,
-				strict: false
-			},
-			(values) => {
-				return values.reduce(
-					(agg, v) => agg + v.helloWorld.hello + v.helloWorld.world,
-					0,
-				);
+				strict: false,
+				reducer: (values) => {
+					return values.reduce(
+						(agg, v) => agg + v.helloWorld.hello + v.helloWorld.world,
+						0,
+					);
+				},
 			},
 		);
 

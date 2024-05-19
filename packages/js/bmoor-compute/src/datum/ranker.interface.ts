@@ -1,14 +1,17 @@
 import {IDatum} from '../datum.interface';
-import {DatumAcrossContext, DatumAcrossSettings} from './across.interface';
+import {DatumAcrossContext} from './across.interface';
+import { DatumAccessorSettings } from './accessor.interface';
 
-export interface DatumRankerContext<SelectT, DatumT extends IDatum>
-	extends DatumAcrossContext<SelectT, DatumT> {}
+export interface DatumRankerContext<DatumT extends IDatum, SelectT>
+	extends DatumAcrossContext<DatumT, SelectT> {}
 
-export interface DatumRankerSettings<SelectT>
-	extends DatumAcrossSettings<SelectT> {
+export interface DatumRankerSettings<RequirementT, SelectT>
+	extends DatumAccessorSettings {
+	select: SelectT;
 	asc?: boolean;
 	bucketsCount?: number; // how many buckets to have
 	bucketSize?: number; // how big a bucket can be
+	reducer: (args: RequirementT) => number;
 }
 
 /**

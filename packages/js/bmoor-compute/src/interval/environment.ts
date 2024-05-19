@@ -2,53 +2,66 @@ import {OrderedMap} from '@bmoor/index';
 
 import {Environment} from '../environment';
 import {IntervalInterface} from '../interval.interface';
-import {IntervalDatumInterface, IntervalDatumSettings} from './datum.interface';
+import {
+	IntervalDatumInterface,
+	IntervalDatumSettings,
+} from './datum.interface';
 import {
 	IntervalEnvironmentInterface,
 	IntervalEnvironmentSelector,
 	IntervalEnvironmentSettings,
 } from './environment.interface';
-import { IntervalDatum } from './datum';
 
 type IntervalT = string;
 type OrderT = number;
 
 export class IntervalEnvironment<
+	DatumT extends IntervalDatumInterface = IntervalDatumInterface,
 	SelectorT extends
 		IntervalEnvironmentSelector = IntervalEnvironmentSelector,
-	DatumT extends IntervalDatumInterface = IntervalDatumInterface,
-> implements IntervalEnvironmentInterface<SelectorT, DatumT>
+> implements IntervalEnvironmentInterface<DatumT, SelectorT>
 {
 	intervals: Map<IntervalT, IntervalInterface<IntervalT, OrderT>>;
-	envs: OrderedMap<string, Environment<SelectorT, DatumT, IntervalDatumSettings>>;
+	envs: OrderedMap<
+		string,
+		Environment<DatumT, SelectorT, IntervalDatumSettings>
+	>;
 
-	constructor(settings: IntervalEnvironmentSettings<DatumT, IntervalDatumSettings>) {
+	constructor(
+		settings: IntervalEnvironmentSettings<DatumT, IntervalDatumSettings>,
+	) {
 		this.envs = new OrderedMap();
 		this.intervals = new Map();
 
-		Object.entries(settings.content).forEach(([intervalRef, envSettings], i) => {
-			const interval = {ref: intervalRef, order: i};
+		Object.entries(settings.content).forEach(
+			([intervalRef, envSettings], i) => {
+				const interval = {ref: intervalRef, order: i};
 
-			const upgraded = Object.entries(envSettings).reduce(
-				((agg, [key, settings]) => {
-					agg[key] = {
-						...settings,
-						interval,
-					};
-				
-					return agg;
-				}),
-				<Record<string, IntervalDatumSettings>>{} 
-			);
+				const upgraded = Object.entries(envSettings).reduce(
+					(agg, [key, settings]) => {
+						agg[key] = {
+							...settings,
+							interval,
+						};
 
-			const environment = new Environment<SelectorT, DatumT, IntervalDatumSettings>({
-				factory: settings.factory(interval),
-				content: upgraded
-			});
+						return agg;
+					},
+					<Record<string, IntervalDatumSettings>>{},
+				);
 
-			this.intervals.set(interval.ref, interval);
-			this.envs.set(interval.ref, environment);
-		});
+				const environment = new Environment<
+					DatumT,
+					SelectorT,
+					IntervalDatumSettings
+				>({
+					factory: settings.factory(interval),
+					content: upgraded,
+				});
+
+				this.intervals.set(interval.ref, interval);
+				this.envs.set(interval.ref, environment);
+			},
+		);
 	}
 
 	select(base: DatumT, select: SelectorT): DatumT[] {
@@ -67,7 +80,7 @@ export class IntervalEnvironment<
 		return rtn;
 	}
 
-	range(datum: DatumT, range: number, strict?: boolean): DatumT[] {
+	range(datum: DatumT, range: number, strict: boolean = false): DatumT[] {
 		const interval = datum.interval;
 		const offset = interval.ref;
 		const rtn = [];
@@ -75,8 +88,17 @@ export class IntervalEnvironment<
 
 		for (const [intervalRef, env] of this.envs
 			.getBetween(begin, offset)
-			.entries()) {
-			rtn.push(env.references.get(datum.ref));
+			.entries()
+		) {
+			const res = env.references.get(datum.ref);
+
+			if (!res && strict) {
+				throw new Error(
+					`not able to range (${datum.ref}, ${datum.interval.ref}, ${intervalRef})`,
+				);
+			} else {
+				rtn.push(res);
+			}
 		}
 
 		return rtn;
@@ -89,12 +111,12 @@ export class IntervalEnvironment<
 			-offset,
 		);
 
-		const rtn = this.envs
-			.get(newIntervalRef)
-			.references.get(datum.ref);
+		const rtn = this.envs.get(newIntervalRef).references.get(datum.ref);
 
-		if (!rtn) {
-			throw new Error(`not able to offset (${datum.ref}, ${datum.interval.ref}, ${offset}, ${newIntervalRef})`);
+		if (!rtn && strict) {
+			throw new Error(
+				`not able to offset (${datum.ref}, ${datum.interval.ref}, ${offset}, ${newIntervalRef})`,
+			);
 		} else {
 			return rtn;
 		}

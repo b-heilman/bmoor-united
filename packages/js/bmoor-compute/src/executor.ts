@@ -1,7 +1,7 @@
 // import { DatumAccessorInterface} from './datum/accessor.interface';
 import {Context} from '@bmoor/context';
 
-import {DatumInterface, IDatum} from './datum.interface';
+import {DatumInterface} from './datum.interface';
 import {DatumActionInterface} from './datum/action.interface';
 import {
 	EnvironmentInterface,
@@ -39,7 +39,7 @@ import {
 export class Executor<
 	SelectorT extends EnvironmentSelector,
 	DatumT extends DatumInterface,
-	EnvT extends EnvironmentInterface<SelectorT, DatumT>,
+	EnvT extends EnvironmentInterface< DatumT, SelectorT>,
 > {
 	env: EnvT;
 

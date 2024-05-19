@@ -35,13 +35,14 @@ describe('@bmoor/compute - datum/across', function () {
 			},
 		});
 
-		const child = new DatumAction<{hello: number; world: number}, Datum, object>(
-			'hello-world',
-			{
-				hello: 'hello',
-				world: 'world',
-			},
-		);
+		const child = new DatumAction<
+			{hello: number; world: number},
+			Datum,
+			object
+		>('hello-world', {
+			hello: 'hello',
+			world: 'world',
+		});
 
 		const top = new DatumAcross(
 			'foo-bar',
@@ -53,12 +54,12 @@ describe('@bmoor/compute - datum/across', function () {
 					something: 2,
 				},
 				offset: 3,
-			},
-			(values) => {
-				return values.reduce(
-					(agg, v) => agg + v.helloWorld.hello + v.helloWorld.world,
-					0,
-				);
+				reducer: (values) => {
+					return values.reduce(
+						(agg, v) => agg + v.helloWorld.hello + v.helloWorld.world,
+						0,
+					);
+				},
 			},
 		);
 

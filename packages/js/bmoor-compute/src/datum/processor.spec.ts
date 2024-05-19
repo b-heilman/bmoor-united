@@ -17,13 +17,14 @@ describe('@bmoor/compute - datum/processor', function () {
 			},
 		});
 
-		const child = new DatumAction<{hello: number; world: number}, Datum, object>(
-			'hello-world',
-			{
-				hello: 'hello',
-				world: 'world',
-			},
-		);
+		const child = new DatumAction<
+			{hello: number; world: number},
+			Datum,
+			object
+		>('hello-world', {
+			hello: 'hello',
+			world: 'world',
+		});
 
 		const top = new DatumProcessor(
 			'foo-bar',
@@ -32,10 +33,12 @@ describe('@bmoor/compute - datum/processor', function () {
 				bar: 'bar',
 				helloWorld: child,
 			},
-			({foo, bar, helloWorld}) => {
-				return (
-					<number>foo + <number>bar + helloWorld.hello + helloWorld.world
-				);
+			{
+				reducer: ({foo, bar, helloWorld}) => {
+					return (
+						<number>foo + <number>bar + helloWorld.hello + helloWorld.world
+					);
+				}
 			},
 		);
 

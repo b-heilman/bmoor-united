@@ -6,6 +6,7 @@ import {
 	DatumActionInterface,
 	DatumActionRequirements,
 } from './action.interface';
+import { DatumProcessorSettings } from './processor.interface';
 
 export class DatumProcessor<
 	ResponseT,
@@ -16,16 +17,16 @@ export class DatumProcessor<
 {
 	name: string;
 	action: DatumAction<RequirementT, DatumT, EnvT>;
-	reducer: (args: RequirementT) => ResponseT;
+	settings: DatumProcessorSettings<RequirementT, ResponseT>;
 
 	constructor(
 		name: FeatureReference,
 		requirements: DatumActionRequirements<RequirementT, DatumT, EnvT>,
-		reducer: (args: RequirementT) => ResponseT,
+		settings: DatumProcessorSettings<RequirementT, ResponseT>
 	) {
-		this.name;
+		this.name = name;
 		this.action = new DatumAction(name, requirements);
-		this.reducer = reducer;
+		this.settings = settings;
 	}
 
 	async process(
@@ -35,6 +36,6 @@ export class DatumProcessor<
 	): Promise<ResponseT[]> {
 		const res = await this.action.process(ctx, env, datums);
 
-		return res.map((res) => this.reducer(res));
+		return res.map((res) => this.settings.reducer(res));
 	}
 }

@@ -44,6 +44,7 @@ export class DatumAccessor<
 		env: EnvT,
 		datums: DatumT[],
 	): Promise<RequirementT[]> {
-		return super.process(ctx, env, this.select(env, datums));
+		const newDatums = this.select(env, datums);
+		return super.process(ctx, env, newDatums);
 	}
 }

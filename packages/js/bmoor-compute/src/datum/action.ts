@@ -35,13 +35,13 @@ export class DatumAction<RequirementT, DatumT extends IDatum, EnvT>
 				const reqs = keys.map((key) => {
 					const req = this.requirements[key];
 
-					if (req instanceof DatumAction) {
+					if (typeof(req) === 'string'){
+						return datum.getValue(req, () => null);
+					} else {
 						return datum.getValue(
 							req.name,
 							async () => (await req.process(ctx, env, [datum]))[0],
 						);
-					} else {
-						return datum.getValue(req, () => null);
 					}
 				});
 

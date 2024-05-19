@@ -17,23 +17,20 @@ export class DatumRange<
 {
 	name: string;
 	accessor: DatumAccessor<RequirementT, DatumT, EnvT>;
-	settings: DatumRangeSettings;
-	reducer: (args: RequirementT[]) => ResponseT;
+	settings: DatumRangeSettings<ResponseT, RequirementT>;
 
 	constructor(
 		name: FeatureReference,
 		requirements: DatumActionRequirements<RequirementT, DatumT, EnvT>,
-		settings: DatumRangeSettings,
-		reducer: (args: RequirementT[]) => ResponseT,
+		settings: DatumRangeSettings<ResponseT, RequirementT>
 	) {
 		this.name = name;
-		this.accessor = new DatumAccessor<RequirementT, DatumT, EnvT>(
-			name,
+		this.accessor = new DatumAccessor(
+			name+'_accessor', // TODO: i don't need to save this to the datum... it's noise
 			requirements,
 			settings,
 		);
 		this.settings = settings;
-		this.reducer = reducer;
 	}
 
 	select(ctx: EnvT, datums: DatumT[]): DatumT[][] {
@@ -51,11 +48,10 @@ export class DatumRange<
 
 		return Promise.all(
 			selected.map(async (datumRange) => {
+				const res = await this.accessor.process(ctx, env, datumRange);
 				// This will apply the offset.  Technically this is not optimal but I'm gonna
 				// let it go for now.  Optimal would be offset => range
-				return this.reducer(
-					await this.accessor.process(ctx, env, datumRange),
-				);
+				return this.settings.reducer(res);
 			}),
 		);
 	}

@@ -3,8 +3,8 @@ import {expect} from 'chai';
 import {Context} from '@bmoor/context';
 
 import {Datum} from '../datum';
-import {DatumCompute} from './compute';
 import {DatumAction} from './action';
+import {DatumCompute} from './compute';
 
 describe('@bmoor/compute - datum/compute', function () {
 	it('should compute a value with historical data', async function () {
@@ -26,7 +26,11 @@ describe('@bmoor/compute - datum/compute', function () {
 			},
 		});
 
-		const child = new DatumAction<{hello: number, world: number}, Datum, object>('hello-world', {
+		const child = new DatumAction<
+			{hello: number; world: number},
+			Datum,
+			object
+		>('hello-world', {
 			hello: 'hello',
 			world: 'world',
 		});
@@ -40,10 +44,19 @@ describe('@bmoor/compute - datum/compute', function () {
 			},
 			{
 				offset: 2,
+				reducer: (data: {
+					foo: number;
+					bar: number;
+					helloWorld: {hello: number; world: number};
+				}) => {
+					return (
+						data.foo +
+						data.bar +
+						data.helloWorld.hello +
+						data.helloWorld.world
+					);
+				},
 			},
-			(data: {foo: number, bar: number, helloWorld: {hello: number, world: number}}) => {
-				return data.foo + data.bar + data.helloWorld.hello + data.helloWorld.world;
-			}
 		);
 
 		expect(
@@ -60,8 +73,6 @@ describe('@bmoor/compute - datum/compute', function () {
 				},
 				[datumNow],
 			),
-		).to.deep.equal([
-			10
-		]);
+		).to.deep.equal([10]);
 	});
 });

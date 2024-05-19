@@ -1,4 +1,3 @@
-import {Datum} from './datum';
 import {DatumInterface, DatumSettings} from './datum.interface';
 import {
 	EnvironmentDatumFactory,
@@ -8,10 +7,10 @@ import {
 } from './environment.interface';
 
 export class Environment<
+DatumT extends DatumInterface,
 	SelectorT extends EnvironmentSelector,
-	DatumT extends DatumInterface,
-	SettingsT extends DatumSettings
-> implements EnvironmentInterface<SelectorT, DatumT>
+	SettingsT extends DatumSettings,
+> implements EnvironmentInterface<DatumT, SelectorT>
 {
 	references: Map<string, DatumT>;
 	factory: EnvironmentDatumFactory<DatumT, SettingsT>;
@@ -41,10 +40,7 @@ export class Environment<
 		}
 	}
 
-	select(
-		base: DatumT,
-		select: EnvironmentSelector,
-	): DatumT[] {
+	select(base: DatumT, select: EnvironmentSelector): DatumT[] {
 		if (select.reference) {
 			base = this.references.get(select.reference);
 		} else if (base === null) {
