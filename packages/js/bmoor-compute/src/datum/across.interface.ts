@@ -4,7 +4,7 @@ import {
 	DatumAccessorSettings,
 } from './accessor.interface';
 
-export interface DatumAcrossSettings<RequirementT, ResponseT, SelectT>
+export interface DatumAcrossSettings<ResponseT, RequirementT, SelectT>
 	extends DatumAccessorSettings {
 	select: SelectT;
 	reducer: (args: RequirementT[]) => ResponseT;

@@ -22,41 +22,41 @@ class Accessor<RequirementT> extends DatumAccessor<
 	IntervalDatumInterface,
 	IntervalEnvironment<IntervalDatumInterface, IntervalEnvironmentSelector>
 > {}
-class Across<RequirementT, ResponseT> extends DatumAcross<
+class Across<ResponseT, RequirementT> extends DatumAcross<
+	ResponseT,
 	RequirementT,
 	IntervalDatumInterface,
-	IntervalEnvironment<IntervalDatumInterface, IntervalEnvironmentSelector>,
-	ResponseT,
-	IntervalEnvironmentSelector
+	IntervalEnvironmentSelector,
+	IntervalEnvironment<IntervalDatumInterface, IntervalEnvironmentSelector>
 > {}
 class Action<RequirementT> extends DatumAction<
 	RequirementT,
 	IntervalDatumInterface,
 	IntervalEnvironment<IntervalDatumInterface, IntervalEnvironmentSelector>
 > {}
-class Compute<RequirementT, ResponseT> extends DatumCompute<
+class Compute<ResponseT, RequirementT> extends DatumCompute<
+	ResponseT,
 	RequirementT,
 	IntervalDatumInterface,
-	IntervalEnvironment<IntervalDatumInterface, IntervalEnvironmentSelector>,
-	ResponseT
+	IntervalEnvironment<IntervalDatumInterface, IntervalEnvironmentSelector>
 > {}
-class Processor<RequirementT, ResponseT> extends DatumProcessor<
+class Processor<ResponseT, RequirementT> extends DatumProcessor<
+	ResponseT,
 	RequirementT,
 	IntervalDatumInterface,
-	IntervalEnvironment<IntervalDatumInterface, IntervalEnvironmentSelector>,
-	ResponseT
+	IntervalEnvironment<IntervalDatumInterface, IntervalEnvironmentSelector>
 > {}
-class Range<RequirementT, ResponseT> extends DatumRange<
+class Range<ResponseT, RequirementT> extends DatumRange<
+	ResponseT,
 	RequirementT,
 	IntervalDatumInterface,
-	IntervalEnvironment<IntervalDatumInterface, IntervalEnvironmentSelector>,
-	ResponseT
+	IntervalEnvironment<IntervalDatumInterface, IntervalEnvironmentSelector>
 > {}
 class Ranker<RequirementT> extends DatumRanker<
 	RequirementT,
 	IntervalDatumInterface,
-	IntervalEnvironment<IntervalDatumInterface, IntervalEnvironmentSelector>,
-	IntervalEnvironmentSelector
+	IntervalEnvironmentSelector,
+	IntervalEnvironment<IntervalDatumInterface, IntervalEnvironmentSelector>
 > {}
 
 describe('@bmoor/compute', function () {
@@ -332,7 +332,7 @@ describe('@bmoor/compute', function () {
 			},
 		);
 
-		proc3 = new Compute<{arg1: number; arg2: number}, number>(
+		proc3 = new Compute<number, {arg1: number; arg2: number}>(
 			'compared-means',
 			{
 				arg1: proc1,

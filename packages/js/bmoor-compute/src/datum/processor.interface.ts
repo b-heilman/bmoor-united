@@ -1,3 +1,3 @@
-export interface DatumProcessorSettings<RequirementT, ResponseT> {
+export interface DatumProcessorSettings<ResponseT, RequirementT> {
     reducer: (args: RequirementT) => ResponseT
 }

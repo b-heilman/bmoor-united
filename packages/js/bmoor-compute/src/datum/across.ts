@@ -9,22 +9,22 @@ import {
 } from './action.interface';
 
 export class DatumAcross<
+	ResponseT,
 	RequirementT,
 	DatumT extends IDatum,
-	EnvT extends DatumAcrossContext<DatumT, SelectT>,
-	ResponseT,
 	SelectT,
+	EnvT extends DatumAcrossContext<DatumT, SelectT>,
 > implements DatumActionInterface<ResponseT, DatumT, EnvT>
 {
 	name: string;
 	accessor: DatumAccessor<RequirementT, DatumT, EnvT>;
-	settings: DatumAcrossSettings<RequirementT, ResponseT, SelectT>;
+	settings: DatumAcrossSettings<ResponseT, RequirementT, SelectT>;
 	reducer: (args: RequirementT[]) => ResponseT;
 
 	constructor(
 		name: FeatureReference,
 		requirements: DatumActionRequirements<RequirementT, DatumT, EnvT>,
-		settings: DatumAcrossSettings<RequirementT, ResponseT, SelectT>,
+		settings: DatumAcrossSettings<ResponseT, RequirementT, SelectT>,
 	) {
 		this.name = name;
 		this.accessor = new DatumAccessor<RequirementT, DatumT, EnvT>(

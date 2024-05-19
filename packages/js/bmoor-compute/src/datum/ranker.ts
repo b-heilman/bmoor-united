@@ -11,8 +11,8 @@ import {DatumRankerContext, DatumRankerSettings} from './ranker.interface';
 export class DatumRanker<
 	RequirementT,
 	DatumT extends IDatum,
-	EnvT extends DatumRankerContext<DatumT, SelectT>,
 	SelectT,
+	EnvT extends DatumRankerContext<DatumT, SelectT>,
 > implements DatumActionInterface<number, DatumT, EnvT>
 {
 	name: string;

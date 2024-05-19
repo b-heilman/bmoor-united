@@ -10,9 +10,9 @@ import {DatumRangeContext, DatumRangeSettings} from './range.interface';
 
 export class DatumRange<
 	ResponseT,
+	RequirementT,
 	DatumT extends IDatum,
 	EnvT extends DatumRangeContext<DatumT>,
-	RequirementT,
 > implements DatumActionInterface<ResponseT, DatumT, EnvT>
 {
 	name: string;

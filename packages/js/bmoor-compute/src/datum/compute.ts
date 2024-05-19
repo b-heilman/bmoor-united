@@ -13,20 +13,20 @@ import {
 import { DatumComputeSettings } from './compute.interface';
 
 export class DatumCompute<
+	ResponseT,
 	RequirementT,
 	DatumT extends IDatum,
 	EnvT extends DatumAccessorContext<DatumT>,
-	ResponseT,
 > implements DatumActionInterface<ResponseT, DatumT, EnvT>
 {
 	name: string;
-	settings: DatumComputeSettings<RequirementT, ResponseT>;
+	settings: DatumComputeSettings<ResponseT, RequirementT>;
 	accessor: DatumAccessor<RequirementT, DatumT, EnvT>;
 
 	constructor(
 		name: FeatureReference,
 		requirements: DatumActionRequirements<RequirementT, DatumT, EnvT>,
-		settings: DatumComputeSettings<RequirementT, ResponseT>
+		settings: DatumComputeSettings<ResponseT, RequirementT>
 	) {
 		this.name = name;
 		// TODO: no need to cashe this, just like range

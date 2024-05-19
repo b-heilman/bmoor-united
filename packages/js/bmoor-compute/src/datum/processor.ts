@@ -10,19 +10,19 @@ import { DatumProcessorSettings } from './processor.interface';
 
 export class DatumProcessor<
 	ResponseT,
+	RequirementT,
 	DatumT extends IDatum,
 	EnvT,
-	RequirementT,
 > implements DatumActionInterface<ResponseT, DatumT, EnvT>
 {
 	name: string;
 	action: DatumAction<RequirementT, DatumT, EnvT>;
-	settings: DatumProcessorSettings<RequirementT, ResponseT>;
+	settings: DatumProcessorSettings<ResponseT, RequirementT>;
 
 	constructor(
 		name: FeatureReference,
 		requirements: DatumActionRequirements<RequirementT, DatumT, EnvT>,
-		settings: DatumProcessorSettings<RequirementT, ResponseT>
+		settings: DatumProcessorSettings<ResponseT, RequirementT>
 	) {
 		this.name = name;
 		this.action = new DatumAction(name, requirements);
