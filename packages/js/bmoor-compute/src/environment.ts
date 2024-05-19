@@ -1,5 +1,5 @@
 import {Datum} from './datum';
-import {DatumInterface} from './datum.interface';
+import {DatumInterface, DatumSettings} from './datum.interface';
 import {
 	EnvironmentDatumFactory,
 	EnvironmentInterface,
@@ -10,19 +10,17 @@ import {
 export class Environment<
 	SelectorT extends EnvironmentSelector,
 	DatumT extends DatumInterface,
+	SettingsT extends DatumSettings
 > implements EnvironmentInterface<SelectorT, DatumT>
 {
 	references: Map<string, DatumT>;
-	factory: EnvironmentDatumFactory<DatumT>;
+	factory: EnvironmentDatumFactory<DatumT, SettingsT>;
 
-	constructor(settings: EnvironmentSettings<DatumT>) {
+	constructor(settings: EnvironmentSettings<DatumT, SettingsT>) {
 		this.references = new Map();
 		this.factory = settings.factory;
 
-		const root = this.factory('root', {
-			metadata: {type: 'root'},
-			features: {},
-		});
+		const root = this.factory('_root');
 
 		this.references.set('_root', root);
 

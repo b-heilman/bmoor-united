@@ -1,5 +1,4 @@
 import {
-	DatumInterface,
 	DatumReference,
 	DatumSettings,
 } from '../datum.interface';
@@ -7,11 +6,9 @@ import {DatumAccessorContext} from '../datum/accessor.interface';
 import {DatumAcrossContext} from '../datum/across.interface';
 import {DatumRangeContext} from '../datum/range.interface';
 import {
-	EnvironmentInterface,
-	EnvironmentSelector,
+	EnvironmentDatumFactory,
 } from '../environment.interface';
 import {IntervalInterface} from '../interval.interface';
-import {IntervalDatum} from './datum';
 import {
 	IntervalDatumInterface,
 	IntervalDatumSelector,
@@ -20,8 +17,12 @@ import {
 type IntervalT = string;
 type OrderT = number;
 
-export interface IntervalEnvironmentSettings {
-	content: Record<IntervalT, Record<DatumReference, DatumSettings>>;
+export interface IntervalEnvironmentSettings<
+	DatumT extends IntervalDatumInterface,
+	SettingsT extends DatumSettings
+> {
+	factory: (interval: IntervalInterface<IntervalT, OrderT>) => EnvironmentDatumFactory<DatumT, SettingsT>;
+	content: Record<IntervalT, Record<DatumReference, SettingsT>>;
 }
 
 export interface IntervalEnvironmentSelector

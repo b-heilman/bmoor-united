@@ -8,7 +8,7 @@ import {IntervalInterface} from '../interval.interface';
 export interface IntervalDatumSelector extends DatumSelector {}
 
 export interface IntervalDatumSettings extends DatumSettings {
-	interval: IntervalInterface;
+	interval?: IntervalInterface;
 }
 
 export interface IntervalDatumInterface extends DatumInterface {

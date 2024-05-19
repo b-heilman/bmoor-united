@@ -3,7 +3,6 @@ export function sum(datums: {sum: {value: number} | number}[]) {
 		typeof v.sum === 'number' ? v.sum : v.sum.value,
 	);
 
-	console.log('sum', values);
 	return values.reduce((agg, value) => agg + value, 0);
 }
 
@@ -12,7 +11,6 @@ export function mean(datums: {mean: {value: number} | number}[]) {
 		typeof v.mean === 'number' ? v.mean : v.mean.value,
 	);
 
-	console.log('mean', values);
 	return values.reduce((agg, value) => agg + value, 0) / values.length;
 }
 

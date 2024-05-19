@@ -5,16 +5,17 @@ import {
 	DatumSettings,
 } from './datum.interface';
 
-export type EnvironmentDatumFactory<DatumT> = (
+export type EnvironmentDatumFactory<DatumT, SettingsT> = (
 	string: string,
-	settings: DatumSettings,
+	settings?: SettingsT,
 ) => DatumT;
 
 export interface EnvironmentSettings<
-	DatumT extends DatumInterface = DatumInterface,
+	DatumT extends DatumInterface,
+	SettingsT extends DatumSettings
 > {
-	content: Record<DatumReference, DatumSettings>;
-	factory: EnvironmentDatumFactory<DatumT>;
+	content: Record<DatumReference, SettingsT>;
+	factory: EnvironmentDatumFactory<DatumT, SettingsT>;
 }
 
 export interface EnvironmentSelector extends DatumSelector {

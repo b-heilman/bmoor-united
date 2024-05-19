@@ -9,11 +9,11 @@ import {
 } from './action.interface';
 
 export class DatumAcross<
-	SelectT,
-	ResponseT,
+	RequirementT,
 	DatumT extends IDatum,
 	EnvT extends DatumAcrossContext<SelectT, DatumT>,
-	RequirementT,
+	ResponseT,
+	SelectT,
 > implements DatumActionInterface<ResponseT, DatumT, EnvT>
 {
 	name: string;

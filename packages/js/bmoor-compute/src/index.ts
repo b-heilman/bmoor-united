@@ -13,6 +13,7 @@ export {Datum} from './datum';
 export {DatumAccessor} from './datum/accessor';
 export {DatumAcross} from './datum/across';
 export {DatumAction} from './datum/action';
+export {DatumCompute} from './datum/compute';
 export {DatumProcessor} from './datum/processor';
 export {DatumRange} from './datum/range';
 export {DatumRanker} from './datum/ranker';

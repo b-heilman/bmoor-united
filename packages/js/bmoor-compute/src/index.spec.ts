@@ -4,6 +4,7 @@ import {
 	DatumAccessor,
 	DatumAcross,
 	DatumAction,
+	DatumCompute,
 	DatumProcessor,
 	DatumRange,
 	DatumRanker,
@@ -20,37 +21,43 @@ import {
 class Accessor<RequirementT> extends DatumAccessor<
 	RequirementT,
 	IntervalDatumInterface,
-	IntervalEnvironment
+	IntervalEnvironment<IntervalEnvironmentSelector, IntervalDatumInterface>
 > {}
 class Across<RequirementT, ResponseT> extends DatumAcross<
-	IntervalEnvironmentSelector,
-	ResponseT,
+	RequirementT,
 	IntervalDatumInterface,
 	IntervalEnvironment<IntervalEnvironmentSelector, IntervalDatumInterface>,
-	RequirementT
+	ResponseT,
+	IntervalEnvironmentSelector
 > {}
 class Action<RequirementT> extends DatumAction<
 	RequirementT,
 	IntervalDatumInterface,
-	IntervalEnvironment
+	IntervalEnvironment<IntervalEnvironmentSelector, IntervalDatumInterface>
+> {}
+class Compute<RequirementT, ResponseT> extends DatumCompute<
+	RequirementT,
+	IntervalDatumInterface,
+	IntervalEnvironment<IntervalEnvironmentSelector, IntervalDatumInterface>,
+	ResponseT
 > {}
 class Processor<RequirementT, ResponseT> extends DatumProcessor<
 	RequirementT,
 	IntervalDatumInterface,
-	IntervalEnvironment,
+	IntervalEnvironment<IntervalEnvironmentSelector, IntervalDatumInterface>,
 	ResponseT
 > {}
 class Range<RequirementT, ResponseT> extends DatumRange<
 	RequirementT,
 	IntervalDatumInterface,
-	IntervalEnvironment,
+	IntervalEnvironment<IntervalEnvironmentSelector, IntervalDatumInterface>,
 	ResponseT
 > {}
 class Ranker<RequirementT> extends DatumRanker<
-	IntervalEnvironmentSelector,
+	RequirementT,
 	IntervalDatumInterface,
 	IntervalEnvironment<IntervalEnvironmentSelector, IntervalDatumInterface>,
-	RequirementT
+	IntervalEnvironmentSelector
 > {}
 
 describe('@bmoor/compute', function () {
@@ -77,6 +84,19 @@ describe('@bmoor/compute', function () {
 
 	beforeEach(function () {
 		env = new IntervalEnvironment({
+			factory: (interval) => {
+				return function (name, settings){
+					if (settings) {
+						return new IntervalDatum(name, settings);
+					} else {
+						return new IntervalDatum(name, {
+							interval,
+							metadata: {type: 'root'},
+							features: {},
+						});
+					}
+				};
+			},
 			content: {
 				eins: {
 					'g-1': {
@@ -310,21 +330,20 @@ describe('@bmoor/compute', function () {
 			},
 			mean,
 		);
-		/*
-		proc3 = new Processor<{data: {arg1: number; arg2: number}}>(
+		
+		proc3 = new Compute<{arg1: number; arg2: number}, number>(
 			'compared-means',
 			{
-				data: {
-					offset: -2,
-					input: new Accessor({
-						arg1: proc1,
-						arg2: proc2,
-					}),
-				},
+				arg1: proc1,
+				arg2: proc2,
 			},
-			({data}) => (data.arg1 + data.arg2) / 2,
+			{
+				offset: 2
+			},
+			(data) => (data.arg1 + data.arg2) / 2,
 		);
 
+		/*
 		proc4 = new Processor('p-means', mean, {
 			mean: {
 				input: accessFoo,
@@ -417,7 +436,7 @@ describe('@bmoor/compute', function () {
 		expect(v).to.deep.equal([3]);
 	});
 
-	xit('should allow compound calls', async function () {
+	it('should allow compound calls', async function () {
 		// (((4 + 3) / 2) + ((5 + 4 + 3) / 3)) / 2
 		const v = await executor.calculate(proc3, {
 			reference: 'g-1',

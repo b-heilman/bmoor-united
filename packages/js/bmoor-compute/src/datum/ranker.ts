@@ -9,10 +9,10 @@ import {
 import {DatumRankerContext, DatumRankerSettings} from './ranker.interface';
 
 export class DatumRanker<
-	SelectT,
+	RequirementT,
 	DatumT extends IDatum,
 	EnvT extends DatumRankerContext<SelectT, DatumT>,
-	RequirementT,
+	SelectT,
 > implements DatumActionInterface<number, DatumT, EnvT>
 {
 	name: string;
