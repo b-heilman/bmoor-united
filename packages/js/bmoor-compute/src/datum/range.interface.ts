@@ -6,7 +6,7 @@ import {
 
 export interface DatumRangeSettings<ResponseT, RequirementT> extends DatumAccessorSettings {
 	range: number;
-	strict: boolean;
+	strict?: boolean;
 	reducer: (args: RequirementT[]) => ResponseT;
 }
 

@@ -375,39 +375,37 @@ describe('@bmoor/compute', function () {
 			}, 
 		);
 
-		/*
-		proc6 = new Processor<{inputs: {foo: number; bar: number}[]}>(
-			'cross',
-			({inputs}: {inputs: {foo: number; bar: number}[]}) => {
-				return (
-					inputs.reduce(
-						(agg, input) => agg + (input.foo + input.bar) / 2,
-						0,
-					) / inputs.length
-				);
+		proc6 = new Across('p-across', 
+			{
+				input: new Accessor<{foo: number, bar: number}>(
+					'foo-bar', {foo: 'foo', bar: 'bar'}, {offset:0}
+				)
 			},
 			{
-				inputs: {
-					input: new Accessor({
-						foo: 'foo',
-						bar: 'bar',
-					}),
-					select: {
-						metadata: {
-							type: 'p',
-						},
+				select: {
+					metadata: {
+						type: 'p',
 					},
 				},
-			},
+				offset: 0,
+				reducer: (args: {input: {foo: number; bar: number}}[]) => {
+					return (
+						args.reduce(
+							(agg, {input}) => agg + (input.foo + input.bar) / 2,
+							0,
+						) // inputs.length
+					);
+				}
+			}
 		);
 
-		proc7 = new Processor('range', mean, {
-			mean: {
-				input: proc6,
-				range: 3,
-			},
+		proc7 = new Range('range', {
+			mean: proc6
+		}, {
+			range: 3,
+			offset: 0,
+			reducer: mean
 		});
-		*/
 	});
 
 	it('should work with a simple execution', async function () {
@@ -456,7 +454,7 @@ describe('@bmoor/compute', function () {
 		expect(v).to.deep.equal([3.75]);
 	});
 
-	xit('should allow subcalls', async function () {
+	it('should allow subcalls', async function () {
 		const v = await executor.calculate(proc4, {
 			reference: 'g-1',
 			interval: {ref: 'eins', order: 0},
@@ -465,7 +463,7 @@ describe('@bmoor/compute', function () {
 		expect(v).to.deep.equal([151]);
 	});
 
-	xit('should allow compound subcalls', async function () {
+	it('should allow compound subcalls', async function () {
 		const v = await executor.calculate(proc5, {
 			reference: 'g-2',
 			interval: {ref: 'zwei', order: 0},
@@ -474,7 +472,7 @@ describe('@bmoor/compute', function () {
 		expect(v).to.deep.equal([165]);
 	});
 
-	xit('should allow more complex compound subcalls', async function () {
+	it('should allow more complex compound subcalls', async function () {
 		const v = await executor.calculate(proc7, {
 			reference: 'g-2',
 			interval: {ref: 'zwei', order: 0},
