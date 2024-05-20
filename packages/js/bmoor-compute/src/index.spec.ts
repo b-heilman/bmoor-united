@@ -389,12 +389,14 @@ describe('@bmoor/compute', function () {
 				},
 				offset: 0,
 				reducer: (args: {input: {foo: number; bar: number}}[]) => {
-					return (
+					const rtn = (
 						args.reduce(
 							(agg, {input}) => agg + (input.foo + input.bar) / 2,
 							0,
-						) // inputs.length
+						) / args.length
 					);
+
+					return rtn;
 				}
 			}
 		);
@@ -481,11 +483,18 @@ describe('@bmoor/compute', function () {
 		expect(v).to.deep.equal([165.25]);
 	});
 
-	/**
 	it('should allow ranking across nodes', async function () {
-		const rank = new Ranker<{foo: number}>(
+		const rank = new Ranker<{rank: {foo: number}}>(
 			'rank-across-foo',
 			{
+				rank: new Accessor<{foo: number}>('ranker-across-access',{
+					foo: 'foo',
+				}, {
+					offset: 0
+				}),
+			},
+			{
+				offset: 0,
 				select: {
 					parent: {
 						type: 'u',
@@ -494,38 +503,35 @@ describe('@bmoor/compute', function () {
 						type: 'p',
 					},
 				},
-			},
-			(input: {foo: number}) => {
-				return input.foo;
-			},
-			{
-				rank: {
-					input: new Accessor({
-						foo: 'foo',
-					}),
+				reducer: (args: {rank:{foo: number}}) => {
+					return args.rank.foo;
 				},
 			},
 		);
 
-		const v1 = await executor.calculate({ref: 'eins', order: 0}, rank, {
+		const v1 = await executor.calculate(rank, {
 			reference: 'g-1-1',
+			interval: {ref: 'eins', order: 0}
 		});
 
 		expect(v1).to.deep.equal([2]);
 
-		const v2 = await executor.calculate({ref: 'eins', order: 0}, rank, {
+		const v2 = await executor.calculate(rank, {
 			reference: 'g-1-2',
+			interval: {ref: 'eins', order: 0},
 		});
 
 		expect(v2).to.deep.equal([1]);
 
-		const v3 = await executor.calculate({ref: 'eins', order: 0}, rank, {
+		const v3 = await executor.calculate(rank, {
 			reference: 'g-2-2',
+			interval: {ref: 'eins', order: 0},
 		});
 
 		expect(v3).to.deep.equal([1]);
 	});
 
+	/**
 	it('should globally allow ranking across nodes', async function () {
 		const rank = new Ranker(
 			'rank-across-foo',

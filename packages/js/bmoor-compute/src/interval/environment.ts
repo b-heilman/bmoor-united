@@ -110,6 +110,7 @@ export class IntervalEnvironment<
 			datum.interval.ref,
 			-offset,
 		);
+		// console.log('Env:offset =>', datum.ref, datum.interval.ref, offset, newIntervalRef);
 
 		const rtn = this.envs.get(newIntervalRef).references.get(datum.ref);
 

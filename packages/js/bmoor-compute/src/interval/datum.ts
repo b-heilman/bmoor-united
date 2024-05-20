@@ -15,8 +15,21 @@ export class IntervalDatum
 
 	constructor(ref, settings: IntervalDatumSettings) {
 		super(ref, settings);
+	}
 
+	build(settings: IntervalDatumSettings){
 		this.interval = settings.interval;
+
+		super.build(settings);
+	}
+
+	createChild(name, settings: IntervalDatumSettings): IntervalDatum {
+		settings.interval = this.interval;
+		const child = new IntervalDatum(name, settings);
+
+		this.addChild(child);
+
+		return child;
 	}
 
 	select(selector: IntervalDatumSelector): IntervalDatum[] {

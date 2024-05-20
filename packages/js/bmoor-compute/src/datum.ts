@@ -18,6 +18,10 @@ export class Datum implements DatumInterface {
 		this.awaiting = new Map();
 		this.features = new Map();
 
+		this.build(settings);
+	}
+
+	build(settings: DatumSettings){
 		for (const key in settings.features) {
 			this.features.set(key, settings.features[key]);
 		}
@@ -27,11 +31,17 @@ export class Datum implements DatumInterface {
 		this.children = new Map();
 		if (settings.children) {
 			for (const childRef in settings.children) {
-				const childSettings = settings.children[childRef];
-
-				this.addChild(new Datum(childRef, childSettings));
+				this.createChild(childRef, settings.children[childRef]);
 			}
 		}
+	}
+
+	createChild(name, settings){
+		const child = new Datum(name, settings);
+
+		this.addChild(child);
+
+		return child;
 	}
 
 	equals(other: Datum) {
