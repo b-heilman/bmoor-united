@@ -97,7 +97,6 @@ function createArrayWriter(
 
 		if (cur.array) {
 			let existing = setter ? setter.eval(root, RTN_VALUE) : root;
-
 			if (final) {
 				// if final, we are dealing with leaves
 				if (existing) {
@@ -137,14 +136,15 @@ function writeArray<T = unknown>(
 	arr: PathContent[],
 	rest: WriterFunction[],
 ): T {
-	const fn = rest.shift();
+	const remaining = rest.slice(0);
+	const fn = remaining.shift();
 
 	for (let i = 0, c = arr.length; i < c; i++) {
 		const value = arr[i];
 		const tgt = obj[i];
 
-		if (rest.length) {
-			writeArray(fn(tgt, value), value, rest);
+		if (remaining.length) {
+			writeArray(fn(tgt, value), value, remaining);
 		} else {
 			fn(tgt, value);
 		}
