@@ -1,15 +1,12 @@
 import {Datum} from '../datum';
 import {IntervalInterface} from '../interval.interface';
 import {
-	IntervalDatumInterface,
 	IntervalDatumSelector,
 	IntervalDatumSettings,
+	IntervalIDatum,
 } from './datum.interface';
 
-export class IntervalDatum
-	extends Datum
-	implements IntervalDatumInterface
-{
+export class IntervalDatum extends Datum implements IntervalIDatum {
 	interval: IntervalInterface;
 	children: Map<string, IntervalDatum>;
 
@@ -17,7 +14,7 @@ export class IntervalDatum
 		super(ref, settings);
 	}
 
-	build(settings: IntervalDatumSettings){
+	build(settings: IntervalDatumSettings) {
 		this.interval = settings.interval;
 
 		super.build(settings);

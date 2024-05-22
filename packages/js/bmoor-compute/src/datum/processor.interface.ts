@@ -1,3 +1,3 @@
 export interface DatumProcessorSettings<ResponseT, RequirementT> {
-    reducer: (args: RequirementT) => ResponseT
+	reducer: (args: RequirementT) => ResponseT;
 }

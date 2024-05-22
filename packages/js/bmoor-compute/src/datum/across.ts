@@ -1,20 +1,20 @@
 import {Context} from '@bmoor/context';
 
-import {FeatureReference, IDatum} from '../datum.interface';
+import {DatumInterface, FeatureReference} from '../datum.interface';
 import {DatumAccessor} from './accessor';
 import {DatumAcrossContext, DatumAcrossSettings} from './across.interface';
 import {
-	DatumActionInterface,
-	DatumActionRequirements,
-} from './action.interface';
+	DatumReaderInterface,
+	DatumReaderRequirements,
+} from './reader.interface';
 
 export class DatumAcross<
 	ResponseT,
 	RequirementT,
-	DatumT extends IDatum,
+	DatumT extends DatumInterface,
 	SelectT,
 	EnvT extends DatumAcrossContext<DatumT, SelectT>,
-> implements DatumActionInterface<ResponseT, DatumT, EnvT>
+> implements DatumReaderInterface<ResponseT, DatumT, EnvT>
 {
 	name: string;
 	accessor: DatumAccessor<RequirementT, DatumT, EnvT>;
@@ -23,7 +23,7 @@ export class DatumAcross<
 
 	constructor(
 		name: FeatureReference,
-		requirements: DatumActionRequirements<RequirementT, DatumT, EnvT>,
+		requirements: DatumReaderRequirements<RequirementT, DatumT, EnvT>,
 		settings: DatumAcrossSettings<ResponseT, RequirementT, SelectT>,
 	) {
 		this.name = name;

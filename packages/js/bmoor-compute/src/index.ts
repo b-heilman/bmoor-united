@@ -12,7 +12,7 @@ export {Environment} from './environment';
 export {Datum} from './datum';
 export {DatumAccessor} from './datum/accessor';
 export {DatumAcross} from './datum/across';
-export {DatumAction} from './datum/action';
+export {DatumReader} from './datum/reader';
 export {DatumCompute} from './datum/compute';
 export {DatumProcessor} from './datum/processor';
 export {DatumRange} from './datum/range';

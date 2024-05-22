@@ -1,19 +1,19 @@
 import {Context} from '@bmoor/context';
 
-import {FeatureReference, IDatum} from '../datum.interface';
+import {DatumInterface, FeatureReference} from '../datum.interface';
 import {DatumAccessor} from './accessor';
-import {
-	DatumActionInterface,
-	DatumActionRequirements,
-} from './action.interface';
 import {DatumRankerContext, DatumRankerSettings} from './ranker.interface';
+import {
+	DatumReaderInterface,
+	DatumReaderRequirements,
+} from './reader.interface';
 
 export class DatumRanker<
 	RequirementT,
-	DatumT extends IDatum,
+	DatumT extends DatumInterface,
 	SelectT,
 	EnvT extends DatumRankerContext<DatumT, SelectT>,
-> implements DatumActionInterface<number, DatumT, EnvT>
+> implements DatumReaderInterface<number, DatumT, EnvT>
 {
 	name: string;
 	accessor: DatumAccessor<RequirementT, DatumT, EnvT>;
@@ -21,7 +21,7 @@ export class DatumRanker<
 
 	constructor(
 		name: FeatureReference,
-		requirements: DatumActionRequirements<RequirementT, DatumT, EnvT>,
+		requirements: DatumReaderRequirements<RequirementT, DatumT, EnvT>,
 		settings: DatumRankerSettings<RequirementT, SelectT>,
 	) {
 		this.name = name;

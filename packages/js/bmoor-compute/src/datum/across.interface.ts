@@ -1,4 +1,4 @@
-import {IDatum} from '../datum.interface';
+import {DatumInterface} from '../datum.interface';
 import {
 	DatumAccessorContext,
 	DatumAccessorSettings,
@@ -10,7 +10,7 @@ export interface DatumAcrossSettings<ResponseT, RequirementT, SelectT>
 	reducer: (args: RequirementT[]) => ResponseT;
 }
 
-export interface DatumAcrossContext<DatumT extends IDatum, SelectT>
+export interface DatumAcrossContext<DatumT extends DatumInterface, SelectT>
 	extends DatumAccessorContext<DatumT> {
 	select: (datum: DatumT, select: SelectT) => DatumT[];
 }

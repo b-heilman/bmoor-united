@@ -1,5 +1,6 @@
-import { DatumAccessorSettings } from "./accessor.interface";
+import {DatumAccessorSettings} from './accessor.interface';
 
-export interface DatumComputeSettings<ResponseT, RequirementT> extends DatumAccessorSettings {
-    reducer: (args: RequirementT) => ResponseT
+export interface DatumComputeSettings<ResponseT, RequirementT>
+	extends DatumAccessorSettings {
+	reducer: (args: RequirementT) => ResponseT;
 }

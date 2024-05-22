@@ -1,8 +1,8 @@
 // import { DatumAccessorInterface} from './datum/accessor.interface';
 import {Context} from '@bmoor/context';
 
-import {DatumInterface} from './datum.interface';
-import {DatumActionInterface} from './datum/action.interface';
+import {IDatum} from './datum.interface';
+import {DatumReaderInterface} from './datum/reader.interface';
 import {
 	EnvironmentInterface,
 	EnvironmentSelector,
@@ -38,8 +38,8 @@ import {
  ****/
 export class Executor<
 	SelectorT extends EnvironmentSelector,
-	DatumT extends DatumInterface,
-	EnvT extends EnvironmentInterface< DatumT, SelectorT>,
+	DatumT extends IDatum,
+	EnvT extends EnvironmentInterface<DatumT, SelectorT>,
 > {
 	env: EnvT;
 
@@ -49,7 +49,7 @@ export class Executor<
 
 	// run a definition and pull back the value
 	async calculate<ResponseT = any>( // eslint-disable-line  @typescript-eslint/no-explicit-any
-		action: DatumActionInterface<ResponseT, DatumT, EnvT>,
+		action: DatumReaderInterface<ResponseT, DatumT, EnvT>,
 		select: SelectorT,
 		ctx: Context = new Context({}),
 	): Promise<ResponseT[]> {

@@ -4,16 +4,13 @@ import {DatumAcrossContext} from '../datum/across.interface';
 import {DatumRangeContext} from '../datum/range.interface';
 import {EnvironmentDatumFactory} from '../environment.interface';
 import {IntervalInterface} from '../interval.interface';
-import {
-	IntervalDatumInterface,
-	IntervalDatumSelector,
-} from './datum.interface';
+import {IntervalDatumSelector, IntervalIDatum} from './datum.interface';
 
 type IntervalT = string;
 type OrderT = number;
 
 export interface IntervalEnvironmentSettings<
-	DatumT extends IntervalDatumInterface,
+	DatumT extends IntervalIDatum,
 	SettingsT extends DatumSettings,
 > {
 	factory: (
@@ -29,7 +26,7 @@ export interface IntervalEnvironmentSelector
 }
 
 export interface IntervalEnvironmentInterface<
-	DatumT extends IntervalDatumInterface,
+	DatumT extends IntervalIDatum,
 	SelectorT extends IntervalEnvironmentSelector,
 > extends DatumAccessorContext<DatumT>,
 		DatumAcrossContext<DatumT, SelectorT>,

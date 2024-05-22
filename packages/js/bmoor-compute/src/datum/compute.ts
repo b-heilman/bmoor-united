@@ -1,23 +1,20 @@
 import {Context} from '@bmoor/context';
 
-import {FeatureReference, IDatum} from '../datum.interface';
+import {DatumInterface, FeatureReference} from '../datum.interface';
 import {DatumAccessor} from './accessor';
+import {DatumAccessorContext} from './accessor.interface';
+import {DatumComputeSettings} from './compute.interface';
 import {
-	DatumAccessorContext,
-	DatumAccessorSettings,
-} from './accessor.interface';
-import {
-	DatumActionInterface,
-	DatumActionRequirements,
-} from './action.interface';
-import { DatumComputeSettings } from './compute.interface';
+	DatumReaderInterface,
+	DatumReaderRequirements,
+} from './reader.interface';
 
 export class DatumCompute<
 	ResponseT,
 	RequirementT,
-	DatumT extends IDatum,
+	DatumT extends DatumInterface,
 	EnvT extends DatumAccessorContext<DatumT>,
-> implements DatumActionInterface<ResponseT, DatumT, EnvT>
+> implements DatumReaderInterface<ResponseT, DatumT, EnvT>
 {
 	name: string;
 	settings: DatumComputeSettings<ResponseT, RequirementT>;
@@ -25,13 +22,17 @@ export class DatumCompute<
 
 	constructor(
 		name: FeatureReference,
-		requirements: DatumActionRequirements<RequirementT, DatumT, EnvT>,
-		settings: DatumComputeSettings<ResponseT, RequirementT>
+		requirements: DatumReaderRequirements<RequirementT, DatumT, EnvT>,
+		settings: DatumComputeSettings<ResponseT, RequirementT>,
 	) {
 		this.name = name;
 		// TODO: no need to cashe this, just like range
 		this.settings = settings;
-		this.accessor = new DatumAccessor(name+'_accessor', requirements, settings);
+		this.accessor = new DatumAccessor(
+			name + '_accessor',
+			requirements,
+			settings,
+		);
 	}
 
 	async process(

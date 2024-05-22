@@ -2,10 +2,7 @@ import {OrderedMap} from '@bmoor/index';
 
 import {Environment} from '../environment';
 import {IntervalInterface} from '../interval.interface';
-import {
-	IntervalDatumInterface,
-	IntervalDatumSettings,
-} from './datum.interface';
+import {IntervalDatumSettings, IntervalIDatum} from './datum.interface';
 import {
 	IntervalEnvironmentInterface,
 	IntervalEnvironmentSelector,
@@ -16,7 +13,7 @@ type IntervalT = string;
 type OrderT = number;
 
 export class IntervalEnvironment<
-	DatumT extends IntervalDatumInterface = IntervalDatumInterface,
+	DatumT extends IntervalIDatum = IntervalIDatum,
 	SelectorT extends
 		IntervalEnvironmentSelector = IntervalEnvironmentSelector,
 > implements IntervalEnvironmentInterface<DatumT, SelectorT>
@@ -88,8 +85,7 @@ export class IntervalEnvironment<
 
 		for (const [intervalRef, env] of this.envs
 			.getBetween(begin, offset)
-			.entries()
-		) {
+			.entries()) {
 			const res = env.references.get(datum.ref);
 
 			if (!res && strict) {

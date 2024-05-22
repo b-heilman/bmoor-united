@@ -1,4 +1,3 @@
-import {DatumInterface} from '@bmoor/compute';
 import {Context} from '@bmoor/context';
 
 import {Event} from './event';
@@ -18,7 +17,7 @@ import {
 } from './graph.interface';
 import {GraphDatum} from './graph/datum';
 import {Node, load as loadNode} from './node';
-import {NodeReference, NodeSelector, NodeType} from './node.interface';
+import {NodeReference, NodeType} from './node.interface';
 
 // used to manage all top levels nodes and then facilitates
 // passing data through them
@@ -113,7 +112,7 @@ export class Graph implements GraphInterface {
 		}));
 	}
 
-	select(selector: GraphSelector): DatumInterface<NodeSelector>[] {
+	select(selector: GraphSelector): GraphDatum[] {
 		let select = <GraphNodeSelector>selector;
 		let res: Node[] = null;
 

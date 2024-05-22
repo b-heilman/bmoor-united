@@ -3,71 +3,61 @@ import {expect} from 'chai';
 import {
 	DatumAccessor,
 	DatumAcross,
-	DatumAction,
 	DatumCompute,
 	DatumProcessor,
 	DatumRange,
 	DatumRanker,
 	Executor,
 	IntervalDatum,
-	IntervalDatumInterface,
-	IntervalDatumSelector,
 	IntervalEnvironment,
 	IntervalEnvironmentSelector,
+	IntervalIDatum,
 	mean,
 } from './index';
 
 class Accessor<RequirementT> extends DatumAccessor<
 	RequirementT,
-	IntervalDatumInterface,
-	IntervalEnvironment<IntervalDatumInterface, IntervalEnvironmentSelector>
+	IntervalIDatum,
+	IntervalEnvironment<IntervalIDatum, IntervalEnvironmentSelector>
 > {}
 class Across<ResponseT, RequirementT> extends DatumAcross<
 	ResponseT,
 	RequirementT,
-	IntervalDatumInterface,
+	IntervalIDatum,
 	IntervalEnvironmentSelector,
-	IntervalEnvironment<IntervalDatumInterface, IntervalEnvironmentSelector>
-> {}
-class Action<RequirementT> extends DatumAction<
-	RequirementT,
-	IntervalDatumInterface,
-	IntervalEnvironment<IntervalDatumInterface, IntervalEnvironmentSelector>
+	IntervalEnvironment<IntervalIDatum, IntervalEnvironmentSelector>
 > {}
 class Compute<ResponseT, RequirementT> extends DatumCompute<
 	ResponseT,
 	RequirementT,
-	IntervalDatumInterface,
-	IntervalEnvironment<IntervalDatumInterface, IntervalEnvironmentSelector>
+	IntervalIDatum,
+	IntervalEnvironment<IntervalIDatum, IntervalEnvironmentSelector>
 > {}
 class Processor<ResponseT, RequirementT> extends DatumProcessor<
 	ResponseT,
 	RequirementT,
-	IntervalDatumInterface,
-	IntervalEnvironment<IntervalDatumInterface, IntervalEnvironmentSelector>
+	IntervalIDatum,
+	IntervalEnvironment<IntervalIDatum, IntervalEnvironmentSelector>
 > {}
 class Range<ResponseT, RequirementT> extends DatumRange<
 	ResponseT,
 	RequirementT,
-	IntervalDatumInterface,
-	IntervalEnvironment<IntervalDatumInterface, IntervalEnvironmentSelector>
+	IntervalIDatum,
+	IntervalEnvironment<IntervalIDatum, IntervalEnvironmentSelector>
 > {}
 class Ranker<RequirementT> extends DatumRanker<
 	RequirementT,
-	IntervalDatumInterface,
+	IntervalIDatum,
 	IntervalEnvironmentSelector,
-	IntervalEnvironment<IntervalDatumInterface, IntervalEnvironmentSelector>
+	IntervalEnvironment<IntervalIDatum, IntervalEnvironmentSelector>
 > {}
 
 describe('@bmoor/compute', function () {
 	let env: IntervalEnvironment = null;
 	let executor: Executor<
 		IntervalEnvironmentSelector,
-		IntervalDatumInterface,
-		IntervalEnvironment<
-			IntervalDatumInterface,
-			IntervalEnvironmentSelector
-		>
+		IntervalIDatum,
+		IntervalEnvironment<IntervalIDatum, IntervalEnvironmentSelector>
 	>;
 
 	let accessFoo;
@@ -290,11 +280,8 @@ describe('@bmoor/compute', function () {
 
 		executor = new Executor<
 			IntervalEnvironmentSelector,
-			IntervalDatumInterface,
-			IntervalEnvironment<
-				IntervalDatumInterface,
-				IntervalEnvironmentSelector
-			>
+			IntervalIDatum,
+			IntervalEnvironment<IntervalIDatum, IntervalEnvironmentSelector>
 		>(env);
 
 		accessFoo = new Accessor('get-foo', {value: 'foo'}, {offset: 0});
@@ -315,7 +302,7 @@ describe('@bmoor/compute', function () {
 			{
 				reducer: (args) => {
 					return (args.eins.value + args.zwei.value) / 2;
-				}
+				},
 			},
 		);
 
@@ -328,7 +315,7 @@ describe('@bmoor/compute', function () {
 				range: 3,
 				strict: false,
 				offset: 0,
-				reducer: mean
+				reducer: mean,
 			},
 		);
 
@@ -343,43 +330,49 @@ describe('@bmoor/compute', function () {
 				reducer: (data) => {
 					return (data.arg1 + data.arg2) / 2;
 				},
-			}
+			},
 		);
 
-		
-		proc4 = new Across('p-means', 
+		proc4 = new Across(
+			'p-means',
 			{
 				mean: accessFoo,
-			}, {
+			},
+			{
 				offset: 0,
 				select: {
 					metadata: {
 						type: 'p',
 					},
 				},
-				reducer: mean
-			}
+				reducer: mean,
+			},
 		);
 
-		proc5 = new Across('p-proc',
+		proc5 = new Across(
+			'p-proc',
 			{
 				mean: proc2,
-			}, {
+			},
+			{
 				offset: 0,
 				select: {
 					metadata: {
 						type: 'p',
 					},
 				},
-				reducer: mean
-			}, 
+				reducer: mean,
+			},
 		);
 
-		proc6 = new Across('p-across', 
+		proc6 = new Across(
+			'p-across',
 			{
-				input: new Accessor<{foo: number, bar: number}>(
-					'foo-bar', {foo: 'foo', bar: 'bar'}, {offset:0}
-				)
+				input: new Accessor<{foo: number; bar: number}>(
+					'foo-bar',
+					{foo: 'foo', bar: 'bar'},
+					{offset: 0},
+				),
 			},
 			{
 				select: {
@@ -389,25 +382,28 @@ describe('@bmoor/compute', function () {
 				},
 				offset: 0,
 				reducer: (args: {input: {foo: number; bar: number}}[]) => {
-					const rtn = (
+					const rtn =
 						args.reduce(
 							(agg, {input}) => agg + (input.foo + input.bar) / 2,
 							0,
-						) / args.length
-					);
+						) / args.length;
 
 					return rtn;
-				}
-			}
+				},
+			},
 		);
 
-		proc7 = new Range('range', {
-			mean: proc6
-		}, {
-			range: 3,
-			offset: 0,
-			reducer: mean
-		});
+		proc7 = new Range(
+			'range',
+			{
+				mean: proc6,
+			},
+			{
+				range: 3,
+				offset: 0,
+				reducer: mean,
+			},
+		);
 	});
 
 	it('should work with a simple execution', async function () {
@@ -487,11 +483,15 @@ describe('@bmoor/compute', function () {
 		const rank = new Ranker<{rank: {foo: number}}>(
 			'rank-across-foo',
 			{
-				rank: new Accessor<{foo: number}>('ranker-across-access',{
-					foo: 'foo',
-				}, {
-					offset: 0
-				}),
+				rank: new Accessor<{foo: number}>(
+					'ranker-across-access',
+					{
+						foo: 'foo',
+					},
+					{
+						offset: 0,
+					},
+				),
 			},
 			{
 				offset: 0,
@@ -503,7 +503,7 @@ describe('@bmoor/compute', function () {
 						type: 'p',
 					},
 				},
-				reducer: (args: {rank:{foo: number}}) => {
+				reducer: (args: {rank: {foo: number}}) => {
 					return args.rank.foo;
 				},
 			},
@@ -511,7 +511,7 @@ describe('@bmoor/compute', function () {
 
 		const v1 = await executor.calculate(rank, {
 			reference: 'g-1-1',
-			interval: {ref: 'eins', order: 0}
+			interval: {ref: 'eins', order: 0},
 		});
 
 		expect(v1).to.deep.equal([1]);
@@ -535,11 +535,15 @@ describe('@bmoor/compute', function () {
 		const rank = new Ranker<{rank: {foo: number}}>(
 			'rank-across-foo',
 			{
-				rank: new Accessor<{foo: number}>('ranker-across-access',{
-					foo: 'foo',
-				}, {
-					offset: 0
-				}),
+				rank: new Accessor<{foo: number}>(
+					'ranker-across-access',
+					{
+						foo: 'foo',
+					},
+					{
+						offset: 0,
+					},
+				),
 			},
 			{
 				asc: true,
@@ -552,7 +556,7 @@ describe('@bmoor/compute', function () {
 						type: 'p',
 					},
 				},
-				reducer: (args: {rank:{foo: number}}) => {
+				reducer: (args: {rank: {foo: number}}) => {
 					return args.rank.foo;
 				},
 			},
@@ -560,7 +564,7 @@ describe('@bmoor/compute', function () {
 
 		const v1 = await executor.calculate(rank, {
 			reference: 'g-1-1',
-			interval: {ref: 'eins', order: 0}
+			interval: {ref: 'eins', order: 0},
 		});
 
 		expect(v1).to.deep.equal([0]);
@@ -579,16 +583,20 @@ describe('@bmoor/compute', function () {
 
 		expect(v3).to.deep.equal([1]);
 	});
-	
+
 	it('should globally allow ranking across nodes', async function () {
 		const rank = new Ranker(
 			'rank-across-foo',
 			{
-				rank: new Accessor<{foo: number}>('ranker-across-access',{
-					foo: 'foo',
-				}, {
-					offset: 0
-				}),
+				rank: new Accessor<{foo: number}>(
+					'ranker-across-access',
+					{
+						foo: 'foo',
+					},
+					{
+						offset: 0,
+					},
+				),
 			},
 			{
 				offset: 0,
@@ -600,28 +608,28 @@ describe('@bmoor/compute', function () {
 						type: 'p',
 					},
 				},
-				reducer: (args: {rank:{foo: number}}) => {
+				reducer: (args: {rank: {foo: number}}) => {
 					return args.rank.foo;
 				},
 			},
 		);
 
 		const v1 = await executor.calculate(rank, {
-			interval: {ref: 'eins', order: 0}, 
+			interval: {ref: 'eins', order: 0},
 			reference: 'g-1-1',
 		});
 
 		expect(v1).to.deep.equal([3]);
 
 		const v2 = await executor.calculate(rank, {
-			interval: {ref: 'eins', order: 0}, 
+			interval: {ref: 'eins', order: 0},
 			reference: 'g-1-2',
 		});
 
 		expect(v2).to.deep.equal([1]);
 
 		const v3 = await executor.calculate(rank, {
-			interval: {ref: 'eins', order: 0}, 
+			interval: {ref: 'eins', order: 0},
 			reference: 'g-2-2',
 		});
 
@@ -632,11 +640,15 @@ describe('@bmoor/compute', function () {
 		const rank = new Ranker(
 			'rank-bucket-foo',
 			{
-				rank: new Accessor<{foo: number}>('ranker-across-access',{
-					foo: 'foo',
-				}, {
-					offset: 0
-				}),
+				rank: new Accessor<{foo: number}>(
+					'ranker-across-access',
+					{
+						foo: 'foo',
+					},
+					{
+						offset: 0,
+					},
+				),
 			},
 			{
 				offset: 0,
@@ -649,7 +661,7 @@ describe('@bmoor/compute', function () {
 						type: 'p',
 					},
 				},
-				reducer: (args: {rank:{foo: number}}) => {
+				reducer: (args: {rank: {foo: number}}) => {
 					return args.rank.foo;
 				},
 			},
@@ -662,7 +674,7 @@ describe('@bmoor/compute', function () {
 
 		expect(v1).to.deep.equal([1]);
 
-		const v2 = await executor.calculate( rank, {
+		const v2 = await executor.calculate(rank, {
 			interval: {ref: 'eins', order: 0},
 			reference: 'g-1-2',
 		});
@@ -670,14 +682,14 @@ describe('@bmoor/compute', function () {
 		expect(v2).to.deep.equal([0]);
 
 		const v3 = await executor.calculate(rank, {
-			interval: {ref: 'eins', order: 0}, 
+			interval: {ref: 'eins', order: 0},
 			reference: 'g-2-2',
 		});
 
 		expect(v3).to.deep.equal([0]);
 
 		const v4 = await executor.calculate(rank, {
-			interval: {ref: 'eins', order: 0}, 
+			interval: {ref: 'eins', order: 0},
 			reference: 'g-2-1',
 		});
 
@@ -688,11 +700,15 @@ describe('@bmoor/compute', function () {
 		const rank = new Ranker(
 			'rank-global-foo',
 			{
-				rank: new Accessor<{foo: number}>('ranker-across-access',{
-					foo: 'foo',
-				}, {
-					offset: 0
-				}),
+				rank: new Accessor<{foo: number}>(
+					'ranker-across-access',
+					{
+						foo: 'foo',
+					},
+					{
+						offset: 0,
+					},
+				),
 			},
 			{
 				offset: 0,
@@ -706,20 +722,20 @@ describe('@bmoor/compute', function () {
 						type: 'p',
 					},
 				},
-				reducer: (args: {rank:{foo: number}}) => {
+				reducer: (args: {rank: {foo: number}}) => {
 					return args.rank.foo;
 				},
 			},
 		);
 
 		const v1 = await executor.calculate(rank, {
-			interval: {ref: 'eins', order: 0}, 
+			interval: {ref: 'eins', order: 0},
 			reference: 'g-1-1',
 		});
 
 		expect(v1).to.deep.equal([0]);
 
-		const v2 = await executor.calculate( rank, {
+		const v2 = await executor.calculate(rank, {
 			interval: {ref: 'eins', order: 0},
 			reference: 'g-1-2',
 		});
@@ -727,14 +743,14 @@ describe('@bmoor/compute', function () {
 		expect(v2).to.deep.equal([0]);
 
 		const v3 = await executor.calculate(rank, {
-			interval: {ref: 'eins', order: 0}, 
+			interval: {ref: 'eins', order: 0},
 			reference: 'g-2-2',
 		});
 
 		expect(v3).to.deep.equal([1]);
 
 		const v4 = await executor.calculate(rank, {
-			interval: {ref: 'eins', order: 0}, 
+			interval: {ref: 'eins', order: 0},
 			reference: 'g-2-1',
 		});
 

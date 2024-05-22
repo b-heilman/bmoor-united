@@ -4,7 +4,7 @@ import {Context} from '@bmoor/context';
 
 import {Datum} from '../datum';
 import {DatumAcross} from './across';
-import {DatumAction} from './action';
+import {DatumReader} from './reader';
 
 describe('@bmoor/compute - datum/across', function () {
 	it('should allow computing group data', async function () {
@@ -35,7 +35,7 @@ describe('@bmoor/compute - datum/across', function () {
 			},
 		});
 
-		const child = new DatumAction<
+		const child = new DatumReader<
 			{hello: number; world: number},
 			Datum,
 			object

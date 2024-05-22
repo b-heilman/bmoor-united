@@ -1,6 +1,6 @@
 import {expect} from 'chai';
 
-import {DatumInterface} from '@bmoor/compute';
+import {IDatum} from '@bmoor/compute';
 import {Context} from '@bmoor/context';
 import {GraphDatum, NodeSelector} from '@bmoor/graph';
 
@@ -443,7 +443,7 @@ describe('@bmoor/graph-compute::graph', function () {
 
 			expect(
 				await Promise.all(
-					res.map((v: DatumInterface<NodeSelector>) => {
+					res.map((v: IDatum<NodeSelector>) => {
 						const datum = <GraphDatum>v;
 						return datum.getValue('foo-bar', NodeValueSelector.node);
 					}),
@@ -458,7 +458,7 @@ describe('@bmoor/graph-compute::graph', function () {
 
 			expect(
 				await Promise.all(
-					res.map((v: DatumInterface<NodeSelector>) => {
+					res.map((v: IDatum<NodeSelector>) => {
 						const datum = <GraphDatum>v;
 						return datum.getValue('passing', NodeValueSelector.event);
 					}),
@@ -479,7 +479,7 @@ describe('@bmoor/graph-compute::graph', function () {
 
 			expect(
 				await Promise.all(
-					res.map((v: DatumInterface<NodeSelector>) => {
+					res.map((v: IDatum<NodeSelector>) => {
 						const datum = <GraphDatum>v;
 						return datum.getValue('passing', NodeValueSelector.event);
 					}),

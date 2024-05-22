@@ -358,7 +358,7 @@ export class Node implements NodeInterface {
 	async setValue(
 		mount: string,
 		selector: NodeValueSelector,
-		value: number,
+		value: FeatureValue,
 	): Promise<boolean> {
 		selector === NodeValueSelector.node
 			? this.setWeight(mount, value)

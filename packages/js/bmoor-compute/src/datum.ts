@@ -1,11 +1,12 @@
 import {
-	DatumInterface,
 	DatumSelector,
+	DatumSetterSettings,
 	DatumSettings,
 	FeatureValue,
+	IDatum,
 } from './datum.interface';
 
-export class Datum implements DatumInterface {
+export class Datum implements IDatum {
 	ref: string;
 	awaiting: Map<string, Promise<unknown>>;
 	features: Map<string, unknown>;
@@ -21,7 +22,7 @@ export class Datum implements DatumInterface {
 		this.build(settings);
 	}
 
-	build(settings: DatumSettings){
+	build(settings: DatumSettings) {
 		for (const key in settings.features) {
 			this.features.set(key, settings.features[key]);
 		}
@@ -36,7 +37,7 @@ export class Datum implements DatumInterface {
 		}
 	}
 
-	createChild(name, settings){
+	createChild(name, settings) {
 		const child = new Datum(name, settings);
 
 		this.addChild(child);
@@ -73,7 +74,7 @@ export class Datum implements DatumInterface {
 	async getValue(
 		attr: string,
 		generator: () => Promise<FeatureValue>,
-		save=true
+		settings: DatumSetterSettings = {},
 	): Promise<FeatureValue> {
 		if (this.awaiting.has(attr)) {
 			return <Promise<FeatureValue>>this.awaiting.get(attr);
@@ -85,7 +86,7 @@ export class Datum implements DatumInterface {
 			rtn.then((val) => {
 				this.awaiting.delete(attr);
 
-				if (save) {
+				if (!settings.fake) {
 					this.features.set(attr, val);
 				}
 

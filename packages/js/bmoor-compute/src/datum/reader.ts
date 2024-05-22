@@ -1,23 +1,23 @@
 import {Context} from '@bmoor/context';
 
-import {FeatureReference, IDatum} from '../datum.interface';
+import {DatumInterface, FeatureReference} from '../datum.interface';
 import {
-	DatumActionInterface,
-	DatumActionRequirements,
-} from './action.interface';
+	DatumReaderInterface,
+	DatumReaderRequirements,
+} from './reader.interface';
 
 /***
  * Allows you to variable from a datum and load in requirements
  */
-export class DatumAction<RequirementT, DatumT extends IDatum, EnvT>
-	implements DatumActionInterface<RequirementT, DatumT, EnvT>
+export class DatumReader<RequirementT, DatumT extends DatumInterface, EnvT>
+	implements DatumReaderInterface<RequirementT, DatumT, EnvT>
 {
 	name: FeatureReference;
-	requirements: DatumActionRequirements<RequirementT, DatumT, EnvT>;
+	requirements: DatumReaderRequirements<RequirementT, DatumT, EnvT>;
 
 	constructor(
 		name: FeatureReference,
-		requirements: DatumActionRequirements<RequirementT, DatumT, EnvT>,
+		requirements: DatumReaderRequirements<RequirementT, DatumT, EnvT>,
 	) {
 		this.name = name;
 		this.requirements = requirements;
@@ -26,7 +26,7 @@ export class DatumAction<RequirementT, DatumT extends IDatum, EnvT>
 	process(
 		ctx: Context,
 		env: EnvT,
-		datums: IDatum[],
+		datums: DatumInterface[],
 	): Promise<RequirementT[]> {
 		return Promise.all(
 			datums.map(async (datum) => {
@@ -35,7 +35,7 @@ export class DatumAction<RequirementT, DatumT extends IDatum, EnvT>
 				const reqs = keys.map((key) => {
 					const req = this.requirements[key];
 
-					if (typeof(req) === 'string'){
+					if (typeof req === 'string') {
 						return datum.getValue(req, () => null);
 					} else {
 						return datum.getValue(

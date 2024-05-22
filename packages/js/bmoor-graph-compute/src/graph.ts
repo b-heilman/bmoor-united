@@ -1,4 +1,4 @@
-import {DatumInterface, EnvironmentRangeSettings} from '@bmoor/compute';
+import {EnvironmentRangeSettings, IDatum} from '@bmoor/compute';
 import {ComputeUnknownInterval} from '@bmoor/compute';
 import {Context} from '@bmoor/context';
 import {
@@ -77,7 +77,7 @@ export class DimensionalGraph implements DimensionalGraphInterface {
 		interval: Interval,
 		selector: GraphSelector,
 		strict = false,
-	): DatumInterface<NodeSelector>[] {
+	): IDatum<NodeSelector>[] {
 		// TODO: I should be able to do this cleaner...
 		try {
 			return this.graphs.get(interval.ref).select(selector);

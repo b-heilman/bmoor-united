@@ -1,11 +1,10 @@
-import {DatumInterface} from '@bmoor/compute';
-
 import {
 	EventInterface,
 	EventJSON,
 	EventReference,
 } from './event.interface';
 import {Features} from './features';
+import {GraphDatumInterface} from './graph/datum.interface';
 import {
 	NodeBuilder,
 	NodeInterface,
@@ -41,7 +40,7 @@ export interface GraphInterface {
 	getEventFeatures(ref: NodeReference): GraphEventFeatures[];
 	// some search methods
 
-	select(selector: GraphSelector): DatumInterface<NodeSelector>[];
+	select(selector: GraphSelector): GraphDatumInterface[];
 }
 
 export interface GraphJSON {

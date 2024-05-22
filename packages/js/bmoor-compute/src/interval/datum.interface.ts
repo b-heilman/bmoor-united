@@ -1,8 +1,4 @@
-import {
-	DatumInterface,
-	DatumSelector,
-	DatumSettings,
-} from '../datum.interface';
+import {DatumSelector, DatumSettings, IDatum} from '../datum.interface';
 import {IntervalInterface} from '../interval.interface';
 
 export interface IntervalDatumSelector extends DatumSelector {}
@@ -11,7 +7,7 @@ export interface IntervalDatumSettings extends DatumSettings {
 	interval?: IntervalInterface;
 }
 
-export interface IntervalDatumInterface extends DatumInterface {
+export interface IntervalIDatum extends IDatum {
 	interval: IntervalInterface;
-	select(selector: IntervalDatumSelector): DatumInterface[];
+	select(selector: IntervalDatumSelector): IDatum[];
 }

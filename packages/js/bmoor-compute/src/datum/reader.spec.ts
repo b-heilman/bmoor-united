@@ -3,7 +3,7 @@ import {expect} from 'chai';
 import {Context} from '@bmoor/context';
 
 import {Datum} from '../datum';
-import {DatumAction} from './action';
+import {DatumReader} from './reader';
 
 describe('@bmoor/compute - datum/action', function () {
 	it('should construct a payload', async function () {
@@ -16,12 +16,12 @@ describe('@bmoor/compute - datum/action', function () {
 			},
 		});
 
-		const child = new DatumAction('hello-world', {
+		const child = new DatumReader('hello-world', {
 			hello: 'hello',
 			world: 'world',
 		});
 
-		const top = new DatumAction('foo-bar', {
+		const top = new DatumReader('foo-bar', {
 			foo: 'foo',
 			bar: 'bar',
 			helloWorld: child,

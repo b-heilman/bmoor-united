@@ -3,8 +3,8 @@ import {expect} from 'chai';
 import {Context} from '@bmoor/context';
 
 import {Datum} from '../datum';
-import {DatumAction} from './action';
 import {DatumProcessor} from './processor';
+import {DatumReader} from './reader';
 
 describe('@bmoor/compute - datum/processor', function () {
 	it('should allow computing a value from requirements', async function () {
@@ -17,7 +17,7 @@ describe('@bmoor/compute - datum/processor', function () {
 			},
 		});
 
-		const child = new DatumAction<
+		const child = new DatumReader<
 			{hello: number; world: number},
 			Datum,
 			object
@@ -38,7 +38,7 @@ describe('@bmoor/compute - datum/processor', function () {
 					return (
 						<number>foo + <number>bar + helloWorld.hello + helloWorld.world
 					);
-				}
+				},
 			},
 		);
 

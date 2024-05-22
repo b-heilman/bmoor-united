@@ -1,8 +1,8 @@
-import {IDatum} from '../datum.interface';
+import {DatumInterface} from '../datum.interface';
+import {DatumAccessorSettings} from './accessor.interface';
 import {DatumAcrossContext} from './across.interface';
-import { DatumAccessorSettings } from './accessor.interface';
 
-export interface DatumRankerContext<DatumT extends IDatum, SelectT>
+export interface DatumRankerContext<DatumT extends DatumInterface, SelectT>
 	extends DatumAcrossContext<DatumT, SelectT> {}
 
 export interface DatumRankerSettings<RequirementT, SelectT>

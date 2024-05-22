@@ -4,7 +4,7 @@ import {Context} from '@bmoor/context';
 
 import {Datum} from '../datum';
 import {DatumAccessor} from './accessor';
-import {DatumAction} from './action';
+import {DatumReader} from './reader';
 
 describe('@bmoor/compute - datum/accessor', function () {
 	it('should construct a payload with historical data', async function () {
@@ -26,7 +26,7 @@ describe('@bmoor/compute - datum/accessor', function () {
 			},
 		});
 
-		const child = new DatumAction('hello-world', {
+		const child = new DatumReader('hello-world', {
 			hello: 'hello',
 			world: 'world',
 		});

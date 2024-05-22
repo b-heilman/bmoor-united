@@ -1,27 +1,27 @@
 import {Context} from '@bmoor/context';
 
-import {FeatureReference, IDatum} from '../datum.interface';
+import {DatumInterface, FeatureReference} from '../datum.interface';
 import {
 	DatumAccessorContext,
 	DatumAccessorSettings,
 } from './accessor.interface';
-import {DatumAction} from './action';
-import {DatumActionRequirements} from './action.interface';
+import {DatumReader} from './reader';
+import {DatumReaderRequirements} from './reader.interface';
 
 /***
  * Allows you to run a action against a datum, but it is offset from 0
  */
 export class DatumAccessor<
 	RequirementT,
-	DatumT extends IDatum,
+	DatumT extends DatumInterface,
 	EnvT extends DatumAccessorContext<DatumT>,
-> extends DatumAction<RequirementT, DatumT, EnvT> {
+> extends DatumReader<RequirementT, DatumT, EnvT> {
 	settings: DatumAccessorSettings;
 
 	// This should calculate the offset defined... somewhere?
 	constructor(
 		name: FeatureReference,
-		requirements: DatumActionRequirements<RequirementT, DatumT, EnvT>,
+		requirements: DatumReaderRequirements<RequirementT, DatumT, EnvT>,
 		settings: DatumAccessorSettings,
 	) {
 		super(name, requirements);

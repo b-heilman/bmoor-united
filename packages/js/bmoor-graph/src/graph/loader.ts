@@ -185,10 +185,12 @@ export class GraphLoader {
 			try {
 				loadNode(nodeJSON, builder.nodes);
 			} catch (ex) {
-				ctx.setError(ex, {
-					code: 'LOADER_LOAD_NODE',
-					protected: nodeJSON,
-				});
+				if (ex instanceof Error) {
+					ctx.setError(ex, {
+						code: 'LOADER_LOAD_NODE',
+						protected: nodeJSON,
+					});
+				}
 
 				throw ex;
 			}
@@ -199,10 +201,12 @@ export class GraphLoader {
 				this.settings.generateEvents(row),
 			);
 		} catch (ex) {
-			ctx.setError(ex, {
-				code: 'LOADER_LOAD_EVENTS',
-				protected: row,
-			});
+			if (ex instanceof Error) {
+				ctx.setError(ex, {
+					code: 'LOADER_LOAD_EVENTS',
+					protected: row,
+				});
+			}
 
 			throw ex;
 		}

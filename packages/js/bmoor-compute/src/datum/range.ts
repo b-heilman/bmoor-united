@@ -1,19 +1,19 @@
 import {Context} from '@bmoor/context';
 
-import {FeatureReference, IDatum} from '../datum.interface';
+import {DatumInterface, FeatureReference} from '../datum.interface';
 import {DatumAccessor} from './accessor';
-import {
-	DatumActionInterface,
-	DatumActionRequirements,
-} from './action.interface';
 import {DatumRangeContext, DatumRangeSettings} from './range.interface';
+import {
+	DatumReaderInterface,
+	DatumReaderRequirements,
+} from './reader.interface';
 
 export class DatumRange<
 	ResponseT,
 	RequirementT,
-	DatumT extends IDatum,
+	DatumT extends DatumInterface,
 	EnvT extends DatumRangeContext<DatumT>,
-> implements DatumActionInterface<ResponseT, DatumT, EnvT>
+> implements DatumReaderInterface<ResponseT, DatumT, EnvT>
 {
 	name: string;
 	accessor: DatumAccessor<RequirementT, DatumT, EnvT>;
@@ -21,12 +21,12 @@ export class DatumRange<
 
 	constructor(
 		name: FeatureReference,
-		requirements: DatumActionRequirements<RequirementT, DatumT, EnvT>,
-		settings: DatumRangeSettings<ResponseT, RequirementT>
+		requirements: DatumReaderRequirements<RequirementT, DatumT, EnvT>,
+		settings: DatumRangeSettings<ResponseT, RequirementT>,
 	) {
 		this.name = name;
 		this.accessor = new DatumAccessor(
-			name+'_accessor', // TODO: i don't need to save this to the datum... it's noise
+			name + '_accessor', // TODO: i don't need to save this to the datum... it's noise
 			requirements,
 			settings,
 		);

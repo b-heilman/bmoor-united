@@ -15,25 +15,31 @@ export interface DatumSelector {
 	parent?: Record<string, string>;
 }
 
-export interface IDatum {
-	hasValue(attr: FeatureReference): boolean;
+export interface DatumSetterSettings {
+	fake?: boolean;
+}
+
+export interface DatumInterface<SelectorT = DatumSelector> {
+	ref: DatumReference;
 
 	// get the value, could be an async source
 	getValue(
 		attr: FeatureReference,
 		generator: () => Promise<FeatureValue>,
+		settings?: DatumSetterSettings,
 	): Promise<FeatureValue>;
 
 	// set the value
 	setValue(attr: FeatureReference, value: FeatureValue): Promise<boolean>;
 
-	equals(other: IDatum): boolean;
+	equals(other: DatumInterface<SelectorT>): boolean;
+
+	select(selector: SelectorT): DatumInterface<SelectorT>[];
 }
 
-export interface DatumInterface extends IDatum {
-	ref: DatumReference;
-	children: Map<DatumReference, DatumInterface>;
+export interface IDatum<SelectorT = DatumSelector>
+	extends DatumInterface<SelectorT> {
+	children: Map<DatumReference, IDatum>;
 
-	select(selector: DatumSelector): DatumInterface[];
-	addChild(child: DatumInterface);
+	addChild(child: IDatum);
 }

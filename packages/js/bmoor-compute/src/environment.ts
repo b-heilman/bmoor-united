@@ -1,4 +1,4 @@
-import {DatumInterface, DatumSettings} from './datum.interface';
+import {DatumSettings, IDatum} from './datum.interface';
 import {
 	EnvironmentDatumFactory,
 	EnvironmentInterface,
@@ -7,7 +7,7 @@ import {
 } from './environment.interface';
 
 export class Environment<
-DatumT extends DatumInterface,
+	DatumT extends IDatum,
 	SelectorT extends EnvironmentSelector,
 	SettingsT extends DatumSettings,
 > implements EnvironmentInterface<DatumT, SelectorT>
