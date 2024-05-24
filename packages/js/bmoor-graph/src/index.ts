@@ -9,4 +9,5 @@ export {Graph, load, dump, applyBuilder} from './graph';
 export {GraphLoader} from './graph/loader';
 export * from './graph/loader.interface';
 export {GraphDatum} from './graph/datum';
+export * from './graph/datum.interface';
 export {GraphView} from './graph/view';
