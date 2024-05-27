@@ -2,7 +2,7 @@ import {Context} from '@bmoor/context';
 
 import {EventFeaturesWriteMode, EventJSON} from '../event.interface';
 import {Graph, applyBuilder} from '../graph';
-import {GraphBuilder} from '../graph.interface';
+import {GraphBuilder, GraphSelector} from '../graph.interface';
 import {load as loadNode} from '../node';
 import {NodeJSON} from '../node.interface';
 import {
@@ -14,6 +14,7 @@ import {
 	GraphLoaderSettings,
 	GraphLoaderValue,
 } from './loader.interface';
+import { GraphDatum } from './datum';
 
 function accessString(
 	row: GraphLoaderRow,
@@ -64,7 +65,10 @@ function featureCopy(row, features, parser = null) {
 	}
 }
 
-export class GraphLoader {
+export class GraphLoader<
+	DatumT extends GraphDatum<GraphSelector>,
+	SelectorT extends GraphSelector
+> {
 	settings: GraphLoaderSettings;
 
 	constructor(settings: GraphLoaderSettings = {}) {
@@ -212,7 +216,7 @@ export class GraphLoader {
 		}
 	}
 
-	_prepareBuilder(graph: Graph): GraphBuilder {
+	_prepareBuilder(graph: Graph<DatumT, SelectorT>): GraphBuilder {
 		return {
 			nodes: Array.from(graph.nodeDex.entries()).reduce(
 				(agg, [ref, node]) => {
@@ -229,7 +233,7 @@ export class GraphLoader {
 		};
 	}
 
-	loadJSON(ctx: Context, graph: Graph, arr: GraphLoaderRow[]) {
+	loadJSON(ctx: Context, graph: Graph<DatumT, SelectorT>, arr: GraphLoaderRow[]) {
 		const builder = this._prepareBuilder(graph);
 
 		for (const rowInfo of arr) {
@@ -241,7 +245,7 @@ export class GraphLoader {
 
 	loadArray(
 		ctx: Context,
-		graph: Graph,
+		graph: Graph<DatumT, SelectorT>,
 		arr: GraphLoaderValue[][],
 		headers = null,
 	) {

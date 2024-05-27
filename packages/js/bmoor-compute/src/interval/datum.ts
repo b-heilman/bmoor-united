@@ -3,10 +3,10 @@ import {IntervalInterface} from '../interval.interface';
 import {
 	IntervalDatumSelector,
 	IntervalDatumSettings,
-	IntervalIDatum,
+	IntervalDatumInterface,
 } from './datum.interface';
 
-export class IntervalDatum extends Datum implements IntervalIDatum {
+export class IntervalDatum extends Datum implements IntervalDatumInterface {
 	interval: IntervalInterface;
 	children: Map<string, IntervalDatum>;
 

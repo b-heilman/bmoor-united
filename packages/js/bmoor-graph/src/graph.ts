@@ -12,7 +12,6 @@ import {
 	GraphEventFeatures,
 	GraphInterface,
 	GraphJSON,
-	GraphNodeSelector,
 	GraphSelector,
 } from './graph.interface';
 import {GraphDatum} from './graph/datum';
@@ -21,7 +20,10 @@ import {NodeReference, NodeType} from './node.interface';
 
 // used to manage all top levels nodes and then facilitates
 // passing data through them
-function connect(graph: Graph, node: Node, event: Event) {
+function connect<
+	DatumT extends GraphDatum<GraphSelector>,
+	SelectorT extends GraphSelector
+>(graph: Graph<DatumT, SelectorT>, node: Node, event: Event) {
 	let arr = graph.connectionDex.get(node.ref);
 
 	if (!arr) {
@@ -35,19 +37,33 @@ function connect(graph: Graph, node: Node, event: Event) {
 	node.addEvent(event);
 }
 
-export class Graph implements GraphInterface {
-	types: Map<NodeType, Node[]>;
+export class Graph<
+	DatumT extends GraphDatum<GraphSelector>,
+	SelectorT extends GraphSelector
+> implements GraphInterface<SelectorT> {
 	root: Node;
+	types: Map<NodeType, Node[]>;
 	nodeDex: Map<NodeReference, Node>;
 	eventDex: Map<EventReference, Event>;
 	connectionDex: Map<NodeReference, Event[]>;
+	datumFactory: (
+		node: Node, 
+		graph: Graph<DatumT, SelectorT>
+	) => DatumT
 
-	constructor(root?: Node) {
+	constructor(
+		factory: (
+			node: Node,
+			graph: Graph<DatumT, SelectorT>
+		) => DatumT, 
+		root?: Node
+	) {
 		this.types = new Map();
 		this.root = root || new Node('__root__', 'root');
 		this.nodeDex = new Map();
 		this.eventDex = new Map();
 		this.connectionDex = new Map();
+		this.datumFactory = factory;
 	}
 
 	addNode(node: Node): void {
@@ -112,32 +128,44 @@ export class Graph implements GraphInterface {
 		}));
 	}
 
-	select(selector: GraphSelector): GraphDatum[] {
-		let select = <GraphNodeSelector>selector;
+	createDatum(node: Node): DatumT{
+		return this.datumFactory(node, this);
+	}
+
+	getDatum(ref: NodeReference): DatumT {
+		return this.createDatum(this.getNode(ref));
+	}
+
+	select(
+		datum: GraphDatum<GraphSelector>, 
+		selector: GraphSelector
+	): DatumT[] {
+		let select = <GraphSelector>selector;
 		let res: Node[] = null;
 
-		if (selector.global) {
-			res = [this.root];
-		} else if (selector.reference) {
-			const selected = this.getNode(selector.reference);
-
-			if (!selected) {
-				throw new Error('Unable to select: ' + selector.reference);
+		if (datum == null){
+			if (selector.type){
+				res = this.types.get(selector.type);
+				select = Object.assign({}, selector, {type: null}); // so it doesn't run again
+			} else {
+				res = [this.root];
 			}
-
-			res = [selected];
 		} else {
-			res = this.types.get(selector.type);
-			select = Object.assign({}, selector, {type: null}); // so it doesn't run again
+			if (selector.root) {
+				res = [this.root];
+				selector.root = null; // clear so when you call the root you don't get a loop
+			} else {
+				res = [datum.node];
+			}
 		}
 
-		let rtn: GraphDatum[] = [
+		let rtn = [
 			...new Set(res.flatMap((node) => node.select(select))),
-		].map((node) => new GraphDatum(node, this));
+		].map((node) => this.createDatum(node));
 
 		if (selector.and) {
 			for (const subSelector of selector.and) {
-				rtn = rtn.concat(<GraphDatum[]>this.select(subSelector));
+				rtn = rtn.concat(this.select(datum, subSelector));
 			}
 		}
 
@@ -165,11 +193,17 @@ export class Graph implements GraphInterface {
 	}
 }
 
-export function dump(graph: Graph): GraphJSON {
+export function dump<
+	DatumT extends GraphDatum<GraphSelector>,
+	SelectorT extends GraphSelector
+>(graph: Graph<DatumT, SelectorT>): GraphJSON {
 	return graph.toJSON();
 }
 
-function addEventJSON(graph: Graph, eventInfo: EventJSON) {
+function addEventJSON<
+	DatumT extends GraphDatum<GraphSelector>,
+	SelectorT extends GraphSelector
+>(graph: Graph<DatumT, SelectorT>, eventInfo: EventJSON) {
 	let event = null;
 
 	if (graph.hasEvent(eventInfo.ref)) {
@@ -193,9 +227,12 @@ function addEventJSON(graph: Graph, eventInfo: EventJSON) {
 	}
 }
 
-export function applyBuilder(
+export function applyBuilder<
+	DatumT extends GraphDatum<GraphSelector>,
+	SelectorT extends GraphSelector
+>(
 	ctx: Context,
-	graph: Graph,
+	graph: Graph<DatumT, SelectorT>,
 	builder: GraphBuilder,
 ) {
 	for (const info of builder.nodes.values()) {
@@ -224,7 +261,15 @@ export function applyBuilder(
 	}
 }
 
-export function load(ctx: Context, source: GraphJSON): Graph {
+export function load<
+	DatumT extends GraphDatum<GraphSelector>,
+	SelectorT extends GraphSelector,
+	GraphT extends Graph<DatumT, SelectorT>
+>(
+	ctx: Context, 
+	source: GraphJSON, 
+	factory: (Node) => GraphT
+): GraphT {
 	const builder = {
 		nodes: new Map(),
 		events: source.events,
@@ -244,7 +289,7 @@ export function load(ctx: Context, source: GraphJSON): Graph {
 		throw ex;
 	}
 
-	const graph = new Graph(root);
+	const graph = factory(root);
 
 	for (const nodeInfo of source.nodes) {
 		try {

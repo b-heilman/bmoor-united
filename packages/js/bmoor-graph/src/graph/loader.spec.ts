@@ -4,15 +4,19 @@ import {Context} from '@bmoor/context';
 
 import {Graph} from '../graph';
 import {GraphLoader} from './loader';
+import { GraphDatum } from './datum';
+import { GraphSelector } from '../graph.interface';
 
 describe('@bmoor/graph::loader', function () {
 	let ctx: Context = null;
-	let graph: Graph = null;
-	let loader: GraphLoader = null;
+	let graph: Graph<GraphDatum<GraphSelector>, GraphSelector> = null;
+	let loader: GraphLoader<GraphDatum<GraphSelector>, GraphSelector> = null;
 
 	beforeEach(function () {
 		ctx = new Context({});
-		graph = new Graph();
+		graph = new Graph(
+			(node, self) => new GraphDatum(node, self)
+		);
 		loader = new GraphLoader({});
 
 		loader.addNodeGenerator({

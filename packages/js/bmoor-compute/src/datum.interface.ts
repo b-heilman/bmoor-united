@@ -12,7 +12,7 @@ export interface DatumSettings {
 
 export interface DatumSelector {
 	metadata?: Record<string, string>;
-	parent?: Record<string, string>;
+	parentMetadata?: Record<string, string>;
 }
 
 export interface DatumSetterSettings {
@@ -20,7 +20,11 @@ export interface DatumSetterSettings {
 }
 
 export interface DatumInterface<SelectorT = DatumSelector> {
-	ref: DatumReference;
+	getReference(): DatumReference;
+	getParent(): DatumInterface<SelectorT>,
+	getChildren(): Map<DatumReference, DatumInterface<SelectorT>>;
+
+	// addChild(child: DatumInterface<SelectorT>);
 
 	// get the value, could be an async source
 	getValue(
@@ -35,11 +39,4 @@ export interface DatumInterface<SelectorT = DatumSelector> {
 	equals(other: DatumInterface<SelectorT>): boolean;
 
 	select(selector: SelectorT): DatumInterface<SelectorT>[];
-}
-
-export interface IDatum<SelectorT = DatumSelector>
-	extends DatumInterface<SelectorT> {
-	children: Map<DatumReference, IDatum>;
-
-	addChild(child: IDatum);
 }

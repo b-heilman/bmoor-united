@@ -6,11 +6,14 @@ import {Event} from './event';
 import {Features} from './features';
 import {Graph, load} from './graph';
 import {Node} from './node';
+import { GraphDatum } from './graph/datum';
 
 describe('@bmoor/graph', function () {
 	describe('Graph building', function () {
 		it('should properly build a flat graph', function () {
-			const graph = new Graph();
+			const graph = new Graph(
+				(node, self) => new GraphDatum(node, self) 
+			);
 
 			const node1 = new Node('node-1');
 			const node2 = new Node('node-2');
@@ -137,7 +140,9 @@ describe('@bmoor/graph', function () {
 		});
 
 		it('should properly build a tiered graph', function () {
-			const graph = new Graph();
+			const graph = new Graph(
+				(node, self) => new GraphDatum(node, self) 
+			);
 
 			const nodeA = new Node('node-a');
 			const node1 = new Node('node-1');
@@ -260,40 +265,47 @@ describe('@bmoor/graph', function () {
 				},
 			],
 			events: [],
-		});
+		}, (root) => new Graph((node, self) => new GraphDatum(node, self), root));
 
 		it('should allow selections combined with .and', function () {
-			const select1 = graph.select({
-				reference: 'node-a',
+			const select1 = graph.select(graph.getDatum('node-a'), {
+				type: 'position',
+				metadata: {
+					which: 'qb',
+				},
 				and: [
 					{
-						reference: 'node-b',
+						type: 'position',
+						metadata: {
+							which: 'wr',
+						}
 					},
 				],
 			});
 
-			expect(select1.map((node) => node.ref)).to.deep.equal([
-				'node-a',
-				'node-b',
+			expect(select1.map((datum) => datum.node.ref)).to.deep.equal([
+				'node-2',
+				'node-1',
 			]);
 		});
 
 		it('should allow selection with .type', function () {
-			const select1 = graph.select({
-				reference: 'node-a',
+			const select1 = graph.select(
+				graph.getDatum('node-a'), {
+					type: 'position',
+				}
+			);
+
+			const select2 = graph.select(null, {
 				type: 'position',
 			});
 
-			const select2 = graph.select({
-				type: 'position',
-			});
-
-			expect(select1.map((node) => node.ref)).to.deep.equal([
+			expect(select1.map((datum) => datum.node.ref)).to.deep.equal([
 				'node-1',
 				'node-2',
 			]);
 
-			expect(select2.map((node) => node.ref)).to.deep.equal([
+			expect(select2.map((datum) => datum.node.ref)).to.deep.equal([
 				'node-1',
 				'node-2',
 				'node-3',
@@ -301,63 +313,66 @@ describe('@bmoor/graph', function () {
 		});
 
 		it('should work with .parent', function () {
-			const select1 = graph.select({
-				reference: 'node-1',
-				parent: 'team',
-			});
-			const select2 = graph.select({
+			const select1 = graph.select(
+				graph.getDatum('node-a'), {
+					parent: 'team',
+				}
+			);
+			const select2 = graph.select(null, {
 				type: 'player',
 				parent: 'team',
 			});
-			const select3 = graph.select({
+			const select3 = graph.select(null, {
 				type: 'position',
 				parent: 'team',
 			});
 
-			expect(select1.map((node) => node.ref)).to.deep.equal(['node-a']);
-			expect(select2.map((node) => node.ref)).to.deep.equal(['node-b']);
-			expect(select3.map((node) => node.ref)).to.deep.equal([
+			expect(select1.map((datum) => datum.node.ref)).to.deep.equal(['node-a']);
+			expect(select2.map((datum) => datum.node.ref)).to.deep.equal(['node-b']);
+			expect(select3.map((datum) => datum.node.ref)).to.deep.equal([
 				'node-a',
 				'node-b',
 			]);
 		});
 
 		it('should work with .sibling', function () {
-			const select1 = graph.select({
-				reference: 'node-1',
+			const select1 = graph.select(graph.getDatum('node-1'), {
 				sibling: 'position',
 			});
 
-			expect(select1.map((node) => node.ref)).to.deep.equal(['node-2']);
+			expect(select1.map((datum) => datum.node.ref)).to.deep.equal(['node-2']);
 		});
 
 		it('should work with .metadata', function () {
-			const select1 = graph.select({
+			const select1 = graph.select(null, {
 				type: 'position',
 				metadata: {
 					which: 'qb',
 				},
 			});
 
-			expect(select1.map((node) => node.ref)).to.deep.equal([
+			expect(select1.map((datum) => datum.node.ref)).to.deep.equal([
 				'node-2',
 				'node-3',
 			]);
 		});
 
 		it('should work with .edge', function () {
-			const select1 = graph.select({
-				reference: 'node-b',
-				edge: 'opponent',
-			});
-			const select2 = graph.select({
-				reference: 'node-b',
-				edge: 'opponent',
-				type: 'position',
-			});
+			const select1 = graph.select(
+				graph.getDatum('node-b'),
+				{
+					edge: 'opponent',
+				});
+			const select2 = graph.select(
+				graph.getDatum('node-b'),
+				{
+					edge: 'opponent',
+					type: 'position',
+				}
+			);
 
-			expect(select1.map((node) => node.ref)).to.deep.equal(['node-a']);
-			expect(select2.map((node) => node.ref)).to.deep.equal([
+			expect(select1.map((datum) => datum.node.ref)).to.deep.equal(['node-a']);
+			expect(select2.map((datum) => datum.node.ref)).to.deep.equal([
 				'node-1',
 				'node-2',
 			]);
@@ -452,7 +467,7 @@ describe('@bmoor/graph', function () {
 					],
 				},
 			],
-		});
+		}, (node) => new Graph(node));
 
 		it('should allow selection', function () {
 			const select1 = graph.getEventFeatures('node-1');

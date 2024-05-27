@@ -1,6 +1,5 @@
 import {expect} from 'chai';
 
-import {IDatum} from '@bmoor/compute';
 import {Context} from '@bmoor/context';
 import {GraphDatum, NodeSelector} from '@bmoor/graph';
 
@@ -27,7 +26,7 @@ describe('@bmoor/graph-compute::graph', function () {
 				order: 2,
 			},
 		],
-		graphs: {
+		sections: {
 			'd-1': {
 				root: {
 					ref: '__root__',
@@ -443,9 +442,9 @@ describe('@bmoor/graph-compute::graph', function () {
 
 			expect(
 				await Promise.all(
-					res.map((v: IDatum<NodeSelector>) => {
+					res.map((v) => {
 						const datum = <GraphDatum>v;
-						return datum.getValue('foo-bar', NodeValueSelector.node);
+						return datum.getValue('foo-bar', () => null, {mode:NodeValueSelector.node});
 					}),
 				),
 			).to.deep.equal([2]);
@@ -458,9 +457,9 @@ describe('@bmoor/graph-compute::graph', function () {
 
 			expect(
 				await Promise.all(
-					res.map((v: IDatum<NodeSelector>) => {
+					res.map((v) => {
 						const datum = <GraphDatum>v;
-						return datum.getValue('passing', NodeValueSelector.event);
+						return datum.getValue('passing', () => null, {mode:NodeValueSelector.event});
 					}),
 				),
 			).to.deep.equal([120]);
@@ -479,9 +478,9 @@ describe('@bmoor/graph-compute::graph', function () {
 
 			expect(
 				await Promise.all(
-					res.map((v: IDatum<NodeSelector>) => {
+					res.map((v) => {
 						const datum = <GraphDatum>v;
-						return datum.getValue('passing', NodeValueSelector.event);
+						return datum.getValue('passing', () => null, {mode:NodeValueSelector.event});
 					}),
 				),
 			).to.deep.equal([120, 220]);
@@ -497,7 +496,7 @@ describe('@bmoor/graph-compute::graph', function () {
 			const res = iGraph.intervalSelect(datum, i1);
 
 			expect(
-				await res.getValue('passing', NodeValueSelector.event),
+				await res.getValue('passing', () => null, {mode:NodeValueSelector.event}),
 			).to.deep.equal(110);
 		});
 	});
@@ -510,9 +509,9 @@ describe('@bmoor/graph-compute::graph', function () {
 
 			const res = iGraph.rangeSelect(datum, i2, 2);
 
-			expect(await res.get(i1).getValue('foo-bar')).to.deep.equal(1);
+			expect(await res.get(i1).getValue('foo-bar', () => null, {})).to.deep.equal(1);
 
-			expect(await res.get(i2).getValue('foo-bar')).to.deep.equal(2);
+			expect(await res.get(i2).getValue('foo-bar', () => null, {})).to.deep.equal(2);
 		});
 
 		it('should work on the events', async function () {
@@ -523,11 +522,11 @@ describe('@bmoor/graph-compute::graph', function () {
 			const res = iGraph.rangeSelect(datum, i2, 2);
 
 			expect(
-				await res.get(i1).getValue('passing', NodeValueSelector.event),
+				await res.get(i1).getValue('passing', () => null, {mode:NodeValueSelector.event}),
 			).to.deep.equal(110);
 
 			expect(
-				await res.get(i2).getValue('passing', NodeValueSelector.event),
+				await res.get(i2).getValue('passing', () => null, {mode:NodeValueSelector.event}),
 			).to.deep.equal(120);
 		});
 
@@ -542,11 +541,11 @@ describe('@bmoor/graph-compute::graph', function () {
 			const res = iGraph.rangeSelect(datum, i2, 3);
 
 			expect(
-				await res.get(i1).getValue('passing', NodeValueSelector.event),
+				await res.get(i1).getValue('passing', () => null, {mode:NodeValueSelector.event}),
 			).to.deep.equal(110);
 
 			expect(
-				await res.get(i2).getValue('passing', NodeValueSelector.event),
+				await res.get(i2).getValue('passing', () => null, {mode:NodeValueSelector.event}),
 			).to.deep.equal(120);
 		});
 
@@ -561,15 +560,15 @@ describe('@bmoor/graph-compute::graph', function () {
 			const res = iGraph.rangeSelect(datum, i3, 3);
 
 			expect(
-				await res.get(i1).getValue('passing', NodeValueSelector.event),
+				await res.get(i1).getValue('passing',  () => null, {mode:NodeValueSelector.event}),
 			).to.deep.equal(110);
 
 			expect(
-				await res.get(i2).getValue('passing', NodeValueSelector.event),
+				await res.get(i2).getValue('passing',  () => null, {mode:NodeValueSelector.event}),
 			).to.deep.equal(120);
 
 			expect(
-				await res.get(i3).getValue('passing', NodeValueSelector.event),
+				await res.get(i3).getValue('passing',  () => null, {mode:NodeValueSelector.event}),
 			).to.deep.equal(130);
 		});
 
@@ -583,11 +582,11 @@ describe('@bmoor/graph-compute::graph', function () {
 			});
 
 			expect(
-				await res.get(i2).getValue('passing', NodeValueSelector.event),
+				await res.get(i2).getValue('passing',  () => null, {mode:NodeValueSelector.event}),
 			).to.deep.equal(120);
 
 			expect(
-				await res.get(i3).getValue('passing', NodeValueSelector.event),
+				await res.get(i3).getValue('passing',  () => null, {mode:NodeValueSelector.event}),
 			).to.deep.equal(130);
 		});
 

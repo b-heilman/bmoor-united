@@ -2,30 +2,30 @@ import {OrderedMap} from '@bmoor/index';
 
 import {Environment} from '../environment';
 import {IntervalInterface} from '../interval.interface';
-import {IntervalDatumSettings, IntervalIDatum} from './datum.interface';
+import {IntervalDatumSettings} from './datum.interface';
 import {
 	IntervalEnvironmentInterface,
 	IntervalEnvironmentSelector,
 	IntervalEnvironmentSettings,
 } from './environment.interface';
+import { IntervalDatum } from './datum';
 
 type IntervalT = string;
 type OrderT = number;
 
 export class IntervalEnvironment<
-	DatumT extends IntervalIDatum = IntervalIDatum,
 	SelectorT extends
 		IntervalEnvironmentSelector = IntervalEnvironmentSelector,
-> implements IntervalEnvironmentInterface<DatumT, SelectorT>
+> implements IntervalEnvironmentInterface<IntervalDatum, SelectorT>
 {
 	intervals: Map<IntervalT, IntervalInterface<IntervalT, OrderT>>;
 	envs: OrderedMap<
 		string,
-		Environment<DatumT, SelectorT, IntervalDatumSettings>
+		Environment<SelectorT, IntervalDatumSettings>
 	>;
 
 	constructor(
-		settings: IntervalEnvironmentSettings<DatumT, IntervalDatumSettings>,
+		settings: IntervalEnvironmentSettings<IntervalDatum, IntervalDatumSettings>,
 	) {
 		this.envs = new OrderedMap();
 		this.intervals = new Map();
@@ -47,7 +47,6 @@ export class IntervalEnvironment<
 				);
 
 				const environment = new Environment<
-					DatumT,
 					SelectorT,
 					IntervalDatumSettings
 				>({
@@ -61,11 +60,11 @@ export class IntervalEnvironment<
 		);
 	}
 
-	select(base: DatumT, select: SelectorT): DatumT[] {
+	select(base: IntervalDatum, select: SelectorT): IntervalDatum[] {
 		let rtn;
 
 		if (base && 'order' in base && 'ref' in base) {
-			rtn = this.envs.get(base.ref).select(null, select);
+			rtn = this.envs.get(base.getReference()).select(null, select);
 		} else {
 			if (select.interval) {
 				rtn = this.envs.get(select.interval.ref).select(base, select);
@@ -77,7 +76,7 @@ export class IntervalEnvironment<
 		return rtn;
 	}
 
-	range(datum: DatumT, range: number, strict: boolean = false): DatumT[] {
+	range(datum: IntervalDatum, range: number, strict: boolean = false): IntervalDatum[] {
 		const interval = datum.interval;
 		const offset = interval.ref;
 		const rtn = [];
@@ -86,11 +85,11 @@ export class IntervalEnvironment<
 		for (const [intervalRef, env] of this.envs
 			.getBetween(begin, offset)
 			.entries()) {
-			const res = env.references.get(datum.ref);
+			const res = env.references.get(datum.getReference());
 
 			if (!res && strict) {
 				throw new Error(
-					`not able to range (${datum.ref}, ${datum.interval.ref}, ${intervalRef})`,
+					`not able to range (${datum.getReference()}, ${datum.interval.ref}, ${intervalRef})`,
 				);
 			} else {
 				rtn.push(res);
@@ -101,21 +100,21 @@ export class IntervalEnvironment<
 	}
 
 	// offset: positive is backwards, negative is forwards in time
-	offset(datum: DatumT, offset: number, strict = false): DatumT {
+	offset(datum: IntervalDatum, offset: number, strict = false): IntervalDatum {
 		const newIntervalRef = this.envs.getTagOffset(
 			datum.interval.ref,
 			-offset,
 		);
 		// console.log('Env:offset =>', datum.ref, datum.interval.ref, offset, newIntervalRef);
 
-		const rtn = this.envs.get(newIntervalRef).references.get(datum.ref);
+		const rtn = this.envs.get(newIntervalRef).references.get(datum.getReference());
 
 		if (!rtn && strict) {
 			throw new Error(
-				`not able to offset (${datum.ref}, ${datum.interval.ref}, ${offset}, ${newIntervalRef})`,
+				`not able to offset (${datum.getReference()}, ${datum.interval.ref}, ${offset}, ${newIntervalRef})`,
 			);
 		} else {
-			return rtn;
+			return <IntervalDatum>rtn;
 		}
 	}
 

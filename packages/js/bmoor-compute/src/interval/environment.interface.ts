@@ -4,13 +4,13 @@ import {DatumAcrossContext} from '../datum/across.interface';
 import {DatumRangeContext} from '../datum/range.interface';
 import {EnvironmentDatumFactory} from '../environment.interface';
 import {IntervalInterface} from '../interval.interface';
-import {IntervalDatumSelector, IntervalIDatum} from './datum.interface';
+import {IntervalDatumSelector, IntervalDatumInterface} from './datum.interface';
 
 type IntervalT = string;
 type OrderT = number;
 
 export interface IntervalEnvironmentSettings<
-	DatumT extends IntervalIDatum,
+	DatumT extends IntervalDatumInterface,
 	SettingsT extends DatumSettings,
 > {
 	factory: (
@@ -21,12 +21,13 @@ export interface IntervalEnvironmentSettings<
 
 export interface IntervalEnvironmentSelector
 	extends IntervalDatumSelector {
-	interval?: IntervalInterface<IntervalT, OrderT>;
 	reference?: string;
 }
 
+// TODO: Move these two two interfaces... and coencide with the interfaces
+//   needed for the datum actions
 export interface IntervalEnvironmentInterface<
-	DatumT extends IntervalIDatum,
+	DatumT extends IntervalDatumInterface,
 	SelectorT extends IntervalEnvironmentSelector,
 > extends DatumAccessorContext<DatumT>,
 		DatumAcrossContext<DatumT, SelectorT>,
@@ -36,7 +37,4 @@ export interface IntervalEnvironmentInterface<
 	range(datum: DatumT, range: number, strict?: boolean): DatumT[];
 
 	offset(datum: DatumT, offset: number, strict?: boolean): DatumT;
-
-	// Used to bootstrap the process
-	getInterval(reference: IntervalT): IntervalInterface<IntervalT, OrderT>;
 }

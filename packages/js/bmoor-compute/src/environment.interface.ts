@@ -2,7 +2,7 @@ import {
 	DatumReference,
 	DatumSelector,
 	DatumSettings,
-	IDatum,
+	DatumInterface,
 } from './datum.interface';
 
 export type EnvironmentDatumFactory<DatumT, SettingsT> = (
@@ -11,7 +11,7 @@ export type EnvironmentDatumFactory<DatumT, SettingsT> = (
 ) => DatumT;
 
 export interface EnvironmentSettings<
-	DatumT extends IDatum,
+	DatumT extends DatumInterface,
 	SettingsT extends DatumSettings,
 > {
 	content: Record<DatumReference, SettingsT>;
@@ -24,8 +24,8 @@ export interface EnvironmentSelector extends DatumSelector {
 
 // interface which allows local methods to be defined
 export interface EnvironmentInterface<
-	DatumT extends IDatum,
-	SelectorT extends EnvironmentSelector,
+	DatumT extends DatumInterface<SelectorT>,
+	SelectorT,
 > {
 	select(base: DatumT, select: SelectorT): DatumT[];
 }

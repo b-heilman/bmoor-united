@@ -1,18 +1,19 @@
 import {
+	DatumInterface,
 	DatumSelector,
 	DatumSetterSettings,
 	DatumSettings,
 	FeatureValue,
-	IDatum,
 } from './datum.interface';
 
-export class Datum implements IDatum {
+export class Datum<SelectorT = DatumSelector> 
+	implements DatumInterface<SelectorT> {
 	ref: string;
+	parent: Datum;
+	children: Map<string, Datum>;
 	awaiting: Map<string, Promise<unknown>>;
 	features: Map<string, unknown>;
 	metadata: Record<string, string>;
-	children: Map<string, Datum>;
-	parent: Datum;
 
 	constructor(ref: string, settings: DatumSettings) {
 		this.ref = ref;
@@ -71,6 +72,18 @@ export class Datum implements IDatum {
 		return this.features.has(attr) || this.awaiting.has(attr);
 	}
 
+	getReference(): string {
+		return this.ref;
+	}
+
+	getParent(): DatumInterface<SelectorT> {
+		return this.parent;
+	}
+
+	getChildren(): Map<string, DatumInterface<SelectorT>> {
+		return this.children;
+	}
+
 	async getValue(
 		attr: string,
 		generator: () => Promise<FeatureValue>,
@@ -110,13 +123,13 @@ export class Datum implements IDatum {
 	}
 
 	select(selector: DatumSelector): Datum[] {
-		const clone = Object.assign({}, selector);
+		const select = Object.assign({}, selector);
 
 		let base: Datum = null;
 
-		if (clone.parent) {
+		if (select.parentMetadata) {
 			let cur = this.parent;
-			while (cur && !cur.matches(clone.parent)) {
+			while (cur && !cur.matches(select.parentMetadata)) {
 				cur = cur.parent;
 			}
 
@@ -125,13 +138,13 @@ export class Datum implements IDatum {
 			base = this; // eslint-disable-line @typescript-eslint/no-this-alias
 		}
 
-		if (clone.metadata) {
-			if (base.matches(clone.metadata)) {
+		if (select.metadata) {
+			if (base.matches(select.metadata)) {
 				return [base];
 			} else {
 				return Array.from(base.children.values()).flatMap((child) => {
-					clone.parent = null;
-					return child.select(clone);
+					select.parentMetadata = null;
+					return child.select(select);
 				});
 			}
 		} else {

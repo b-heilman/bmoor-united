@@ -1,19 +1,22 @@
-import {EnvironmentInterface} from '@bmoor/compute';
 import {
-	Graph,
+	DatumAccessorContext, 
+	DatumAcrossContext,
+	DatumInterface,
+	DatumRangeContext,
+	EnvironmentInterface
+} from '@bmoor/compute';
+import {
 	GraphBuilder,
 	GraphJSON,
 	GraphSelector,
-	NodeSelector,
 } from '@bmoor/graph';
-import {OrderedMap} from '@bmoor/index';
 
 import {
 	IntervalInterface,
 	IntervalJSON,
-	IntervalOrder,
 	IntervalReference,
 } from './interval.interface';
+import { GraphComputeSectionInterface } from './graph/section.interface';
 
 /**
  * I am going to use this to manage the multiple graphs across time.  I believe
@@ -22,22 +25,32 @@ import {
  * The interface to compute will sit on top of this class.  I should be able to support
  * much of the functionality Graph used to.
  */
-export interface DimensionalGraphJSON {
+export interface GraphComputeJSON {
 	intervals: IntervalJSON[];
-	graphs: Record<IntervalReference, GraphJSON>;
+	sections: Record<IntervalReference, GraphJSON>;
 }
 
-export interface DimensionalGraphInterface
-	extends EnvironmentInterface<
-		GraphSelector,
-		NodeSelector,
-		IntervalReference,
-		IntervalOrder
-	> {
-	graphs: OrderedMap<IntervalReference, Graph>;
-
-	getGraph(interval: IntervalInterface): Graph;
+export interface GraphComputeSelector extends GraphSelector {
+	across?: boolean;
+	interval?: IntervalReference;
 }
+
+export interface GraphComputeInterface<
+	DatumT extends DatumInterface<SelectorT>, 
+	SelectorT extends GraphComputeSelector
+> extends EnvironmentInterface<DatumT, SelectorT>, 
+		DatumAccessorContext<DatumT>,  
+		DatumAcrossContext<DatumT, SelectorT>,
+		DatumRangeContext<DatumT>{
+	hasInterval(intervalRef: IntervalReference): boolean;
+	addInterval(interval: IntervalInterface): void;
+	getInterval(intervalRef: IntervalReference): IntervalInterface;
+	hasSection(interval: IntervalInterface): boolean;
+	addSection(section: GraphComputeSectionInterface<SelectorT>): void;
+	getSection(interval: IntervalInterface): GraphComputeSectionInterface<SelectorT>;
+}
+
+
 
 // TODO: where do I convert from string to internal selector?
 // selector examples as string

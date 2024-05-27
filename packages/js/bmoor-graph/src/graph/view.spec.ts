@@ -6,19 +6,33 @@ import {Features} from '../features';
 import {Graph} from '../graph';
 import {GraphLoader} from './loader';
 import {GraphView} from './view';
+import { GraphDatum } from './datum';
+import { GraphSelector } from '../graph.interface';
 
 describe('@bmoor/graph::view', function () {
 	let ctx: Context = null;
-	let week1: Graph = null;
-	let week2: Graph = null;
-	let week3: Graph = null;
-	let loader: GraphLoader = null;
+	let week1: Graph<
+		GraphDatum<GraphSelector>,
+		GraphSelector
+	> = null;
+	let week2: Graph<
+		GraphDatum<GraphSelector>,
+		GraphSelector
+	> = null;
+	let week3: Graph<
+		GraphDatum<GraphSelector>,
+		GraphSelector
+	> = null;
+	let loader: GraphLoader<
+		GraphDatum<GraphSelector>,
+		GraphSelector
+	> = null;
 
 	beforeEach(function () {
 		ctx = new Context({});
-		week1 = new Graph();
-		week2 = new Graph();
-		week3 = new Graph();
+		week1 = new Graph((node, self) => new GraphDatum(node, self));
+		week2 = new Graph((node, self) => new GraphDatum(node, self));
+		week3 = new Graph((node, self) => new GraphDatum(node, self));
 		loader = new GraphLoader({});
 
 		loader.addNodeGenerator({

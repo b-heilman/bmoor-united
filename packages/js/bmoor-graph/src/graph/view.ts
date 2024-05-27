@@ -1,11 +1,16 @@
 import {EventReference} from '../event.interface';
 import {Features} from '../features';
 import {Graph} from '../graph';
+import { GraphSelector } from '../graph.interface';
 import {NodeReference} from '../node.interface';
+import { GraphDatum } from './datum';
 import {NodePath} from './view.interface';
 
-function searchGraphs(
-	graphs: Graph[],
+function searchGraphs<
+	DatumT extends GraphDatum<GraphSelector>,
+	SelectorT extends GraphSelector
+>(
+	graphs: Graph<DatumT, SelectorT>[],
 	nodeRef: NodeReference,
 	visited: Set<NodeReference>,
 	depth: number,
@@ -31,8 +36,11 @@ function searchGraphs(
 	}
 }
 
-export class GraphView {
-	graphs: Graph[];
+export class GraphView<
+	DatumT extends GraphDatum<GraphSelector>,
+	SelectorT extends GraphSelector
+> {
+	graphs: Graph<DatumT, SelectorT>[];
 	connections: Map<
 		NodeReference,
 		Map<NodeReference, Map<EventReference, Features>>
@@ -43,7 +51,7 @@ export class GraphView {
 		this.graphs = [];
 	}
 
-	addGraph(graph: Graph) {
+	addGraph(graph: Graph<DatumT, SelectorT>) {
 		this.graphs.push(graph);
 	}
 

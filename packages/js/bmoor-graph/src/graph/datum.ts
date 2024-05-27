@@ -1,29 +1,48 @@
-import {DatumInterface, FeatureValue} from '@bmoor/compute';
+import {DatumInterface, FeatureValue, DatumReference} from '@bmoor/compute';
 
 import {GraphInterface, GraphSelector} from '../graph.interface';
 import {Node} from '../node';
-import {NodeReference, NodeValueSelector} from '../node.interface';
+import {NodeValueSelector} from '../node.interface';
 import {
 	GraphDatumInterface,
 	GraphDatumSetterSettings,
 } from './datum.interface';
 
-export class GraphDatum implements GraphDatumInterface {
-	ref: NodeReference;
+export class GraphDatum<SelectorT extends GraphSelector> 
+	implements GraphDatumInterface<SelectorT> {
 	node: Node;
-	graph: GraphInterface;
+	graph: GraphInterface<SelectorT>;
 	awaiting: Map<string, Promise<FeatureValue>>;
 
-	constructor(node: Node, graph: GraphInterface) {
-		this.ref = node.ref;
+	constructor(node: Node, graph: GraphInterface<SelectorT>) {
+		// this.ref = node.ref;
 		this.node = node;
 		this.graph = graph;
 		this.awaiting = new Map();
 	}
 
-	equals(other: DatumInterface<GraphSelector>) {
+	getReference(): DatumReference {
+		return this.node.ref;
+	}
+
+	getParent(): GraphDatumInterface<SelectorT> {
+		return new GraphDatum(this.node.parent, this.graph);
+	}
+
+	getChildren(): Map<DatumReference, GraphDatumInterface<SelectorT>> {
+		return Object.values(this.node.children).reduce(
+			(agg, nodeCollection) => {
+				nodeCollection.forEach(node => {
+					agg.set(node.ref, new GraphDatum(node, this.graph));
+				});
+			},
+			new Map()
+		)
+	}
+
+	equals(other: DatumInterface<SelectorT>) {
 		if (other instanceof GraphDatum) {
-			return this.node === other.node;
+			return this.node === other.node && this.graph === other.graph;
 		} else {
 			return false;
 		}
@@ -65,9 +84,9 @@ export class GraphDatum implements GraphDatumInterface {
 		return true;
 	}
 
-	select(select: GraphSelector): GraphDatumInterface[] {
-		if (select.global) {
-			return this.graph.select(select);
+	select(select: SelectorT): GraphDatumInterface<SelectorT>[] {
+		if (select.root) {
+			return this.graph.select(this, select);
 		} else {
 			return this.node
 				.select(select)

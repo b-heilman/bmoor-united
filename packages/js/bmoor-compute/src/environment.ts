@@ -1,4 +1,5 @@
-import {DatumSettings, IDatum} from './datum.interface';
+import { Datum } from './datum';
+import {DatumSettings, DatumInterface} from './datum.interface';
 import {
 	EnvironmentDatumFactory,
 	EnvironmentInterface,
@@ -6,16 +7,16 @@ import {
 	EnvironmentSettings,
 } from './environment.interface';
 
+// This is more abstract, only here for testing
 export class Environment<
-	DatumT extends IDatum,
 	SelectorT extends EnvironmentSelector,
 	SettingsT extends DatumSettings,
-> implements EnvironmentInterface<DatumT, SelectorT>
+> implements EnvironmentInterface<Datum, SelectorT>
 {
-	references: Map<string, DatumT>;
-	factory: EnvironmentDatumFactory<DatumT, SettingsT>;
+	references: Map<string, Datum>;
+	factory: EnvironmentDatumFactory<Datum, SettingsT>;
 
-	constructor(settings: EnvironmentSettings<DatumT, SettingsT>) {
+	constructor(settings: EnvironmentSettings<Datum, SettingsT>) {
 		this.references = new Map();
 		this.factory = settings.factory;
 
@@ -32,21 +33,21 @@ export class Environment<
 		});
 	}
 
-	addDatum(datum: DatumT) {
+	addDatum(datum: Datum) {
 		this.references.set(datum.ref, datum);
 
 		for (const childDatum of datum.children.values()) {
-			this.addDatum(<DatumT>childDatum);
+			this.addDatum(<Datum>childDatum);
 		}
 	}
 
-	select(base: DatumT, select: EnvironmentSelector): DatumT[] {
+	select(base: Datum, select: EnvironmentSelector): Datum[] {
 		if (select.reference) {
 			base = this.references.get(select.reference);
 		} else if (base === null) {
 			base = this.references.get('_root');
 		}
 
-		return <DatumT[]>base.select(select);
+		return <Datum[]>base.select(select);
 	}
 }

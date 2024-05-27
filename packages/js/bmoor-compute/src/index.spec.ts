@@ -11,53 +11,52 @@ import {
 	IntervalDatum,
 	IntervalEnvironment,
 	IntervalEnvironmentSelector,
-	IntervalIDatum,
 	mean,
 } from './index';
 
 class Accessor<RequirementT> extends DatumAccessor<
 	RequirementT,
-	IntervalIDatum,
-	IntervalEnvironment<IntervalIDatum, IntervalEnvironmentSelector>
+	IntervalDatum,
+	IntervalEnvironment<IntervalEnvironmentSelector>
 > {}
 class Across<ResponseT, RequirementT> extends DatumAcross<
 	ResponseT,
 	RequirementT,
-	IntervalIDatum,
+	IntervalDatum,
 	IntervalEnvironmentSelector,
-	IntervalEnvironment<IntervalIDatum, IntervalEnvironmentSelector>
+	IntervalEnvironment<IntervalEnvironmentSelector>
 > {}
 class Compute<ResponseT, RequirementT> extends DatumCompute<
 	ResponseT,
 	RequirementT,
-	IntervalIDatum,
-	IntervalEnvironment<IntervalIDatum, IntervalEnvironmentSelector>
+	IntervalDatum,
+	IntervalEnvironment<IntervalEnvironmentSelector>
 > {}
 class Processor<ResponseT, RequirementT> extends DatumProcessor<
 	ResponseT,
 	RequirementT,
-	IntervalIDatum,
-	IntervalEnvironment<IntervalIDatum, IntervalEnvironmentSelector>
+	IntervalDatum,
+	IntervalEnvironment<IntervalEnvironmentSelector>
 > {}
 class Range<ResponseT, RequirementT> extends DatumRange<
 	ResponseT,
 	RequirementT,
-	IntervalIDatum,
-	IntervalEnvironment<IntervalIDatum, IntervalEnvironmentSelector>
+	IntervalDatum,
+	IntervalEnvironment<IntervalEnvironmentSelector>
 > {}
 class Ranker<RequirementT> extends DatumRanker<
 	RequirementT,
-	IntervalIDatum,
+	IntervalDatum,
 	IntervalEnvironmentSelector,
-	IntervalEnvironment<IntervalIDatum, IntervalEnvironmentSelector>
+	IntervalEnvironment<IntervalEnvironmentSelector>
 > {}
 
 describe('@bmoor/compute', function () {
 	let env: IntervalEnvironment = null;
 	let executor: Executor<
 		IntervalEnvironmentSelector,
-		IntervalIDatum,
-		IntervalEnvironment<IntervalIDatum, IntervalEnvironmentSelector>
+		IntervalDatum,
+		IntervalEnvironment<IntervalEnvironmentSelector>
 	>;
 
 	let accessFoo;
@@ -280,8 +279,8 @@ describe('@bmoor/compute', function () {
 
 		executor = new Executor<
 			IntervalEnvironmentSelector,
-			IntervalIDatum,
-			IntervalEnvironment<IntervalIDatum, IntervalEnvironmentSelector>
+			IntervalDatum,
+			IntervalEnvironment<IntervalEnvironmentSelector>
 		>(env);
 
 		accessFoo = new Accessor('get-foo', {value: 'foo'}, {offset: 0});
@@ -496,7 +495,7 @@ describe('@bmoor/compute', function () {
 			{
 				offset: 0,
 				select: {
-					parent: {
+					parentMetadata: {
 						type: 'u',
 					},
 					metadata: {
@@ -549,7 +548,7 @@ describe('@bmoor/compute', function () {
 				asc: true,
 				offset: 0,
 				select: {
-					parent: {
+					parentMetadata: {
 						type: 'u',
 					},
 					metadata: {
@@ -601,7 +600,7 @@ describe('@bmoor/compute', function () {
 			{
 				offset: 0,
 				select: {
-					parent: {
+					parentMetadata: {
 						type: 'root',
 					},
 					metadata: {
@@ -654,7 +653,7 @@ describe('@bmoor/compute', function () {
 				offset: 0,
 				bucketsCount: 2,
 				select: {
-					parent: {
+					parentMetadata: {
 						type: 'root',
 					},
 					metadata: {
@@ -715,7 +714,7 @@ describe('@bmoor/compute', function () {
 				asc: true,
 				bucketSize: 3,
 				select: {
-					parent: {
+					parentMetadata: {
 						type: 'root',
 					},
 					metadata: {
