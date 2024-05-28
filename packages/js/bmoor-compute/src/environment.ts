@@ -1,5 +1,5 @@
 import { Datum } from './datum';
-import {DatumSettings, DatumInterface} from './datum.interface';
+import {DatumSettings, DatumInterface, DatumReference} from './datum.interface';
 import {
 	EnvironmentDatumFactory,
 	EnvironmentInterface,
@@ -39,6 +39,10 @@ export class Environment<
 		for (const childDatum of datum.children.values()) {
 			this.addDatum(<Datum>childDatum);
 		}
+	}
+
+	getDatum(ref: DatumReference){
+		return this.references.get(ref);
 	}
 
 	select(base: Datum, select: EnvironmentSelector): Datum[] {

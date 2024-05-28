@@ -37,8 +37,8 @@ import {
 }
  ****/
 export class Executor<
-	SelectorT extends EnvironmentSelector,
 	DatumT extends DatumInterface,
+	SelectorT extends EnvironmentSelector,
 	EnvT extends EnvironmentInterface<DatumT, SelectorT>,
 > {
 	env: EnvT;
@@ -49,16 +49,10 @@ export class Executor<
 
 	// run a definition and pull back the value
 	async calculate<ResponseT = any>( // eslint-disable-line  @typescript-eslint/no-explicit-any
+		datums: DatumT[],
 		action: DatumReaderInterface<ResponseT, DatumT, EnvT>,
-		select: SelectorT,
 		ctx: Context = new Context({}),
 	): Promise<ResponseT[]> {
-		const selection = this.env.select(null, select);
-
-		if (ctx.hasFlag('verbose')) {
-			ctx.log('-> select', select, selection);
-		}
-
-		return action.process(ctx, this.env, selection);
+		return action.process(ctx, this.env, datums);
 	}
 }

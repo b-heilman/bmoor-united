@@ -32,7 +32,7 @@ export interface GraphComputeJSON {
 
 export interface GraphComputeSelector extends GraphSelector {
 	across?: boolean;
-	interval?: IntervalReference;
+	interval?: IntervalReference | IntervalInterface;
 }
 
 export interface GraphComputeInterface<
@@ -57,15 +57,15 @@ export interface GraphComputeInterface<
 // 12/05/21:eagles > qb:current:pass-yards -> yards for that game
 // 12/05/21:eagles > qb:past:pass-yards -> yards for the season for qb
 // 12/05/21:eagles:past:pass-yards -> yards for the season for team
-// DimensionalGraphSelectorMode
+// GraphComputeSelectorMode
 
 export {NodeValueSelector} from '@bmoor/graph/src/node.interface';
 
-export interface DimensionalGraphBuilderPage extends GraphBuilder {
+export interface GraphComputeBuilderPage extends GraphBuilder {
 	interval: IntervalInterface;
 }
 
-export type DimensionalGraphBuilder = Map<
+export type GraphComputeBuilder = Map<
 	IntervalReference,
-	DimensionalGraphBuilderPage
+	GraphComputeBuilderPage
 >;

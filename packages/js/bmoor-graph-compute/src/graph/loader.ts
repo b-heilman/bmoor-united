@@ -6,29 +6,33 @@ import {
 	applyBuilder,
 } from '@bmoor/graph';
 
-import {DimensionalGraph} from '../graph';
+import {GraphCompute} from '../graph';
 import {
-	DimensionalGraphBuilder,
-	DimensionalGraphBuilderPage,
+	GraphComputeBuilder,
+	GraphComputeBuilderPage,
+	GraphComputeSelector,
 } from '../graph.interface';
-import {Interval} from '../interval';
-import {DimensionalGraphLoaderSettings} from './loader.interface';
+import {GraphComputeLoaderSettings} from './loader.interface';
+import { GraphComputeDatumInterface } from '../datum.interface';
 
-export class DimensionalGraphLoader extends GraphLoader {
-	settings: DimensionalGraphLoaderSettings;
+export class GraphComputeLoader extends GraphLoader<
+	GraphComputeDatumInterface<GraphComputeSelector>,
+	GraphComputeSelector
+> {
+	settings: GraphComputeLoaderSettings;
 
-	constructor(settings: DimensionalGraphLoaderSettings) {
+	constructor(settings: GraphComputeLoaderSettings) {
 		super(settings);
 	}
 
 	loadDimensionalRow(
 		ctx: Context,
-		builder: DimensionalGraphBuilder,
+		builder: GraphComputeBuilder,
 		row: GraphLoaderRow,
 	) {
 		const interval = this.settings.generateInterval(row, builder.size);
 
-		let builderInterval: DimensionalGraphBuilderPage = null;
+		let builderInterval: GraphComputeBuilderPage = null;
 		if (builder.has(interval.ref)) {
 			builderInterval = builder.get(interval.ref);
 		} else {
@@ -44,21 +48,23 @@ export class DimensionalGraphLoader extends GraphLoader {
 		try {
 			return super.loadRow(ctx, builderInterval, row);
 		} catch (ex) {
-			ctx.setError(ex, {
-				code: 'LOADER_LOADDIMROW',
-				protected: row,
-			});
+			if (ex instanceof Error){
+				ctx.setError(ex, {
+					code: 'LOADER_LOADDIMROW',
+					protected: row,
+				});
+			}
 
 			throw ex;
 		}
 	}
 
 	_prepareDimentionalBuilder(
-		dGraph: DimensionalGraph,
-	): DimensionalGraphBuilder {
+		dGraph: GraphCompute,
+	): GraphComputeBuilder {
 		return Array.from(dGraph.intervals.entries()).reduce(
 			(agg, [ref, interval]) => {
-				const graph = dGraph.getGraph(interval);
+				const graph = dGraph.getSection(interval);
 				const graphBuilder = this._prepareBuilder(graph);
 
 				agg.set(ref, {
@@ -75,7 +81,7 @@ export class DimensionalGraphLoader extends GraphLoader {
 
 	loadDimensionalJSON(
 		ctx: Context,
-		dGraph: DimensionalGraph,
+		dGraph: GraphCompute,
 		arr: GraphLoaderRow[],
 	) {
 		const builder = this._prepareDimentionalBuilder(dGraph);
@@ -85,7 +91,7 @@ export class DimensionalGraphLoader extends GraphLoader {
 		}
 
 		for (const page of builder.values()) {
-			const graph = dGraph.getGraph(<Interval>page.interval);
+			const graph = dGraph.getSection(page.interval);
 
 			applyBuilder(ctx, graph, page);
 		}
@@ -93,7 +99,7 @@ export class DimensionalGraphLoader extends GraphLoader {
 
 	loadDimensionalArray(
 		ctx: Context,
-		dGraph: DimensionalGraph,
+		dGraph: GraphCompute,
 		arr: GraphLoaderValue[][],
 		headers = null,
 	) {
@@ -114,7 +120,7 @@ export class DimensionalGraphLoader extends GraphLoader {
 		}
 
 		for (const page of builder.values()) {
-			const graph = dGraph.getGraph(<Interval>page.interval);
+			const graph = dGraph.getSection(page.interval);
 
 			applyBuilder(ctx, graph, page);
 		}

@@ -4,7 +4,7 @@ import * as path from 'path';
 
 import {Context} from '@bmoor/context';
 import {
-	DimensionalGraphLoader,
+	GraphComputeLoader,
 	Interval,
 	dump,
 	load,
@@ -28,7 +28,7 @@ type DataRow = {
 };
 
 async function run() {
-	const gameLoader = new DimensionalGraphLoader({
+	const gameLoader = new GraphComputeLoader({
 		generateInterval: function (dict: DataRow) {
 			const interval = new Interval(
 				`${dict.season}-${dict.week}`,

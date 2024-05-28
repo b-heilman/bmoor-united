@@ -4,8 +4,8 @@ import * as path from 'path';
 
 import {Context} from '@bmoor/context';
 import {
-	DimensionalGraph,
-	DimensionalGraphLoader,
+	GraphCompute,
+	GraphComputeLoader,
 	Interval,
 	dump,
 } from '@bmoor/graph-compute';
@@ -103,8 +103,8 @@ const offUsages = {
         }
  */
 async function run() {
-	const graph = new DimensionalGraph();
-	const playerLoader = new DimensionalGraphLoader({
+	const graph = new GraphCompute();
+	const playerLoader = new GraphComputeLoader({
 		generateInterval: function (dict: {season: string; week: string}) {
 			const interval = new Interval(
 				`${dict.season}-${dict.week}`,

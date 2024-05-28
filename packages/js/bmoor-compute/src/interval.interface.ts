@@ -1,8 +1,9 @@
-type IntervalT = string;
 type OrderT = number;
 
+export type IntervalReference = string;
+
 export interface IntervalInterface<
-	ReferenceRef = IntervalT,
+	ReferenceRef = IntervalReference,
 	Order = OrderT,
 > {
 	ref: ReferenceRef;

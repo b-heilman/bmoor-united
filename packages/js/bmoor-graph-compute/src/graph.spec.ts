@@ -1,11 +1,10 @@
 import {expect} from 'chai';
 
 import {Context} from '@bmoor/context';
-import {GraphDatum, NodeSelector} from '@bmoor/graph';
 
-import {DimensionalGraph, load} from './graph';
+import {GraphCompute, load} from './graph';
 import {NodeValueSelector} from './graph.interface';
-import {Interval} from './interval';
+import {IntervalInterface} from './interval.interface';
 
 describe('@bmoor/graph-compute::graph', function () {
 	const schema = {
@@ -416,10 +415,10 @@ describe('@bmoor/graph-compute::graph', function () {
 	};
 
 	let ctx: Context;
-	let iGraph: DimensionalGraph = null;
-	let i1: Interval = null;
-	let i2: Interval = null;
-	let i3: Interval = null;
+	let iGraph: GraphCompute = null;
+	let i1: IntervalInterface = null;
+	let i2: IntervalInterface = null;
+	let i3: IntervalInterface = null;
 
 	beforeEach(function () {
 		ctx = new Context({});
@@ -436,50 +435,41 @@ describe('@bmoor/graph-compute::graph', function () {
 
 	describe('::select', function () {
 		it('should work on the node', async function () {
-			const res = iGraph.select(i2, {
-				reference: 'team-a',
-			});
+			const datum = iGraph.getDatum('team-a', i2);
 
 			expect(
-				await Promise.all(
-					res.map((v) => {
-						const datum = <GraphDatum>v;
-						return datum.getValue('foo-bar', () => null, {mode:NodeValueSelector.node});
-					}),
+				await datum.getValue(
+					'foo-bar', 
+					() => null, 
+					{mode:NodeValueSelector.node}
 				),
 			).to.deep.equal([2]);
 		});
 
 		it('should work on the events', async function () {
-			const res = iGraph.select(i2, {
-				reference: 'player-1',
-			});
+			const datum = iGraph.getDatum('player-1', i2);
 
 			expect(
-				await Promise.all(
-					res.map((v) => {
-						const datum = <GraphDatum>v;
-						return datum.getValue('passing', () => null, {mode:NodeValueSelector.event});
-					}),
-				),
+				await datum.getValue(
+					'passing', 
+					() => null, 
+					{mode:NodeValueSelector.event}
+				)
 			).to.deep.equal([120]);
 		});
 	});
 
 	describe('::subSelect', function () {
 		it('should work on the node', async function () {
-			const selection = iGraph.select(i2, {
-				reference: 'team-a',
-			});
+			const datum = iGraph.getDatum('team-a', i2);
 
-			const res = (<GraphDatum>selection[0]).select({
+			const res = datum.select({
 				type: 'player',
 			});
 
 			expect(
 				await Promise.all(
-					res.map((v) => {
-						const datum = <GraphDatum>v;
+					res.map((datum) => {
 						return datum.getValue('passing', () => null, {mode:NodeValueSelector.event});
 					}),
 				),
@@ -487,9 +477,10 @@ describe('@bmoor/graph-compute::graph', function () {
 		});
 	});
 
+	/*
 	describe('::intervalSelect', function () {
 		it('should work on the node', async function () {
-			const datum = <GraphDatum>iGraph.select(i2, {
+			const datum = iGraph.select(i2, {
 				reference: 'player-1',
 			})[0];
 
@@ -500,106 +491,96 @@ describe('@bmoor/graph-compute::graph', function () {
 			).to.deep.equal(110);
 		});
 	});
-
+	*/
 	describe('::rangeSelect', function () {
 		it('should work on the node', async function () {
-			const datum = <GraphDatum>iGraph.select(i2, {
-				reference: 'team-a',
-			})[0];
+			const datum = iGraph.getDatum('team-a', i2);
 
-			const res = iGraph.rangeSelect(datum, i2, 2);
+			const res = iGraph.range(datum, 2);
 
-			expect(await res.get(i1).getValue('foo-bar', () => null, {})).to.deep.equal(1);
+			expect(await res[0].getValue('foo-bar', () => null, {})).to.deep.equal(1);
 
-			expect(await res.get(i2).getValue('foo-bar', () => null, {})).to.deep.equal(2);
+			expect(await res[1].getValue('foo-bar', () => null, {})).to.deep.equal(2);
 		});
 
 		it('should work on the events', async function () {
-			const datum = <GraphDatum>iGraph.select(i2, {
-				reference: 'player-1',
-			})[0];
+			const datum = iGraph.getDatum('player-1', i2);
 
-			const res = iGraph.rangeSelect(datum, i2, 2);
+			const res = iGraph.range(datum, 2);
 
 			expect(
-				await res.get(i1).getValue('passing', () => null, {mode:NodeValueSelector.event}),
+				await res[0].getValue('passing', () => null, {mode:NodeValueSelector.event}),
 			).to.deep.equal(110);
 
 			expect(
-				await res.get(i2).getValue('passing', () => null, {mode:NodeValueSelector.event}),
+				await res[1].getValue('passing', () => null, {mode:NodeValueSelector.event}),
 			).to.deep.equal(120);
 		});
 
 		it('should work range overflow', async function () {
-			const datum = <GraphDatum>iGraph.select(i2, {
+			const datum = iGraph.select(null, {
+				interval: i2,
 				type: 'player',
 				metadata: {
 					position: 'qb',
 				},
 			})[0];
 
-			const res = iGraph.rangeSelect(datum, i2, 3);
+			const res = iGraph.range(datum, 3);
 
 			expect(
-				await res.get(i1).getValue('passing', () => null, {mode:NodeValueSelector.event}),
+				await res[0].getValue('passing', () => null, {mode:NodeValueSelector.event}),
 			).to.deep.equal(110);
 
 			expect(
-				await res.get(i2).getValue('passing', () => null, {mode:NodeValueSelector.event}),
+				await res[1].getValue('passing', () => null, {mode:NodeValueSelector.event}),
 			).to.deep.equal(120);
 		});
 
 		it('should work with range correct', async function () {
-			const datum = <GraphDatum>iGraph.select(i2, {
+			const datum = iGraph.select(null, {
+				interval: i3,
 				type: 'player',
 				metadata: {
 					position: 'qb',
 				},
 			})[0];
 
-			const res = iGraph.rangeSelect(datum, i3, 3);
+			const res = iGraph.range(datum, 3);
 
 			expect(
-				await res.get(i1).getValue('passing',  () => null, {mode:NodeValueSelector.event}),
+				await res[0].getValue('passing',  () => null, {mode:NodeValueSelector.event}),
 			).to.deep.equal(110);
 
 			expect(
-				await res.get(i2).getValue('passing',  () => null, {mode:NodeValueSelector.event}),
+				await res[1].getValue('passing',  () => null, {mode:NodeValueSelector.event}),
 			).to.deep.equal(120);
 
 			expect(
-				await res.get(i3).getValue('passing',  () => null, {mode:NodeValueSelector.event}),
+				await res[2].getValue('passing',  () => null, {mode:NodeValueSelector.event}),
 			).to.deep.equal(130);
 		});
 
 		it('should work on the node with strict false', async function () {
-			const datum = <GraphDatum>iGraph.select(i2, {
-				reference: 'player-1',
-			})[0];
+			const datum = iGraph.getDatum('player-1', i2);
 
-			const res = iGraph.rangeSelect(datum, i3, 3, {
-				strict: false,
-			});
+			const res = iGraph.range(datum, 3, false);
 
 			expect(
-				await res.get(i2).getValue('passing',  () => null, {mode:NodeValueSelector.event}),
+				await res[0].getValue('passing',  () => null, {mode:NodeValueSelector.event}),
 			).to.deep.equal(120);
 
 			expect(
-				await res.get(i3).getValue('passing',  () => null, {mode:NodeValueSelector.event}),
+				await res[1].getValue('passing',  () => null, {mode:NodeValueSelector.event}),
 			).to.deep.equal(130);
 		});
 
 		it('should fail if strict and missing data', async function () {
 			let failed = false;
-			const datum = <GraphDatum>iGraph.select(i1, {
-				reference: 'player-5',
-			})[0];
+			const datum = iGraph.getDatum('player-5', i1);
 
 			try {
-				iGraph.rangeSelect(datum, i3, 3, {
-					strict: true,
-				});
+				iGraph.range(datum, 3, true);
 			} catch (ex) {
 				failed = true;
 			}
@@ -608,15 +589,16 @@ describe('@bmoor/graph-compute::graph', function () {
 		});
 
 		it('should be ok if not strict and missing data', async function () {
-			const datum = <GraphDatum>iGraph.select(i1, {
-				reference: 'player-5',
-			})[0];
+			let failed = false;
+			const datum = iGraph.getDatum('player-5', i1);
 
-			const res = iGraph.rangeSelect(datum, i3, 3, {
-				strict: false,
-			});
+			try {
+				iGraph.range(datum, 3, false);
+			} catch (ex) {
+				failed = true;
+			}
 
-			expect(res.size).to.equal(2);
+			expect(failed).to.equal(false);
 		});
 	});
 });

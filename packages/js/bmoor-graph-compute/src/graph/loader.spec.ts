@@ -2,19 +2,19 @@ import {expect} from 'chai';
 
 import {Context} from '@bmoor/context';
 
-import {DimensionalGraph} from '../graph';
+import {GraphCompute} from '../graph';
 import {Interval} from '../interval';
-import {DimensionalGraphLoader} from './loader';
+import {GraphComputeLoader} from './loader';
 
 describe('@bmoor/graph-compute::loader', function () {
 	let ctx: Context = null;
-	let graph: DimensionalGraph = null;
-	let loader: DimensionalGraphLoader = null;
+	let graph: GraphCompute = null;
+	let loader: GraphComputeLoader = null;
 
 	beforeEach(function () {
 		ctx = new Context({});
-		graph = new DimensionalGraph();
-		loader = new DimensionalGraphLoader({
+		graph = new GraphCompute();
+		loader = new GraphComputeLoader({
 			generateInterval: function (dict) {
 				const interval = new Interval(
 					<string>dict.week,
@@ -921,7 +921,7 @@ describe('@bmoor/graph-compute::loader', function () {
 		});
 
 		it('should work with multiple loaders', function () {
-			const loader2 = new DimensionalGraphLoader({
+			const loader2 = new GraphComputeLoader({
 				generateInterval: function (dict) {
 					const interval = new Interval(
 						<string>dict.week,

@@ -1,13 +1,13 @@
 import {GraphLoaderRow, GraphLoaderSettings} from '@bmoor/graph';
 
-import {Interval} from '../interval';
+import {IntervalInterface} from '../interval.interface';
 
 export type LoaderIntervalGenerator = (
 	row: GraphLoaderRow,
 	nextPos: number,
-) => Interval;
+) => IntervalInterface;
 
-export interface DimensionalGraphLoaderSettings
+export interface GraphComputeLoaderSettings
 	extends GraphLoaderSettings {
 	generateInterval: LoaderIntervalGenerator;
 }

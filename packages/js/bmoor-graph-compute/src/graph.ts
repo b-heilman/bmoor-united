@@ -1,10 +1,8 @@
 import {ComputeUnknownInterval} from '@bmoor/compute';
 import {Context} from '@bmoor/context';
 import {
-	Graph,
-	GraphDatum,
-	GraphSelector,
-	load as loadGraph,
+	load as loadSection,
+	NodeReference,
 } from '@bmoor/graph';
 import {OrderedMap} from '@bmoor/index';
 
@@ -14,7 +12,7 @@ import {
 	GraphComputeSelector,
 } from './graph.interface';
 import {Interval} from './interval';
-import {IntervalReference} from './interval.interface';
+import {IntervalReference, IntervalInterface} from './interval.interface';
 import { GraphComputeSection } from './graph/section';
 import { GraphComputeDatum } from './datum';
 import { GraphComputeDatumInterface } from './datum.interface';
@@ -31,7 +29,7 @@ export class GraphCompute implements
 			GraphComputeSelector
 		>
 	>;
-	intervals: Map<IntervalReference, Interval>;
+	intervals: Map<IntervalReference, IntervalInterface>;
 
 	constructor() {
 		this.sections = new OrderedMap<
@@ -41,18 +39,18 @@ export class GraphCompute implements
 				GraphComputeSelector
 			>
 		>();
-		this.intervals = new Map<IntervalReference, Interval>();
+		this.intervals = new Map<IntervalReference, IntervalInterface>();
 	}
 
 	hasInterval(intervalRef: IntervalReference) {
 		return this.intervals.has(intervalRef);
 	}
 
-	addInterval(interval: Interval) {
+	addInterval(interval: IntervalInterface) {
 		this.intervals.set(interval.ref, interval);
 	}
 
-	getInterval(intervalRef: IntervalReference) {
+	getInterval(intervalRef: IntervalReference): IntervalInterface {
 		const rtn = this.intervals.get(intervalRef);
 
 		if (!rtn) {
@@ -62,24 +60,24 @@ export class GraphCompute implements
 		return rtn;
 	}
 
-	hasSection(interval: Interval){
+	hasSection(interval: IntervalInterface){
 		return this.sections.has(interval.ref);
 	}
 
 	addSection(
-		graph: GraphComputeSection<
+		section: GraphComputeSection<
 			GraphComputeDatumInterface<GraphComputeSelector>,
 			GraphComputeSelector
 		>
 	) {
-		this.sections.set(graph.interval.ref, graph);
+		this.sections.set(section.interval.ref, section);
 
-		if (!this.hasInterval(graph.interval.ref)) {
-			this.addInterval(graph.interval);
+		if (!this.hasInterval(section.interval.ref)) {
+			this.addInterval(section.interval);
 		}
 	}
 
-	getSection(interval: Interval) {
+	getSection(interval: IntervalInterface) {
 		let section = this.sections.get(interval.ref);
 
 		if (!section) {
@@ -94,6 +92,17 @@ export class GraphCompute implements
 		}
 
 		return section;
+	}
+
+	getDatum(
+		ref: NodeReference, 
+		interval: IntervalInterface | IntervalReference 
+	): GraphComputeDatumInterface<GraphComputeSelector> {
+		if (typeof(interval) === 'string'){
+			interval = this.getInterval(interval);
+		}
+
+		return this.getSection(interval).getDatum(ref);
 	}
 
 	//getGraphSeries(start: Interval, stop: Interval): Graph[] {
@@ -111,7 +120,8 @@ export class GraphCompute implements
 				(section) => section.select(selector) 
 			);
 		} else if (selector.interval) {
-			const interval = this.getInterval(selector.interval);
+			const interval = typeof(selector.interval) === 'string'?
+				this.getInterval(selector.interval) : selector.interval;
 
 			return this.getSection(interval).select(base, selector);
 		} else {
@@ -207,10 +217,6 @@ export class GraphCompute implements
 	*/
 	
 
-	getPrevInterval(interval: Interval): Interval {
-		return this.getInterval(this.sections.getPrevTag(interval.ref));
-	}
-
 	toJSON(): GraphComputeJSON {
 		const intervals = [];
 		const sections = {};
@@ -230,15 +236,15 @@ export class GraphCompute implements
 	}
 }
 
-export function dump(graph: DimensionalGraph): DimensionalGraphJSON {
+export function dump(graph: GraphCompute): GraphComputeJSON {
 	return graph.toJSON();
 }
 
 export function load(
 	ctx: Context,
-	schema: DimensionalGraphJSON,
-): DimensionalGraph {
-	const graph = new DimensionalGraph();
+	schema: GraphComputeJSON,
+): GraphCompute {
+	const graph = new GraphCompute();
 
 	const intervals = [];
 	for (const input of schema.intervals) {
@@ -255,13 +261,22 @@ export function load(
 	//   order doesn't matter.  This works for now, but isn't sound logically.
 	for (const interval of intervals) {
 		const graphInput = schema.sections[interval.ref];
-		const section: GraphComputeSection<GraphComputeSelector> = loadGraph(
+		const section: GraphComputeSection<
+			GraphComputeDatumInterface<GraphComputeSelector>,
+			GraphComputeSelector
+		> = loadSection(
 			ctx, 
 			graphInput, 
-			(root) => new GraphComputeSection<GraphComputeSelector>(root)
+			(root) => new GraphComputeSection<
+				GraphComputeDatumInterface<GraphComputeSelector>,
+				GraphComputeSelector
+			>(
+				(node) => new GraphComputeDatum(node, section, graph),
+				root
+			)
 		);
 
-		section.interval = graph.getInterval(interval.ref);
+		section.setInterval(graph.getInterval(interval.ref), graph);
 
 		graph.addSection(section);
 	}

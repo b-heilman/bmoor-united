@@ -54,8 +54,8 @@ class Ranker<RequirementT> extends DatumRanker<
 describe('@bmoor/compute', function () {
 	let env: IntervalEnvironment = null;
 	let executor: Executor<
-		IntervalEnvironmentSelector,
 		IntervalDatum,
+		IntervalEnvironmentSelector,
 		IntervalEnvironment<IntervalEnvironmentSelector>
 	>;
 
@@ -278,8 +278,8 @@ describe('@bmoor/compute', function () {
 		});
 
 		executor = new Executor<
-			IntervalEnvironmentSelector,
 			IntervalDatum,
+			IntervalEnvironmentSelector,
 			IntervalEnvironment<IntervalEnvironmentSelector>
 		>(env);
 
@@ -407,73 +407,73 @@ describe('@bmoor/compute', function () {
 
 	it('should work with a simple execution', async function () {
 		// access
-		const v = await executor.calculate(accessFoo, {
-			reference: 'g-1',
-			interval: {ref: 'drei', order: 0},
-		});
+		const v = await executor.calculate(
+			[executor.env.getDatum('g-1', 'drei')],
+			accessFoo
+		);
 		expect(v).to.deep.equal([{value: 3}]);
 	});
 
 	it('should allow you to simply pick the other side', async function () {
 		// access
-		const v = await executor.calculate(accessFoo, {
-			reference: 'g-2',
-			interval: {ref: 'drei', order: 0},
-		});
+		const v = await executor.calculate(
+			[executor.env.getDatum('g-2', 'drei')],
+			accessFoo
+		);
 		expect(v).to.deep.equal([{value: 30}]);
 	});
 
 	it('should work with simple processor', async function () {
 		// (10 + 20) / 2
-		const v = await executor.calculate(proc1, {
-			reference: 'g-2',
-			interval: {ref: 'drei', order: 0},
-		});
+		const v = await executor.calculate(
+			[executor.env.getDatum('g-2', 'drei')],
+			proc1
+		);
 		expect(v).to.deep.equal([15]);
 	});
 
 	it('should work with a range execution', async function () {
 		// (2 + 3 + 4) / 3
-		const v = await executor.calculate(proc2, {
-			reference: 'g-1',
-			interval: {ref: 'fier', order: 0},
-		});
+		const v = await executor.calculate(
+			[executor.env.getDatum('g-1', 'fier')],
+			proc2
+		);
 		expect(v).to.deep.equal([3]);
 	});
 
 	it('should allow compound calls', async function () {
 		// (((4 + 3) / 2) + ((5 + 4 + 3) / 3)) / 2
-		const v = await executor.calculate(proc3, {
-			reference: 'g-1',
-			interval: {ref: 'sieben', order: 0},
-		});
+		const v = await executor.calculate(
+			[executor.env.getDatum('g-1', 'sieben')],
+			proc3
+		);
 
 		expect(v).to.deep.equal([3.75]);
 	});
 
 	it('should allow subcalls', async function () {
-		const v = await executor.calculate(proc4, {
-			reference: 'g-1',
-			interval: {ref: 'eins', order: 0},
-		});
+		const v = await executor.calculate(
+			[executor.env.getDatum('g-1', 'eins')],
+			proc4
+		);
 
 		expect(v).to.deep.equal([151]);
 	});
 
 	it('should allow compound subcalls', async function () {
-		const v = await executor.calculate(proc5, {
-			reference: 'g-2',
-			interval: {ref: 'zwei', order: 0},
-		});
+		const v = await executor.calculate(
+			[executor.env.getDatum('g-2', 'zwei')],
+			proc5
+		);
 
 		expect(v).to.deep.equal([165]);
 	});
 
 	it('should allow more complex compound subcalls', async function () {
-		const v = await executor.calculate(proc7, {
-			reference: 'g-2',
-			interval: {ref: 'zwei', order: 0},
-		});
+		const v = await executor.calculate(
+			[executor.env.getDatum('g-2', 'zwei')],
+			proc7
+		);
 
 		expect(v).to.deep.equal([165.25]);
 	});
@@ -508,24 +508,24 @@ describe('@bmoor/compute', function () {
 			},
 		);
 
-		const v1 = await executor.calculate(rank, {
-			reference: 'g-1-1',
-			interval: {ref: 'eins', order: 0},
-		});
+		const v1 = await executor.calculate(
+			[executor.env.getDatum('g-1-1', 'eins')],
+			rank
+		);
 
 		expect(v1).to.deep.equal([1]);
 
-		const v2 = await executor.calculate(rank, {
-			reference: 'g-1-2',
-			interval: {ref: 'eins', order: 0},
-		});
+		const v2 = await executor.calculate(
+			[executor.env.getDatum('g-1-2', 'eins')],
+			rank
+		);
 
 		expect(v2).to.deep.equal([0]);
 
-		const v3 = await executor.calculate(rank, {
-			reference: 'g-2-2',
-			interval: {ref: 'eins', order: 0},
-		});
+		const v3 = await executor.calculate(
+			[executor.env.getDatum('g-2-2', 'eins')],
+			rank
+		);
 
 		expect(v3).to.deep.equal([0]);
 	});
@@ -561,24 +561,24 @@ describe('@bmoor/compute', function () {
 			},
 		);
 
-		const v1 = await executor.calculate(rank, {
-			reference: 'g-1-1',
-			interval: {ref: 'eins', order: 0},
-		});
+		const v1 = await executor.calculate(
+			[executor.env.getDatum('g-1-1', 'eins')],
+			rank
+		);
 
 		expect(v1).to.deep.equal([0]);
 
-		const v2 = await executor.calculate(rank, {
-			reference: 'g-1-2',
-			interval: {ref: 'eins', order: 0},
-		});
+		const v2 = await executor.calculate(
+			[executor.env.getDatum('g-1-2', 'eins')],
+			rank
+		);
 
 		expect(v2).to.deep.equal([1]);
 
-		const v3 = await executor.calculate(rank, {
-			reference: 'g-2-2',
-			interval: {ref: 'eins', order: 0},
-		});
+		const v3 = await executor.calculate(
+			[executor.env.getDatum('g-2-2', 'eins')],
+			rank
+		);
 
 		expect(v3).to.deep.equal([1]);
 	});
@@ -613,24 +613,24 @@ describe('@bmoor/compute', function () {
 			},
 		);
 
-		const v1 = await executor.calculate(rank, {
-			interval: {ref: 'eins', order: 0},
-			reference: 'g-1-1',
-		});
+		const v1 = await executor.calculate(
+			[executor.env.getDatum('g-1-1', 'eins')],
+			rank
+		);
 
 		expect(v1).to.deep.equal([3]);
 
-		const v2 = await executor.calculate(rank, {
-			interval: {ref: 'eins', order: 0},
-			reference: 'g-1-2',
-		});
+		const v2 = await executor.calculate(
+			[executor.env.getDatum('g-1-2', 'eins')],
+			rank
+		);
 
 		expect(v2).to.deep.equal([1]);
 
-		const v3 = await executor.calculate(rank, {
-			interval: {ref: 'eins', order: 0},
-			reference: 'g-2-2',
-		});
+		const v3 = await executor.calculate(
+			[executor.env.getDatum('g-2-2', 'eins')],
+			rank
+		);
 
 		expect(v3).to.deep.equal([0]);
 	});
@@ -666,31 +666,31 @@ describe('@bmoor/compute', function () {
 			},
 		);
 
-		const v1 = await executor.calculate(rank, {
-			interval: {ref: 'eins', order: 0},
-			reference: 'g-1-1',
-		});
+		const v1 = await executor.calculate(
+			[executor.env.getDatum('g-1-1', 'eins')],
+			rank
+		);
 
 		expect(v1).to.deep.equal([1]);
 
-		const v2 = await executor.calculate(rank, {
-			interval: {ref: 'eins', order: 0},
-			reference: 'g-1-2',
-		});
+		const v2 = await executor.calculate(
+			[executor.env.getDatum('g-1-2', 'eins')],
+			rank
+		);
 
 		expect(v2).to.deep.equal([0]);
 
-		const v3 = await executor.calculate(rank, {
-			interval: {ref: 'eins', order: 0},
-			reference: 'g-2-2',
-		});
+		const v3 = await executor.calculate(
+			[executor.env.getDatum('g-2-2', 'eins')],
+			rank
+		);
 
 		expect(v3).to.deep.equal([0]);
 
-		const v4 = await executor.calculate(rank, {
-			interval: {ref: 'eins', order: 0},
-			reference: 'g-2-1',
-		});
+		const v4 = await executor.calculate(
+			[executor.env.getDatum('g-2-1', 'eins')],
+			rank
+		);
 
 		expect(v4).to.deep.equal([1]);
 	});
@@ -727,31 +727,31 @@ describe('@bmoor/compute', function () {
 			},
 		);
 
-		const v1 = await executor.calculate(rank, {
-			interval: {ref: 'eins', order: 0},
-			reference: 'g-1-1',
-		});
+		const v1 = await executor.calculate(
+			[executor.env.getDatum('g-1-1', 'eins')],
+			rank
+		);
 
 		expect(v1).to.deep.equal([0]);
 
-		const v2 = await executor.calculate(rank, {
-			interval: {ref: 'eins', order: 0},
-			reference: 'g-1-2',
-		});
+		const v2 = await executor.calculate(
+			[executor.env.getDatum('g-1-2', 'eins')],
+			rank
+		);
 
 		expect(v2).to.deep.equal([0]);
 
-		const v3 = await executor.calculate(rank, {
-			interval: {ref: 'eins', order: 0},
-			reference: 'g-2-2',
-		});
+		const v3 = await executor.calculate(
+			[executor.env.getDatum('g-2-2', 'eins')],
+			rank
+		);
 
 		expect(v3).to.deep.equal([1]);
 
-		const v4 = await executor.calculate(rank, {
-			interval: {ref: 'eins', order: 0},
-			reference: 'g-2-1',
-		});
+		const v4 = await executor.calculate(
+			[executor.env.getDatum('g-2-1', 'eins')],
+			rank
+		);
 
 		expect(v4).to.deep.equal([0]);
 	});

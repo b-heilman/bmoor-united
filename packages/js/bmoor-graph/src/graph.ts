@@ -189,14 +189,14 @@ export class Graph<
 }
 
 export function dump<
-	DatumT extends GraphDatum<GraphSelector>,
+	DatumT extends GraphDatumInterface<GraphSelector>,
 	SelectorT extends GraphSelector
 >(graph: Graph<DatumT, SelectorT>): GraphJSON {
 	return graph.toJSON();
 }
 
 function addEventJSON<
-	DatumT extends GraphDatum<GraphSelector>,
+	DatumT extends GraphDatumInterface<GraphSelector>,
 	SelectorT extends GraphSelector
 >(graph: Graph<DatumT, SelectorT>, eventInfo: EventJSON) {
 	let event = null;
@@ -223,11 +223,12 @@ function addEventJSON<
 }
 
 export function applyBuilder<
-	DatumT extends GraphDatum<GraphSelector>,
-	SelectorT extends GraphSelector
+	DatumT extends GraphDatumInterface<GraphSelector>,
+	SelectorT extends GraphSelector,
+	GraphT extends Graph<DatumT, SelectorT>
 >(
 	ctx: Context,
-	graph: Graph<DatumT, SelectorT>,
+	graph: GraphT,
 	builder: GraphBuilder,
 ) {
 	for (const info of builder.nodes.values()) {
@@ -257,7 +258,7 @@ export function applyBuilder<
 }
 
 export function load<
-	DatumT extends GraphDatum<GraphSelector>,
+	DatumT extends GraphDatumInterface<GraphSelector>,
 	SelectorT extends GraphSelector,
 	GraphT extends Graph<DatumT, SelectorT>
 >(
@@ -301,7 +302,7 @@ export function load<
 		}
 	}
 
-	applyBuilder(ctx, graph, builder);
+	applyBuilder<DatumT, SelectorT, GraphT>(ctx, graph, builder);
 
 	return graph;
 }

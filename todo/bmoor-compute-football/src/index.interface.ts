@@ -1,4 +1,4 @@
 export {
 	IntervalReference as Interval,
-	DimensionalGraphSelector as Selector,
+	GraphComputeSelector as Selector,
 } from '@bmoor/interval';

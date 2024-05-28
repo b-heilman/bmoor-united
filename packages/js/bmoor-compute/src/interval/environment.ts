@@ -9,6 +9,7 @@ import {
 	IntervalEnvironmentSettings,
 } from './environment.interface';
 import { IntervalDatum } from './datum';
+import { DatumReference } from '../datum.interface';
 
 type IntervalT = string;
 type OrderT = number;
@@ -58,6 +59,10 @@ export class IntervalEnvironment<
 				this.envs.set(interval.ref, environment);
 			},
 		);
+	}
+
+	getDatum(ref: DatumReference, interval: string): IntervalDatum{
+		return <IntervalDatum>this.envs.get(interval).getDatum(ref);
 	}
 
 	select(base: IntervalDatum, select: SelectorT): IntervalDatum[] {

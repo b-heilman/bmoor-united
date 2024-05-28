@@ -16,7 +16,7 @@ export interface GraphDatumSetterSettings extends DatumSetterSettings {
 export interface GraphDatumInterface<SelectorT extends GraphSelector>
 	extends DatumInterface<SelectorT> {
 	node: Node;
-	graph: GraphInterface<SelectorT>;
+	graph: GraphInterface<GraphDatumInterface<SelectorT>, SelectorT>;
 
 	getReference(): DatumReference;
 	getParent(): GraphDatumInterface<SelectorT>,

@@ -7,9 +7,10 @@ import {GraphDatum} from '@bmoor/graph';
 import {
 	DimensionalDatumAccessor as Accessor,
 	DimensionalExecutor,
-	DimensionalGraph,
-	DimensionalGraphLoader,
+	GraphCompute,
+	GraphComputeLoader,
 	Interval,
+	IntervalInterface,
 	NodeValueSelector,
 	DimensionalDatumProcessor as Processor,
 	DimensionalDatumRanker as Ranker,
@@ -18,11 +19,11 @@ import {
 describe('bmoor/graph-compute', function () {
 	let ctx: Context = null;
 
-	let i1: Interval = null;
-	let i2: Interval = null;
-	let i3: Interval = null;
-	let graph: DimensionalGraph = null;
-	let loader: DimensionalGraphLoader = null;
+	let i1: IntervalInterface = null;
+	let i2: IntervalInterface = null;
+	let i3: IntervalInterface = null;
+	let graph: GraphCompute = null;
+	let loader: GraphComputeLoader = null;
 	let executor: DimensionalExecutor = null;
 
 	let playerRushingAverage5 = null;
@@ -37,8 +38,8 @@ describe('bmoor/graph-compute', function () {
 	 */
 	beforeEach(function () {
 		ctx = new Context({});
-		graph = new DimensionalGraph();
-		loader = new DimensionalGraphLoader({
+		graph = new GraphCompute();
+		loader = new GraphComputeLoader({
 			generateInterval: function (dict) {
 				const interval = new Interval(
 					<string>dict.week,

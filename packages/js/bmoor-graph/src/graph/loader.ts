@@ -14,7 +14,7 @@ import {
 	GraphLoaderSettings,
 	GraphLoaderValue,
 } from './loader.interface';
-import { GraphDatum } from './datum';
+import { GraphDatumInterface } from './datum.interface';
 
 function accessString(
 	row: GraphLoaderRow,
@@ -66,7 +66,7 @@ function featureCopy(row, features, parser = null) {
 }
 
 export class GraphLoader<
-	DatumT extends GraphDatum<GraphSelector>,
+	DatumT extends GraphDatumInterface<GraphSelector>,
 	SelectorT extends GraphSelector
 > {
 	settings: GraphLoaderSettings;
