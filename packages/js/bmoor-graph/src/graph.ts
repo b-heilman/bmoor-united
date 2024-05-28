@@ -17,11 +17,12 @@ import {
 import {GraphDatum} from './graph/datum';
 import {Node, load as loadNode} from './node';
 import {NodeReference, NodeType} from './node.interface';
+import { GraphDatumInterface } from './graph/datum.interface';
 
 // used to manage all top levels nodes and then facilitates
 // passing data through them
 function connect<
-	DatumT extends GraphDatum<GraphSelector>,
+	DatumT extends GraphDatumInterface<GraphSelector>,
 	SelectorT extends GraphSelector
 >(graph: Graph<DatumT, SelectorT>, node: Node, event: Event) {
 	let arr = graph.connectionDex.get(node.ref);
@@ -38,24 +39,18 @@ function connect<
 }
 
 export class Graph<
-	DatumT extends GraphDatum<GraphSelector>,
+	DatumT extends GraphDatumInterface<GraphSelector>,
 	SelectorT extends GraphSelector
-> implements GraphInterface<SelectorT> {
+> implements GraphInterface<DatumT, SelectorT> {
 	root: Node;
 	types: Map<NodeType, Node[]>;
 	nodeDex: Map<NodeReference, Node>;
 	eventDex: Map<EventReference, Event>;
 	connectionDex: Map<NodeReference, Event[]>;
-	datumFactory: (
-		node: Node, 
-		graph: Graph<DatumT, SelectorT>
-	) => DatumT
+	datumFactory: ( node: Node ) => DatumT
 
 	constructor(
-		factory: (
-			node: Node,
-			graph: Graph<DatumT, SelectorT>
-		) => DatumT, 
+		factory: (node: Node) => DatumT, 
 		root?: Node
 	) {
 		this.types = new Map();
@@ -129,7 +124,7 @@ export class Graph<
 	}
 
 	createDatum(node: Node): DatumT{
-		return this.datumFactory(node, this);
+		return this.datumFactory(node);
 	}
 
 	getDatum(ref: NodeReference): DatumT {
@@ -137,7 +132,7 @@ export class Graph<
 	}
 
 	select(
-		datum: GraphDatum<GraphSelector>, 
+		datum: GraphDatumInterface<GraphSelector>, 
 		selector: GraphSelector
 	): DatumT[] {
 		let select = <GraphSelector>selector;

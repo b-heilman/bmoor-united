@@ -30,9 +30,9 @@ describe('@bmoor/graph::view', function () {
 
 	beforeEach(function () {
 		ctx = new Context({});
-		week1 = new Graph((node, self) => new GraphDatum(node, self));
-		week2 = new Graph((node, self) => new GraphDatum(node, self));
-		week3 = new Graph((node, self) => new GraphDatum(node, self));
+		week1 = new Graph((node) => new GraphDatum(node, week1));
+		week2 = new Graph((node) => new GraphDatum(node, week2));
+		week3 = new Graph((node) => new GraphDatum(node, week3));
 		loader = new GraphLoader({});
 
 		loader.addNodeGenerator({

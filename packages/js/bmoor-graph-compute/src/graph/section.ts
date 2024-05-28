@@ -1,32 +1,29 @@
 import { Graph, GraphDatum, GraphSelector, Node } from "@bmoor/graph";
 import { Interval } from "../interval";
 import { GraphComputeSectionInterface } from "./section.interface";
-import { GraphComputeDatum } from "../datum";
 import { GraphComputeInterface, GraphComputeSelector } from "../graph.interface";
+import { GraphComputeDatumInterface } from "../datum.interface";
 
 export class GraphComputeSection<
+    DatumT extends GraphComputeDatumInterface<SelectorT>,
     SelectorT extends GraphComputeSelector
-> extends Graph 
+> extends Graph<DatumT, SelectorT> 
     implements GraphComputeSectionInterface<SelectorT>{
     interval: Interval
-    parent: GraphComputeInterface<
-        GraphComputeDatum<SelectorT>,
-        SelectorT
-    >
+    parent: GraphComputeInterface<DatumT, SelectorT>
 
-    setInterval(interval: Interval, parent: GraphComputeInterface<GraphComputeDatum<SelectorT>,SelectorT>){
+    setInterval(
+        interval: Interval, 
+        parent: GraphComputeInterface<DatumT,SelectorT>
+    ){
         this.interval = interval;
         this.parent = parent;
     }
 
-    createDatum(node: Node): GraphComputeDatum<SelectorT> {
-        return new GraphComputeDatum<SelectorT>(node, this, this.parent);
-    }
-
     select(
-        datum: GraphComputeDatum<SelectorT>,
+        datum: DatumT,
         selector: SelectorT
-    ): GraphComputeDatum<SelectorT>[] {
+    ): DatumT[] {
         if (selector.across || selector.interval) {
             return this.parent.select(datum, selector);
         } else {

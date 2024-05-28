@@ -24,7 +24,10 @@ export interface GraphEventFeatures {
 	nodeFeatures: Features;
 }
 
-export interface GraphInterface<SelectorT extends GraphSelector> {
+export interface GraphInterface<
+	DatumT extends GraphDatumInterface<SelectorT>,
+	SelectorT extends GraphSelector
+> {
 	types: Map<NodeType, NodeInterface[]>;
 	nodeDex: Map<NodeReference, NodeInterface>;
 	eventDex: Map<EventReference, EventInterface>;
@@ -38,9 +41,9 @@ export interface GraphInterface<SelectorT extends GraphSelector> {
 	// some search methods
 
 	select(
-		datum: GraphDatumInterface<SelectorT>, 
+		datum: DatumT, 
 		selector: SelectorT
-	): GraphDatumInterface<SelectorT>[];
+	): DatumT[];
 }
 
 export interface GraphJSON {

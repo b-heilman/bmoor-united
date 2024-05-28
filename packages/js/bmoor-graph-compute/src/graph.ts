@@ -17,18 +17,30 @@ import {Interval} from './interval';
 import {IntervalReference} from './interval.interface';
 import { GraphComputeSection } from './graph/section';
 import { GraphComputeDatum } from './datum';
-import { GraphComputerDatumInterface } from './datum.interface';
+import { GraphComputeDatumInterface } from './datum.interface';
 
 export class GraphCompute implements 
 	GraphComputeInterface<
-		GraphComputerDatumInterface<GraphComputeSelector>,
+		GraphComputeDatumInterface<GraphComputeSelector>,
 		GraphComputeSelector
 	> {
-	sections: OrderedMap<IntervalReference, GraphComputeSection<GraphComputeSelector>>;
+	sections: OrderedMap<
+		IntervalReference, 
+		GraphComputeSection<
+			GraphComputeDatumInterface<GraphComputeSelector>,
+			GraphComputeSelector
+		>
+	>;
 	intervals: Map<IntervalReference, Interval>;
 
 	constructor() {
-		this.sections = new OrderedMap<IntervalReference, GraphComputeSection<GraphComputeSelector>>();
+		this.sections = new OrderedMap<
+			IntervalReference, 
+			GraphComputeSection<
+				GraphComputeDatumInterface<GraphComputeSelector>,
+				GraphComputeSelector
+			>
+		>();
 		this.intervals = new Map<IntervalReference, Interval>();
 	}
 
@@ -54,7 +66,12 @@ export class GraphCompute implements
 		return this.sections.has(interval.ref);
 	}
 
-	addSection(graph: GraphComputeSection<GraphComputeSelector>) {
+	addSection(
+		graph: GraphComputeSection<
+			GraphComputeDatumInterface<GraphComputeSelector>,
+			GraphComputeSelector
+		>
+	) {
 		this.sections.set(graph.interval.ref, graph);
 
 		if (!this.hasInterval(graph.interval.ref)) {
@@ -66,9 +83,12 @@ export class GraphCompute implements
 		let section = this.sections.get(interval.ref);
 
 		if (!section) {
-			section = new GraphComputeSection<GraphComputeSelector>();
+			section = new GraphComputeSection<
+				GraphComputeDatumInterface<GraphComputeSelector>,
+				GraphComputeSelector
+			>((node) => new GraphComputeDatum(node, section, this));
 
-			section.setInterval(interval);
+			section.setInterval(interval, this);
 
 			this.addSection(section);
 		}
@@ -85,7 +105,7 @@ export class GraphCompute implements
 	select(
 		base: GraphComputeDatum<GraphComputeSelector>,
 		selector: GraphComputeSelector
-	): GraphComputerDatumInterface<GraphComputeSelector>[] {
+	): GraphComputeDatumInterface<GraphComputeSelector>[] {
 		if (selector.across){
 			return Object.values(this.sections).flatMap(
 				(section) => section.select(selector) 
@@ -93,17 +113,17 @@ export class GraphCompute implements
 		} else if (selector.interval) {
 			const interval = this.getInterval(selector.interval);
 
-			return this.getSection(interval).select(selector);
+			return this.getSection(interval).select(base, selector);
 		} else {
 			return base.select(selector);
 		}
 	}
 
 	range(
-		base: GraphComputerDatumInterface<GraphComputeSelector>,
+		base: GraphComputeDatumInterface<GraphComputeSelector>,
 		range: number,
 		strict = false
-	): GraphComputerDatumInterface<GraphComputeSelector>[] {
+	): GraphComputeDatumInterface<GraphComputeSelector>[] {
 		const interval = base.graph.interval;
 		const offset = interval.ref;
 		const rtn = [];
@@ -112,7 +132,7 @@ export class GraphCompute implements
 		for (const [intervalRef, section] of this.sections
 			.getBetween(begin, offset)
 			.entries()) {
-			const res = section.references.get(base.getReference());
+			const res = section.getDatum(base.getReference());
 
 			if (!res && strict) {
 				throw new Error(
@@ -127,17 +147,17 @@ export class GraphCompute implements
 	}
 
 	offset(
-		base: GraphComputerDatumInterface<GraphComputeSelector>,
+		base: GraphComputeDatumInterface<GraphComputeSelector>,
 		offset: number,
 		strict = false
-	): GraphComputerDatumInterface<GraphComputeSelector> {
+	): GraphComputeDatumInterface<GraphComputeSelector> {
 		const newIntervalRef = this.sections.getTagOffset(
 			base.graph.interval.ref,
 			-offset,
 		);
 		// console.log('Env:offset =>', datum.ref, datum.interval.ref, offset, newIntervalRef);
 
-		const rtn = this.sections.get(newIntervalRef).references.get(base.getReference());
+		const rtn = this.sections.get(newIntervalRef).getDatum(base.getReference());
 
 		if (!rtn && strict) {
 			throw new Error(

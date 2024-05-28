@@ -12,7 +12,7 @@ describe('@bmoor/graph', function () {
 	describe('Graph building', function () {
 		it('should properly build a flat graph', function () {
 			const graph = new Graph(
-				(node, self) => new GraphDatum(node, self) 
+				(node) => new GraphDatum(node, graph) 
 			);
 
 			const node1 = new Node('node-1');
@@ -141,7 +141,7 @@ describe('@bmoor/graph', function () {
 
 		it('should properly build a tiered graph', function () {
 			const graph = new Graph(
-				(node, self) => new GraphDatum(node, self) 
+				(node) => new GraphDatum(node, graph) 
 			);
 
 			const nodeA = new Node('node-a');
@@ -265,7 +265,15 @@ describe('@bmoor/graph', function () {
 				},
 			],
 			events: [],
-		}, (root) => new Graph((node, self) => new GraphDatum(node, self), root));
+		}, (root) => {
+			/**
+			 * Type script refuses to allow me to do this in any way other this
+			 * this ugly shit.  This language used to be nice, now it's just a worse
+			 * version of Java
+			 */
+			const t = new Graph((node) => new GraphDatum(node, t), root);
+			return t;
+		});
 
 		it('should allow selections combined with .and', function () {
 			const select1 = graph.select(graph.getDatum('node-a'), {
@@ -467,7 +475,10 @@ describe('@bmoor/graph', function () {
 					],
 				},
 			],
-		}, (node) => new Graph(node));
+		}, (node) => {
+			const t = new Graph((node) => new GraphDatum(node, t), node);
+			return t;
+		});
 
 		it('should allow selection', function () {
 			const select1 = graph.getEventFeatures('node-1');

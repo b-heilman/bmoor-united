@@ -15,7 +15,7 @@ describe('@bmoor/graph::loader', function () {
 	beforeEach(function () {
 		ctx = new Context({});
 		graph = new Graph(
-			(node, self) => new GraphDatum(node, self)
+			(node) => new GraphDatum(node, graph)
 		);
 		loader = new GraphLoader({});
 

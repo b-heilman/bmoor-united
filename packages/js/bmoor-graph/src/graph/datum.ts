@@ -11,10 +11,10 @@ import {
 export class GraphDatum<SelectorT extends GraphSelector> 
 	implements GraphDatumInterface<SelectorT> {
 	node: Node;
-	graph: GraphInterface<SelectorT>;
+	graph: GraphInterface<GraphDatumInterface<SelectorT>, SelectorT>;
 	awaiting: Map<string, Promise<FeatureValue>>;
 
-	constructor(node: Node, graph: GraphInterface<SelectorT>) {
+	constructor(node: Node, graph: GraphInterface<GraphDatumInterface<SelectorT>, SelectorT>) {
 		// this.ref = node.ref;
 		this.node = node;
 		this.graph = graph;

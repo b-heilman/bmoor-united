@@ -2,20 +2,21 @@ import { GraphDatum, GraphInterface, GraphSelector, Node } from "@bmoor/graph";
 import { DatumInterface } from "@bmoor/compute";
 
 import { GraphComputeSection } from "./graph/section";
-import { GraphComputerDatumInterface } from "./datum.interface";
-import { GraphComputeInterface } from "./graph.interface";
+import { GraphComputeDatumInterface } from "./datum.interface";
+import { GraphComputeInterface, GraphComputeSelector } from "./graph.interface";
+import { GraphComputeSectionInterface } from "./graph/section.interface";
 
 
-export class GraphComputeDatum<SelectorT extends GraphSelector> 
-    extends GraphDatum<SelectorT> implements GraphComputerDatumInterface<SelectorT>{
+export class GraphComputeDatum<SelectorT extends GraphComputeSelector> 
+    extends GraphDatum<SelectorT> implements GraphComputeDatumInterface<SelectorT>{
     
-    graph: GraphComputeSection<SelectorT>;
-    global: GraphComputeInterface<GraphComputeDatum<SelectorT>, SelectorT>;
+    graph: GraphComputeSectionInterface<SelectorT>;
+    global: GraphComputeInterface<GraphComputeDatumInterface<SelectorT>, SelectorT>;
 
     constructor(
         node: Node, 
-        graph: GraphComputeSection<SelectorT>,
-        global: GraphComputeInterface<GraphComputeDatum<GraphSelector>, GraphSelector>
+        graph: GraphComputeSectionInterface<SelectorT>,
+        global: GraphComputeInterface<GraphComputeDatumInterface<GraphSelector>, GraphSelector>
     ) {
         super(node, graph);
 
@@ -28,5 +29,17 @@ export class GraphComputeDatum<SelectorT extends GraphSelector>
         } else {
             return false;
         }
+    }
+
+    select(select: SelectorT): GraphComputeDatumInterface<SelectorT>[] {
+        if (select.interval || select.across){
+            return this.global.select(this, select);
+        }else if (select.root) {
+			return this.graph.select(this, select);
+		} else {
+			return this.node
+				.select(select)
+				.map((node) => new GraphComputeDatum(node, this.graph, this.global));
+		}
     }
 }
