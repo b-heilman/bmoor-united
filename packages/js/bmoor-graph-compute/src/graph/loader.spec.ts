@@ -141,7 +141,7 @@ describe('@bmoor/graph-compute::loader', function () {
 						order: 2,
 					},
 				],
-				graphs: {
+				sections: {
 					'1': {
 						root: {
 							ref: '__root__',
@@ -345,7 +345,7 @@ describe('@bmoor/graph-compute::loader', function () {
 						order: 2,
 					},
 				],
-				graphs: {
+				sections: {
 					'1': {
 						root: {
 							ref: '__root__',
@@ -519,7 +519,7 @@ describe('@bmoor/graph-compute::loader', function () {
 						label: 2,
 					},
 				],
-				graphs: {
+				sections: {
 					'1': {
 						root: {
 							ref: '__root__',
@@ -1071,7 +1071,7 @@ describe('@bmoor/graph-compute::loader', function () {
 						order: 2,
 					},
 				],
-				graphs: {
+				sections: {
 					'1': {
 						root: {
 							ref: '__root__',

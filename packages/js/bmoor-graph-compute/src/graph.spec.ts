@@ -443,7 +443,7 @@ describe('@bmoor/graph-compute::graph', function () {
 					() => null, 
 					{mode:NodeValueSelector.node}
 				),
-			).to.deep.equal([2]);
+			).to.deep.equal(2);
 		});
 
 		it('should work on the events', async function () {
@@ -455,7 +455,7 @@ describe('@bmoor/graph-compute::graph', function () {
 					() => null, 
 					{mode:NodeValueSelector.event}
 				)
-			).to.deep.equal([120]);
+			).to.deep.equal(120);
 		});
 	});
 

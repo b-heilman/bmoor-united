@@ -39,9 +39,9 @@ export interface GraphComputeInterface<
 	DatumT extends DatumInterface<SelectorT>, 
 	SelectorT extends GraphComputeSelector
 > extends EnvironmentInterface<DatumT, SelectorT>, 
-		DatumOffsetContext<DatumT>,  
+		DatumOffsetContext<DatumT, SelectorT>,  
 		DatumAcrossContext<DatumT, SelectorT>,
-		DatumRangeContext<DatumT>{
+		DatumRangeContext<DatumT, SelectorT>{
 	hasInterval(intervalRef: IntervalReference): boolean;
 	addInterval(interval: IntervalInterface): void;
 	getInterval(intervalRef: IntervalReference): IntervalInterface;
