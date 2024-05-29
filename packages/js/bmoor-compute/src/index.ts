@@ -1,5 +1,5 @@
 export * from './datum.interface';
-export * from './datum/accessor.interface';
+export * from './datum/offset.interface';
 export * from './datum/across.interface';
 export * from './datum/range.interface';
 export * from './environment.interface';
@@ -11,11 +11,10 @@ export {Executor} from './executor';
 export {Environment} from './environment';
 
 export {Datum} from './datum';
-export {DatumAccessor} from './datum/accessor';
+export {DatumOffset} from './datum/offset';
 export {DatumAcross} from './datum/across';
 export {DatumReader} from './datum/reader';
 export {DatumCompute} from './datum/compute';
-export {DatumProcessor} from './datum/processor';
 export {DatumRange} from './datum/range';
 export {DatumRanker} from './datum/ranker';
 

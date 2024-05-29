@@ -4,7 +4,7 @@ import * as path from 'path';
 import {mean as calcMean, sum as calcSum, reduce} from '@bmoor/compute';
 import {Context} from '@bmoor/context';
 import {
-	DimensionalDatumAccessor as Accessor,
+	DimensionalDatumOffset as Accessor,
 	DimensionalExecutor,
 	DimensionalDatumProcessor as Processor,
 	DimensionalDatumRanker as Ranker,

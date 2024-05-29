@@ -3,7 +3,7 @@ import {expect} from 'chai';
 import {Context} from '@bmoor/context';
 
 import {Datum} from '../datum';
-import {DatumAccessor} from './accessor';
+import {DatumOffset} from './offset';
 import {DatumReader} from './reader';
 
 describe('@bmoor/compute - datum/accessor', function () {
@@ -31,7 +31,7 @@ describe('@bmoor/compute - datum/accessor', function () {
 			world: 'world',
 		});
 
-		const top = new DatumAccessor(
+		const top = new DatumOffset(
 			'foo-bar',
 			{
 				foo: 'foo',
@@ -54,6 +54,7 @@ describe('@bmoor/compute - datum/accessor', function () {
 
 						return datumPast;
 					},
+					select: () => null
 				},
 				[datumNow],
 			),

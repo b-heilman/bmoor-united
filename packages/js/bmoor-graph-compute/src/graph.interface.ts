@@ -1,5 +1,5 @@
 import {
-	DatumAccessorContext, 
+	DatumOffsetContext, 
 	DatumAcrossContext,
 	DatumInterface,
 	DatumRangeContext,
@@ -39,7 +39,7 @@ export interface GraphComputeInterface<
 	DatumT extends DatumInterface<SelectorT>, 
 	SelectorT extends GraphComputeSelector
 > extends EnvironmentInterface<DatumT, SelectorT>, 
-		DatumAccessorContext<DatumT>,  
+		DatumOffsetContext<DatumT>,  
 		DatumAcrossContext<DatumT, SelectorT>,
 		DatumRangeContext<DatumT>{
 	hasInterval(intervalRef: IntervalReference): boolean;

@@ -1,7 +1,7 @@
 import {Context} from '@bmoor/context';
 
 import {DatumInterface, FeatureReference} from '../datum.interface';
-import {DatumAccessor} from './accessor';
+import {DatumOffset} from './offset';
 import {DatumRankerContext, DatumRankerSettings} from './ranker.interface';
 import {
 	DatumReaderInterface,
@@ -16,7 +16,7 @@ export class DatumRanker<
 > implements DatumReaderInterface<number, DatumT, EnvT>
 {
 	name: string;
-	accessor: DatumAccessor<RequirementT, DatumT, EnvT>;
+	accessor: DatumOffset<RequirementT, DatumT, SelectT, EnvT>;
 	settings: DatumRankerSettings<RequirementT, SelectT>;
 
 	constructor(
@@ -25,10 +25,10 @@ export class DatumRanker<
 		settings: DatumRankerSettings<RequirementT, SelectT>,
 	) {
 		this.name = name;
-		this.accessor = new DatumAccessor<RequirementT, DatumT, EnvT>(
+		this.accessor = new DatumOffset<RequirementT, DatumT, SelectT, EnvT>(
 			name,
 			requirements,
-			settings,
+			Object.assign({}, settings, {select: null}),
 		);
 		this.settings = settings;
 	}

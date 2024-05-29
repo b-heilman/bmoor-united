@@ -1,8 +1,8 @@
 import {Context} from '@bmoor/context';
 
 import {DatumInterface, FeatureReference} from '../datum.interface';
-import {DatumAccessor} from './accessor';
-import {DatumAccessorContext} from './accessor.interface';
+import {DatumOffset} from './offset';
+import {DatumOffsetContext} from './offset.interface';
 import {DatumComputeSettings} from './compute.interface';
 import {
 	DatumReaderInterface,
@@ -13,22 +13,22 @@ export class DatumCompute<
 	ResponseT,
 	RequirementT,
 	DatumT extends DatumInterface,
-	EnvT extends DatumAccessorContext<DatumT>,
+	SelectT,
+	EnvT extends DatumOffsetContext<DatumT, SelectT>,
 > implements DatumReaderInterface<ResponseT, DatumT, EnvT>
 {
 	name: string;
-	settings: DatumComputeSettings<ResponseT, RequirementT>;
-	accessor: DatumAccessor<RequirementT, DatumT, EnvT>;
+	accessor: DatumOffset<RequirementT, DatumT, SelectT, EnvT>;
+	settings: DatumComputeSettings<ResponseT, RequirementT, SelectT>;
 
 	constructor(
 		name: FeatureReference,
 		requirements: DatumReaderRequirements<RequirementT, DatumT, EnvT>,
-		settings: DatumComputeSettings<ResponseT, RequirementT>,
+		settings: DatumComputeSettings<ResponseT, RequirementT, SelectT>,
 	) {
 		this.name = name;
-		// TODO: no need to cashe this, just like range
 		this.settings = settings;
-		this.accessor = new DatumAccessor(
+		this.accessor = new DatumOffset(
 			name + '_accessor',
 			requirements,
 			settings,

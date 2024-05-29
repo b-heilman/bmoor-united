@@ -1,7 +1,7 @@
 import {Context} from '@bmoor/context';
 
 import {DatumInterface, FeatureReference} from '../datum.interface';
-import {DatumAccessor} from './accessor';
+import {DatumOffset} from './offset';
 import {DatumRangeContext, DatumRangeSettings} from './range.interface';
 import {
 	DatumReaderInterface,
@@ -12,20 +12,21 @@ export class DatumRange<
 	ResponseT,
 	RequirementT,
 	DatumT extends DatumInterface,
-	EnvT extends DatumRangeContext<DatumT>,
+	SelectT,
+	EnvT extends DatumRangeContext<DatumT, SelectT>,
 > implements DatumReaderInterface<ResponseT, DatumT, EnvT>
 {
 	name: string;
-	accessor: DatumAccessor<RequirementT, DatumT, EnvT>;
-	settings: DatumRangeSettings<ResponseT, RequirementT>;
+	accessor: DatumOffset<RequirementT, DatumT, SelectT, EnvT>;
+	settings: DatumRangeSettings<ResponseT, RequirementT, SelectT>;
 
 	constructor(
 		name: FeatureReference,
 		requirements: DatumReaderRequirements<RequirementT, DatumT, EnvT>,
-		settings: DatumRangeSettings<ResponseT, RequirementT>,
+		settings: DatumRangeSettings<ResponseT, RequirementT, SelectT>,
 	) {
 		this.name = name;
-		this.accessor = new DatumAccessor(
+		this.accessor = new DatumOffset(
 			name + '_accessor', // TODO: i don't need to save this to the datum... it's noise
 			requirements,
 			settings,

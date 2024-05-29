@@ -1,16 +1,18 @@
 import {DatumInterface} from '../datum.interface';
 import {
-	DatumAccessorContext,
-	DatumAccessorSettings,
-} from './accessor.interface';
+	DatumOffsetContext,
+	DatumOffsetSettings,
+} from './offset.interface';
 
-export interface DatumAcrossSettings<ResponseT, RequirementT, SelectT>
-	extends DatumAccessorSettings {
-	select: SelectT;
+export interface DatumAcrossSettings<
+	ResponseT, RequirementT, SelectT
+> extends DatumOffsetSettings<SelectT> {
 	reducer: (args: RequirementT[]) => ResponseT;
 }
 
-export interface DatumAcrossContext<DatumT extends DatumInterface, SelectT>
-	extends DatumAccessorContext<DatumT> {
+export interface DatumAcrossContext<
+	DatumT extends DatumInterface,
+	SelectT
+> extends DatumOffsetContext<DatumT, SelectT> {
 	select: (datum: DatumT, select: SelectT) => DatumT[];
 }

@@ -1,13 +1,12 @@
 import {DatumInterface} from '../datum.interface';
-import {DatumAccessorSettings} from './accessor.interface';
+import {DatumOffsetSettings} from './offset.interface';
 import {DatumAcrossContext} from './across.interface';
 
 export interface DatumRankerContext<DatumT extends DatumInterface, SelectT>
 	extends DatumAcrossContext<DatumT, SelectT> {}
 
 export interface DatumRankerSettings<RequirementT, SelectT>
-	extends DatumAccessorSettings {
-	select: SelectT;
+	extends DatumOffsetSettings<SelectT> {
 	asc?: boolean;
 	bucketsCount?: number; // how many buckets to have
 	bucketSize?: number; // how big a bucket can be

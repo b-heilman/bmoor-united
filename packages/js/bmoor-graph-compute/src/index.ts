@@ -1,10 +1,7 @@
-export {DimensionalDatumAccessor} from './datum/accessor';
-export {DimensionalDatumProcessor} from './datum/processor';
-export {DimensionalDatumRanker} from './datum/ranker';
 export {GraphCompute, dump, load} from './graph';
 export * from './graph.interface';
 export {GraphComputeLoader} from './graph/loader';
 export * from './graph/loader.interface';
-export {DimensionalExecutor} from './executor';
+export {GraphExecutor} from './executor';
 export {Interval} from './interval';
 export * from './interval.interface';

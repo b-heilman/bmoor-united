@@ -1,6 +1,6 @@
 import {Context} from '@bmoor/context';
 import {NodeValueSelector, GraphView} from '@bmoor/graph';
-import {DimensionalDatumAccessor as Accessor, GraphCompute, Interval} from '@bmoor/graph-compute';
+import {DimensionalDatumOffset as Accessor, GraphCompute, Interval} from '@bmoor/graph-compute';
 
 import {
 	executor,

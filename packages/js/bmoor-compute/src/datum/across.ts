@@ -1,7 +1,7 @@
 import {Context} from '@bmoor/context';
 
 import {DatumInterface, FeatureReference} from '../datum.interface';
-import {DatumAccessor} from './accessor';
+import {DatumOffset} from './offset';
 import {DatumAcrossContext, DatumAcrossSettings} from './across.interface';
 import {
 	DatumReaderInterface,
@@ -17,7 +17,7 @@ export class DatumAcross<
 > implements DatumReaderInterface<ResponseT, DatumT, EnvT>
 {
 	name: string;
-	accessor: DatumAccessor<RequirementT, DatumT, EnvT>;
+	accessor: DatumOffset<RequirementT, DatumT, SelectT, EnvT>;
 	settings: DatumAcrossSettings<ResponseT, RequirementT, SelectT>;
 	reducer: (args: RequirementT[]) => ResponseT;
 
@@ -27,10 +27,12 @@ export class DatumAcross<
 		settings: DatumAcrossSettings<ResponseT, RequirementT, SelectT>,
 	) {
 		this.name = name;
-		this.accessor = new DatumAccessor<RequirementT, DatumT, EnvT>(
+		this.accessor = new DatumOffset<RequirementT, DatumT, SelectT, EnvT>(
 			name,
 			requirements,
-			settings,
+			// remove the select from the accessor request, the select
+			// SHOULD be different.  Not sure how to make sure it is...
+			Object.assign({}, settings, {select: null}),
 		);
 		this.settings = settings;
 	}

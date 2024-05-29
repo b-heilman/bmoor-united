@@ -9,8 +9,11 @@ import {
 /***
  * Allows you to variable from a datum and load in requirements
  */
-export class DatumReader<RequirementT, DatumT extends DatumInterface, EnvT>
-	implements DatumReaderInterface<RequirementT, DatumT, EnvT>
+export class DatumReader<
+	RequirementT, 
+	DatumT extends DatumInterface, 
+	EnvT
+> implements DatumReaderInterface<RequirementT, DatumT, EnvT>
 {
 	name: FeatureReference;
 	requirements: DatumReaderRequirements<RequirementT, DatumT, EnvT>;

@@ -1,5 +1,5 @@
 import {DatumReference, DatumSettings} from '../datum.interface';
-import {DatumAccessorContext} from '../datum/accessor.interface';
+import {DatumOffsetContext} from '../datum/offset.interface';
 import {DatumAcrossContext} from '../datum/across.interface';
 import {DatumRangeContext} from '../datum/range.interface';
 import {EnvironmentDatumFactory} from '../environment.interface';
@@ -29,9 +29,9 @@ export interface IntervalEnvironmentSelector
 export interface IntervalEnvironmentInterface<
 	DatumT extends IntervalDatumInterface,
 	SelectorT extends IntervalEnvironmentSelector,
-> extends DatumAccessorContext<DatumT>,
+> extends DatumOffsetContext<DatumT, SelectorT>,
 		DatumAcrossContext<DatumT, SelectorT>,
-		DatumRangeContext<DatumT> {
+		DatumRangeContext<DatumT, SelectorT> {
 	select(base: DatumT, select: SelectorT): DatumT[];
 
 	range(datum: DatumT, range: number, strict?: boolean): DatumT[];

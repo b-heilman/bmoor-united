@@ -79,6 +79,7 @@ describe('@bmoor/compute - datum/range', function () {
 
 						return datumPast;
 					},
+					select: () => null
 				},
 				[datumNow],
 			),

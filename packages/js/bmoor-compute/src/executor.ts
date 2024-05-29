@@ -1,4 +1,4 @@
-// import { DatumAccessorInterface} from './datum/accessor.interface';
+// import { DatumOffsetInterface} from './datum/accessor.interface';
 import {Context} from '@bmoor/context';
 
 import {DatumInterface} from './datum.interface';

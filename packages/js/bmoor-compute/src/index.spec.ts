@@ -1,10 +1,9 @@
 import {expect} from 'chai';
 
 import {
-	DatumAccessor,
+	DatumOffset,
 	DatumAcross,
 	DatumCompute,
-	DatumProcessor,
 	DatumRange,
 	DatumRanker,
 	Executor,
@@ -14,9 +13,10 @@ import {
 	mean,
 } from './index';
 
-class Accessor<RequirementT> extends DatumAccessor<
+class Offset<RequirementT> extends DatumOffset<
 	RequirementT,
 	IntervalDatum,
+	IntervalEnvironmentSelector,
 	IntervalEnvironment<IntervalEnvironmentSelector>
 > {}
 class Across<ResponseT, RequirementT> extends DatumAcross<
@@ -30,18 +30,14 @@ class Compute<ResponseT, RequirementT> extends DatumCompute<
 	ResponseT,
 	RequirementT,
 	IntervalDatum,
-	IntervalEnvironment<IntervalEnvironmentSelector>
-> {}
-class Processor<ResponseT, RequirementT> extends DatumProcessor<
-	ResponseT,
-	RequirementT,
-	IntervalDatum,
+	IntervalEnvironmentSelector,
 	IntervalEnvironment<IntervalEnvironmentSelector>
 > {}
 class Range<ResponseT, RequirementT> extends DatumRange<
 	ResponseT,
 	RequirementT,
 	IntervalDatum,
+	IntervalEnvironmentSelector,
 	IntervalEnvironment<IntervalEnvironmentSelector>
 > {}
 class Ranker<RequirementT> extends DatumRanker<
@@ -283,13 +279,13 @@ describe('@bmoor/compute', function () {
 			IntervalEnvironment<IntervalEnvironmentSelector>
 		>(env);
 
-		accessFoo = new Accessor('get-foo', {value: 'foo'}, {offset: 0});
-		accessFoo1 = new Accessor('get-foo-1', {value: 'foo'}, {offset: 1});
-		accessFoo2 = new Accessor('get-foo-2', {value: 'foo'}, {offset: 2});
+		accessFoo = new Offset('get-foo', {value: 'foo'}, {offset: 0});
+		accessFoo1 = new Offset('get-foo-1', {value: 'foo'}, {offset: 1});
+		accessFoo2 = new Offset('get-foo-2', {value: 'foo'}, {offset: 2});
 
 		// bar1
 
-		proc1 = new Processor<
+		proc1 = new Compute<
 			number,
 			{eins: {value: number}; zwei: {value: number}}
 		>(
@@ -299,6 +295,7 @@ describe('@bmoor/compute', function () {
 				zwei: accessFoo2,
 			},
 			{
+				offset: 0,
 				reducer: (args) => {
 					return (args.eins.value + args.zwei.value) / 2;
 				},
@@ -367,7 +364,7 @@ describe('@bmoor/compute', function () {
 		proc6 = new Across(
 			'p-across',
 			{
-				input: new Accessor<{foo: number; bar: number}>(
+				input: new Offset<{foo: number; bar: number}>(
 					'foo-bar',
 					{foo: 'foo', bar: 'bar'},
 					{offset: 0},
@@ -482,7 +479,7 @@ describe('@bmoor/compute', function () {
 		const rank = new Ranker<{rank: {foo: number}}>(
 			'rank-across-foo',
 			{
-				rank: new Accessor<{foo: number}>(
+				rank: new Offset<{foo: number}>(
 					'ranker-across-access',
 					{
 						foo: 'foo',
@@ -534,7 +531,7 @@ describe('@bmoor/compute', function () {
 		const rank = new Ranker<{rank: {foo: number}}>(
 			'rank-across-foo',
 			{
-				rank: new Accessor<{foo: number}>(
+				rank: new Offset<{foo: number}>(
 					'ranker-across-access',
 					{
 						foo: 'foo',
@@ -587,7 +584,7 @@ describe('@bmoor/compute', function () {
 		const rank = new Ranker(
 			'rank-across-foo',
 			{
-				rank: new Accessor<{foo: number}>(
+				rank: new Offset<{foo: number}>(
 					'ranker-across-access',
 					{
 						foo: 'foo',
@@ -639,7 +636,7 @@ describe('@bmoor/compute', function () {
 		const rank = new Ranker(
 			'rank-bucket-foo',
 			{
-				rank: new Accessor<{foo: number}>(
+				rank: new Offset<{foo: number}>(
 					'ranker-across-access',
 					{
 						foo: 'foo',
@@ -699,7 +696,7 @@ describe('@bmoor/compute', function () {
 		const rank = new Ranker(
 			'rank-global-foo',
 			{
-				rank: new Accessor<{foo: number}>(
+				rank: new Offset<{foo: number}>(
 					'ranker-across-access',
 					{
 						foo: 'foo',
