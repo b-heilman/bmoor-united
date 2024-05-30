@@ -77,8 +77,10 @@ export class DatumRanker<
 			}),
 		);
 
-		return <Promise<number[]>>(
-			Promise.all(datums.map((d) => d.getValue(this.name, () => null)))
+		const rtn = await Promise.all(
+			datums.map((d) => d.getValue(this.name, () => null)),
 		);
+
+		return <number[]>rtn;
 	}
 }

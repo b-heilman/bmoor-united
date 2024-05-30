@@ -438,11 +438,9 @@ describe('@bmoor/graph-compute::graph', function () {
 			const datum = iGraph.getDatum('team-a', i2);
 
 			expect(
-				await datum.getValue(
-					'foo-bar', 
-					() => null, 
-					{mode:NodeValueSelector.node}
-				),
+				await datum.getValue('foo-bar', () => null, {
+					mode: NodeValueSelector.node,
+				}),
 			).to.deep.equal(2);
 		});
 
@@ -450,11 +448,9 @@ describe('@bmoor/graph-compute::graph', function () {
 			const datum = iGraph.getDatum('player-1', i2);
 
 			expect(
-				await datum.getValue(
-					'passing', 
-					() => null, 
-					{mode:NodeValueSelector.event}
-				)
+				await datum.getValue('passing', () => null, {
+					mode: NodeValueSelector.event,
+				}),
 			).to.deep.equal(120);
 		});
 	});
@@ -470,7 +466,9 @@ describe('@bmoor/graph-compute::graph', function () {
 			expect(
 				await Promise.all(
 					res.map((datum) => {
-						return datum.getValue('passing', () => null, {mode:NodeValueSelector.event});
+						return datum.getValue('passing', () => null, {
+							mode: NodeValueSelector.event,
+						});
 					}),
 				),
 			).to.deep.equal([120, 220]);
@@ -498,9 +496,13 @@ describe('@bmoor/graph-compute::graph', function () {
 
 			const res = iGraph.range(datum, 2);
 
-			expect(await res[0].getValue('foo-bar', () => null, {})).to.deep.equal(1);
+			expect(
+				await res[1].getValue('foo-bar', () => null, {}),
+			).to.deep.equal(1);
 
-			expect(await res[1].getValue('foo-bar', () => null, {})).to.deep.equal(2);
+			expect(
+				await res[0].getValue('foo-bar', () => null, {}),
+			).to.deep.equal(2);
 		});
 
 		it('should work on the events', async function () {
@@ -509,11 +511,15 @@ describe('@bmoor/graph-compute::graph', function () {
 			const res = iGraph.range(datum, 2);
 
 			expect(
-				await res[0].getValue('passing', () => null, {mode:NodeValueSelector.event}),
+				await res[1].getValue('passing', () => null, {
+					mode: NodeValueSelector.event,
+				}),
 			).to.deep.equal(110);
 
 			expect(
-				await res[1].getValue('passing', () => null, {mode:NodeValueSelector.event}),
+				await res[0].getValue('passing', () => null, {
+					mode: NodeValueSelector.event,
+				}),
 			).to.deep.equal(120);
 		});
 
@@ -529,11 +535,15 @@ describe('@bmoor/graph-compute::graph', function () {
 			const res = iGraph.range(datum, 3);
 
 			expect(
-				await res[0].getValue('passing', () => null, {mode:NodeValueSelector.event}),
+				await res[1].getValue('passing', () => null, {
+					mode: NodeValueSelector.event,
+				}),
 			).to.deep.equal(110);
 
 			expect(
-				await res[1].getValue('passing', () => null, {mode:NodeValueSelector.event}),
+				await res[0].getValue('passing', () => null, {
+					mode: NodeValueSelector.event,
+				}),
 			).to.deep.equal(120);
 		});
 
@@ -549,30 +559,41 @@ describe('@bmoor/graph-compute::graph', function () {
 			const res = iGraph.range(datum, 3);
 
 			expect(
-				await res[0].getValue('passing',  () => null, {mode:NodeValueSelector.event}),
+				await res[2].getValue('passing', () => null, {
+					mode: NodeValueSelector.event,
+				}),
 			).to.deep.equal(110);
 
 			expect(
-				await res[1].getValue('passing',  () => null, {mode:NodeValueSelector.event}),
+				await res[1].getValue('passing', () => null, {
+					mode: NodeValueSelector.event,
+				}),
 			).to.deep.equal(120);
 
 			expect(
-				await res[2].getValue('passing',  () => null, {mode:NodeValueSelector.event}),
+				await res[0].getValue('passing', () => null, {
+					mode: NodeValueSelector.event,
+				}),
 			).to.deep.equal(130);
 		});
 
 		it('should work on the node with strict false', async function () {
 			const datum = iGraph.getDatum('player-1', i2);
 
+			// A positive range takes us back
 			const res = iGraph.range(datum, 3, false);
 
 			expect(
-				await res[0].getValue('passing',  () => null, {mode:NodeValueSelector.event}),
+				await res[0].getValue('passing', () => null, {
+					mode: NodeValueSelector.event,
+				}),
 			).to.deep.equal(120);
 
 			expect(
-				await res[1].getValue('passing',  () => null, {mode:NodeValueSelector.event}),
-			).to.deep.equal(130);
+				await res[1].getValue('passing', () => null, {
+					mode: NodeValueSelector.event,
+				}),
+			).to.deep.equal(110);
 		});
 
 		it('should fail if strict and missing data', async function () {

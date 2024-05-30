@@ -1,15 +1,15 @@
 import {OrderedMap} from '@bmoor/index';
 
+import {DatumReference} from '../datum.interface';
 import {Environment} from '../environment';
 import {IntervalInterface} from '../interval.interface';
+import {IntervalDatum} from './datum';
 import {IntervalDatumSettings} from './datum.interface';
 import {
 	IntervalEnvironmentInterface,
 	IntervalEnvironmentSelector,
 	IntervalEnvironmentSettings,
 } from './environment.interface';
-import { IntervalDatum } from './datum';
-import { DatumReference } from '../datum.interface';
 
 type IntervalT = string;
 type OrderT = number;
@@ -20,13 +20,13 @@ export class IntervalEnvironment<
 > implements IntervalEnvironmentInterface<IntervalDatum, SelectorT>
 {
 	intervals: Map<IntervalT, IntervalInterface<IntervalT, OrderT>>;
-	envs: OrderedMap<
-		string,
-		Environment<SelectorT, IntervalDatumSettings>
-	>;
+	envs: OrderedMap<string, Environment<SelectorT, IntervalDatumSettings>>;
 
 	constructor(
-		settings: IntervalEnvironmentSettings<IntervalDatum, IntervalDatumSettings>,
+		settings: IntervalEnvironmentSettings<
+			IntervalDatum,
+			IntervalDatumSettings
+		>,
 	) {
 		this.envs = new OrderedMap();
 		this.intervals = new Map();
@@ -61,7 +61,7 @@ export class IntervalEnvironment<
 		);
 	}
 
-	getDatum(ref: DatumReference, interval: string): IntervalDatum{
+	getDatum(ref: DatumReference, interval: string): IntervalDatum {
 		return <IntervalDatum>this.envs.get(interval).getDatum(ref);
 	}
 
@@ -81,7 +81,11 @@ export class IntervalEnvironment<
 		return rtn;
 	}
 
-	range(datum: IntervalDatum, range: number, strict: boolean = false): IntervalDatum[] {
+	range(
+		datum: IntervalDatum,
+		range: number,
+		strict: boolean = false,
+	): IntervalDatum[] {
 		const interval = datum.interval;
 		const offset = interval.ref;
 		const rtn = [];
@@ -105,14 +109,20 @@ export class IntervalEnvironment<
 	}
 
 	// offset: positive is backwards, negative is forwards in time
-	offset(datum: IntervalDatum, offset: number, strict = false): IntervalDatum {
+	offset(
+		datum: IntervalDatum,
+		offset: number,
+		strict = false,
+	): IntervalDatum {
 		const newIntervalRef = this.envs.getTagOffset(
 			datum.interval.ref,
 			-offset,
 		);
 		// console.log('Env:offset =>', datum.ref, datum.interval.ref, offset, newIntervalRef);
 
-		const rtn = this.envs.get(newIntervalRef).references.get(datum.getReference());
+		const rtn = this.envs
+			.get(newIntervalRef)
+			.references.get(datum.getReference());
 
 		if (!rtn && strict) {
 			throw new Error(

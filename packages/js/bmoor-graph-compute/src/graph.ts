@@ -1,29 +1,28 @@
 import {ComputeUnknownInterval} from '@bmoor/compute';
 import {Context} from '@bmoor/context';
-import {
-	load as loadSection,
-	NodeReference,
-} from '@bmoor/graph';
+import {NodeReference, load as loadSection} from '@bmoor/graph';
 import {OrderedMap} from '@bmoor/index';
 
+import {GraphComputeDatum} from './datum';
+import {GraphComputeDatumInterface} from './datum.interface';
 import {
 	GraphComputeInterface,
 	GraphComputeJSON,
 	GraphComputeSelector,
 } from './graph.interface';
+import {GraphComputeSection} from './graph/section';
 import {Interval} from './interval';
-import {IntervalReference, IntervalInterface} from './interval.interface';
-import { GraphComputeSection } from './graph/section';
-import { GraphComputeDatum } from './datum';
-import { GraphComputeDatumInterface } from './datum.interface';
+import {IntervalInterface, IntervalReference} from './interval.interface';
 
-export class GraphCompute implements 
-	GraphComputeInterface<
-		GraphComputeDatumInterface<GraphComputeSelector>,
-		GraphComputeSelector
-	> {
+export class GraphCompute
+	implements
+		GraphComputeInterface<
+			GraphComputeDatumInterface<GraphComputeSelector>,
+			GraphComputeSelector
+		>
+{
 	sections: OrderedMap<
-		IntervalReference, 
+		IntervalReference,
 		GraphComputeSection<
 			GraphComputeDatumInterface<GraphComputeSelector>,
 			GraphComputeSelector
@@ -33,7 +32,7 @@ export class GraphCompute implements
 
 	constructor() {
 		this.sections = new OrderedMap<
-			IntervalReference, 
+			IntervalReference,
 			GraphComputeSection<
 				GraphComputeDatumInterface<GraphComputeSelector>,
 				GraphComputeSelector
@@ -60,7 +59,7 @@ export class GraphCompute implements
 		return rtn;
 	}
 
-	hasSection(interval: IntervalInterface){
+	hasSection(interval: IntervalInterface) {
 		return this.sections.has(interval.ref);
 	}
 
@@ -68,7 +67,7 @@ export class GraphCompute implements
 		section: GraphComputeSection<
 			GraphComputeDatumInterface<GraphComputeSelector>,
 			GraphComputeSelector
-		>
+		>,
 	) {
 		this.sections.set(section.interval.ref, section);
 
@@ -95,10 +94,10 @@ export class GraphCompute implements
 	}
 
 	getDatum(
-		ref: NodeReference, 
-		interval: IntervalInterface | IntervalReference 
+		ref: NodeReference,
+		interval: IntervalInterface | IntervalReference,
 	): GraphComputeDatumInterface<GraphComputeSelector> {
-		if (typeof(interval) === 'string'){
+		if (typeof interval === 'string') {
 			interval = this.getInterval(interval);
 		}
 
@@ -113,16 +112,20 @@ export class GraphCompute implements
 
 	select(
 		base: GraphComputeDatum<GraphComputeSelector>,
-		selector: GraphComputeSelector
+		selector: GraphComputeSelector,
 	): GraphComputeDatumInterface<GraphComputeSelector>[] {
-		if (selector.across){
-			return Object.values(this.sections).flatMap(
-				(section) => section.select(selector) 
+		if (selector.across) {
+			selector.across = null;
+			return Object.values(this.sections).flatMap((section) =>
+				section.select(selector),
 			);
 		} else if (selector.interval) {
-			const interval = typeof(selector.interval) === 'string'?
-				this.getInterval(selector.interval) : selector.interval;
+			const interval =
+				typeof selector.interval === 'string'
+					? this.getInterval(selector.interval)
+					: selector.interval;
 
+			selector.interval = null;
 			return this.getSection(interval).select(base, selector);
 		} else {
 			return base.select(selector);
@@ -132,25 +135,23 @@ export class GraphCompute implements
 	range(
 		base: GraphComputeDatumInterface<GraphComputeSelector>,
 		range: number,
-		strict = false
+		strict = false,
 	): GraphComputeDatumInterface<GraphComputeSelector>[] {
 		const interval = base.graph.interval;
 		const offset = interval.ref;
 		const rtn = [];
 		const begin = this.sections.getTagOffset(offset, 1 - range, true);
 
-		for (const [intervalRef, section] of this.sections
-			.getBetween(begin, offset)
-			.entries()) {
-			const res = section.getDatum(base.getReference());
+		for (const section of this.sections
+			.getBetween(offset, begin)
+			.values()) {
+			rtn.push(section.getDatum(base.getReference()));
+		}
 
-			if (!res && strict) {
-				throw new Error(
-					`not able to range (${base.getReference()}, ${base.graph.interval.ref}, ${intervalRef})`,
-				);
-			} else {
-				rtn.push(res);
-			}
+		if (strict && rtn.length !== range) {
+			throw new Error(
+				`not able to range (${base.getReference()}, ${base.graph.interval.ref}, ${range}, ${rtn.length})`,
+			);
 		}
 
 		return rtn;
@@ -159,23 +160,22 @@ export class GraphCompute implements
 	offset(
 		base: GraphComputeDatumInterface<GraphComputeSelector>,
 		offset: number,
-		strict = false
+		strict = false,
 	): GraphComputeDatumInterface<GraphComputeSelector> {
 		const newIntervalRef = this.sections.getTagOffset(
 			base.graph.interval.ref,
 			-offset,
+			!strict,
 		);
-		// console.log('Env:offset =>', datum.ref, datum.interval.ref, offset, newIntervalRef);
 
-		const rtn = this.sections.get(newIntervalRef).getDatum(base.getReference());
-
-		if (!rtn && strict) {
+		if (!newIntervalRef && strict) {
 			throw new Error(
 				`not able to offset (${base.getReference()}, ${base.graph.interval.ref}, ${offset}, ${newIntervalRef})`,
 			);
-		} else {
-			return rtn;
 		}
+
+		// console.log('Env:offset =>', base.node.ref, base.graph.interval.ref, offset, newIntervalRef);
+		return this.sections.get(newIntervalRef).getDatum(base.getReference());
 	}
 	/*
 	intervalSelect(
@@ -215,7 +215,6 @@ export class GraphCompute implements
 		return new GraphDatum(node, graph);
 	}
 	*/
-	
 
 	toJSON(): GraphComputeJSON {
 		const intervals = [];
@@ -265,15 +264,13 @@ export function load(
 			GraphComputeDatumInterface<GraphComputeSelector>,
 			GraphComputeSelector
 		> = loadSection(
-			ctx, 
-			graphInput, 
-			(root) => new GraphComputeSection<
-				GraphComputeDatumInterface<GraphComputeSelector>,
-				GraphComputeSelector
-			>(
-				(node) => new GraphComputeDatum(node, section, graph),
-				root
-			)
+			ctx,
+			graphInput,
+			(root) =>
+				new GraphComputeSection<
+					GraphComputeDatumInterface<GraphComputeSelector>,
+					GraphComputeSelector
+				>((node) => new GraphComputeDatum(node, section, graph), root),
 		);
 
 		section.setInterval(graph.getInterval(interval.ref), graph);

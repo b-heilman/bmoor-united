@@ -9,11 +9,11 @@ export type IntervalLabel = string;
 export interface IntervalInterface
 	extends SuperInterface<IntervalReference, IntervalOrder> {
 	label: IntervalLabel;
-	toJSON(): object
+	toJSON(): object;
 }
 
 // because there's no difference
-export interface IntervalJSON 
+export interface IntervalJSON
 	extends SuperInterface<IntervalReference, IntervalOrder> {
 	label: IntervalLabel;
 }

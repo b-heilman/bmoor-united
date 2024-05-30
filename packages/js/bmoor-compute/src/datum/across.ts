@@ -1,8 +1,8 @@
 import {Context} from '@bmoor/context';
 
 import {DatumInterface, FeatureReference} from '../datum.interface';
-import {DatumOffset} from './offset';
 import {DatumAcrossContext, DatumAcrossSettings} from './across.interface';
+import {DatumOffset} from './offset';
 import {
 	DatumReaderInterface,
 	DatumReaderRequirements,
@@ -39,7 +39,7 @@ export class DatumAcross<
 
 	select(ctx: EnvT, datums: DatumT[]): DatumT[][] {
 		return datums.map((datum) => {
-			return ctx.select(datum, this.settings.select);
+			return ctx.select(datum, Object.assign({}, this.settings.select));
 		});
 	}
 

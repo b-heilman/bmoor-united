@@ -3,9 +3,9 @@ import {expect} from 'chai';
 import {Context} from '@bmoor/context';
 
 import {Graph} from '../graph';
+import {GraphSelector} from '../graph.interface';
+import {GraphDatum} from './datum';
 import {GraphLoader} from './loader';
-import { GraphDatum } from './datum';
-import { GraphSelector } from '../graph.interface';
 
 describe('@bmoor/graph::loader', function () {
 	let ctx: Context = null;
@@ -14,9 +14,7 @@ describe('@bmoor/graph::loader', function () {
 
 	beforeEach(function () {
 		ctx = new Context({});
-		graph = new Graph(
-			(node) => new GraphDatum(node, graph)
-		);
+		graph = new Graph((node) => new GraphDatum(node, graph));
 		loader = new GraphLoader({});
 
 		loader.addNodeGenerator({

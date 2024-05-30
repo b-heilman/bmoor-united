@@ -415,7 +415,11 @@ describe('@bmoor-modeling::Service', function () {
 					);
 				} catch (ex) {
 					failed = true;
-					expect(ex.message).to.equal('fail-whale');
+					if (ex instanceof Error) {
+						expect(ex.message).to.equal('fail-whale');
+					} else {
+						expect(true).to.equal(false);
+					}
 				}
 
 				expect(failed).to.equal(true);
@@ -656,7 +660,11 @@ describe('@bmoor-modeling::Service', function () {
 					);
 				} catch (ex) {
 					failed = true;
-					expect(ex.message).to.equal('fail-whale');
+					if (ex instanceof Error) {
+						expect(ex.message).to.equal('fail-whale');
+					} else {
+						expect(true).to.equal(false);
+					}
 				}
 
 				expect(failed).to.equal(true);
@@ -772,7 +780,7 @@ describe('@bmoor-modeling::Service', function () {
 					}),
 				});
 
-				const myStub = stub(adapter, 'delete').resolves(true);
+				const myStub = stub(adapter, 'delete').resolves(null);
 
 				stub(service, 'read').resolves([
 					{

@@ -70,7 +70,7 @@ describe('@bmoor/compute - datum/compute', function () {
 
 						return datumPast;
 					},
-					select: () => null
+					select: () => null,
 				},
 				[datumNow],
 			),

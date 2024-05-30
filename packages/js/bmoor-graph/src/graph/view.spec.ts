@@ -4,29 +4,17 @@ import {Context} from '@bmoor/context';
 
 import {Features} from '../features';
 import {Graph} from '../graph';
+import {GraphSelector} from '../graph.interface';
+import {GraphDatum} from './datum';
 import {GraphLoader} from './loader';
 import {GraphView} from './view';
-import { GraphDatum } from './datum';
-import { GraphSelector } from '../graph.interface';
 
 describe('@bmoor/graph::view', function () {
 	let ctx: Context = null;
-	let week1: Graph<
-		GraphDatum<GraphSelector>,
-		GraphSelector
-	> = null;
-	let week2: Graph<
-		GraphDatum<GraphSelector>,
-		GraphSelector
-	> = null;
-	let week3: Graph<
-		GraphDatum<GraphSelector>,
-		GraphSelector
-	> = null;
-	let loader: GraphLoader<
-		GraphDatum<GraphSelector>,
-		GraphSelector
-	> = null;
+	let week1: Graph<GraphDatum<GraphSelector>, GraphSelector> = null;
+	let week2: Graph<GraphDatum<GraphSelector>, GraphSelector> = null;
+	let week3: Graph<GraphDatum<GraphSelector>, GraphSelector> = null;
+	let loader: GraphLoader<GraphDatum<GraphSelector>, GraphSelector> = null;
 
 	beforeEach(function () {
 		ctx = new Context({});

@@ -8,7 +8,7 @@ export interface DatumOffsetSettings<SelectT> {
 
 export interface DatumOffsetContext<
 	DatumT extends DatumInterface,
-	SelectT
+	SelectT,
 > {
 	select: (datum: DatumT, select: SelectT) => DatumT[];
 	offset: (datum: DatumT, shift: number, strict?: boolean) => DatumT;

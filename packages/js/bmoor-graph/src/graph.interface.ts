@@ -17,7 +17,7 @@ import {
 export interface GraphSelector extends NodeSelector {
 	root?: boolean;
 	and?: GraphSelector[];
-};
+}
 
 export interface GraphEventFeatures {
 	eventFeatures: Features;
@@ -26,7 +26,7 @@ export interface GraphEventFeatures {
 
 export interface GraphInterface<
 	DatumT extends GraphDatumInterface<SelectorT>,
-	SelectorT extends GraphSelector
+	SelectorT extends GraphSelector,
 > {
 	types: Map<NodeType, NodeInterface[]>;
 	nodeDex: Map<NodeReference, NodeInterface>;
@@ -40,10 +40,7 @@ export interface GraphInterface<
 	getEventFeatures(ref: NodeReference): GraphEventFeatures[];
 	// some search methods
 
-	select(
-		datum: DatumT, 
-		selector: SelectorT
-	): DatumT[];
+	select(datum: DatumT, selector: SelectorT): DatumT[];
 }
 
 export interface GraphJSON {

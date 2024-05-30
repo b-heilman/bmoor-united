@@ -7,7 +7,7 @@ import {
 
 import {GraphInterface, GraphSelector} from '../graph.interface';
 import {Node} from '../node';
-import {NodeReference, NodeValueSelector} from '../node.interface';
+import {NodeValueSelector} from '../node.interface';
 
 export interface GraphDatumSetterSettings extends DatumSetterSettings {
 	mode?: NodeValueSelector;
@@ -19,16 +19,16 @@ export interface GraphDatumInterface<SelectorT extends GraphSelector>
 	graph: GraphInterface<GraphDatumInterface<SelectorT>, SelectorT>;
 
 	getReference(): DatumReference;
-	getParent(): GraphDatumInterface<SelectorT>,
+	getParent(): GraphDatumInterface<SelectorT>;
 	getChildren(): Map<DatumReference, GraphDatumInterface<SelectorT>>;
 
 	equals(other: GraphDatumInterface<SelectorT>): boolean;
 
-	getValue(
+	getValue<ResponseT extends FeatureValue>(
 		attr: string,
-		generator: () => Promise<FeatureValue>,
+		generator: () => Promise<ResponseT>,
 		settings: GraphDatumSetterSettings,
-	): Promise<FeatureValue>;
+	): Promise<ResponseT>;
 
 	select(selector: SelectorT): GraphDatumInterface<SelectorT>[];
 }

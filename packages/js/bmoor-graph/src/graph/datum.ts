@@ -1,4 +1,8 @@
-import {DatumInterface, FeatureValue, DatumReference} from '@bmoor/compute';
+import {
+	DatumInterface,
+	DatumReference,
+	FeatureValue,
+} from '@bmoor/compute';
 
 import {GraphInterface, GraphSelector} from '../graph.interface';
 import {Node} from '../node';
@@ -8,13 +12,17 @@ import {
 	GraphDatumSetterSettings,
 } from './datum.interface';
 
-export class GraphDatum<SelectorT extends GraphSelector> 
-	implements GraphDatumInterface<SelectorT> {
+export class GraphDatum<SelectorT extends GraphSelector>
+	implements GraphDatumInterface<SelectorT>
+{
 	node: Node;
 	graph: GraphInterface<GraphDatumInterface<SelectorT>, SelectorT>;
 	awaiting: Map<string, Promise<FeatureValue>>;
 
-	constructor(node: Node, graph: GraphInterface<GraphDatumInterface<SelectorT>, SelectorT>) {
+	constructor(
+		node: Node,
+		graph: GraphInterface<GraphDatumInterface<SelectorT>, SelectorT>,
+	) {
 		// this.ref = node.ref;
 		this.node = node;
 		this.graph = graph;
@@ -32,12 +40,12 @@ export class GraphDatum<SelectorT extends GraphSelector>
 	getChildren(): Map<DatumReference, GraphDatumInterface<SelectorT>> {
 		return Object.values(this.node.children).reduce(
 			(agg, nodeCollection) => {
-				nodeCollection.forEach(node => {
+				nodeCollection.forEach((node) => {
 					agg.set(node.ref, new GraphDatum(node, this.graph));
 				});
 			},
-			new Map()
-		)
+			new Map(),
+		);
 	}
 
 	equals(other: DatumInterface<SelectorT>) {
@@ -49,31 +57,45 @@ export class GraphDatum<SelectorT extends GraphSelector>
 	}
 
 	// get the value, could be an async source
-	async getValue(
+	async getValue<ResponseT extends FeatureValue>(
 		attr: string,
-		generator: () => Promise<FeatureValue>,
-		settings: GraphDatumSetterSettings,
-	): Promise<FeatureValue> {
-		const mode = settings.mode || NodeValueSelector.node;
-		if (this.awaiting.has(attr)) {
-			return <Promise<FeatureValue>>this.awaiting.get(attr);
-		} else if (this.node.hasValue(attr, mode)) {
-			return this.node.getValue(attr, mode);
+		generator?: () => Promise<ResponseT>,
+		settings: GraphDatumSetterSettings = {},
+	): Promise<ResponseT> {
+		// event mode is the original source of truth, the node values are
+		// what has been computed, etc.
+		// TODO: implement fake and require logic in the higher level components
+		if (generator) {
+			const mode = settings.mode || NodeValueSelector.node;
+			if (this.node.hasValue(attr, mode)) {
+				return <ResponseT>(<unknown>this.node.getValue(attr, mode));
+			} else if (this.awaiting.has(attr)) {
+				return <Promise<ResponseT>>this.awaiting.get(attr);
+			} else {
+				const rtn = generator().then((val) => {
+					// TODO: Datum => write value get-foo { value: 0 } {}
+					//   that's wrong...
+					if (!settings.fake) {
+						this.awaiting.delete(attr);
+						this.node.setValue(attr, mode, val);
+					}
+
+					return val;
+				});
+
+				this.awaiting.set(attr, rtn);
+
+				return rtn;
+			}
 		} else {
-			const rtn = generator();
-
-			rtn.then((val) => {
-				if (!settings.fake) {
-					this.awaiting.delete(attr);
-					this.node.setValue(attr, mode, val);
-				}
-
-				return val;
-			});
-
-			this.awaiting.set(attr, rtn);
-
-			return rtn;
+			const mode = NodeValueSelector.event;
+			if (this.node.hasValue(attr, mode)) {
+				return <ResponseT>(<unknown>this.node.getValue(attr, mode));
+			} else if (settings.require) {
+				throw new Error(`Reading ${this.node.ref}`);
+			} else {
+				return null;
+			}
 		}
 	}
 

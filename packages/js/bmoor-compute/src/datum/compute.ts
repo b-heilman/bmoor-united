@@ -1,9 +1,9 @@
 import {Context} from '@bmoor/context';
 
 import {DatumInterface, FeatureReference} from '../datum.interface';
+import {DatumComputeSettings} from './compute.interface';
 import {DatumOffset} from './offset';
 import {DatumOffsetContext} from './offset.interface';
-import {DatumComputeSettings} from './compute.interface';
 import {
 	DatumReaderInterface,
 	DatumReaderRequirements,

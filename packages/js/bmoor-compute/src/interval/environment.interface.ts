@@ -1,10 +1,13 @@
 import {DatumReference, DatumSettings} from '../datum.interface';
-import {DatumOffsetContext} from '../datum/offset.interface';
 import {DatumAcrossContext} from '../datum/across.interface';
+import {DatumOffsetContext} from '../datum/offset.interface';
 import {DatumRangeContext} from '../datum/range.interface';
 import {EnvironmentDatumFactory} from '../environment.interface';
 import {IntervalInterface} from '../interval.interface';
-import {IntervalDatumSelector, IntervalDatumInterface} from './datum.interface';
+import {
+	IntervalDatumInterface,
+	IntervalDatumSelector,
+} from './datum.interface';
 
 type IntervalT = string;
 type OrderT = number;

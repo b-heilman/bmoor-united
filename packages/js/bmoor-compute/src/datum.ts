@@ -6,8 +6,9 @@ import {
 	FeatureValue,
 } from './datum.interface';
 
-export class Datum<SelectorT = DatumSelector> 
-	implements DatumInterface<SelectorT> {
+export class Datum<SelectorT = DatumSelector>
+	implements DatumInterface<SelectorT>
+{
 	ref: string;
 	parent: Datum;
 	children: Map<string, Datum>;
@@ -84,15 +85,15 @@ export class Datum<SelectorT = DatumSelector>
 		return this.children;
 	}
 
-	async getValue(
+	async getValue<ResponseT extends FeatureValue>(
 		attr: string,
-		generator: () => Promise<FeatureValue>,
+		generator: () => Promise<ResponseT>,
 		settings: DatumSetterSettings = {},
-	): Promise<FeatureValue> {
+	): Promise<ResponseT> {
 		if (this.awaiting.has(attr)) {
-			return <Promise<FeatureValue>>this.awaiting.get(attr);
+			return <Promise<ResponseT>>this.awaiting.get(attr);
 		} else if (this.features.has(attr)) {
-			return <FeatureValue>this.features.get(attr);
+			return <ResponseT>this.features.get(attr);
 		} else {
 			const rtn = generator();
 

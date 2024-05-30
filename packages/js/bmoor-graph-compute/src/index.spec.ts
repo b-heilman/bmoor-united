@@ -1,29 +1,27 @@
 import {expect} from 'chai';
 
 import {
-	mean, 
-	sum, 
-	DatumRanker,
+	DatumAcross,
+	DatumCompute,
 	DatumOffset,
 	DatumRange,
-	DatumAcross,
-	DatumCompute
+	DatumRanker,
+	mean,
+	sum,
 } from '@bmoor/compute';
 import {Context} from '@bmoor/context';
-import {GraphDatum} from '@bmoor/graph';
 
+import {GraphComputeDatumInterface} from './datum.interface';
 import {
-	GraphExecutor,
 	GraphCompute,
 	GraphComputeInterface,
 	GraphComputeLoader,
 	GraphComputeSelector,
+	GraphExecutor,
 	Interval,
 	IntervalInterface,
-	NodeValueSelector
+	NodeValueSelector,
 } from './index';
-import { GraphComputeDatum } from './datum';
-import { GraphComputeDatumInterface } from './datum.interface';
 
 class Offset<RequirementT> extends DatumOffset<
 	RequirementT,
@@ -77,8 +75,6 @@ class Ranker<RequirementT> extends DatumRanker<
 		GraphComputeSelector
 	>
 > {}
-
-
 
 describe('bmoor/graph-compute', function () {
 	let ctx: Context = null;
@@ -197,7 +193,7 @@ describe('bmoor/graph-compute', function () {
 				'rush',
 			],
 			[
-				'1',
+				'i-1',
 				't-1-2',
 				't-1',
 				't-1',
@@ -211,7 +207,7 @@ describe('bmoor/graph-compute', function () {
 				0,
 			],
 			[
-				'1',
+				'i-1',
 				't-1-2',
 				't-1',
 				't-1',
@@ -224,10 +220,36 @@ describe('bmoor/graph-compute', function () {
 				15,
 				111,
 			],
-			['1', 't-1-2', 't-1', 't-1', 't-2', 'wr', 'wr-1-1', 0, 0, 0, 100, 5],
-			['1', 't-1-2', 't-1', 't-1', 't-2', 'wr', 'wr-2-1', 0, 0, 0, 85, 0],
 			[
-				'1',
+				'i-1',
+				't-1-2',
+				't-1',
+				't-1',
+				't-2',
+				'wr',
+				'wr-1-1',
+				0,
+				0,
+				0,
+				100,
+				5,
+			],
+			[
+				'i-1',
+				't-1-2',
+				't-1',
+				't-1',
+				't-2',
+				'wr',
+				'wr-2-1',
+				0,
+				0,
+				0,
+				85,
+				0,
+			],
+			[
+				'i-1',
 				't-1-2',
 				't-2',
 				't-1',
@@ -241,7 +263,7 @@ describe('bmoor/graph-compute', function () {
 				0,
 			],
 			[
-				'1',
+				'i-1',
 				't-1-2',
 				't-2',
 				't-1',
@@ -255,7 +277,7 @@ describe('bmoor/graph-compute', function () {
 				100,
 			],
 			[
-				'1',
+				'i-1',
 				't-1-2',
 				't-2',
 				't-1',
@@ -268,9 +290,22 @@ describe('bmoor/graph-compute', function () {
 				100,
 				25,
 			],
-			['1', 't-1-2', 't-2', 't-1', 't-2', 'wr', 'wr-2-2', 0, 0, 0, 85, 0],
 			[
-				'1',
+				'i-1',
+				't-1-2',
+				't-2',
+				't-1',
+				't-2',
+				'wr',
+				'wr-2-2',
+				0,
+				0,
+				0,
+				85,
+				0,
+			],
+			[
+				'i-1',
 				't-3-4',
 				't-3',
 				't-3',
@@ -284,7 +319,7 @@ describe('bmoor/graph-compute', function () {
 				0,
 			],
 			[
-				'1',
+				'i-1',
 				't-3-4',
 				't-3',
 				't-3',
@@ -297,10 +332,36 @@ describe('bmoor/graph-compute', function () {
 				15,
 				100,
 			],
-			['1', 't-3-4', 't-3', 't-3', 't-4', 'wr', 'wr-1-3', 0, 0, 0, 100, 5],
-			['1', 't-3-4', 't-3', 't-3', 't-4', 'wr', 'wr-2-3', 0, 0, 0, 85, 0],
 			[
-				'1',
+				'i-1',
+				't-3-4',
+				't-3',
+				't-3',
+				't-4',
+				'wr',
+				'wr-1-3',
+				0,
+				0,
+				0,
+				100,
+				5,
+			],
+			[
+				'i-1',
+				't-3-4',
+				't-3',
+				't-3',
+				't-4',
+				'wr',
+				'wr-2-3',
+				0,
+				0,
+				0,
+				85,
+				0,
+			],
+			[
+				'i-1',
 				't-3-4',
 				't-4',
 				't-3',
@@ -314,7 +375,7 @@ describe('bmoor/graph-compute', function () {
 				0,
 			],
 			[
-				'1',
+				'i-1',
 				't-3-4',
 				't-4',
 				't-3',
@@ -327,11 +388,37 @@ describe('bmoor/graph-compute', function () {
 				15,
 				100,
 			],
-			['1', 't-3-4', 't-4', 't-3', 't-4', 'wr', 'wr-1-4', 0, 0, 0, 100, 5],
-			['1', 't-3-4', 't-4', 't-3', 't-4', 'wr', 'wr-2-4', 0, 0, 0, 85, 0],
-
 			[
-				'2',
+				'i-1',
+				't-3-4',
+				't-4',
+				't-3',
+				't-4',
+				'wr',
+				'wr-1-4',
+				0,
+				0,
+				0,
+				100,
+				5,
+			],
+			[
+				'i-1',
+				't-3-4',
+				't-4',
+				't-3',
+				't-4',
+				'wr',
+				'wr-2-4',
+				0,
+				0,
+				0,
+				85,
+				0,
+			],
+			//------------- week 2 -------------
+			[
+				'i-2',
 				't-1-3',
 				't-1',
 				't-1',
@@ -345,7 +432,7 @@ describe('bmoor/graph-compute', function () {
 				0,
 			],
 			[
-				'2',
+				'i-2',
 				't-1-3',
 				't-1',
 				't-1',
@@ -358,10 +445,36 @@ describe('bmoor/graph-compute', function () {
 				15,
 				110,
 			],
-			['2', 't-1-3', 't-1', 't-1', 't-3', 'wr', 'wr-1-1', 0, 0, 0, 100, 5],
-			['2', 't-1-3', 't-1', 't-1', 't-3', 'wr', 'wr-2-1', 0, 0, 0, 85, 0],
 			[
-				'2',
+				'i-2',
+				't-1-3',
+				't-1',
+				't-1',
+				't-3',
+				'wr',
+				'wr-1-1',
+				0,
+				0,
+				0,
+				100,
+				5,
+			],
+			[
+				'i-2',
+				't-1-3',
+				't-1',
+				't-1',
+				't-3',
+				'wr',
+				'wr-2-1',
+				0,
+				0,
+				0,
+				85,
+				0,
+			],
+			[
+				'i-2',
 				't-1-3',
 				't-3',
 				't-1',
@@ -375,7 +488,7 @@ describe('bmoor/graph-compute', function () {
 				0,
 			],
 			[
-				'2',
+				'i-2',
 				't-1-3',
 				't-3',
 				't-1',
@@ -389,7 +502,7 @@ describe('bmoor/graph-compute', function () {
 				100,
 			],
 			[
-				'2',
+				'i-2',
 				't-1-3',
 				't-3',
 				't-1',
@@ -402,9 +515,22 @@ describe('bmoor/graph-compute', function () {
 				100,
 				26,
 			],
-			['2', 't-1-3', 't-3', 't-1', 't-3', 'wr', 'wr-2-3', 0, 0, 0, 85, 0],
 			[
-				'2',
+				'i-2',
+				't-1-3',
+				't-3',
+				't-1',
+				't-3',
+				'wr',
+				'wr-2-3',
+				0,
+				0,
+				0,
+				85,
+				0,
+			],
+			[
+				'i-2',
 				't-2-4',
 				't-2',
 				't-2',
@@ -418,7 +544,7 @@ describe('bmoor/graph-compute', function () {
 				0,
 			],
 			[
-				'2',
+				'i-2',
 				't-2-4',
 				't-2',
 				't-2',
@@ -431,10 +557,36 @@ describe('bmoor/graph-compute', function () {
 				15,
 				100,
 			],
-			['2', 't-2-4', 't-2', 't-2', 't-4', 'wr', 'wr-1-2', 0, 0, 0, 100, 5],
-			['2', 't-2-4', 't-2', 't-2', 't-4', 'wr', 'wr-2-2', 0, 0, 0, 85, 0],
 			[
-				'2',
+				'i-2',
+				't-2-4',
+				't-2',
+				't-2',
+				't-4',
+				'wr',
+				'wr-1-2',
+				0,
+				0,
+				0,
+				100,
+				5,
+			],
+			[
+				'i-2',
+				't-2-4',
+				't-2',
+				't-2',
+				't-4',
+				'wr',
+				'wr-2-2',
+				0,
+				0,
+				0,
+				85,
+				0,
+			],
+			[
+				'i-2',
 				't-2-4',
 				't-4',
 				't-2',
@@ -448,7 +600,7 @@ describe('bmoor/graph-compute', function () {
 				0,
 			],
 			[
-				'2',
+				'i-2',
 				't-2-4',
 				't-4',
 				't-2',
@@ -459,13 +611,39 @@ describe('bmoor/graph-compute', function () {
 				0,
 				0,
 				15,
-				100,
+				90,
 			],
-			['2', 't-2-4', 't-4', 't-2', 't-4', 'wr', 'wr-1-4', 0, 0, 0, 100, 5],
-			['2', 't-2-4', 't-4', 't-2', 't-4', 'wr', 'wr-2-4', 0, 0, 0, 85, 0],
-
 			[
-				'3',
+				'i-2',
+				't-2-4',
+				't-4',
+				't-2',
+				't-4',
+				'wr',
+				'wr-1-4',
+				0,
+				0,
+				0,
+				100,
+				5,
+			],
+			[
+				'i-2',
+				't-2-4',
+				't-4',
+				't-2',
+				't-4',
+				'wr',
+				'wr-2-4',
+				0,
+				0,
+				0,
+				85,
+				0,
+			],
+			//------------- 3 -------------
+			[
+				'i-3',
 				't-1-4',
 				't-1',
 				't-1',
@@ -479,7 +657,7 @@ describe('bmoor/graph-compute', function () {
 				0,
 			],
 			[
-				'3',
+				'i-3',
 				't-1-4',
 				't-1',
 				't-1',
@@ -492,10 +670,36 @@ describe('bmoor/graph-compute', function () {
 				15,
 				109,
 			],
-			['3', 't-1-4', 't-1', 't-1', 't-4', 'wr', 'wr-1-1', 0, 0, 0, 100, 5],
-			['3', 't-1-4', 't-1', 't-1', 't-4', 'wr', 'wr-2-1', 0, 0, 0, 85, 0],
 			[
-				'3',
+				'i-3',
+				't-1-4',
+				't-1',
+				't-1',
+				't-4',
+				'wr',
+				'wr-1-1',
+				0,
+				0,
+				0,
+				100,
+				5,
+			],
+			[
+				'i-3',
+				't-1-4',
+				't-1',
+				't-1',
+				't-4',
+				'wr',
+				'wr-2-1',
+				0,
+				0,
+				0,
+				85,
+				0,
+			],
+			[
+				'i-3',
 				't-1-4',
 				't-4',
 				't-1',
@@ -509,7 +713,7 @@ describe('bmoor/graph-compute', function () {
 				0,
 			],
 			[
-				'3',
+				'i-3',
 				't-1-4',
 				't-4',
 				't-1',
@@ -523,7 +727,7 @@ describe('bmoor/graph-compute', function () {
 				100,
 			],
 			[
-				'3',
+				'i-3',
 				't-1-4',
 				't-4',
 				't-1',
@@ -536,9 +740,22 @@ describe('bmoor/graph-compute', function () {
 				100,
 				27,
 			],
-			['3', 't-1-4', 't-4', 't-1', 't-4', 'wr', 'wr-2-4', 0, 0, 0, 85, 0],
 			[
-				'3',
+				'i-3',
+				't-1-4',
+				't-4',
+				't-1',
+				't-4',
+				'wr',
+				'wr-2-4',
+				0,
+				0,
+				0,
+				85,
+				0,
+			],
+			[
+				'i-3',
 				't-3-2',
 				't-3',
 				't-3',
@@ -552,7 +769,7 @@ describe('bmoor/graph-compute', function () {
 				0,
 			],
 			[
-				'3',
+				'i-3',
 				't-3-2',
 				't-3',
 				't-3',
@@ -565,10 +782,36 @@ describe('bmoor/graph-compute', function () {
 				15,
 				100,
 			],
-			['3', 't-3-2', 't-3', 't-3', 't-2', 'wr', 'wr-1-3', 0, 0, 0, 100, 5],
-			['3', 't-3-2', 't-3', 't-3', 't-2', 'wr', 'wr-2-3', 0, 0, 0, 85, 0],
 			[
-				'3',
+				'i-3',
+				't-3-2',
+				't-3',
+				't-3',
+				't-2',
+				'wr',
+				'wr-1-3',
+				0,
+				0,
+				0,
+				100,
+				5,
+			],
+			[
+				'i-3',
+				't-3-2',
+				't-3',
+				't-3',
+				't-2',
+				'wr',
+				'wr-2-3',
+				0,
+				0,
+				0,
+				85,
+				0,
+			],
+			[
+				'i-3',
 				't-3-2',
 				't-2',
 				't-3',
@@ -582,7 +825,7 @@ describe('bmoor/graph-compute', function () {
 				0,
 			],
 			[
-				'3',
+				'i-3',
 				't-3-2',
 				't-2',
 				't-3',
@@ -593,50 +836,76 @@ describe('bmoor/graph-compute', function () {
 				0,
 				0,
 				15,
-				100,
+				80,
 			],
-			['3', 't-3-2', 't-2', 't-3', 't-2', 'wr', 'wr-1-2', 0, 0, 0, 100, 5],
-			['3', 't-3-2', 't-2', 't-3', 't-2', 'wr', 'wr-2-2', 0, 0, 0, 85, 0],
+			[
+				'i-3',
+				't-3-2',
+				't-2',
+				't-3',
+				't-2',
+				'wr',
+				'wr-1-2',
+				0,
+				0,
+				0,
+				100,
+				5,
+			],
+			[
+				'i-3',
+				't-3-2',
+				't-2',
+				't-3',
+				't-2',
+				'wr',
+				'wr-2-2',
+				0,
+				0,
+				0,
+				85,
+				0,
+			],
 		]);
 
-		i1 = graph.getInterval('1');
-		i2 = graph.getInterval('2');
-		i3 = graph.getInterval('3');
+		i1 = graph.getInterval('i-1');
+		i2 = graph.getInterval('i-2');
+		i3 = graph.getInterval('i-3');
 
 		const rushAccess = new Offset<{value: number}>(
-			'get-foo', 
-			{value: 'rush'}, 
-			{offset: 0}
+			'get-foo',
+			{value: 'rush'},
+			{offset: 0},
 		);
 
 		playerRushingAverage5 = new Range<number, {mean: {value: number}}>(
-			'player-rushing-avg-5', 
+			'player-rushing-avg-5',
 			{
-				mean: rushAccess
+				mean: rushAccess,
 			},
 			{
 				range: 5,
 				offset: 0,
-				reducer: mean
-			}
+				reducer: mean,
+			},
 		);
 
 		playerRushingAverage2 = new Range<number, {mean: {value: number}}>(
-			'player-rushing-avg-2', 
+			'player-rushing-avg-2',
 			{
-				mean: rushAccess
+				mean: rushAccess,
 			},
 			{
 				range: 2,
 				offset: 0,
-				reducer: mean
-			}
+				reducer: mean,
+			},
 		);
 
 		playerRushingAverage2Agg = new Across(
-			'player-rushing-avg-2agg', 
+			'player-rushing-avg-2agg',
 			{
-				mean: playerRushingAverage2
+				mean: playerRushingAverage2,
 			},
 			{
 				select: {
@@ -644,21 +913,22 @@ describe('bmoor/graph-compute', function () {
 					type: 'player',
 				},
 				offset: 0,
-				reducer: mean
-			}
+				reducer: mean,
+			},
 		);
 
 		playerRushingAverage2Comp = new Compute(
 			'player-rushing-avg-2comp',
 			{
 				agg: playerRushingAverage2Agg,
-				avg: playerRushingAverage2
-			},{
+				avg: playerRushingAverage2,
+			},
+			{
 				offset: 2,
-				reducer: function ({agg, avg}: {agg: number, avg: number}) {
+				reducer: function ({agg, avg}: {agg: number; avg: number}) {
 					return agg < avg ? 1 : 0;
 				},
-			}
+			},
 		);
 
 		executor = new GraphExecutor(graph);
@@ -666,29 +936,29 @@ describe('bmoor/graph-compute', function () {
 
 	it('should compute the historical average for a player', async function () {
 		const res = await executor.calculate(
-			[executor.env.getDatum('rb-1-1', i3)], 
+			[executor.env.getDatum('rb-1-1', i3)],
 			playerRushingAverage5,
 		);
 
 		expect(res).to.deep.equal([110]);
 
 		const res2 = await executor.calculate(
-			[executor.env.getDatum('rb-1-1', i2)], 
-			playerRushingAverage5
+			[executor.env.getDatum('rb-1-1', i2)],
+			playerRushingAverage5,
 		);
 
 		expect(res2).to.deep.equal([110.5]);
 
 		const res3 = await executor.calculate(
-			[executor.env.getDatum('rb-1-1', i3)], 
-			playerRushingAverage2
+			[executor.env.getDatum('rb-1-1', i3)],
+			playerRushingAverage2,
 		);
 
 		expect(res3).to.deep.equal([109.5]);
 
 		const res4 = await executor.calculate(
-			[executor.env.getDatum('rb-1-1', i1)], 
-			playerRushingAverage2
+			[executor.env.getDatum('rb-1-1', i1)],
+			playerRushingAverage2,
 		);
 
 		expect(res4).to.deep.equal([111]);
@@ -696,59 +966,74 @@ describe('bmoor/graph-compute', function () {
 
 	it('should compute a composition value', async function () {
 		const res1 = await executor.calculate(
-			[executor.env.getDatum('t-1', i1)], 
-			playerRushingAverage2Agg
+			[executor.env.getDatum('t-1', i1)],
+			playerRushingAverage2Agg,
 		);
 
-		expect(res1).to.deep.equal([29]);
+		expect(res1).to.deep.equal([28.1875]);
+
+		const res12 = await executor.calculate(
+			[executor.env.getDatum('t-2', i1)],
+			playerRushingAverage2Agg,
+		);
+
+		expect(res12).to.deep.equal([28.1875]);
+
+		const res13 = await executor.calculate(
+			[executor.env.getDatum('t-3', i1)],
+			playerRushingAverage2Agg,
+		);
+
+		expect(res13).to.deep.equal([28.1875]);
 
 		const res2 = await executor.calculate(
-			[executor.env.getDatum('t-1', i2)], 
-			playerRushingAverage2Agg
+			[executor.env.getDatum('t-1', i2)],
+			playerRushingAverage2Agg,
 		);
 
-		expect(res2).to.deep.equal([28.875]);
+		expect(res2).to.deep.equal([27.875]);
 
-		/**
-		const res3 = await executor.calculate(
-			i2, playerRushingAverage2Agg, {
-			global: true,
-		});
+		const res22 = await executor.calculate(
+			[executor.env.getDatum('t-2', i2)],
+			playerRushingAverage2Agg,
+		);
 
-		expect(res3).to.deep.equal([28.1875]);
-		**/
+		expect(res22).to.deep.equal([27.875]);
+
+		const res23 = await executor.calculate(
+			[executor.env.getDatum('t-3', i2)],
+			playerRushingAverage2Agg,
+		);
+
+		expect(res23).to.deep.equal([27.875]);
 	});
 
 	it('should compute values using a global value', async function () {
 		const res1 = await executor.calculate(
-			[executor.env.getDatum('rb-1-1', i1)], 
-			playerRushingAverage2Comp
+			[executor.env.getDatum('rb-1-1', i1)],
+			playerRushingAverage2Comp,
 		);
 
 		expect(res1).to.deep.equal([1]);
 
 		const res2 = await executor.calculate(
-			[executor.env.getDatum('rb-1-1', i2)], 
-			playerRushingAverage2Comp
+			[executor.env.getDatum('rb-1-1', i2)],
+			playerRushingAverage2Comp,
 		);
 
 		expect(res2).to.deep.equal([1]);
 
 		const res3 = await executor.calculate(
-			[executor.env.getDatum('qb-1-1', i2)], 
-			playerRushingAverage2Comp
+			[executor.env.getDatum('qb-1-1', i2)],
+			playerRushingAverage2Comp,
 		);
 
 		expect(res3).to.deep.equal([0]);
 	});
 
-	it('should compute values using a diffeent mode', async function () {
+	it('should compute values using a different mode', async function () {
 		const datum = executor.env.getDatum('rb-1-1', i2);
-
-		await executor.calculate(
-			[datum], 
-			playerRushingAverage2Comp
-		);
+		await executor.calculate([datum], playerRushingAverage2Comp);
 
 		expect(
 			await datum.node.getValue(
@@ -764,60 +1049,65 @@ describe('bmoor/graph-compute', function () {
 			),
 		).to.equal(0);
 
-		expect(await datum.node.getValue('rush', NodeValueSelector.node)).to.equal(
-			null,
-		);
+		expect(
+			await datum.node.getValue('rush', NodeValueSelector.node),
+		).to.equal(null);
 
-		expect(await datum.node.getValue('rush', NodeValueSelector.event)).to.equal(
-			110,
-		);
+		expect(
+			await datum.node.getValue('rush', NodeValueSelector.event),
+		).to.equal(110);
 	});
 
 	it('should compute the defensive stats for a team by position group', async function () {
 		const rushAccess = new Offset<{value: number}>(
-			'get-foo', 
-			{value: 'rush'}, 
-			{offset: 0}
+			'get-foo',
+			{value: 'rush'},
+			{offset: 0},
 		);
 
 		const totalRushing = new Across(
-			'total-rushing', {
-				sum: rushAccess
-			},{
+			'total-rushing',
+			{
+				sum: rushAccess,
+			},
+			{
 				offset: 0,
 				select: {
 					type: 'player',
 				},
-				reducer: sum
-			}
+				reducer: sum,
+			},
 		);
 
-		const opposingRushing = new Offset(
+		const opposingRushing = new Compute(
 			'opp-rushing',
 			{
-				rushing: totalRushing
+				rushing: totalRushing,
 			},
 			{
 				select: {
 					parent: 'team',
 					edge: 'opponent',
 				},
-			}
+				reducer: (datum) => {
+					return datum.rushing;
+				},
+			},
 		);
 
 		const res1 = await executor.calculate(
-			[executor.env.getDatum('rb-1-1', i2)], 
-			opposingRushing
+			[executor.env.getDatum('rb-1-1', i1)],
+			opposingRushing,
 		);
 
 		const res2 = await executor.calculate(
-			[executor.env.getDatum('rb-1-1', i2)], 
-			opposingRushing
+			[executor.env.getDatum('rb-1-1', i2)],
+			opposingRushing,
 		);
 
 		const res3 = await executor.calculate(
-			[executor.env.getDatum('rb-1-1', i3)], 
-			opposingRushing
+			[executor.env.getDatum('rb-1-1', i3)],
+			opposingRushing,
 		);
 
 		expect(res1).to.deep.equal([125]);
@@ -825,120 +1115,117 @@ describe('bmoor/graph-compute', function () {
 		expect(res3).to.deep.equal([127]);
 	});
 
-	/**
 	it('should allow us to rank players by offsensive stats', async function () {
 		const ranker = new Ranker(
 			'rushing-rank',
+			{
+				value: 'rush',
+			},
 			{
 				select: {
 					parent: 'root',
 					type: 'player',
 				},
+				reducer: (data: {value: number}) => data.value,
 			},
-			(data: {value: number}) => data.value,
-			[
-				{
-					input: new Accessor({
-						value: 'rush',
-					}),
-				},
-			],
 		);
 
 		const res1 = await executor.calculate(
-			[executor.env.getDatum('rb-1-1', i1)], 
-			ranker
+			[executor.env.getDatum('rb-1-1', i1)],
+			ranker,
 		);
 
 		const res2 = await executor.calculate(
-			[executor.env.getDatum('wr-1-3', i1)], 
-			ranker
+			[executor.env.getDatum('wr-1-3', i1)],
+			ranker,
 		);
 
 		const res3 = await executor.calculate(
-			[executor.env.getDatum('wr-1-4', i3)], 
-			ranker
+			[executor.env.getDatum('wr-1-4', i3)],
+			ranker,
 		);
 
-		expect(res1).to.deep.equal([1]);
-		expect(res2).to.deep.equal([7]);
-		expect(res3).to.deep.equal([5]);
+		expect(res1).to.deep.equal([0]);
+		expect(res2).to.deep.equal([6]);
+		expect(res3).to.deep.equal([4]);
 	});
 
 	it('should allow us to rank teams by defensive stats', async function () {
-		const totalRushing = new Processor('total-rushing', sum, [
+		const totalRushing = new Across(
+			'total-rushing',
 			{
-				input: new Accessor({
-					value: 'rush',
-				}),
+				sum: 'rush',
+			},
+			{
 				select: {
 					type: 'player',
 				},
+				reducer: sum,
 			},
-		]);
-
-		const opposingRushing = new Processor(
-			'allowed-rushing',
-			(value: number) => value,
-			[
-				{
-					input: totalRushing,
-					select: {
-						parent: 'team',
-						edge: 'opponent',
-					},
-					reduce: true,
-				},
-			],
 		);
 
-		const opposingRushAcross = new Processor('opposing-rushing-5', mean, [
+		const opposingRushing = new Compute(
+			'allowed-rushing',
 			{
-				input: opposingRushing,
-				range: 5,
+				input: totalRushing,
 			},
-		]);
+			{
+				select: {
+					parent: 'team',
+					edge: 'opponent',
+				},
+				reducer: ({input}) => input,
+			},
+		);
+
+		const opposingRushAcross = new Range(
+			'opposing-rushing-5',
+			{
+				mean: opposingRushing,
+			},
+			{
+				range: 5,
+				reducer: mean,
+			},
+		);
 
 		const ranker = new Ranker(
 			'rushing-rank',
+			{
+				input: opposingRushAcross,
+			},
 			{
 				select: {
 					parent: 'root',
 					type: 'team',
 				},
+				reducer: ({input}) => input,
 			},
-			(value: number) => value,
-			[
-				{
-					input: opposingRushAcross,
-				},
-			],
 		);
 
 		const res1 = await executor.calculate(
-			[executor.env.getDatum('t-1', i1)], 
-			ranker
+			[executor.env.getDatum('t-1', i1)],
+			ranker,
 		);
 
 		const res2 = await executor.calculate(
-			[executor.env.getDatum('t-2', i1)], 
+			[executor.env.getDatum('t-2', i1)],
 			ranker,
 		);
 
 		const res3 = await executor.calculate(
-			[executor.env.getDatum('t-3', i1)], 
-			ranker
+			[executor.env.getDatum('t-3', i1)],
+			ranker,
 		);
 
 		const res4 = await executor.calculate(
-			[executor.env.getDatum('t-4', i1)], 
-			ranker
+			[executor.env.getDatum('t-4', i1)],
+			ranker,
 		);
 
-		expect(res1).to.deep.equal([1]);
-		expect(res2).to.deep.equal([2]);
-		expect(res3).to.deep.equal([3]);
-		expect(res4).to.deep.equal([4]);
+		expect(res1).to.deep.equal([0]);
+		expect(res2).to.deep.equal([1]);
+		expect(res3).to.deep.equal([2]);
+		expect(res4).to.deep.equal([3]);
 	});
-	**/
 });

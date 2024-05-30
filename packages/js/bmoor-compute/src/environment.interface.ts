@@ -1,8 +1,8 @@
 import {
+	DatumInterface,
 	DatumReference,
 	DatumSelector,
 	DatumSettings,
-	DatumInterface,
 } from './datum.interface';
 
 export type EnvironmentDatumFactory<DatumT, SettingsT> = (

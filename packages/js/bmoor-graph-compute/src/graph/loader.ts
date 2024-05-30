@@ -6,6 +6,7 @@ import {
 	applyBuilder,
 } from '@bmoor/graph';
 
+import {GraphComputeDatumInterface} from '../datum.interface';
 import {GraphCompute} from '../graph';
 import {
 	GraphComputeBuilder,
@@ -13,7 +14,6 @@ import {
 	GraphComputeSelector,
 } from '../graph.interface';
 import {GraphComputeLoaderSettings} from './loader.interface';
-import { GraphComputeDatumInterface } from '../datum.interface';
 
 export class GraphComputeLoader extends GraphLoader<
 	GraphComputeDatumInterface<GraphComputeSelector>,
@@ -48,7 +48,7 @@ export class GraphComputeLoader extends GraphLoader<
 		try {
 			return super.loadRow(ctx, builderInterval, row);
 		} catch (ex) {
-			if (ex instanceof Error){
+			if (ex instanceof Error) {
 				ctx.setError(ex, {
 					code: 'LOADER_LOADDIMROW',
 					protected: row,
@@ -59,9 +59,7 @@ export class GraphComputeLoader extends GraphLoader<
 		}
 	}
 
-	_prepareDimentionalBuilder(
-		dGraph: GraphCompute,
-	): GraphComputeBuilder {
+	_prepareDimentionalBuilder(dGraph: GraphCompute): GraphComputeBuilder {
 		return Array.from(dGraph.intervals.entries()).reduce(
 			(agg, [ref, interval]) => {
 				const graph = dGraph.getSection(interval);

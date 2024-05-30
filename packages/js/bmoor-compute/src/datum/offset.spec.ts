@@ -54,7 +54,7 @@ describe('@bmoor/compute - datum/accessor', function () {
 
 						return datumPast;
 					},
-					select: () => null
+					select: () => null,
 				},
 				[datumNow],
 			),

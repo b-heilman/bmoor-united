@@ -5,15 +5,13 @@ import {Context} from '@bmoor/context';
 import {Event} from './event';
 import {Features} from './features';
 import {Graph, load} from './graph';
+import {GraphDatum} from './graph/datum';
 import {Node} from './node';
-import { GraphDatum } from './graph/datum';
 
 describe('@bmoor/graph', function () {
 	describe('Graph building', function () {
 		it('should properly build a flat graph', function () {
-			const graph = new Graph(
-				(node) => new GraphDatum(node, graph) 
-			);
+			const graph = new Graph((node) => new GraphDatum(node, graph));
 
 			const node1 = new Node('node-1');
 			const node2 = new Node('node-2');
@@ -140,9 +138,7 @@ describe('@bmoor/graph', function () {
 		});
 
 		it('should properly build a tiered graph', function () {
-			const graph = new Graph(
-				(node) => new GraphDatum(node, graph) 
-			);
+			const graph = new Graph((node) => new GraphDatum(node, graph));
 
 			const nodeA = new Node('node-a');
 			const node1 = new Node('node-1');
@@ -214,66 +210,70 @@ describe('@bmoor/graph', function () {
 
 	describe('Graph::select', function () {
 		const ctx = new Context({});
-		const graph = load(ctx, {
-			root: {
-				ref: '__root__',
-				type: 'root',
+		const graph = load(
+			ctx,
+			{
+				root: {
+					ref: '__root__',
+					type: 'root',
+				},
+				nodes: [
+					{
+						ref: 'node-a',
+						type: 'team',
+						edges: {
+							opponent: ['node-b'],
+						},
+					},
+					{
+						ref: 'node-1',
+						type: 'position',
+						metadata: {
+							which: 'wr',
+						},
+						parentRef: 'node-a',
+					},
+					{
+						ref: 'node-2',
+						type: 'position',
+						metadata: {
+							which: 'qb',
+						},
+						parentRef: 'node-a',
+					},
+					{
+						ref: 'node-b',
+						type: 'team',
+						edges: {
+							opponent: ['node-a'],
+						},
+					},
+					{
+						ref: 'node-3',
+						type: 'position',
+						metadata: {
+							which: 'qb',
+						},
+						parentRef: 'node-b',
+					},
+					{
+						ref: 'node-4',
+						type: 'player',
+						parentRef: 'node-3',
+					},
+				],
+				events: [],
 			},
-			nodes: [
-				{
-					ref: 'node-a',
-					type: 'team',
-					edges: {
-						opponent: ['node-b'],
-					},
-				},
-				{
-					ref: 'node-1',
-					type: 'position',
-					metadata: {
-						which: 'wr',
-					},
-					parentRef: 'node-a',
-				},
-				{
-					ref: 'node-2',
-					type: 'position',
-					metadata: {
-						which: 'qb',
-					},
-					parentRef: 'node-a',
-				},
-				{
-					ref: 'node-b',
-					type: 'team',
-					edges: {
-						opponent: ['node-a'],
-					},
-				},
-				{
-					ref: 'node-3',
-					type: 'position',
-					metadata: {
-						which: 'qb',
-					},
-					parentRef: 'node-b',
-				},
-				{
-					ref: 'node-4',
-					type: 'player',
-					parentRef: 'node-3',
-				},
-			],
-			events: [],
-		}, (root) => {
-			/**
-			 * Type script refuses to allow me to do this in any way other this
-			 * this ugly shit.  This language used to be nice, now it's just a worse
-			 * version of Java
-			 */
-			const t = new Graph((node) => new GraphDatum(node, t), root);
-			return t;
-		});
+			(root) => {
+				/**
+				 * Type script refuses to allow me to do this in any way other this
+				 * this ugly shit.  This language used to be nice, now it's just a worse
+				 * version of Java
+				 */
+				const t = new Graph((node) => new GraphDatum(node, t), root);
+				return t;
+			},
+		);
 
 		it('should allow selections combined with .and', function () {
 			const select1 = graph.select(graph.getDatum('node-a'), {
@@ -286,7 +286,7 @@ describe('@bmoor/graph', function () {
 						type: 'position',
 						metadata: {
 							which: 'wr',
-						}
+						},
 					},
 				],
 			});
@@ -298,11 +298,9 @@ describe('@bmoor/graph', function () {
 		});
 
 		it('should allow selection with .type', function () {
-			const select1 = graph.select(
-				graph.getDatum('node-a'), {
-					type: 'position',
-				}
-			);
+			const select1 = graph.select(graph.getDatum('node-a'), {
+				type: 'position',
+			});
 
 			const select2 = graph.select(null, {
 				type: 'position',
@@ -321,11 +319,9 @@ describe('@bmoor/graph', function () {
 		});
 
 		it('should work with .parent', function () {
-			const select1 = graph.select(
-				graph.getDatum('node-a'), {
-					parent: 'team',
-				}
-			);
+			const select1 = graph.select(graph.getDatum('node-a'), {
+				parent: 'team',
+			});
 			const select2 = graph.select(null, {
 				type: 'player',
 				parent: 'team',
@@ -335,8 +331,12 @@ describe('@bmoor/graph', function () {
 				parent: 'team',
 			});
 
-			expect(select1.map((datum) => datum.node.ref)).to.deep.equal(['node-a']);
-			expect(select2.map((datum) => datum.node.ref)).to.deep.equal(['node-b']);
+			expect(select1.map((datum) => datum.node.ref)).to.deep.equal([
+				'node-a',
+			]);
+			expect(select2.map((datum) => datum.node.ref)).to.deep.equal([
+				'node-b',
+			]);
 			expect(select3.map((datum) => datum.node.ref)).to.deep.equal([
 				'node-a',
 				'node-b',
@@ -348,7 +348,9 @@ describe('@bmoor/graph', function () {
 				sibling: 'position',
 			});
 
-			expect(select1.map((datum) => datum.node.ref)).to.deep.equal(['node-2']);
+			expect(select1.map((datum) => datum.node.ref)).to.deep.equal([
+				'node-2',
+			]);
 		});
 
 		it('should work with .metadata', function () {
@@ -366,20 +368,17 @@ describe('@bmoor/graph', function () {
 		});
 
 		it('should work with .edge', function () {
-			const select1 = graph.select(
-				graph.getDatum('node-b'),
-				{
-					edge: 'opponent',
-				});
-			const select2 = graph.select(
-				graph.getDatum('node-b'),
-				{
-					edge: 'opponent',
-					type: 'position',
-				}
-			);
+			const select1 = graph.select(graph.getDatum('node-b'), {
+				edge: 'opponent',
+			});
+			const select2 = graph.select(graph.getDatum('node-b'), {
+				edge: 'opponent',
+				type: 'position',
+			});
 
-			expect(select1.map((datum) => datum.node.ref)).to.deep.equal(['node-a']);
+			expect(select1.map((datum) => datum.node.ref)).to.deep.equal([
+				'node-a',
+			]);
 			expect(select2.map((datum) => datum.node.ref)).to.deep.equal([
 				'node-1',
 				'node-2',
@@ -389,96 +388,100 @@ describe('@bmoor/graph', function () {
 
 	describe('Graph::getEventFeatures', function () {
 		const ctx = new Context({});
-		const graph = load(ctx, {
-			root: {
-				ref: '__root__',
-				type: 'root',
+		const graph = load(
+			ctx,
+			{
+				root: {
+					ref: '__root__',
+					type: 'root',
+				},
+				nodes: [
+					{
+						ref: 'node-a',
+						type: 'team',
+					},
+					{
+						ref: 'node-1',
+						type: 'position',
+						metadata: {
+							which: 'wr',
+						},
+						parentRef: 'node-a',
+					},
+					{
+						ref: 'node-2',
+						type: 'position',
+						metadata: {
+							which: 'qb',
+						},
+						parentRef: 'node-a',
+					},
+					{
+						ref: 'node-b',
+						type: 'team',
+					},
+					{
+						ref: 'node-3',
+						type: 'position',
+						metadata: {
+							which: 'qb',
+						},
+						parentRef: 'node-b',
+					},
+					{
+						ref: 'node-4',
+						type: 'player',
+						parentRef: 'node-3',
+					},
+				],
+				events: [
+					{
+						ref: 'node-1:node-2',
+						features: {
+							general: 1,
+						},
+						connections: [
+							{
+								nodeRef: 'node-1',
+								features: {
+									value: 1,
+								},
+							},
+							{
+								nodeRef: 'node-2',
+								features: {
+									value: 2,
+								},
+							},
+						],
+					},
+					{
+						ref: 'node-3:node-4',
+						features: {
+							general: 2,
+						},
+						connections: [
+							{
+								nodeRef: 'node-3',
+								features: {
+									value: 3,
+								},
+							},
+							{
+								nodeRef: 'node-4',
+								features: {
+									value: 4,
+								},
+							},
+						],
+					},
+				],
 			},
-			nodes: [
-				{
-					ref: 'node-a',
-					type: 'team',
-				},
-				{
-					ref: 'node-1',
-					type: 'position',
-					metadata: {
-						which: 'wr',
-					},
-					parentRef: 'node-a',
-				},
-				{
-					ref: 'node-2',
-					type: 'position',
-					metadata: {
-						which: 'qb',
-					},
-					parentRef: 'node-a',
-				},
-				{
-					ref: 'node-b',
-					type: 'team',
-				},
-				{
-					ref: 'node-3',
-					type: 'position',
-					metadata: {
-						which: 'qb',
-					},
-					parentRef: 'node-b',
-				},
-				{
-					ref: 'node-4',
-					type: 'player',
-					parentRef: 'node-3',
-				},
-			],
-			events: [
-				{
-					ref: 'node-1:node-2',
-					features: {
-						general: 1,
-					},
-					connections: [
-						{
-							nodeRef: 'node-1',
-							features: {
-								value: 1,
-							},
-						},
-						{
-							nodeRef: 'node-2',
-							features: {
-								value: 2,
-							},
-						},
-					],
-				},
-				{
-					ref: 'node-3:node-4',
-					features: {
-						general: 2,
-					},
-					connections: [
-						{
-							nodeRef: 'node-3',
-							features: {
-								value: 3,
-							},
-						},
-						{
-							nodeRef: 'node-4',
-							features: {
-								value: 4,
-							},
-						},
-					],
-				},
-			],
-		}, (node) => {
-			const t = new Graph((node) => new GraphDatum(node, t), node);
-			return t;
-		});
+			(node) => {
+				const t = new Graph((node) => new GraphDatum(node, t), node);
+				return t;
+			},
+		);
 
 		it('should allow selection', function () {
 			const select1 = graph.getEventFeatures('node-1');

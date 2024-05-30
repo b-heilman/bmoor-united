@@ -1,5 +1,5 @@
-import { Datum } from './datum';
-import {DatumSettings, DatumInterface, DatumReference} from './datum.interface';
+import {Datum} from './datum';
+import {DatumReference, DatumSettings} from './datum.interface';
 import {
 	EnvironmentDatumFactory,
 	EnvironmentInterface,
@@ -41,7 +41,7 @@ export class Environment<
 		}
 	}
 
-	getDatum(ref: DatumReference){
+	getDatum(ref: DatumReference) {
 		return this.references.get(ref);
 	}
 

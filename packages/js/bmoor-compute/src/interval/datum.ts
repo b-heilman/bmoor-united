@@ -1,12 +1,15 @@
 import {Datum} from '../datum';
 import {IntervalInterface} from '../interval.interface';
 import {
+	IntervalDatumInterface,
 	IntervalDatumSelector,
 	IntervalDatumSettings,
-	IntervalDatumInterface,
 } from './datum.interface';
 
-export class IntervalDatum extends Datum implements IntervalDatumInterface {
+export class IntervalDatum
+	extends Datum
+	implements IntervalDatumInterface
+{
 	interval: IntervalInterface;
 	children: Map<string, IntervalDatum>;
 

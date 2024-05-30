@@ -1,6 +1,8 @@
-import { GraphDatumInterface } from "@bmoor/graph";
-import { GraphComputeSectionInterface } from "./graph/section.interface";
+import {GraphDatumInterface} from '@bmoor/graph';
 
-export interface GraphComputeDatumInterface<SelectorT> extends GraphDatumInterface<SelectorT>{
-    graph: GraphComputeSectionInterface<SelectorT>
+import {GraphComputeSectionInterface} from './graph/section.interface';
+
+export interface GraphComputeDatumInterface<SelectorT>
+	extends GraphDatumInterface<SelectorT> {
+	graph: GraphComputeSectionInterface<SelectorT>;
 }

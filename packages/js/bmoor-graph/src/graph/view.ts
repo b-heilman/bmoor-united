@@ -1,14 +1,14 @@
 import {EventReference} from '../event.interface';
 import {Features} from '../features';
 import {Graph} from '../graph';
-import { GraphSelector } from '../graph.interface';
+import {GraphSelector} from '../graph.interface';
 import {NodeReference} from '../node.interface';
-import { GraphDatum } from './datum';
+import {GraphDatum} from './datum';
 import {NodePath} from './view.interface';
 
 function searchGraphs<
 	DatumT extends GraphDatum<GraphSelector>,
-	SelectorT extends GraphSelector
+	SelectorT extends GraphSelector,
 >(
 	graphs: Graph<DatumT, SelectorT>[],
 	nodeRef: NodeReference,
@@ -38,7 +38,7 @@ function searchGraphs<
 
 export class GraphView<
 	DatumT extends GraphDatum<GraphSelector>,
-	SelectorT extends GraphSelector
+	SelectorT extends GraphSelector,
 > {
 	graphs: Graph<DatumT, SelectorT>[];
 	connections: Map<

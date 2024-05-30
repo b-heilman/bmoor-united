@@ -9,11 +9,8 @@ import {
 /***
  * Allows you to variable from a datum and load in requirements
  */
-export class DatumReader<
-	RequirementT, 
-	DatumT extends DatumInterface, 
-	EnvT
-> implements DatumReaderInterface<RequirementT, DatumT, EnvT>
+export class DatumReader<RequirementT, DatumT extends DatumInterface, EnvT>
+	implements DatumReaderInterface<RequirementT, DatumT, EnvT>
 {
 	name: FeatureReference;
 	requirements: DatumReaderRequirements<RequirementT, DatumT, EnvT>;
@@ -39,7 +36,7 @@ export class DatumReader<
 					const req = this.requirements[key];
 
 					if (typeof req === 'string') {
-						return datum.getValue(req, () => null);
+						return datum.getValue(req);
 					} else {
 						return datum.getValue(
 							req.name,

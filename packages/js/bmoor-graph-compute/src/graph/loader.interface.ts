@@ -7,7 +7,6 @@ export type LoaderIntervalGenerator = (
 	nextPos: number,
 ) => IntervalInterface;
 
-export interface GraphComputeLoaderSettings
-	extends GraphLoaderSettings {
+export interface GraphComputeLoaderSettings extends GraphLoaderSettings {
 	generateInterval: LoaderIntervalGenerator;
 }

@@ -17,21 +17,22 @@ export interface DatumSelector {
 
 export interface DatumSetterSettings {
 	fake?: boolean;
+	require?: boolean;
 }
 
 export interface DatumInterface<SelectorT = DatumSelector> {
 	getReference(): DatumReference;
-	getParent(): DatumInterface<SelectorT>,
+	getParent(): DatumInterface<SelectorT>;
 	getChildren(): Map<DatumReference, DatumInterface<SelectorT>>;
 
 	// addChild(child: DatumInterface<SelectorT>);
 
 	// get the value, could be an async source
-	getValue(
+	getValue<ReponseT extends FeatureValue>(
 		attr: FeatureReference,
-		generator: () => Promise<FeatureValue>,
+		generator?: () => Promise<ReponseT>,
 		settings?: DatumSetterSettings,
-	): Promise<FeatureValue>;
+	): Promise<ReponseT>;
 
 	// set the value
 	setValue(attr: FeatureReference, value: FeatureValue): Promise<boolean>;

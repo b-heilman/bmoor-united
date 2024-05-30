@@ -14,16 +14,15 @@ import {
 	GraphJSON,
 	GraphSelector,
 } from './graph.interface';
-import {GraphDatum} from './graph/datum';
+import {GraphDatumInterface} from './graph/datum.interface';
 import {Node, load as loadNode} from './node';
 import {NodeReference, NodeType} from './node.interface';
-import { GraphDatumInterface } from './graph/datum.interface';
 
 // used to manage all top levels nodes and then facilitates
 // passing data through them
 function connect<
 	DatumT extends GraphDatumInterface<GraphSelector>,
-	SelectorT extends GraphSelector
+	SelectorT extends GraphSelector,
 >(graph: Graph<DatumT, SelectorT>, node: Node, event: Event) {
 	let arr = graph.connectionDex.get(node.ref);
 
@@ -40,19 +39,17 @@ function connect<
 
 export class Graph<
 	DatumT extends GraphDatumInterface<GraphSelector>,
-	SelectorT extends GraphSelector
-> implements GraphInterface<DatumT, SelectorT> {
+	SelectorT extends GraphSelector,
+> implements GraphInterface<DatumT, SelectorT>
+{
 	root: Node;
 	types: Map<NodeType, Node[]>;
 	nodeDex: Map<NodeReference, Node>;
 	eventDex: Map<EventReference, Event>;
 	connectionDex: Map<NodeReference, Event[]>;
-	datumFactory: ( node: Node ) => DatumT
+	datumFactory: (node: Node) => DatumT;
 
-	constructor(
-		factory: (node: Node) => DatumT, 
-		root?: Node
-	) {
+	constructor(factory: (node: Node) => DatumT, root?: Node) {
 		this.types = new Map();
 		this.root = root || new Node('__root__', 'root');
 		this.nodeDex = new Map();
@@ -123,7 +120,7 @@ export class Graph<
 		}));
 	}
 
-	createDatum(node: Node): DatumT{
+	createDatum(node: Node): DatumT {
 		return this.datumFactory(node);
 	}
 
@@ -132,14 +129,14 @@ export class Graph<
 	}
 
 	select(
-		datum: GraphDatumInterface<GraphSelector>, 
-		selector: GraphSelector
+		datum: GraphDatumInterface<GraphSelector>,
+		selector: GraphSelector,
 	): DatumT[] {
 		let select = <GraphSelector>selector;
 		let res: Node[] = null;
 
-		if (datum == null){
-			if (selector.type){
+		if (datum == null) {
+			if (selector.type) {
 				res = this.types.get(selector.type);
 				select = Object.assign({}, selector, {type: null}); // so it doesn't run again
 			} else {
@@ -154,9 +151,9 @@ export class Graph<
 			}
 		}
 
-		let rtn = [
-			...new Set(res.flatMap((node) => node.select(select))),
-		].map((node) => this.createDatum(node));
+		let rtn = [...new Set(res.flatMap((node) => node.select(select)))].map(
+			(node) => this.createDatum(node),
+		);
 
 		if (selector.and) {
 			for (const subSelector of selector.and) {
@@ -190,14 +187,14 @@ export class Graph<
 
 export function dump<
 	DatumT extends GraphDatumInterface<GraphSelector>,
-	SelectorT extends GraphSelector
+	SelectorT extends GraphSelector,
 >(graph: Graph<DatumT, SelectorT>): GraphJSON {
 	return graph.toJSON();
 }
 
 function addEventJSON<
 	DatumT extends GraphDatumInterface<GraphSelector>,
-	SelectorT extends GraphSelector
+	SelectorT extends GraphSelector,
 >(graph: Graph<DatumT, SelectorT>, eventInfo: EventJSON) {
 	let event = null;
 
@@ -225,12 +222,8 @@ function addEventJSON<
 export function applyBuilder<
 	DatumT extends GraphDatumInterface<GraphSelector>,
 	SelectorT extends GraphSelector,
-	GraphT extends Graph<DatumT, SelectorT>
->(
-	ctx: Context,
-	graph: GraphT,
-	builder: GraphBuilder,
-) {
+	GraphT extends Graph<DatumT, SelectorT>,
+>(ctx: Context, graph: GraphT, builder: GraphBuilder) {
 	for (const info of builder.nodes.values()) {
 		if (info.stub) {
 			throw new Error('node stubbed but never defined: ' + info.node.ref);
@@ -260,12 +253,8 @@ export function applyBuilder<
 export function load<
 	DatumT extends GraphDatumInterface<GraphSelector>,
 	SelectorT extends GraphSelector,
-	GraphT extends Graph<DatumT, SelectorT>
->(
-	ctx: Context, 
-	source: GraphJSON, 
-	factory: (Node) => GraphT
-): GraphT {
+	GraphT extends Graph<DatumT, SelectorT>,
+>(ctx: Context, source: GraphJSON, factory: (Node) => GraphT): GraphT {
 	const builder = {
 		nodes: new Map(),
 		events: source.events,

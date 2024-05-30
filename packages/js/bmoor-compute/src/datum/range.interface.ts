@@ -1,8 +1,5 @@
 import {DatumInterface} from '../datum.interface';
-import {
-	DatumOffsetContext,
-	DatumOffsetSettings,
-} from './offset.interface';
+import {DatumOffsetContext, DatumOffsetSettings} from './offset.interface';
 
 export interface DatumRangeSettings<ResponseT, RequirementT, SelectT>
 	extends DatumOffsetSettings<SelectT> {
@@ -11,10 +8,7 @@ export interface DatumRangeSettings<ResponseT, RequirementT, SelectT>
 	reducer: (args: RequirementT[]) => ResponseT;
 }
 
-export interface DatumRangeContext<
-	DatumT extends DatumInterface,
-	SelectT
->
+export interface DatumRangeContext<DatumT extends DatumInterface, SelectT>
 	extends DatumOffsetContext<DatumT, SelectT> {
 	range: (datum: DatumT, depth: number, strict: boolean) => DatumT[];
 }

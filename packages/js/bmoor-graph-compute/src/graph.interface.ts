@@ -1,22 +1,18 @@
 import {
-	DatumOffsetContext, 
 	DatumAcrossContext,
 	DatumInterface,
+	DatumOffsetContext,
 	DatumRangeContext,
-	EnvironmentInterface
+	EnvironmentInterface,
 } from '@bmoor/compute';
-import {
-	GraphBuilder,
-	GraphJSON,
-	GraphSelector,
-} from '@bmoor/graph';
+import {GraphBuilder, GraphJSON, GraphSelector} from '@bmoor/graph';
 
+import {GraphComputeSectionInterface} from './graph/section.interface';
 import {
 	IntervalInterface,
 	IntervalJSON,
 	IntervalReference,
 } from './interval.interface';
-import { GraphComputeSectionInterface } from './graph/section.interface';
 
 /**
  * I am going to use this to manage the multiple graphs across time.  I believe
@@ -36,21 +32,21 @@ export interface GraphComputeSelector extends GraphSelector {
 }
 
 export interface GraphComputeInterface<
-	DatumT extends DatumInterface<SelectorT>, 
-	SelectorT extends GraphComputeSelector
-> extends EnvironmentInterface<DatumT, SelectorT>, 
-		DatumOffsetContext<DatumT, SelectorT>,  
+	DatumT extends DatumInterface<SelectorT>,
+	SelectorT extends GraphComputeSelector,
+> extends EnvironmentInterface<DatumT, SelectorT>,
+		DatumOffsetContext<DatumT, SelectorT>,
 		DatumAcrossContext<DatumT, SelectorT>,
-		DatumRangeContext<DatumT, SelectorT>{
+		DatumRangeContext<DatumT, SelectorT> {
 	hasInterval(intervalRef: IntervalReference): boolean;
 	addInterval(interval: IntervalInterface): void;
 	getInterval(intervalRef: IntervalReference): IntervalInterface;
 	hasSection(interval: IntervalInterface): boolean;
 	addSection(section: GraphComputeSectionInterface<SelectorT>): void;
-	getSection(interval: IntervalInterface): GraphComputeSectionInterface<SelectorT>;
+	getSection(
+		interval: IntervalInterface,
+	): GraphComputeSectionInterface<SelectorT>;
 }
-
-
 
 // TODO: where do I convert from string to internal selector?
 // selector examples as string

@@ -1,7 +1,7 @@
 // import { DatumOffsetInterface} from './datum/accessor.interface';
 import {Context} from '@bmoor/context';
 
-import {DatumInterface} from './datum.interface';
+import {DatumInterface, FeatureValue} from './datum.interface';
 import {DatumReaderInterface} from './datum/reader.interface';
 import {
 	EnvironmentInterface,
@@ -48,11 +48,19 @@ export class Executor<
 	}
 
 	// run a definition and pull back the value
-	async calculate<ResponseT = any>( // eslint-disable-line  @typescript-eslint/no-explicit-any
+	// eslint-disable-line  @typescript-eslint/no-explicit-any
+	async calculate<ResponseT extends FeatureValue>(
 		datums: DatumT[],
 		action: DatumReaderInterface<ResponseT, DatumT, EnvT>,
 		ctx: Context = new Context({}),
 	): Promise<ResponseT[]> {
-		return action.process(ctx, this.env, datums);
+		return Promise.all(
+			datums.map(async (datum) =>
+				datum.getValue(
+					action.name,
+					async () => (await action.process(ctx, this.env, [datum]))[0],
+				),
+			),
+		);
 	}
 }
