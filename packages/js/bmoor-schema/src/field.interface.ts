@@ -1,11 +1,19 @@
 import {PathInterface} from '@bmoor/path';
+import {
+	PathArray,
+	PathLeaf,
+	PathLink,
+	PathObject,
+} from '@bmoor/path/src/path.interface';
+
+import {TypingInterface} from './typing.interface';
 
 export type FieldReference = string;
 
 export interface FieldInfo {
 	type: string;
-	primary: boolean;
-	required: boolean;
+	primary?: boolean;
+	required?: boolean;
 }
 
 export interface FieldJSON {
@@ -14,34 +22,22 @@ export interface FieldJSON {
 	info: FieldInfo;
 }
 
-export interface FieldParsed {
-	ref?: FieldReference;
-	info: FieldInfo;
-	// eslint-disable-next-line  @typescript-eslint/no-explicit-any
-	path: PathInterface<any>;
-}
+export interface FieldPathObject extends PathObject {}
 
-export interface FieldPathObject {
-	type: 'object';
-	reference?: string;
-}
+export interface FieldPathArray extends PathArray {}
 
-export interface FieldPathArray {
-	type: 'array';
-	reference?: string;
-}
-
-export interface FieldPathLeaf {
-	type: 'leaf';
-	reference?: string; // 
+export interface FieldPathLeaf extends PathLeaf {
 	fieldType: string;
 }
 
-export type FieldPathLink = FieldPathObject | FieldPathArray | FieldPathLeaf;
+export type FieldPathLink =
+	| FieldPathObject
+	| FieldPathArray
+	| FieldPathLeaf;
 
 export interface FieldInterface {
 	getReference(): FieldReference;
-	getInfo(): FieldInfo
-	getPath(): string
-	getPathChain(): FieldPathLink[]
+	getInfo(): FieldInfo;
+	getPath(): string;
+	getPathChain(): FieldPathLink[];
 }

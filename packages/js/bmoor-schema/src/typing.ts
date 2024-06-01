@@ -7,8 +7,8 @@ import {
 export class Typing implements TypingInterface {
 	index: Record<TypingReference, TypingInfo>;
 
-	constructor() {
-		this.index = {};
+	constructor(types: Record<TypingReference, TypingInfo> = {}) {
+		this.index = types;
 	}
 
 	addType(type: TypingReference, info: TypingInfo) {
@@ -19,3 +19,12 @@ export class Typing implements TypingInterface {
 		return this.index[type];
 	}
 }
+
+export const types = new Typing({
+	string: {
+		json: 'string',
+	},
+	number: {
+		json: 'number',
+	},
+});

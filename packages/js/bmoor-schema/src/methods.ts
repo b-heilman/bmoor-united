@@ -1,13 +1,13 @@
 import {implode} from '@bmoor/object';
 
+import {FormatJSONSchema} from './format/jsonschema';
+import {JSONSchemaObject} from './format/jsonschema.interface';
 import {
 	SchemaInterface,
 	SchemaJSON,
 	SchemaStructured,
 } from './schema.interface';
 import {TypingInterface} from './typing.interface';
-import { FormatJSONSchema } from './format/jsonschema';
-import { JSONSchemaObject } from './format/jsonschema.interface';
 
 export function fromStructureSchema(
 	structured: SchemaStructured,
@@ -29,16 +29,14 @@ export function toJSONSchema(
 ): JSONSchemaObject {
 	const formatter = new FormatJSONSchema(typing);
 
-	for (const field of schema.getFields()){
+	for (const field of schema.getFields()) {
 		formatter.addField(field);
 	}
 
 	return formatter.toJSON();
 }
 
-export function toBmoorSchema(
-	schema: SchemaInterface,
-): SchemaJSON {
+export function toBmoorSchema(schema: SchemaInterface): SchemaJSON {
 	return {
 		fields: schema.getFields().map((field) => ({
 			tag: field.getReference(),

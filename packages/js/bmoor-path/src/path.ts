@@ -2,7 +2,9 @@ import {Token, Tokenizer} from '@bmoor/compiler';
 import {DynamicObject} from '@bmoor/object';
 
 import {parser} from './parser';
-import {PathInterface} from './path.interface';
+import {PathInterface, PathLink} from './path.interface';
+import {AccessorToken} from './token/accessor';
+import {ArrayToken} from './token/array';
 
 // eslint-disable-next-line  @typescript-eslint/no-explicit-any
 export class Path<T = any> implements PathInterface<T> {
@@ -21,6 +23,7 @@ export class Path<T = any> implements PathInterface<T> {
 
 		return this.reader;
 	}
+
 	read(root: DynamicObject<T>): T {
 		return this.getReader()(root);
 	}
@@ -36,7 +39,65 @@ export class Path<T = any> implements PathInterface<T> {
 	write(root: DynamicObject<T>, v: T): void {
 		this.getWriter()(root, v);
 	}
-	
+
+	getChain(): PathLink[] {
+		const rtn: PathLink[] = [];
+
+		const tokens = parser.tokenizer.tokenize(this.structure);
+		const leaf = tokens.pop();
+		let reference;
+
+		if (tokens.length) {
+			const root = tokens.shift();
+
+			if (root instanceof ArrayToken) {
+				rtn.push({
+					type: 'array',
+				});
+			}
+
+			reference = tokens.reduce((reference, token) => {
+				if (token instanceof AccessorToken) {
+					rtn.push({
+						type: 'object',
+						reference,
+					});
+				} else {
+					rtn.push({
+						type: 'array',
+						reference,
+					});
+				}
+
+				// cast '' => undefined
+				return token.content || undefined;
+			}, root.content);
+		}
+
+		if (leaf instanceof AccessorToken) {
+			if (reference) {
+				rtn.push({
+					type: 'object',
+					reference,
+				});
+			}
+
+			rtn.push({
+				type: 'leaf',
+				reference: leaf.content,
+			});
+		} else {
+			rtn.push({
+				type: 'array',
+				reference,
+			});
+			rtn.push({
+				type: 'leaf',
+			});
+		}
+
+		return rtn;
+	}
 	toString(): string {
 		return this.structure;
 	}

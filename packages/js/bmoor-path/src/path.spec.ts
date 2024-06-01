@@ -103,5 +103,55 @@ describe('@bmoor/path', function () {
 				},
 			});
 		});
+
+		describe('getChain', function () {
+			it('should return a tokenized version of the path', function () {
+				const path = new Path('hello.world[][]["friend"]');
+
+				expect(path.getChain()).to.deep.equal([
+					{
+						reference: 'hello',
+						type: 'object',
+					},
+					{
+						reference: 'world',
+						type: 'array',
+					},
+					{
+						reference: undefined,
+						type: 'array',
+					},
+					{
+						reference: 'friend',
+						type: 'leaf',
+					},
+				]);
+			});
+
+			it('should return a tokenized version of the path', function () {
+				const path = new Path('[]');
+
+				expect(path.getChain()).to.deep.equal([
+					{
+						reference: undefined,
+						type: 'array',
+					},
+					{
+						type: 'leaf',
+					},
+				]);
+			});
+
+			it('should return a tokenized version of the path', function () {
+				const path = new Path('path');
+
+				expect(path.getChain()).to.deep.equal([
+					{
+						reference: 'path',
+						type: 'leaf',
+					},
+				]);
+			});
+		});
 	});
 });

@@ -1,6 +1,11 @@
 import {DynamicObject} from '@bmoor/object';
 
-import {FieldInfo, FieldInterface, FieldJSON, FieldParsed} from './field.interface';
+import {
+	FieldInfo,
+	FieldInterface,
+	FieldJSON,
+	FieldParsed,
+} from './field.interface';
 
 export interface SchemaStructured {
 	structure: DynamicObject<string>;

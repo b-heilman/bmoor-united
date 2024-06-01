@@ -1,74 +1,94 @@
-import { FieldInterface } from "../field.interface";
-import { TypingInterface } from "../typing.interface";
-import { JSONSchemaNode, JSONSchemaObject } from "./jsonschema.interface";
+import {FieldInterface} from '../field.interface';
+import {SchemaInterface} from '../schema.interface';
+import {TypingInterface} from '../typing.interface';
+import {JSONSchemaNode, JSONSchemaObject} from './jsonschema.interface';
 
 export class FormatJSONSchema {
-    root: JSONSchemaObject;
-    typing: TypingInterface;
+	root: JSONSchemaObject;
+	typing: TypingInterface;
 
-    constructor(typing: TypingInterface){
-        this.root = {
-            type: "object",
-            properties: {}
-        };
-    }
+	constructor(typing: TypingInterface) {
+        this.typing = typing;
+		this.root = {
+			type: 'object',
+			properties: {},
+		};
+	}
 
-    addField(field: FieldInterface){
-        const chain = field.getPathChain();
+	addSchema(schema: SchemaInterface) {
+		for (const field of schema.getFields()) {
+			this.addField(field);
+		}
+	}
 
-        let cur: JSONSchemaNode  = this.root;
+	addField(field: FieldInterface) {
+		const chain = field.getPathChain();
 
-        for (const link of chain){
-            if ('properties' in cur){
-                if (link.type === 'object'){
-                    if (!(link.reference in cur.properties)){
-                        cur.properties[link.reference] = {
-                            type: "object",
-                            properties: {}
+		let cur: JSONSchemaNode = this.root;
+
+		for (const link of chain) {
+			if ('properties' in cur) {
+				if (link.type === 'object') {
+					if (!(link.reference in cur.properties)) {
+						cur.properties[link.reference] = {
+							type: 'object',
+							properties: {},
+						};
+					}
+				} else if (link.type === 'array') {
+					if (!(link.reference in cur.properties)) {
+						cur.properties[link.reference] = {
+							type: 'array',
+							items: {},
+						};
+					}
+				} else {
+					cur.properties[link.reference] = {
+						type: this.typing.getType(link.fieldType).json,
+					};
+				}
+
+                cur = cur.properties[link.reference];
+			} else if ('items' in cur) {
+				if (link.type === 'object') {
+					if (!cur.items.type) {
+						Object.assign(cur.items, {
+							type: 'object',
+							properties: {},
+						});
+					}
+
+                    cur = cur.items;
+				} else if (link.type === 'array') {
+					if (!cur.items.type) {
+						Object.assign(cur.items, {
+							type: 'array',
+							items: {},
+						});
+					}
+
+                    cur = cur.items;
+				} else {
+                    if (link.reference){
+                        if (!('properties' in cur.items)){
+                            cur.items = {
+                                type: 'object',
+                                properties: {},
+                            };
                         }
-                    }
 
-                    cur = cur.properties[link.reference]
-                } else if (link.type === 'array'){
-                    if (!(link.reference in cur.properties)){
-                        cur.properties[link.reference] = {
-                            type: "array",
-                            items: {}
-                        }
+                        cur = cur.items.properties[link.reference] = {
+                            type: this.typing.getType(link.fieldType).json
+                        };
+                    } else {
+                        cur.items.type = this.typing.getType(link.fieldType).json;
                     }
+				}
+			}
+		}
+	}
 
-                    cur = cur.properties[link.reference]
-                } else {
-                    cur.properties[link.reference] = {
-                        type: link.fieldType
-                    }
-                }
-            } else if ('items' in cur){
-                if (link.type === 'object'){
-                    if (!cur.items.type){
-                        Object.assign(cur.items, {
-                            type: 'object',
-                            properties: {}
-                        });
-                    }
-                } else if (link.type === 'array'){
-                    if (!cur.items.type){
-                        Object.assign(cur.items, {
-                            type: 'array',
-                            items: {}
-                        });
-                    }
-                } else {
-                    // TODO: need to decode this
-                    cur.items.type = link.fieldType;
-                }
-
-                cur = cur.items;
-            }
-        }
-    }
-
-    toJSON(){
-        return this.root;
-    }
+	toJSON() {
+		return this.root;
+	}
 }
