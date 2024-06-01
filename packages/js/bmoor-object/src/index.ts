@@ -10,6 +10,7 @@ export {
 	makeGetter,
 	del,
 	MappedObject,
+	ParsedPathType,
 	explode,
 	implode,
 	keys,

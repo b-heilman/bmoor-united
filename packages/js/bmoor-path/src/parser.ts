@@ -66,7 +66,7 @@ function readArray(arr, [fn, ...rest]: ReaderFunction[]) {
 	}
 }
 
-function createReader(ops: Expressable[]): ReaderFunction {
+export function createReader(ops: Expressable[]): ReaderFunction {
 	const chunks = reduceExpressables(ops);
 
 	if (chunks.length > 1) {
@@ -153,7 +153,7 @@ function writeArray<T = unknown>(
 	return obj;
 }
 
-function createWriter(ops: Expressable[]): WriterFunction {
+export function createWriter(ops: Expressable[]): WriterFunction {
 	const chunks = reduceExpressables(ops);
 
 	if (chunks.length > 1) {

@@ -1,8 +1,8 @@
 {
-  "name": "@bmoor/datum",
-  "version": "0.4.0",
+  "name": "@bmoor/schema",
+  "version": "0.2.1",
   "type": "module",
-  "description": "Ways to work the lowly datum",
+  "description": "Describing a data's structure in a way that is friendlier for databases",
   "main": "src/index.ts",
   "files": [
     "src/*[!.spec].js",
@@ -17,15 +17,16 @@
   "bugs": {
     "url": "https://github.com/b-heilman/bmoor-united/issues"
   },
-  "homepage": "https://github.com/b-heilman/bmoor-united/blob/main/packages/bmoor-graph/README.md",
+  "homepage": "https://github.com/b-heilman/bmoor-united/blob/main/packages/bmoor-error/README.md",
+  "dependencies": {},
   "scripts": {
     "build": "mkdir -p dist/; cp -r src/ dist/src;  cp package.json dist/package.json",
     "lint": "eslint ./src",
     "test": "NODE_OPTIONS=\"--import=@bmoor/bootstrap/src/node-typescript.js\" mocha -r ts-node/register --recursive \"./src/**/*.spec.ts\"",
-    "test:file": "mocha -r ts-node/register",
-    "publish": "echo \"graph publishing...\""
+    "publish": "echo \"error publishing...\""
   },
-  "keywords": [],
-  "dependencies": {
-  }
+  "keywords": [
+    "error",
+    "error management"
+  ]
 }

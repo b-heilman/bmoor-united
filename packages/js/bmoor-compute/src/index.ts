@@ -21,6 +21,6 @@ export {DatumRanker} from './datum/ranker';
 export {IntervalDatum} from './interval/datum';
 export {IntervalEnvironment} from './interval/environment';
 
-export * from './transform';
+export * from './methods';
 
 export {ComputeUnknownInterval} from './error/unknownInterval';

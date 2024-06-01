@@ -1,10 +1,9 @@
-// TODO: I need to move all the interfaces to their own files, makes me thing
-//   of C .h files, but c'est la vie
 export {Compiler} from './compiler';
 export {CompilerInterface} from './compiler.interface';
 export {Pattern} from './tokenizer/pattern';
 export {Token} from './tokenizer/token';
 export {TokenizerState} from './tokenizer/state';
+export {Tokenizer} from './tokenizer';
 export {
 	ExpressableUsages,
 	ExpressableValue,
