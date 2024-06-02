@@ -1,7 +1,7 @@
 import {implode} from '@bmoor/object';
 
-import {FormatJSONSchema} from './format/jsonschema';
-import {JSONSchemaObject} from './format/jsonschema.interface';
+import {BuilderJSONSchema} from './builder/jsonschema';
+import {BuilderJSONSchemaObject} from './builder/jsonschema.interface';
 import {
 	SchemaInterface,
 	SchemaJSON,
@@ -15,19 +15,22 @@ export function fromStructureSchema(
 	const paths = implode(structured.structure);
 
 	return {
-		fields: Object.entries(paths).map(([path, tag]) => ({
-			tag,
+		reference: structured.reference,
+		fields: Object.entries(paths).map(([path, ref]) => ({
+			ref,
 			path,
-			info: structured.info[tag],
+			info: structured.info[ref],
 		})),
+		relationships: structured.relationships,
+		validations: structured.validations,
 	};
 }
 
 export function toJSONSchema(
 	schema: SchemaInterface,
 	typing: TypingInterface,
-): JSONSchemaObject {
-	const formatter = new FormatJSONSchema(typing);
+): BuilderJSONSchemaObject {
+	const formatter = new BuilderJSONSchema(typing);
 
 	for (const field of schema.getFields()) {
 		formatter.addField(field);
@@ -39,7 +42,7 @@ export function toJSONSchema(
 export function toBmoorSchema(schema: SchemaInterface): SchemaJSON {
 	return {
 		fields: schema.getFields().map((field) => ({
-			tag: field.getReference(),
+			ref: field.getReference(),
 			info: field.getInfo(),
 			path: field.getPath(),
 		})),

@@ -1,4 +1,3 @@
-import {Token, Tokenizer} from '@bmoor/compiler';
 import {DynamicObject} from '@bmoor/object';
 
 import {parser} from './parser';

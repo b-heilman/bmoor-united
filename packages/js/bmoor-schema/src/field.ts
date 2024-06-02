@@ -7,7 +7,6 @@ import {
 	FieldPathLink,
 	FieldReference,
 } from './field.interface';
-import {TypingInterface} from './typing.interface';
 
 // eslint-disable-next-line  @typescript-eslint/no-explicit-any
 export class Field<T = any> implements FieldInterface {

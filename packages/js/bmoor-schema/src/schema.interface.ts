@@ -4,22 +4,30 @@ import {
 	FieldInfo,
 	FieldInterface,
 	FieldJSON,
-	FieldParsed,
+	FieldReference,
 } from './field.interface';
+import {RelationshipJSON} from './schema/relationship.interface';
+import {ValidationJSON} from './schema/validation.interface';
+
+export type SchemaReference = string;
 
 export interface SchemaStructured {
+	reference?: SchemaReference;
 	structure: DynamicObject<string>;
 	info: Record<string, FieldInfo>;
+	relationships?: Record<FieldReference, RelationshipJSON>;
+	validations?: Record<FieldReference, ValidationJSON>;
 }
 
 export interface SchemaJSON {
+	reference?: SchemaReference;
 	fields: FieldJSON[];
-}
-
-export interface SchemaParsed {
-	fields: FieldParsed[];
+	relationships?: Record<FieldReference, RelationshipJSON>;
+	validations?: Record<FieldReference, ValidationJSON>;
 }
 
 export interface SchemaInterface {
 	getFields(): FieldInterface[];
+	getField(ref: FieldReference): FieldInterface;
+	toJSON(): SchemaJSON;
 }

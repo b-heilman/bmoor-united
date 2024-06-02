@@ -1,14 +1,17 @@
 import {FieldInterface} from '../field.interface';
 import {SchemaInterface} from '../schema.interface';
 import {TypingInterface} from '../typing.interface';
-import {JSONSchemaNode, JSONSchemaObject} from './jsonschema.interface';
+import {
+	BuilderJSONSchemaNode,
+	BuilderJSONSchemaObject,
+} from './jsonschema.interface';
 
-export class FormatJSONSchema {
-	root: JSONSchemaObject;
+export class BuilderJSONSchema {
+	root: BuilderJSONSchemaObject;
 	typing: TypingInterface;
 
 	constructor(typing: TypingInterface) {
-        this.typing = typing;
+		this.typing = typing;
 		this.root = {
 			type: 'object',
 			properties: {},
@@ -24,7 +27,7 @@ export class FormatJSONSchema {
 	addField(field: FieldInterface) {
 		const chain = field.getPathChain();
 
-		let cur: JSONSchemaNode = this.root;
+		let cur: BuilderJSONSchemaNode = this.root;
 
 		for (const link of chain) {
 			if ('properties' in cur) {
@@ -48,7 +51,7 @@ export class FormatJSONSchema {
 					};
 				}
 
-                cur = cur.properties[link.reference];
+				cur = cur.properties[link.reference];
 			} else if ('items' in cur) {
 				if (link.type === 'object') {
 					if (!cur.items.type) {
@@ -58,7 +61,7 @@ export class FormatJSONSchema {
 						});
 					}
 
-                    cur = cur.items;
+					cur = cur.items;
 				} else if (link.type === 'array') {
 					if (!cur.items.type) {
 						Object.assign(cur.items, {
@@ -67,22 +70,22 @@ export class FormatJSONSchema {
 						});
 					}
 
-                    cur = cur.items;
+					cur = cur.items;
 				} else {
-                    if (link.reference){
-                        if (!('properties' in cur.items)){
-                            cur.items = {
-                                type: 'object',
-                                properties: {},
-                            };
-                        }
+					if (link.reference) {
+						if (!('properties' in cur.items)) {
+							cur.items = {
+								type: 'object',
+								properties: {},
+							};
+						}
 
-                        cur = cur.items.properties[link.reference] = {
-                            type: this.typing.getType(link.fieldType).json
-                        };
-                    } else {
-                        cur.items.type = this.typing.getType(link.fieldType).json;
-                    }
+						cur = cur.items.properties[link.reference] = {
+							type: this.typing.getType(link.fieldType).json,
+						};
+					} else {
+						cur.items.type = this.typing.getType(link.fieldType).json;
+					}
 				}
 			}
 		}

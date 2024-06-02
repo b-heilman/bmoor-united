@@ -1,12 +1,8 @@
-import {PathInterface} from '@bmoor/path';
 import {
 	PathArray,
 	PathLeaf,
-	PathLink,
 	PathObject,
 } from '@bmoor/path/src/path.interface';
-
-import {TypingInterface} from './typing.interface';
 
 export type FieldReference = string;
 
