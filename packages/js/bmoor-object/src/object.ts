@@ -39,7 +39,8 @@ export function parsePath(path: IncomingPathType): ParsedPathType {
 }
 
 // base functionality does not support arrays
-export type DynamicObject<T> = {
+// eslint-disable-next-line  @typescript-eslint/no-explicit-any
+export type DynamicObject<T = any> = {
 	[key: string]: T | DynamicObject<T> | DynamicObject<T>[];
 };
 

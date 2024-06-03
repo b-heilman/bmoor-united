@@ -1,3 +1,4 @@
+import {DynamicObject} from '@bmoor/object';
 import {Path, PathInterface} from '@bmoor/path';
 
 import {
@@ -42,5 +43,13 @@ export class Field<T = any> implements FieldInterface {
 				return link;
 			}
 		});
+	}
+
+	read(root: DynamicObject<T>): T {
+		return this.path.read(root);
+	}
+
+	write(root: DynamicObject<T>, v: T): void {
+		return this.path.write(root, v);
 	}
 }

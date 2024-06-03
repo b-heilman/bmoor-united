@@ -1,3 +1,4 @@
+import {DynamicObject} from '@bmoor/object';
 import {
 	PathArray,
 	PathLeaf,
@@ -31,9 +32,13 @@ export type FieldPathLink =
 	| FieldPathArray
 	| FieldPathLeaf;
 
-export interface FieldInterface {
+// eslint-disable-next-line  @typescript-eslint/no-explicit-any
+export interface FieldInterface<T = any> {
 	getReference(): FieldReference;
 	getInfo(): FieldInfo;
 	getPath(): string;
 	getPathChain(): FieldPathLink[];
+
+	read(root: DynamicObject<T>): T;
+	write(root: DynamicObject<T>, v: T);
 }

@@ -1,3 +1,5 @@
+import {DynamicObject} from '@bmoor/object';
+
 import {Field} from './field';
 import {FieldInterface, FieldReference} from './field.interface';
 import {
@@ -32,6 +34,26 @@ export class Schema implements SchemaInterface {
 
 	getField(ref: FieldReference): FieldInterface {
 		return this.fields[ref];
+	}
+
+	implode(root: DynamicObject): DynamicObject {
+		const rtn = {};
+
+		for (const [key, field] of Object.entries(this.fields)) {
+			rtn[key] = field.read(root);
+		}
+
+		return rtn;
+	}
+
+	explode(root: DynamicObject): DynamicObject {
+		const rtn = {};
+
+		for (const [key, field] of Object.entries(this.fields)) {
+			field.write(rtn, root[key]);
+		}
+
+		return rtn;
 	}
 
 	toJSON(): SchemaJSON {
