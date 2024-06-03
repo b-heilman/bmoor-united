@@ -1,4 +1,4 @@
-export {ImplodeSettings} from './object.interface';
+export * from './object.interface';
 export {
 	parsePath,
 	DynamicObject,

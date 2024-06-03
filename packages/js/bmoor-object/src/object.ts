@@ -1,7 +1,7 @@
 import {isArray, isObject, isString, isUndefined} from '@bmoor/compare';
 import {create} from '@bmoor/error';
 
-import {ImplodeSettings} from './object.interface';
+import {IgnoreSettings, ImplodeSettings} from './object.interface';
 
 export type ParsedPathType = Array<string>;
 export type IncomingPathType = string | ParsedPathType;
@@ -40,7 +40,7 @@ export function parsePath(path: IncomingPathType): ParsedPathType {
 
 // base functionality does not support arrays
 export type DynamicObject<T> = {
-	[key: string]: T | DynamicObject<T>;
+	[key: string]: T | DynamicObject<T> | DynamicObject<T>[];
 };
 
 /**
@@ -282,8 +282,6 @@ export function explode<T>(
 
 	return target;
 }
-
-type IgnoreSettings = {[key: string]: boolean | IgnoreSettings};
 
 export function implode<T>(
 	obj: DynamicObject<T>,

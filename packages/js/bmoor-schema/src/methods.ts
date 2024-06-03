@@ -1,4 +1,5 @@
-import {implode} from '@bmoor/object';
+import {isArray} from '@bmoor/compare';
+import {implode} from '@bmoor/path';
 
 import {BuilderJSONSchema} from './builder/jsonschema';
 import {BuilderJSONSchemaObject} from './builder/jsonschema.interface';
@@ -16,11 +17,21 @@ export function fromStructureSchema(
 
 	return {
 		reference: structured.reference,
-		fields: Object.entries(paths).map(([path, ref]) => ({
-			ref,
-			path,
-			info: structured.info[ref],
-		})),
+		fields: Object.entries(paths).map(([path, reference]) => {
+			let ref: string;
+
+			if (isArray(reference)) {
+				ref = reference[0];
+			} else {
+				ref = <string>reference;
+			}
+
+			return {
+				ref,
+				path,
+				info: structured.info[ref],
+			};
+		}),
 		relationships: structured.relationships,
 		validations: structured.validations,
 	};
@@ -37,14 +48,4 @@ export function toJSONSchema(
 	}
 
 	return formatter.toJSON();
-}
-
-export function toBmoorSchema(schema: SchemaInterface): SchemaJSON {
-	return {
-		fields: schema.getFields().map((field) => ({
-			ref: field.getReference(),
-			info: field.getInfo(),
-			path: field.getPath(),
-		})),
-	};
 }

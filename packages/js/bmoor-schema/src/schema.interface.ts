@@ -13,7 +13,7 @@ export type SchemaReference = string;
 
 export interface SchemaStructured {
 	reference?: SchemaReference;
-	structure: DynamicObject<string>;
+	structure: DynamicObject<string | string[]>;
 	info: Record<string, FieldInfo>;
 	relationships?: Record<FieldReference, RelationshipJSON>;
 	validations?: Record<FieldReference, ValidationJSON>;
