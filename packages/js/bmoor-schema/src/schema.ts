@@ -6,13 +6,14 @@ import {
 	SchemaInterface,
 	SchemaJSON,
 	SchemaReference,
+	SchemaSettings,
 } from './schema.interface';
 
 export class Schema implements SchemaInterface {
 	settings: SchemaJSON;
 	fields: Record<FieldReference, FieldInterface>;
 
-	constructor(schema: SchemaJSON) {
+	constructor(schema: SchemaSettings) {
 		this.settings = schema; // I'll probably change this later, but for now, is what it is
 		this.fields = schema.fields.reduce((agg, fieldSchema, dex) => {
 			const field = new Field(fieldSchema);

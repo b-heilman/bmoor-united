@@ -26,6 +26,10 @@ export interface SchemaJSON {
 	validations?: Record<FieldReference, ValidationJSON>;
 }
 
+export interface SchemaSettings extends SchemaJSON {
+	
+}
+
 export interface SchemaInterface {
 	getFields(): FieldInterface[];
 	getField(ref: FieldReference): FieldInterface;
