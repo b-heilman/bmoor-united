@@ -3,7 +3,7 @@ import {DynamicObject} from '@bmoor/object';
 import {ConnectorJSON} from './connector.interface';
 import {ContextInterface} from './context.interface';
 import {Field} from './field';
-import {FieldInterface, FieldReference} from './field.interface';
+import {FieldInterface, FieldReference, FieldUse} from './field.interface';
 import {RelationshipJSON} from './relationship.interface';
 import {
 	SchemaInterface,
@@ -11,11 +11,12 @@ import {
 	SchemaReference,
 	SchemaSettings,
 } from './schema.interface';
+import { create } from '@bmoor/error';
 
 export class Schema implements SchemaInterface {
 	settings: SchemaJSON;
 	fields: Record<FieldReference, FieldInterface>;
-	relationships: RelationshipJSON[];
+	relationships: Record<SchemaReference, RelationshipJSON>;
 	connection: ConnectorJSON;
 
 	constructor(schema: SchemaSettings) {
@@ -36,7 +37,14 @@ export class Schema implements SchemaInterface {
 			return agg;
 		}, {});
 
-		this.relationships = schema.relationships;
+		this.relationships = schema.relationships.reduce(
+			(agg, relationship) => {
+				agg[relationship.other] = relationship;
+
+				return agg;
+			},
+			{}
+		);
 
 		if (this.settings.connection) {
 			this.connection = this.settings.connection;
@@ -47,12 +55,32 @@ export class Schema implements SchemaInterface {
 		return this.settings.reference;
 	}
 
+	getPrimaryField(): FieldInterface {
+		const res = this.getFields().filter(field => field.getInfo().use === FieldUse.primary);
+
+		if (res.length > 1){
+			throw create('unable to have multiple primaries: '+this.getReference(), {
+				code: 'BMS_SCHEMA_MULTIPLE_PRIMARIES'
+			});
+		}
+
+		return res[0];
+	}
+
 	getFields(): FieldInterface[] {
 		return Object.values(this.fields);
 	}
 
 	getField(ref: FieldReference): FieldInterface {
 		return this.fields[ref];
+	}
+
+	getRelationships(): RelationshipJSON[] {
+		return Object.values(this.relationships);
+	}
+
+	getRelationship(other: SchemaReference): RelationshipJSON {
+		return this.relationships[other];
 	}
 
 	implode(root: DynamicObject): DynamicObject {

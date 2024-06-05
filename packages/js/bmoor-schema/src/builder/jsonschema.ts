@@ -1,17 +1,18 @@
+import { ContextInterface } from '../context.interface';
 import {FieldInterface} from '../field.interface';
 import {SchemaInterface} from '../schema.interface';
-import {TypingInterface} from '../typing.interface';
+import { BuilderGraphqlTypingJSON } from './graphql.interface';
 import {
 	BuilderJSONSchemaNode,
 	BuilderJSONSchemaObject,
 } from './jsonschema.interface';
 
 export class BuilderJSONSchema {
+	ctx: ContextInterface<BuilderGraphqlTypingJSON>;
 	root: BuilderJSONSchemaObject;
-	typing: TypingInterface;
 
-	constructor(typing: TypingInterface) {
-		this.typing = typing;
+	constructor(ctx: ContextInterface<BuilderGraphqlTypingJSON>) {
+		this.ctx = ctx;
 		this.root = {
 			type: 'object',
 			properties: {},
@@ -47,7 +48,7 @@ export class BuilderJSONSchema {
 					}
 				} else {
 					cur.properties[link.reference] = {
-						type: this.typing.getType(link.fieldType).json,
+						type: this.ctx.getTyping(link.fieldType).json,
 					};
 				}
 
@@ -81,10 +82,10 @@ export class BuilderJSONSchema {
 						}
 
 						cur = cur.items.properties[link.reference] = {
-							type: this.typing.getType(link.fieldType).json,
+							type: this.ctx.getTyping(link.fieldType).json,
 						};
 					} else {
-						cur.items.type = this.typing.getType(link.fieldType).json;
+						cur.items.type = this.ctx.getTyping(link.fieldType).json;
 					}
 				}
 			}

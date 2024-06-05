@@ -33,8 +33,11 @@ export interface SchemaSettings extends SchemaJSON {}
 
 export interface SchemaInterface extends ConnectorReadable {
 	getReference(): SchemaReference;
+	getPrimaryField(): FieldInterface;
 	getFields(): FieldInterface[];
 	getField(ref: FieldReference): FieldInterface;
+	getRelationships(): RelationshipJSON[]
+	getRelationship(ref: SchemaReference): RelationshipJSON
 
 	toJSON(): SchemaJSON;
 }

@@ -10,9 +10,14 @@ import {ValidatorJSON} from './validator.interface';
 
 export type FieldReference = string;
 
+export enum FieldUse {
+	primary='primary',
+	synthetic='synthetic'
+}
+
 export interface FieldInfo {
 	type: string;
-	primary?: boolean;
+	use?: 'primary' | 'synthetic';
 	required?: boolean;
 }
 

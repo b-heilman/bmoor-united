@@ -35,7 +35,20 @@ describe('@bmoor/schema :: FormatJSONSchema', function () {
 			],
 		});
 
-		const formatter = new BuilderJSONSchema(types);
+		const formatter = new BuilderJSONSchema({
+			getValidator() {
+				return () => Promise.resolve('fail');
+			},
+			getTyping(ref) {
+				return types.getType(ref);
+			},
+			getSchema() {
+				return schema;
+			},
+			getConnector() {
+				return null;
+			}
+		});
 
 		formatter.addSchema(schema);
 
