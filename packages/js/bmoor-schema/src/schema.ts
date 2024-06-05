@@ -1,7 +1,10 @@
 import {DynamicObject} from '@bmoor/object';
 
+import {ConnectorJSON} from './connector.interface';
+import {ContextInterface} from './context.interface';
 import {Field} from './field';
 import {FieldInterface, FieldReference} from './field.interface';
+import {RelationshipJSON} from './relationship.interface';
 import {
 	SchemaInterface,
 	SchemaJSON,
@@ -12,6 +15,8 @@ import {
 export class Schema implements SchemaInterface {
 	settings: SchemaJSON;
 	fields: Record<FieldReference, FieldInterface>;
+	relationships: RelationshipJSON[];
+	connection: ConnectorJSON;
 
 	constructor(schema: SchemaSettings) {
 		this.settings = schema; // I'll probably change this later, but for now, is what it is
@@ -21,8 +26,21 @@ export class Schema implements SchemaInterface {
 
 			agg[ref] = field;
 
+			if (schema.validators) {
+				const validator = schema.validators[ref];
+				if (validator) {
+					field.setValidator(validator);
+				}
+			}
+
 			return agg;
 		}, {});
+
+		this.relationships = schema.relationships;
+
+		if (this.settings.connection) {
+			this.connection = this.settings.connection;
+		}
 	}
 
 	getReference(): SchemaReference {
@@ -55,6 +73,13 @@ export class Schema implements SchemaInterface {
 		}
 
 		return rtn;
+	}
+
+	// eslint-disable-next-line  @typescript-eslint/no-explicit-any
+	async read(ctx: ContextInterface, select: any): Promise<any[]> {
+		const connector = ctx.getConnector(this.connection.connector);
+
+		return connector(select);
 	}
 
 	toJSON(): SchemaJSON {

@@ -33,7 +33,8 @@ export function fromStructureSchema(
 			};
 		}),
 		relationships: structured.relationships,
-		validations: structured.validations,
+		validators: structured.validators,
+		connection: structured.connection,
 	};
 }
 

@@ -1,10 +1,11 @@
 export type TypingReference = string;
 
-export interface TypingInfo {
+export interface TypingJSON {
 	json: string;
 }
 
-export interface TypingInterface {
-	addType(type: TypingReference, info: TypingInfo): void;
-	getType(type: TypingReference): TypingInfo;
+export interface TypingInterface<T extends TypingJSON = TypingJSON> {
+	define(types: Record<TypingReference, T>);
+	addType(type: TypingReference, info: T): void;
+	getType(type: TypingReference): T;
 }

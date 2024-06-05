@@ -1,13 +1,14 @@
 import {DynamicObject} from '@bmoor/object';
 
+import {ConnectorJSON, ConnectorReadable} from './connector.interface';
 import {
 	FieldInfo,
 	FieldInterface,
 	FieldJSON,
 	FieldReference,
 } from './field.interface';
-import {RelationshipJSON} from './schema/relationship.interface';
-import {ValidationJSON} from './schema/validation.interface';
+import {RelationshipJSON} from './relationship.interface';
+import {ValidatorJSON} from './validator.interface';
 
 export type SchemaReference = string;
 
@@ -15,23 +16,25 @@ export interface SchemaStructured {
 	reference?: SchemaReference;
 	structure: DynamicObject<string | string[]>;
 	info: Record<string, FieldInfo>;
-	relationships?: Record<FieldReference, RelationshipJSON>;
-	validations?: Record<FieldReference, ValidationJSON>;
+	validators?: Record<FieldReference, ValidatorJSON>;
+	relationships?: RelationshipJSON[];
+	connection?: ConnectorJSON;
 }
 
 export interface SchemaJSON {
 	reference?: SchemaReference;
 	fields: FieldJSON[];
-	relationships?: Record<FieldReference, RelationshipJSON>;
-	validations?: Record<FieldReference, ValidationJSON>;
+	validators?: Record<FieldReference, ValidatorJSON>;
+	relationships?: RelationshipJSON[];
+	connection?: ConnectorJSON;
 }
 
-export interface SchemaSettings extends SchemaJSON {
-	
-}
+export interface SchemaSettings extends SchemaJSON {}
 
-export interface SchemaInterface {
+export interface SchemaInterface extends ConnectorReadable {
+	getReference(): SchemaReference;
 	getFields(): FieldInterface[];
 	getField(ref: FieldReference): FieldInterface;
+
 	toJSON(): SchemaJSON;
 }

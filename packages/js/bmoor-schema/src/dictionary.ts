@@ -1,24 +1,92 @@
+import {
+	ConnectorFn,
+	ConnectorInterface,
+	ConnectorReference,
+} from './connector.interface';
 import {DictionaryInterface, DictionaryJSON} from './dictionary.interface';
 import {Schema} from './schema';
 import {SchemaInterface, SchemaReference} from './schema.interface';
+import {types} from './typing';
+import {
+	TypingInterface,
+	TypingJSON,
+	TypingReference,
+} from './typing.interface';
+import {validations} from './validator';
+import {
+	ValidatorInterface,
+	ValidatorReference,
+} from './validator.interface';
 
-export class Dictionary implements DictionaryInterface {
-	schemas: Record<SchemaReference, Schema>;
+// eslint-disable-next-line  @typescript-eslint/no-explicit-any
+type GenericInput = any;
 
-	constructor(settings: DictionaryJSON) {
-		this.schemas = {};
+export class Dictionary<SchemaT extends SchemaInterface>
+	implements DictionaryInterface<SchemaT>
+{
+	builder: (input: GenericInput) => SchemaT[];
+	schemas: Record<SchemaReference, SchemaT>;
+	typing: TypingInterface;
+	validations: ValidatorInterface;
+	connectors: ConnectorInterface;
 
-		for (const schemaSettings of settings.schemas) {
-			const schema = new Schema(schemaSettings);
-			const schemaRef = schema.getReference();
+	constructor(
+		builder: (input: GenericInput) => SchemaT[],
+		settings: GenericInput = null,
+	) {
+		this.typing = types;
+		this.builder = builder;
+		this.validations = validations;
 
-			if (schemaRef) {
-				this.schemas[schemaRef] = schema;
-			}
+		if (settings) {
+			this.define(settings);
 		}
+		const schemas = builder(settings);
+		this.schemas = schemas.reduce((agg, schema) => {
+			agg[schema.getReference()] = schema;
+
+			return agg;
+		}, {});
 	}
 
-	getSchema(ref: SchemaReference): SchemaInterface {
+	setTyping(typing: TypingInterface) {
+		this.typing = typing;
+	}
+
+	getTyping(ref: TypingReference): TypingJSON {
+		return this.typing.getType(ref);
+	}
+
+	setValidators(validations: ValidatorInterface) {
+		this.validations = validations;
+	}
+
+	getValidator(ref: ValidatorReference) {
+		return this.validations.getValidator(ref);
+	}
+
+	setConnectors(connectors: ConnectorInterface) {
+		this.connectors = connectors;
+	}
+
+	getConnector(ref: ConnectorReference): ConnectorFn {
+		return this.connectors.getConnection(ref);
+	}
+
+	define(input: GenericInput) {
+		const schemas = this.builder(input);
+		this.schemas = schemas.reduce((agg, schema) => {
+			agg[schema.getReference()] = schema;
+
+			return agg;
+		}, {});
+	}
+
+	addSchema(schema: SchemaT) {
+		this.schemas[schema.getReference()] = schema;
+	}
+
+	getSchema(ref: SchemaReference): SchemaT {
 		return this.schemas[ref];
 	}
 
@@ -29,4 +97,10 @@ export class Dictionary implements DictionaryInterface {
 			),
 		};
 	}
+}
+
+export function dictionaryBuilder(settings: DictionaryJSON) {
+	return settings.schemas.map(
+		(schemaSettings) => new Schema(schemaSettings),
+	);
 }

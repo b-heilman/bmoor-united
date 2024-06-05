@@ -1,6 +1,7 @@
 import {DynamicObject} from '@bmoor/object';
 import {Path, PathInterface} from '@bmoor/path';
 
+import {ContextInterface} from './context.interface';
 import {
 	FieldInfo,
 	FieldInterface,
@@ -8,11 +9,13 @@ import {
 	FieldPathLink,
 	FieldReference,
 } from './field.interface';
+import {ValidatorJSON} from './validator.interface';
 
 // eslint-disable-next-line  @typescript-eslint/no-explicit-any
 export class Field<T = any> implements FieldInterface {
 	source: FieldJSON;
 	path: PathInterface<T>;
+	validation: ValidatorJSON;
 
 	constructor(schema: FieldJSON) {
 		this.path = new Path(schema.path);
@@ -51,5 +54,17 @@ export class Field<T = any> implements FieldInterface {
 
 	write(root: DynamicObject<T>, v: T): void {
 		return this.path.write(root, v);
+	}
+
+	setValidator(settings: ValidatorJSON) {
+		this.validation = settings;
+	}
+
+	validate(
+		ctx: ContextInterface,
+		root: DynamicObject<T>,
+	): Promise<string> {
+		const validator = ctx.getValidator(this.validation.validator);
+		return validator(this.read(root));
 	}
 }
