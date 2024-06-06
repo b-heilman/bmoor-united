@@ -8,6 +8,7 @@ describe('@bmoor/schema :: BuilderGraphql', function () {
 	it('should properly generate a json schema', function () {
 		const schemas = {
 			's-1': new Schema({
+				reference: 's-1',
 				fields: [
 					{
 						path: 'foo',
@@ -24,6 +25,7 @@ describe('@bmoor/schema :: BuilderGraphql', function () {
 				],
 			}),
 			's-2': new Schema({
+				reference: 's-2',
 				fields: [
 					{
 						path: 'hello',
@@ -40,6 +42,7 @@ describe('@bmoor/schema :: BuilderGraphql', function () {
 				],
 			}),
 			's-3': new Schema({
+				reference: 's-3',
 				fields: [
 					{
 						path: 'id',
@@ -51,18 +54,21 @@ describe('@bmoor/schema :: BuilderGraphql', function () {
 					{
 						path: 'otherId',
 						info: {
+							required: true,
 							type: 'string',
 						},
 					},
 					{
 						path: 'mount',
 						info: {
+							use: 'synthetic',
 							type: 'array',
 						},
 					},
 					{
 						path: 'parent',
 						info: {
+							use: 'synthetic',
 							type: 'object',
 						},
 					},
@@ -72,7 +78,7 @@ describe('@bmoor/schema :: BuilderGraphql', function () {
 						reference: 'parent',
 						type: 'toOne',
 						fields: ['otherId'],
-						other: 's-1',
+						other: 's-2',
 						otherFields: ['hello'],
 					},
 					{
@@ -104,38 +110,21 @@ describe('@bmoor/schema :: BuilderGraphql', function () {
 		formatter.addSchema(schemas['s-3']);
 
 		expect(formatter.toJSON()).to.deep.equal({
-			type: 'object',
-			properties: {
-				foo: {
-					type: 'object',
-					properties: {
-						bar: {
-							type: 'string',
-						},
-						bar2: {
-							type: 'number',
-						},
-					},
-				},
-
-				hello: {
-					type: 'array',
-					items: {
-						type: 'object',
-						properties: {
-							world: {
-								type: 'number',
-							},
-							otherWorld: {
-								type: 'array',
-								items: {
-									type: 'string',
-								},
-							},
-						},
-					},
-				},
-			},
+			id: 'ID!',
+			otherId: 'String!',
+			'parent(hello: String)': 's-2',
+			'mount(foo: String)': '[s-1]',
 		});
+
+		expect(formatter.toString().replace(/\s/g, '')).to.deep.equal(
+			`
+			type s-3 {
+			id: ID!
+			otherId: String!
+			parent(hello: String): s-2
+			mount(foo: String): [s-1]
+			}
+		`.replace(/\s/g, ''),
+		);
 	});
 });

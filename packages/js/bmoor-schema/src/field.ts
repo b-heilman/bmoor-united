@@ -23,7 +23,7 @@ export class Field<T = any> implements FieldInterface {
 	}
 
 	getReference(): FieldReference {
-		return this.source.ref;
+		return this.source.ref || this.source.path;
 	}
 
 	getInfo(): FieldInfo {

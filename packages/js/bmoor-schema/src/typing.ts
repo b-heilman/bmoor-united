@@ -33,18 +33,30 @@ export class Typing<TypeT extends TypingJSON = TypingJSON>
 export const types = new Typing({
 	string: {
 		json: 'string',
-		graphql: 'string',
+		graphql: 'String',
 	},
 	number: {
 		json: 'number',
-		graphql: 'float',
+		graphql: 'Float',
+	},
+	int: {
+		json: 'number',
+		graphql: 'Int',
+	},
+	float: {
+		json: 'number',
+		graphql: 'Float',
+	},
+	boolean: {
+		json: 'boolean',
+		graphql: 'Boolean',
 	},
 	object: {
 		json: 'object',
-		graphql: 'object',
+		graphql: null,
 	},
 	array: {
 		json: 'array',
-		graphql: 'array',
+		graphql: null,
 	},
 });

@@ -24,6 +24,7 @@ function rootToGraphql(root: DynamicObject, indention = ''): string {
 export class BuilderGraphql {
 	ctx: ContextInterface<BuilderGraphqlTypingJSON>;
 	root: DynamicObject;
+	schema?: SchemaInterface;
 
 	constructor(ctx: ContextInterface<BuilderGraphqlTypingJSON>) {
 		this.ctx = ctx;
@@ -31,6 +32,7 @@ export class BuilderGraphql {
 	}
 
 	addSchema(schema: SchemaInterface) {
+		this.schema = schema;
 		for (const field of schema.getFields()) {
 			this.addField(field);
 		}
@@ -47,7 +49,10 @@ export class BuilderGraphql {
 			set(
 				this.root,
 				field.getPath(),
-				this.ctx.getTyping(info.type).graphql,
+				info.use === 'primary'
+					? 'ID!'
+					: this.ctx.getTyping(info.type).graphql +
+							(info.required ? '!' : ''),
 			);
 		}
 	}
@@ -59,6 +64,7 @@ export class BuilderGraphql {
 		const other = this.ctx.getSchema(relationship.other);
 
 		const attrs = relationship.otherFields.map((attr) => {
+			// TODO: I need to handle filters...
 			const otherField = other.getField(attr);
 
 			return `${otherField.getReference()}: ${this.ctx.getTyping(otherField.getInfo().type).graphql}`;
@@ -73,7 +79,7 @@ export class BuilderGraphql {
 
 		set(
 			this.root,
-			schema.getField(relationship.reference).getPath +
+			schema.getField(relationship.reference).getPath() +
 				'(' +
 				attributes +
 				')',
@@ -86,6 +92,17 @@ export class BuilderGraphql {
 	}
 
 	toString() {
-		return rootToGraphql(this.root);
+		const graphql = rootToGraphql(this.root);
+		if (this.schema) {
+			// TODO: a way to format the name...
+			return (
+				'type ' +
+				this.schema.getReference() +
+				' ' +
+				rootToGraphql(this.root)
+			);
+		} else {
+			return graphql;
+		}
 	}
 }
