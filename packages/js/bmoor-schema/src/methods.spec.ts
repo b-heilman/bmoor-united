@@ -36,7 +36,22 @@ describe('@bmoor/schema :: methods', function () {
 				],
 			});
 
-			expect(toJSONSchema(schema, types)).to.deep.equal({
+			const ctx = {
+				getValidator() {
+					return () => Promise.resolve('fail');
+				},
+				getTyping(ref) {
+					return types.getType(ref);
+				},
+				getSchema() {
+					return schema;
+				},
+				getConnector() {
+					return null;
+				},
+			};
+
+			expect(toJSONSchema(ctx, schema)).to.deep.equal({
 				type: 'object',
 				properties: {
 					foo: {
@@ -106,7 +121,22 @@ describe('@bmoor/schema :: methods', function () {
 				}),
 			);
 
-			expect(toJSONSchema(schema, types)).to.deep.equal({
+			const ctx = {
+				getValidator() {
+					return () => Promise.resolve('fail');
+				},
+				getTyping(ref) {
+					return types.getType(ref);
+				},
+				getSchema() {
+					return schema;
+				},
+				getConnector() {
+					return null;
+				},
+			};
+
+			expect(toJSONSchema(ctx, schema)).to.deep.equal({
 				type: 'object',
 				properties: {
 					foo: {

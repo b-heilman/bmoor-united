@@ -1,9 +1,10 @@
+import {create} from '@bmoor/error';
 import {DynamicObject} from '@bmoor/object';
 
 import {ConnectorJSON} from './connector.interface';
 import {ContextInterface} from './context.interface';
 import {Field} from './field';
-import {FieldInterface, FieldReference, FieldUse} from './field.interface';
+import {FieldInterface, FieldReference} from './field.interface';
 import {RelationshipJSON} from './relationship.interface';
 import {
 	SchemaInterface,
@@ -11,7 +12,6 @@ import {
 	SchemaReference,
 	SchemaSettings,
 } from './schema.interface';
-import { create } from '@bmoor/error';
 
 export class Schema implements SchemaInterface {
 	settings: SchemaJSON;
@@ -37,14 +37,18 @@ export class Schema implements SchemaInterface {
 			return agg;
 		}, {});
 
-		this.relationships = schema.relationships.reduce(
-			(agg, relationship) => {
-				agg[relationship.other] = relationship;
+		if (schema.relationships) {
+			this.relationships = schema.relationships.reduce(
+				(agg, relationship) => {
+					agg[relationship.other] = relationship;
 
-				return agg;
-			},
-			{}
-		);
+					return agg;
+				},
+				{},
+			);
+		} else {
+			this.relationships = {};
+		}
 
 		if (this.settings.connection) {
 			this.connection = this.settings.connection;
@@ -56,12 +60,17 @@ export class Schema implements SchemaInterface {
 	}
 
 	getPrimaryField(): FieldInterface {
-		const res = this.getFields().filter(field => field.getInfo().use === FieldUse.primary);
+		const res = this.getFields().filter(
+			(field) => field.getInfo().use === 'primary',
+		);
 
-		if (res.length > 1){
-			throw create('unable to have multiple primaries: '+this.getReference(), {
-				code: 'BMS_SCHEMA_MULTIPLE_PRIMARIES'
-			});
+		if (res.length > 1) {
+			throw create(
+				'unable to have multiple primaries: ' + this.getReference(),
+				{
+					code: 'BMS_SCHEMA_MULTIPLE_PRIMARIES',
+				},
+			);
 		}
 
 		return res[0];

@@ -1,17 +1,16 @@
-import { ContextInterface } from '../context.interface';
+import {ContextInterface} from '../context.interface';
 import {FieldInterface} from '../field.interface';
 import {SchemaInterface} from '../schema.interface';
-import { BuilderGraphqlTypingJSON } from './graphql.interface';
 import {
 	BuilderJSONSchemaNode,
 	BuilderJSONSchemaObject,
 } from './jsonschema.interface';
 
 export class BuilderJSONSchema {
-	ctx: ContextInterface<BuilderGraphqlTypingJSON>;
+	ctx: ContextInterface;
 	root: BuilderJSONSchemaObject;
 
-	constructor(ctx: ContextInterface<BuilderGraphqlTypingJSON>) {
+	constructor(ctx: ContextInterface) {
 		this.ctx = ctx;
 		this.root = {
 			type: 'object',
@@ -26,6 +25,11 @@ export class BuilderJSONSchema {
 	}
 
 	addField(field: FieldInterface) {
+		// For now, I'm not supporting synthetic fields
+		if (field.getInfo().use === 'synthetic') {
+			return;
+		}
+
 		const chain = field.getPathChain();
 
 		let cur: BuilderJSONSchemaNode = this.root;

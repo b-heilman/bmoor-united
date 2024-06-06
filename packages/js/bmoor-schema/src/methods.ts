@@ -3,12 +3,13 @@ import {implode} from '@bmoor/path';
 
 import {BuilderJSONSchema} from './builder/jsonschema';
 import {BuilderJSONSchemaObject} from './builder/jsonschema.interface';
+import {ContextInterface} from './context.interface';
 import {
 	SchemaInterface,
 	SchemaJSON,
 	SchemaStructured,
 } from './schema.interface';
-import {TypingInterface} from './typing.interface';
+import {TypingJSON} from './typing.interface';
 
 export function fromStructureSchema(
 	structured: SchemaStructured,
@@ -38,15 +39,13 @@ export function fromStructureSchema(
 	};
 }
 
-export function toJSONSchema(
+export function toJSONSchema<T extends TypingJSON = TypingJSON>(
+	ctx: ContextInterface<T>,
 	schema: SchemaInterface,
-	typing: TypingInterface,
 ): BuilderJSONSchemaObject {
-	const formatter = new BuilderJSONSchema(typing);
+	const formatter = new BuilderJSONSchema(ctx);
 
-	for (const field of schema.getFields()) {
-		formatter.addField(field);
-	}
+	formatter.addSchema(schema);
 
 	return formatter.toJSON();
 }

@@ -4,7 +4,7 @@ import {Schema} from '../schema';
 import {types} from '../typing';
 import {BuilderJSONSchema} from './jsonschema';
 
-describe('@bmoor/schema :: FormatJSONSchema', function () {
+describe('@bmoor/schema :: BuilderJSONSchema', function () {
 	it('should properly generate a json schema', function () {
 		const schema = new Schema({
 			fields: [
@@ -32,6 +32,13 @@ describe('@bmoor/schema :: FormatJSONSchema', function () {
 						type: 'string',
 					},
 				},
+				{
+					path: 'should.fail',
+					info: {
+						use: 'synthetic',
+						type: 'string',
+					},
+				},
 			],
 		});
 
@@ -47,7 +54,7 @@ describe('@bmoor/schema :: FormatJSONSchema', function () {
 			},
 			getConnector() {
 				return null;
-			}
+			},
 		});
 
 		formatter.addSchema(schema);

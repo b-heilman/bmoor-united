@@ -3,14 +3,9 @@ import {SchemaReference} from './schema.interface';
 
 export type RelationshipReference = string;
 
-export enum RelationshipType {
-	toMany= 'toMany',
-	toOne= 'toOne'
-}
-
 export interface RelationshipJSON {
 	reference: RelationshipReference;
-	type: 'toMany' | 'toOne'; 
+	type: 'toOne' | 'toMany';
 	other: SchemaReference;
 	fields: FieldReference[];
 	otherFields: FieldReference[];

@@ -1,5 +1,5 @@
-import { TypingJSON } from "../typing.interface";
+import {TypingJSON} from '../typing.interface';
 
-export interface BuilderGraphqlTypingJSON extends TypingJSON{
-    graphql: string
+export interface BuilderGraphqlTypingJSON extends TypingJSON {
+	graphql: string;
 }
