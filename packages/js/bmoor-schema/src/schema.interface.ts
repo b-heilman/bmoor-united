@@ -1,10 +1,10 @@
 import {DynamicObject} from '@bmoor/object';
 
 import {
-	ConnectorActionsType,
-	ConnectorJSON,
-	ConnectorReadable,
-} from './connector.interface';
+	ConnectionActionsType,
+	ConnectionJSON,
+} from './connection.interface';
+import {ConnectorReadable} from './connector.interface';
 import {
 	FieldInfo,
 	FieldInterface,
@@ -12,37 +12,37 @@ import {
 	FieldReference,
 } from './field.interface';
 import {RelationshipJSON} from './relationship.interface';
-import {ValidatorJSON} from './validator.interface';
+import {ValidationJSON} from './validation.interface';
 
 export type SchemaReference = string;
 
 export interface SchemaStructured<
-	ActionsT extends ConnectorActionsType = ConnectorActionsType,
+	ActionsT extends ConnectionActionsType = ConnectionActionsType,
 > {
 	reference?: SchemaReference;
 	structure: DynamicObject<string | string[]>;
 	info: Record<string, FieldInfo>;
-	validators?: Record<FieldReference, ValidatorJSON>;
+	validators?: Record<FieldReference, ValidationJSON>;
 	relationships?: RelationshipJSON[];
-	connection?: ConnectorJSON<ActionsT>;
+	connection?: ConnectionJSON<ActionsT>;
 }
 
 export interface SchemaJSON<
-	ActionsT extends ConnectorActionsType = ConnectorActionsType,
+	ActionsT extends ConnectionActionsType = ConnectionActionsType,
 > {
 	reference?: SchemaReference;
 	fields: FieldJSON[];
-	validators?: Record<FieldReference, ValidatorJSON>;
+	validators?: Record<FieldReference, ValidationJSON>;
 	relationships?: RelationshipJSON[];
-	connection?: ConnectorJSON<ActionsT>;
+	connection?: ConnectionJSON<ActionsT>;
 }
 
 export interface SchemaSettings<
-	ActionsT extends ConnectorActionsType = ConnectorActionsType,
+	ActionsT extends ConnectionActionsType = ConnectionActionsType,
 > extends SchemaJSON<ActionsT> {}
 
 export interface SchemaInterface<
-	ActionsT extends ConnectorActionsType = ConnectorActionsType,
+	ActionsT extends ConnectionActionsType = ConnectionActionsType,
 > extends ConnectorReadable<ActionsT> {
 	getReference(): SchemaReference;
 	getPrimaryField(): FieldInterface;

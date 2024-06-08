@@ -1,29 +1,26 @@
-import {
-	ConnectorFn,
-	ConnectorInterface,
-	ConnectorReference,
-} from './connector.interface';
+import {ConnectionFn, ConnectionReference} from './connection.interface';
+import {ConnectorInterface} from './connector.interface';
 
 export class Connector implements ConnectorInterface {
-	index: Record<ConnectorReference, ConnectorFn>;
+	index: Record<ConnectionReference, ConnectionFn>;
 
-	constructor(types: Record<ConnectorReference, ConnectorFn> = {}) {
-		this.index = types;
+	constructor(index: Record<ConnectionReference, ConnectionFn> = {}) {
+		this.index = index;
 	}
 
 	clear() {
 		this.index = {};
 	}
 
-	define(types: Record<ConnectorReference, ConnectorFn>) {
+	define(types: Record<ConnectionReference, ConnectionFn>) {
 		this.index = {...this.index, ...types};
 	}
 
-	addConnection(type: ConnectorReference, info: ConnectorFn) {
+	addConnection(type: ConnectionReference, info: ConnectionFn) {
 		this.index[type] = info;
 	}
 
-	getConnection(type: ConnectorReference): ConnectorFn {
+	getConnection(type: ConnectionReference): ConnectionFn {
 		return this.index[type];
 	}
 }

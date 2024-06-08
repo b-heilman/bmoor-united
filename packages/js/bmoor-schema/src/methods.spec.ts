@@ -37,7 +37,7 @@ describe('@bmoor/schema :: methods', function () {
 			});
 
 			const ctx = {
-				getValidator() {
+				getValidation() {
 					return () => Promise.resolve('fail');
 				},
 				getTyping(ref) {
@@ -46,7 +46,7 @@ describe('@bmoor/schema :: methods', function () {
 				getSchema() {
 					return schema;
 				},
-				getConnector() {
+				getConnection() {
 					return null;
 				},
 			};
@@ -122,7 +122,7 @@ describe('@bmoor/schema :: methods', function () {
 			);
 
 			const ctx = {
-				getValidator() {
+				getValidation() {
 					return () => Promise.resolve('fail');
 				},
 				getTyping(ref) {
@@ -131,7 +131,7 @@ describe('@bmoor/schema :: methods', function () {
 				getSchema() {
 					return schema;
 				},
-				getConnector() {
+				getConnection() {
 					return null;
 				},
 			};

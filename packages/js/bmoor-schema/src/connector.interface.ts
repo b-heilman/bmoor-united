@@ -1,38 +1,22 @@
+import {
+	ConnectionActionsType,
+	ConnectionFn,
+	ConnectionReference,
+	ConnectionSelect,
+} from './connection.interface';
 import {ConnectorContextInterface} from './connector/context.interface';
-import {TypingReference} from './typing.interface';
 
-export type ConnectorActionsType = Record<string, TypingReference>;
-
-export type ConnectorReference = string;
-
-export interface ConnectorSelect<ActionsT extends ConnectorActionsType> {
-	actions: ActionsT;
-}
-
-export type ConnectorFn<ActionsT extends ConnectorActionsType> = (
-	select: ConnectorSelect<ActionsT>,
-) => Promise<any[]>; // eslint-disable-line  @typescript-eslint/no-explicit-any
-
-// eslint-disable-next-line  @typescript-eslint/no-explicit-any
-export interface ConnectorJSON<ActionsT extends ConnectorActionsType> {
-	connector: ConnectorReference;
-	actions?: ActionsT;
-}
-
-export interface ConnectorReadable<ActionsT extends ConnectorActionsType> {
+export interface ConnectorReadable<
+	ActionsT extends ConnectionActionsType,
+> {
 	read(
-		ctx: ConnectorContextInterface<ActionsT>,
-		select: ConnectorSelect<ActionsT>,
+		ctx: ConnectorContextInterface,
+		select: ConnectionSelect<ActionsT>,
 	): Promise<any[]>; // eslint-disable-line  @typescript-eslint/no-explicit-any
 }
 
-export interface ConnectorInterface<
-	ActionsT extends ConnectorActionsType,
-> {
-	define(types: Record<ConnectorReference, ConnectorFn<ActionsT>>);
-	addConnection(
-		type: ConnectorReference,
-		info: ConnectorFn<ActionsT>,
-	): void;
-	getConnection(type: ConnectorReference): ConnectorFn<ActionsT>;
+export interface ConnectorInterface {
+	define(types: Record<ConnectionReference, ConnectionFn>);
+	addConnection(type: ConnectionReference, info: ConnectionFn): void;
+	getConnection(type: ConnectionReference): ConnectionFn;
 }

@@ -1,6 +1,5 @@
 import {DynamicObject, set} from '@bmoor/object';
 
-import {ConnectorActionsType} from '../connector.interface';
 import {ConnectorContextInterface} from '../connector/context.interface';
 import {FieldInterface} from '../field.interface';
 import {RelationshipJSON} from '../relationship.interface';
@@ -22,14 +21,12 @@ function rootToGraphql(root: DynamicObject, indention = ''): string {
 	);
 }
 
-export class BuilderGraphql<ActionsT extends ConnectorActionsType> {
-	ctx: ConnectorContextInterface<ActionsT, BuilderGraphqlTypingJSON>;
+export class BuilderGraphql {
+	ctx: ConnectorContextInterface<BuilderGraphqlTypingJSON>;
 	root: DynamicObject;
 	schema?: SchemaInterface;
 
-	constructor(
-		ctx: ConnectorContextInterface<ActionsT, BuilderGraphqlTypingJSON>,
-	) {
+	constructor(ctx: ConnectorContextInterface<BuilderGraphqlTypingJSON>) {
 		this.ctx = ctx;
 		this.root = {};
 	}

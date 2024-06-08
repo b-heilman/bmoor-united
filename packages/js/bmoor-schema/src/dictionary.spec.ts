@@ -1,19 +1,21 @@
 import {expect} from 'chai';
 
-import {Dictionary} from '../dictionary';
-import {Schema} from '../schema';
-import {SchemaInterface} from '../schema.interface';
-import {types} from '../typing';
-import {validations} from '../validator';
-import {BuilderGraphql} from './graphql';
-import {BuilderGraphqlTypingJSON} from './graphql.interface';
+import {Connector} from './connector';
+import {Dictionary} from './dictionary';
+import {Schema} from './schema';
+import {SchemaInterface} from './schema.interface';
+import {types} from './typing';
+import {TypingJSON} from './typing.interface';
+import {validations} from './validator';
 
-describe('@bmoor/schema :: BuilderGraphql', function () {
-	it('should properly generate a json schema', function () {
-		const dictionary = new Dictionary<
-			BuilderGraphqlTypingJSON,
-			SchemaInterface
-		>(types, validations);
+describe('@bmoor/schema :: Dictionary', function () {
+	let dictionary: Dictionary<TypingJSON, SchemaInterface>;
+
+	beforeEach(function () {
+		dictionary = new Dictionary<TypingJSON, SchemaInterface>(
+			types,
+			validations,
+		);
 
 		dictionary.addSchema(
 			new Schema({
@@ -53,7 +55,7 @@ describe('@bmoor/schema :: BuilderGraphql', function () {
 					},
 				],
 				connection: {
-					reference: 'junk',
+					reference: 'foo',
 					actions: {
 						eins: 'string',
 						zwei: 'float',
@@ -65,6 +67,9 @@ describe('@bmoor/schema :: BuilderGraphql', function () {
 		dictionary.addSchema(
 			new Schema({
 				reference: 's-3',
+				connection: {
+					reference: 'bar',
+				},
 				fields: [
 					{
 						path: 'id',
@@ -114,26 +119,39 @@ describe('@bmoor/schema :: BuilderGraphql', function () {
 			}),
 		);
 
-		const formatter = new BuilderGraphql(dictionary);
+		dictionary.setConnector(
+			new Connector({
+				foo: async () => [
+					{
+						eins: 1,
+					},
+				],
+				bar: async () => [
+					{
+						zwei: 2,
+					},
+				],
+			}),
+		);
+	});
 
-		formatter.addSchema(dictionary.getSchema('s-3'));
+	it('should allow reading', async function () {
+		const foo = await dictionary.getSchema('s-2').read(dictionary, {});
 
-		expect(formatter.toJSON()).to.deep.equal({
-			id: 'ID!',
-			otherId: 'String!',
-			'parent(hello: String, eins: String, zwei: Float)': 's-2',
-			'mount(foo: String)': '[s-1]',
+		expect(foo).to.deep.equal([
+			{
+				eins: 1,
+			},
+		]);
+
+		const bar = await dictionary.getSchema('s-3').read(dictionary, {
+			actions: {}, // should be optional
 		});
 
-		expect(formatter.toString().replace(/\s/g, '')).to.deep.equal(
-			`
-			type s-3 {
-			id: ID!
-			otherId: String!
-			parent(hello: String, eins: String, zwei: Float): s-2
-			mount(foo: String): [s-1]
-			}
-		`.replace(/\s/g, ''),
-		);
+		expect(bar).to.deep.equal([
+			{
+				zwei: 2,
+			},
+		]);
 	});
 });

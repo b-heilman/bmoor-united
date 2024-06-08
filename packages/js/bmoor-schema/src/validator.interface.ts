@@ -1,15 +1,7 @@
-export type ValidatorReference = string;
-
-// Only returns a string if invalid, otherwise returns null
-// eslint-disable-next-line  @typescript-eslint/no-explicit-any
-export type ValidatorFn = (value: any) => Promise<string>;
-
-export interface ValidatorJSON {
-	validator: ValidatorReference;
-}
+import {ValidationFn, ValidationReference} from './validation.interface';
 
 export interface ValidatorInterface {
-	define(types: Record<ValidatorReference, ValidatorFn>);
-	addValidator(type: ValidatorReference, info: ValidatorFn): void;
-	getValidator(type: ValidatorReference): ValidatorFn;
+	define(types: Record<ValidationReference, ValidationFn>);
+	addValidation(type: ValidationReference, info: ValidationFn): void;
+	getValidation(type: ValidationReference): ValidationFn;
 }

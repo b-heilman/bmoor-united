@@ -1,93 +1,79 @@
-import {
-	ConnectorFn,
-	ConnectorInterface,
-	ConnectorReference,
-} from './connector.interface';
+import {create} from '@bmoor/error';
+
+import {ConnectionFn, ConnectionReference} from './connection.interface';
+import {ConnectorInterface} from './connector.interface';
 import {DictionaryInterface, DictionaryJSON} from './dictionary.interface';
-import {Schema} from './schema';
 import {SchemaInterface, SchemaReference} from './schema.interface';
-import {types} from './typing';
 import {
 	TypingInterface,
 	TypingJSON,
 	TypingReference,
 } from './typing.interface';
-import {validations} from './validator';
-import {
-	ValidatorInterface,
-	ValidatorReference,
-} from './validator.interface';
+import {ValidationReference} from './validation.interface';
+import {ValidatorInterface} from './validator.interface';
 
-// eslint-disable-next-line  @typescript-eslint/no-explicit-any
-type GenericInput = any;
-
-export class Dictionary<SchemaT extends SchemaInterface>
-	implements DictionaryInterface<SchemaT>
+export class Dictionary<
+	TypingT extends TypingJSON,
+	SchemaT extends SchemaInterface,
+> implements DictionaryInterface<SchemaT>
 {
-	builder: (input: GenericInput) => SchemaT[];
+	typing: TypingInterface<TypingT>;
 	schemas: Record<SchemaReference, SchemaT>;
-	typing: TypingInterface;
-	validations: ValidatorInterface;
-	connectors: ConnectorInterface;
+	connector: ConnectorInterface;
+	validator: ValidatorInterface;
 
 	constructor(
-		builder: (input: GenericInput) => SchemaT[],
-		settings: GenericInput = null,
+		types: TypingInterface<TypingT>,
+		validator: ValidatorInterface,
 	) {
 		this.typing = types;
-		this.builder = builder;
-		this.validations = validations;
-
-		if (settings) {
-			this.define(settings);
-		}
-		const schemas = builder(settings);
-		this.schemas = schemas.reduce((agg, schema) => {
-			agg[schema.getReference()] = schema;
-
-			return agg;
-		}, {});
+		this.validator = validator;
+		this.schemas = {};
 	}
 
-	setTyping(typing: TypingInterface) {
+	setTyping(typing: TypingInterface<TypingT>) {
 		this.typing = typing;
 	}
 
-	getTyping(ref: TypingReference): TypingJSON {
+	getTyping(ref: TypingReference): TypingT {
 		return this.typing.getType(ref);
 	}
 
-	setValidators(validations: ValidatorInterface) {
-		this.validations = validations;
+	setValidator(validator: ValidatorInterface) {
+		this.validator = validator;
 	}
 
-	getValidator(ref: ValidatorReference) {
-		return this.validations.getValidator(ref);
+	getValidation(ref: ValidationReference) {
+		return this.validator.getValidation(ref);
 	}
 
-	setConnectors(connectors: ConnectorInterface) {
-		this.connectors = connectors;
+	setConnector(connector: ConnectorInterface) {
+		this.connector = connector;
 	}
 
-	getConnector(ref: ConnectorReference): ConnectorFn {
-		return this.connectors.getConnection(ref);
-	}
-
-	define(input: GenericInput) {
-		const schemas = this.builder(input);
-		this.schemas = schemas.reduce((agg, schema) => {
-			agg[schema.getReference()] = schema;
-
-			return agg;
-		}, {});
+	getConnection(ref: ConnectionReference): ConnectionFn {
+		return this.connector.getConnection(ref);
 	}
 
 	addSchema(schema: SchemaT) {
-		this.schemas[schema.getReference()] = schema;
+		const ref = schema.getReference();
+
+		if (!ref) {
+			throw create('Schemas in dictionary must have reference', {
+				code: 'BMS_DICTIONARY_UNNAMED_SCHEMA',
+			});
+		}
+
+		this.schemas[ref] = schema;
 	}
 
 	getSchema(ref: SchemaReference): SchemaT {
 		return this.schemas[ref];
+	}
+
+	// eslint-disable-next-line  @typescript-eslint/no-explicit-any
+	async read(ref: SchemaReference, select: any): Promise<any[]> {
+		return this.getSchema('s-2').read(this, select);
 	}
 
 	toJSON(): DictionaryJSON {
@@ -97,10 +83,4 @@ export class Dictionary<SchemaT extends SchemaInterface>
 			),
 		};
 	}
-}
-
-export function dictionaryBuilder(settings: DictionaryJSON) {
-	return settings.schemas.map(
-		(schemaSettings) => new Schema(schemaSettings),
-	);
 }

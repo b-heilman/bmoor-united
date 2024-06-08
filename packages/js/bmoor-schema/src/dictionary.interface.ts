@@ -16,5 +16,8 @@ export interface DictionaryInterface<
 
 	getSchema(ref: SchemaReference): SchemaT;
 
+	// eslint-disable-next-line  @typescript-eslint/no-explicit-any
+	read(ref: SchemaReference, select: any): Promise<any[]>;
+
 	toJSON(): DictionaryJSON;
 }

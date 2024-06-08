@@ -1,7 +1,10 @@
 import {create} from '@bmoor/error';
 import {DynamicObject} from '@bmoor/object';
 
-import {ConnectorActionsType, ConnectorJSON} from './connector.interface';
+import {
+	ConnectionActionsType,
+	ConnectionJSON,
+} from './connection.interface';
 import {ConnectorContextInterface} from './connector/context.interface';
 import {Field} from './field';
 import {FieldInterface, FieldReference} from './field.interface';
@@ -14,13 +17,13 @@ import {
 } from './schema.interface';
 
 export class Schema<
-	ActionsT extends ConnectorActionsType = ConnectorActionsType,
+	ActionsT extends ConnectionActionsType = ConnectionActionsType,
 > implements SchemaInterface<ActionsT>
 {
 	settings: SchemaJSON<ActionsT>;
 	fields: Record<FieldReference, FieldInterface>;
 	relationships: Record<SchemaReference, RelationshipJSON>;
-	connection: ConnectorJSON<ActionsT>;
+	connection: ConnectionJSON<ActionsT>;
 
 	constructor(schema: SchemaSettings<ActionsT>) {
 		this.settings = schema; // I'll probably change this later, but for now, is what it is
@@ -119,14 +122,11 @@ export class Schema<
 		return this.connection?.actions;
 	}
 
-	async read(
-		ctx: ConnectorContextInterface<ActionsT>,
-		select: any, // eslint-disable-line  @typescript-eslint/no-explicit-any
-		// eslint-disable-next-line  @typescript-eslint/no-explicit-any
-	): Promise<any[]> {
-		const connector = ctx.getConnector(this.connection.connector);
+	// eslint-disable-next-line  @typescript-eslint/no-explicit-any
+	async read(ctx: ConnectorContextInterface, select: any): Promise<any[]> {
+		const connection = ctx.getConnection(this.connection.reference);
 
-		return connector(select);
+		return connection(select);
 	}
 
 	toJSON(): SchemaJSON {

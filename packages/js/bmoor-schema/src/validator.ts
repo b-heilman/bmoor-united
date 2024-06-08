@@ -1,13 +1,10 @@
-import {
-	ValidatorFn,
-	ValidatorInterface,
-	ValidatorReference,
-} from './validator.interface';
+import {ValidationFn, ValidationReference} from './validation.interface';
+import {ValidatorInterface} from './validator.interface';
 
 export class Validator implements ValidatorInterface {
-	index: Record<ValidatorReference, ValidatorFn>;
+	index: Record<ValidationReference, ValidationFn>;
 
-	constructor(types: Record<ValidatorReference, ValidatorFn> = {}) {
+	constructor(types: Record<ValidationReference, ValidationFn> = {}) {
 		this.index = types;
 	}
 
@@ -15,22 +12,33 @@ export class Validator implements ValidatorInterface {
 		this.index = {};
 	}
 
-	define(types: Record<ValidatorReference, ValidatorFn>) {
+	define(types: Record<ValidationReference, ValidationFn>) {
 		this.index = {...this.index, ...types};
 	}
 
-	addValidator(type: ValidatorReference, info: ValidatorFn) {
+	addValidation(type: ValidationReference, info: ValidationFn) {
 		this.index[type] = info;
 	}
 
-	getValidator(type: ValidatorReference): ValidatorFn {
+	getValidation(type: ValidationReference): ValidationFn {
 		return this.index[type];
 	}
 }
 
 export const validations = new Validator({
-	string: async (input) =>
-		typeof input === 'string' ? null : 'not a string',
+	string: async (input, info, mode) => {
+		if (!input && info.required) {
+			if (input === null) {
+				return 'can not be null';
+			} else if (mode === 'update' && input === undefined) {
+				return null;
+			} else {
+				return 'is required';
+			}
+		}
+
+		return typeof input === 'string' ? null : 'not a string';
+	},
 	number: async (input) =>
 		typeof input === 'number' ? null : 'not a number',
 });

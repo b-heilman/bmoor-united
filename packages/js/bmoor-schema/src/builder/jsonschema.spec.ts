@@ -43,7 +43,7 @@ describe('@bmoor/schema :: BuilderJSONSchema', function () {
 		});
 
 		const formatter = new BuilderJSONSchema({
-			getValidator() {
+			getValidation() {
 				return () => Promise.resolve('fail');
 			},
 			getTyping(ref) {

@@ -9,13 +9,13 @@ import {
 	FieldPathLink,
 	FieldReference,
 } from './field.interface';
-import {ValidatorJSON} from './validator.interface';
+import {ValidationJSON} from './validation.interface';
 
 // eslint-disable-next-line  @typescript-eslint/no-explicit-any
 export class Field<T = any> implements FieldInterface {
 	source: FieldJSON;
 	path: PathInterface<T>;
-	validation: ValidatorJSON;
+	validation: ValidationJSON;
 
 	constructor(schema: FieldJSON) {
 		this.path = new Path(schema.path);
@@ -56,15 +56,20 @@ export class Field<T = any> implements FieldInterface {
 		return this.path.write(root, v);
 	}
 
-	setValidator(settings: ValidatorJSON) {
+	setValidator(settings: ValidationJSON) {
 		this.validation = settings;
 	}
 
 	validate(
 		ctx: ContextInterface,
 		root: DynamicObject<T>,
+		mode: 'create' | 'update' = null,
 	): Promise<string> {
-		const validator = ctx.getValidator(this.validation.validator);
-		return validator(this.read(root));
+		if (this.validation) {
+			const validation = ctx.getValidation(this.validation.reference);
+			return validation(this.read(root), this.getInfo(), mode);
+		} else {
+			return null;
+		}
 	}
 }
