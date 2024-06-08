@@ -40,6 +40,13 @@ describe('@bmoor/schema :: BuilderGraphql', function () {
 						},
 					},
 				],
+				connection: {
+					connector: 'junk',
+					actions: {
+						eins: 'string',
+						zwei: 'float',
+					},
+				},
 			}),
 			's-3': new Schema({
 				reference: 's-3',
@@ -103,7 +110,7 @@ describe('@bmoor/schema :: BuilderGraphql', function () {
 				return schemas[ref];
 			},
 			getConnector() {
-				return null;
+				return () => null;
 			},
 		});
 
@@ -112,7 +119,7 @@ describe('@bmoor/schema :: BuilderGraphql', function () {
 		expect(formatter.toJSON()).to.deep.equal({
 			id: 'ID!',
 			otherId: 'String!',
-			'parent(hello: String)': 's-2',
+			'parent(hello: String, eins: String, zwei: Float)': 's-2',
 			'mount(foo: String)': '[s-1]',
 		});
 
@@ -121,7 +128,7 @@ describe('@bmoor/schema :: BuilderGraphql', function () {
 			type s-3 {
 			id: ID!
 			otherId: String!
-			parent(hello: String): s-2
+			parent(hello: String, eins: String, zwei: Float): s-2
 			mount(foo: String): [s-1]
 			}
 		`.replace(/\s/g, ''),

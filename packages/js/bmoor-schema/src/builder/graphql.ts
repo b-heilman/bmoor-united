@@ -1,6 +1,7 @@
 import {DynamicObject, set} from '@bmoor/object';
 
-import {ContextInterface} from '../context.interface';
+import {ConnectorActionsType} from '../connector.interface';
+import {ConnectorContextInterface} from '../connector/context.interface';
 import {FieldInterface} from '../field.interface';
 import {RelationshipJSON} from '../relationship.interface';
 import {SchemaInterface} from '../schema.interface';
@@ -21,12 +22,14 @@ function rootToGraphql(root: DynamicObject, indention = ''): string {
 	);
 }
 
-export class BuilderGraphql {
-	ctx: ContextInterface<BuilderGraphqlTypingJSON>;
+export class BuilderGraphql<ActionsT extends ConnectorActionsType> {
+	ctx: ConnectorContextInterface<ActionsT, BuilderGraphqlTypingJSON>;
 	root: DynamicObject;
 	schema?: SchemaInterface;
 
-	constructor(ctx: ContextInterface<BuilderGraphqlTypingJSON>) {
+	constructor(
+		ctx: ConnectorContextInterface<ActionsT, BuilderGraphqlTypingJSON>,
+	) {
 		this.ctx = ctx;
 		this.root = {};
 	}
@@ -63,12 +66,20 @@ export class BuilderGraphql {
 	) {
 		const other = this.ctx.getSchema(relationship.other);
 
-		const attrs = relationship.otherFields.map((attr) => {
-			// TODO: I need to handle filters...
-			const otherField = other.getField(attr);
+		const attrs = relationship.otherFields
+			.map((attr) => {
+				// TODO: I need to handle filters...
+				const otherField = other.getField(attr);
 
-			return `${otherField.getReference()}: ${this.ctx.getTyping(otherField.getInfo().type).graphql}`;
-		});
+				return `${otherField.getReference()}: ${this.ctx.getTyping(otherField.getInfo().type).graphql}`;
+			})
+			.concat(
+				Object.entries(other.getConnectionActions() || {}).map(
+					([action, type]) => {
+						return `${action}: ${this.ctx.getTyping(<string>type).graphql}`;
+					},
+				),
+			);
 
 		const attributes = attrs.join(', ');
 
