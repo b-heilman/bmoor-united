@@ -78,7 +78,7 @@ export class Graphql<
 			})
 			.join('\n');
 
-		const queries = Object.entries(this.settings).reduce(
+		const queries = Object.entries(this.settings.query).reduce(
 			(agg, [key, query]) => {
 				const schema = this.dictionary.getSchema(query.schema);
 
@@ -106,7 +106,15 @@ export class Graphql<
 			{},
 		);
 
-		return `${types}\ntype Query: ${dictToGraphql(queries)}`;
+		let custom = '';
+		if (this.settings.customTypes) {
+			custom =
+				Object.keys(this.settings.customTypes)
+					.map((type) => 'scalar ' + type)
+					.join('\n') + '\n';
+		}
+
+		return `${custom}${types}\n${dictToGraphql(queries, 'Query')}`;
 	}
 
 	toResolvers(): GraphqlSchemaResolvers {

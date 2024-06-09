@@ -136,4 +136,75 @@ describe('@bmoor/schema :: BuilderGraphql', function () {
 		`.replace(/\s/g, ''),
 		);
 	});
+
+	it('should properly generate a complex schema', function () {
+		const dictionary = new Dictionary<
+			BuilderGraphqlTypingJSON,
+			SchemaInterface
+		>(types, validations);
+
+		dictionary.addSchema(
+			new Schema({
+				reference: 's-1',
+				fields: [
+					{
+						path: 'foo.bar',
+						info: {
+							type: 'string',
+						},
+					},
+					{
+						path: 'hello.world',
+						info: {
+							type: 'number',
+						},
+					},
+					{
+						path: 'eins.zwei.drei',
+						info: {
+							type: 'float',
+						},
+					},
+				],
+			}),
+		);
+
+		const formatter = new BuilderGraphql(dictionary);
+
+		formatter.addSchema(dictionary.getSchema('s-1'));
+
+		expect(formatter.toJSON()).to.deep.equal({
+			foo: {
+				bar: 'String',
+			},
+			hello: {
+				world: 'Float',
+			},
+			eins: {
+				zwei: {
+					drei: 'Float',
+				},
+			},
+		});
+
+		expect(formatter.toString()).to.deep.equal(
+			`type s-1 {
+	foo: s-1_0
+	hello: s-1_1
+	eins: s-1_2
+}
+type s-1_0 {
+	bar: String
+}
+type s-1_1 {
+	world: Float
+}
+type s-1_2 {
+	zwei: s-1_2_0
+}
+type s-1_2_0 {
+	drei: Float
+}`,
+		);
+	});
 });

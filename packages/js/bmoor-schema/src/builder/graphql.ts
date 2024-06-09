@@ -90,17 +90,8 @@ export class BuilderGraphql<
 	}
 
 	toString() {
-		const graphql = dictToGraphql(this.root);
-		if (this.schema) {
-			// TODO: a way to format the name...
-			return (
-				'type ' +
-				this.schema.getReference() +
-				' ' +
-				dictToGraphql(this.root)
-			);
-		} else {
-			return graphql;
-		}
+		const name = this.schema?.getReference() || '**replace**';
+
+		return dictToGraphql(this.root, name);
 	}
 }

@@ -39,12 +39,16 @@ export interface GraphqlQuery<
 		) => any[]; // eslint-disable-line  @typescript-eslint/no-explicit-any
 		params?: GraphqlQueryParams;
 	};
-	single?: false;
+	single?: boolean;
 	// TODO: security
 	// TODO: relationships to follow
 }
 
-export type GraphqlJSON<
+export interface GraphqlJSON<
 	TypingT extends TypingJSON,
 	SchemaT extends SchemaInterface = SchemaInterface,
-> = Record<GraphqlQueryReference, GraphqlQuery<TypingT, SchemaT>>;
+> {
+	query: Record<GraphqlQueryReference, GraphqlQuery<TypingT, SchemaT>>;
+	// eslint-disable-next-line  @typescript-eslint/no-explicit-any
+	customTypes?: Record<string, any>;
+}

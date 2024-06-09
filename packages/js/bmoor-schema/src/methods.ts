@@ -53,18 +53,31 @@ export function toJSONSchema<T extends TypingJSON = TypingJSON>(
 
 export function dictToGraphql(
 	root: DynamicObject,
-	indention = '',
+	namespace: string,
 ): string {
-	const children = indention + '\t';
+	const children = [];
+	const schema = [];
 
-	// TODO: subtypes are defined on the bottom
-	return (
-		'{\n' +
-		Object.entries(root)
-			.map(([key, value]) => children + key + ': ' + value)
-			.join('\n') +
-		'\n' +
-		indention +
-		'}'
-	);
+	let counter = 0;
+
+	for (const [key, value] of Object.entries(root)) {
+		if (typeof value === 'object') {
+			const child = namespace + '_' + counter;
+
+			children.push(dictToGraphql(value, child));
+			schema.push(key + ': ' + child);
+
+			counter++;
+		} else {
+			schema.push(key + ': ' + value);
+		}
+	}
+
+	let content = `type ${namespace} {\n\t${schema.join('\n\t')}\n}`;
+
+	if (children.length) {
+		content = content + '\n' + children.join('\n');
+	}
+
+	return content;
 }
