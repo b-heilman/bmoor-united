@@ -1,5 +1,6 @@
 export * from './connection.interface';
 export * from './context.interface';
+export * from './dictionary.interface';
 export * from './field.interface';
 export * from './schema.interface';
 export * from './typing.interface';
