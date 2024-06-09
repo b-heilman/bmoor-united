@@ -49,6 +49,9 @@ describe('@bmoor/schema :: methods', function () {
 				getConnection() {
 					return null;
 				},
+				formatName(name) {
+					return name;
+				},
 			};
 
 			expect(toJSONSchema(ctx, schema)).to.deep.equal({
@@ -133,6 +136,9 @@ describe('@bmoor/schema :: methods', function () {
 				},
 				getConnection() {
 					return null;
+				},
+				formatName(name) {
+					return name;
 				},
 			};
 

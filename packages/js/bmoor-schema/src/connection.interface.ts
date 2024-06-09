@@ -5,6 +5,7 @@ export type ConnectionActionsType = Record<string, TypingReference>;
 
 export interface ConnectionSelect<ActionsT extends ConnectionActionsType> {
 	actions?: ActionsT;
+	properties?: any; // eslint-disable-line  @typescript-eslint/no-explicit-any
 }
 
 export type ConnectionFn<

@@ -15,7 +15,7 @@ import {ValidatorInterface} from './validator.interface';
 export class Dictionary<
 	TypingT extends TypingJSON,
 	SchemaT extends SchemaInterface,
-> implements DictionaryInterface<SchemaT>
+> implements DictionaryInterface<TypingT, SchemaT>
 {
 	typing: TypingInterface<TypingT>;
 	schemas: Record<SchemaReference, SchemaT>;
@@ -71,9 +71,19 @@ export class Dictionary<
 		return this.schemas[ref];
 	}
 
+	getSchemas(): SchemaT[] {
+		return Object.values(this.schemas);
+	}
+
 	// eslint-disable-next-line  @typescript-eslint/no-explicit-any
 	async read(ref: SchemaReference, select: any): Promise<any[]> {
 		return this.getSchema('s-2').read(this, select);
+	}
+
+	// TODO: figure out usages
+	// TODO: probably want to make this camelcase or snakecase transformation
+	formatName(ref: string): string {
+		return ref;
 	}
 
 	toJSON(): DictionaryJSON {

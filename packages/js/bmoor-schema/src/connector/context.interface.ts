@@ -3,7 +3,7 @@ import {ContextInterface} from '../context.interface';
 import {TypingJSON} from '../typing.interface';
 
 export interface ConnectorContextInterface<
-	T extends TypingJSON = TypingJSON,
-> extends ContextInterface<T> {
+	TypingT extends TypingJSON = TypingJSON,
+> extends ContextInterface<TypingT> {
 	getConnection(ref: ConnectionReference): ConnectionFn;
 }

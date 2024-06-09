@@ -1,4 +1,5 @@
 import {isArray} from '@bmoor/compare';
+import {DynamicObject} from '@bmoor/object';
 import {implode} from '@bmoor/path';
 
 import {BuilderJSONSchema} from './builder/jsonschema';
@@ -48,4 +49,22 @@ export function toJSONSchema<T extends TypingJSON = TypingJSON>(
 	formatter.addSchema(schema);
 
 	return formatter.toJSON();
+}
+
+export function dictToGraphql(
+	root: DynamicObject,
+	indention = '',
+): string {
+	const children = indention + '\t';
+
+	// TODO: subtypes are defined on the bottom
+	return (
+		'{\n' +
+		Object.entries(root)
+			.map(([key, value]) => children + key + ': ' + value)
+			.join('\n') +
+		'\n' +
+		indention +
+		'}'
+	);
 }

@@ -52,6 +52,9 @@ describe('@bmoor/schema :: BuilderJSONSchema', function () {
 			getSchema() {
 				return schema;
 			},
+			formatName(name) {
+				return name;
+			},
 		});
 
 		formatter.addSchema(schema);

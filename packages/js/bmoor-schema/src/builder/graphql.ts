@@ -2,31 +2,21 @@ import {DynamicObject, set} from '@bmoor/object';
 
 import {ConnectorContextInterface} from '../connector/context.interface';
 import {FieldInterface} from '../field.interface';
+import {dictToGraphql} from '../methods';
 import {RelationshipJSON} from '../relationship.interface';
 import {SchemaInterface} from '../schema.interface';
 import {BuilderGraphqlTypingJSON} from './graphql.interface';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function rootToGraphql(root: DynamicObject, indention = ''): string {
-	const children = indention + '\t';
+// TODO: I need to handle multiple dimensions and sub types
 
-	return (
-		'{\n' +
-		Object.entries(root)
-			.map(([key, value]) => children + key + ': ' + value)
-			.join('\n') +
-		'\n' +
-		indention +
-		'}'
-	);
-}
-
-export class BuilderGraphql {
-	ctx: ConnectorContextInterface<BuilderGraphqlTypingJSON>;
+export class BuilderGraphql<
+	TypingT extends BuilderGraphqlTypingJSON = BuilderGraphqlTypingJSON,
+> {
+	ctx: ConnectorContextInterface<TypingT>;
 	root: DynamicObject;
 	schema?: SchemaInterface;
 
-	constructor(ctx: ConnectorContextInterface<BuilderGraphqlTypingJSON>) {
+	constructor(ctx: ConnectorContextInterface<TypingT>) {
 		this.ctx = ctx;
 		this.root = {};
 	}
@@ -73,7 +63,7 @@ export class BuilderGraphql {
 			.concat(
 				Object.entries(other.getConnectionActions() || {}).map(
 					([action, type]) => {
-						return `${action}: ${this.ctx.getTyping(<string>type).graphql}`;
+						return `${action}: ${this.ctx.getTyping(type).graphql}`;
 					},
 				),
 			);
@@ -100,14 +90,14 @@ export class BuilderGraphql {
 	}
 
 	toString() {
-		const graphql = rootToGraphql(this.root);
+		const graphql = dictToGraphql(this.root);
 		if (this.schema) {
 			// TODO: a way to format the name...
 			return (
 				'type ' +
 				this.schema.getReference() +
 				' ' +
-				rootToGraphql(this.root)
+				dictToGraphql(this.root)
 			);
 		} else {
 			return graphql;

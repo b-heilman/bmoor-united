@@ -6,4 +6,6 @@ export interface ContextInterface<T extends TypingJSON = TypingJSON> {
 	getValidation(ref: ValidationReference): ValidationFn;
 	getTyping(ref: TypingReference): T;
 	getSchema(ref: SchemaReference): SchemaInterface;
+
+	formatName(ref: string, usage?: string): string;
 }
