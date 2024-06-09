@@ -1,4 +1,5 @@
 import {create} from '@bmoor/error';
+import {toCamelCase} from '@bmoor/string';
 
 import {ConnectionFn, ConnectionReference} from './connection.interface';
 import {ConnectorInterface} from './connector.interface';
@@ -83,7 +84,7 @@ export class Dictionary<
 	// TODO: figure out usages
 	// TODO: probably want to make this camelcase or snakecase transformation
 	formatName(ref: string): string {
-		return ref;
+		return toCamelCase(ref);
 	}
 
 	toJSON(): DictionaryJSON {

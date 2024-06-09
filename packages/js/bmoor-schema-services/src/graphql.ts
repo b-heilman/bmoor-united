@@ -32,7 +32,7 @@ function createSchemaResolver(
 				const properties = relationship.otherFields.reduce(
 					(mappedArgs, targetRef, i) => {
 						const srcField = schema.getField(relationship.fields[i]);
-						const targetField = schema.getField(targetRef);
+						const targetField = other.getField(targetRef);
 
 						targetField.write(mappedArgs, srcField.read(src));
 
@@ -67,7 +67,7 @@ export class Graphql<
 		this.dictionary = dictionary;
 	}
 
-	toGraphQL(): string {
+	toString(): string {
 		const types = Object.values(this.dictionary.getSchemas())
 			.map((schema) => {
 				const builder = new BuilderGraphql<TypingT>(this.dictionary);
@@ -122,13 +122,18 @@ export class Graphql<
 
 		// Add the collection resolvers
 		Object.values(this.dictionary.getSchemas()).reduce((agg, schema) => {
-			agg[this.dictionary.formatName(schema.getReference())] =
-				createSchemaResolver(this.dictionary, schema);
+			const resolvers = createSchemaResolver(this.dictionary, schema);
+
+			if (Object.keys(resolvers).length > 0) {
+				agg[this.dictionary.formatName(schema.getReference())] = resolvers;
+			}
 
 			return agg;
 		}, resolvers);
 
-		resolvers['Query'] = Object.entries(this.settings).reduce(
+		// TODO: I need to add types to resolvers
+
+		resolvers['Query'] = Object.entries(this.settings.query).reduce(
 			(agg, [key, query]) => {
 				const schema = this.dictionary.getSchema(query.schema);
 				const single = query.single || false;

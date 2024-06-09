@@ -121,17 +121,17 @@ describe('@bmoor/schema :: BuilderGraphql', function () {
 		expect(formatter.toJSON()).to.deep.equal({
 			id: 'ID!',
 			otherId: 'String!',
-			'parent(hello: String, eins: String, zwei: Float)': 's-2',
-			'mount(foo: String)': '[s-1]',
+			'parent(hello: String, eins: String, zwei: Float)': 's2',
+			'mount(foo: String)': '[s1]',
 		});
 
 		expect(formatter.toString().replace(/\s/g, '')).to.deep.equal(
 			`
-			type s-3 {
+			type s3 {
 			id: ID!
 			otherId: String!
-			parent(hello: String, eins: String, zwei: Float): s-2
-			mount(foo: String): [s-1]
+			parent(hello: String, eins: String, zwei: Float): s2
+			mount(foo: String): [s1]
 			}
 		`.replace(/\s/g, ''),
 		);
@@ -188,21 +188,21 @@ describe('@bmoor/schema :: BuilderGraphql', function () {
 		});
 
 		expect(formatter.toString()).to.deep.equal(
-			`type s-1 {
-	foo: s-1_0
-	hello: s-1_1
-	eins: s-1_2
+			`type s1 {
+	foo: s1_0
+	hello: s1_1
+	eins: s1_2
 }
-type s-1_0 {
+type s1_0 {
 	bar: String
 }
-type s-1_1 {
+type s1_1 {
 	world: Float
 }
-type s-1_2 {
-	zwei: s-1_2_0
+type s1_2 {
+	zwei: s1_2_0
 }
-type s-1_2_0 {
+type s1_2_0 {
 	drei: Float
 }`,
 		);

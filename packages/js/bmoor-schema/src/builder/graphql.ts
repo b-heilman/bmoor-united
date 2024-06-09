@@ -70,7 +70,7 @@ export class BuilderGraphql<
 
 		const attributes = attrs.join(', ');
 
-		let result = other.getReference(); // this.ctx.formatName(other.name);
+		let result = this.ctx.formatName(other.getReference());
 		if (relationship.type === 'toMany') {
 			result = '[' + result + ']';
 		}
@@ -90,7 +90,9 @@ export class BuilderGraphql<
 	}
 
 	toString() {
-		const name = this.schema?.getReference() || '**replace**';
+		const name = this.ctx.formatName(
+			this.schema?.getReference() || '__replace__',
+		);
 
 		return dictToGraphql(this.root, name);
 	}

@@ -1,7 +1,10 @@
+import {ApolloServer, BaseContext} from '@apollo/server';
+import {strict as assert} from 'assert';
 import {expect} from 'chai';
 
 import {
 	BuilderGraphqlTypingJSON,
+	Connector,
 	Dictionary,
 	Schema,
 	SchemaInterface,
@@ -11,7 +14,7 @@ import {
 
 import {Graphql} from './graphql';
 
-describe('@bmoor/schema-services', function () {
+describe('@bmoor/schema-services : graphql', function () {
 	let dictionary: Dictionary<BuilderGraphqlTypingJSON, SchemaInterface>;
 
 	beforeEach(function () {
@@ -38,6 +41,9 @@ describe('@bmoor/schema-services', function () {
 						},
 					},
 				],
+				connection: {
+					reference: 'foo',
+				},
 			}),
 		);
 
@@ -60,7 +66,7 @@ describe('@bmoor/schema-services', function () {
 					},
 				],
 				connection: {
-					reference: 'junk',
+					reference: 'hello',
 					actions: {
 						eins: 'string',
 						zwei: 'float',
@@ -118,11 +124,37 @@ describe('@bmoor/schema-services', function () {
 						otherFields: ['foo'],
 					},
 				],
+				connection: {
+					reference: 'stub',
+				},
+			}),
+		);
+
+		dictionary.setConnector(
+			new Connector({
+				foo: async () => [
+					{
+						foo: 'eins',
+						bar: 1.1,
+					},
+				],
+				hello: async () => [
+					{
+						hello: 'zwei',
+						world: 1.2,
+					},
+				],
+				stub: async () => [
+					{
+						id: 'fier',
+						otherId: 'funf',
+					},
+				],
 			}),
 		);
 	});
 
-	describe('graphql', function () {
+	describe('toGraphQL', function () {
 		it('should properly generate graphql', function () {
 			const graphql = new Graphql(dictionary, {
 				query: {
@@ -139,27 +171,163 @@ describe('@bmoor/schema-services', function () {
 				},
 			});
 
-			expect(graphql.toGraphQL()).to.equal(
+			expect(graphql.toString()).to.equal(
 				`scalar Date
-type s-1 {
+type s1 {
 	foo: ID!
 	bar: Float
 }
-type s-2 {
+type s2 {
 	hello: ID!
 	world: Float
 }
-type s-3 {
+type s3 {
 	id: ID!
 	otherId: String!
-	parent(hello: String, eins: String, zwei: Float): s-2
-	mount(foo: String): [s-1]
+	parent(hello: String, eins: String, zwei: Float): s2
+	mount(foo: String): [s1]
 }
 type Query {
-	entry(foo: String!): [s-1]
-	singleEntry(id: String!): s-3
+	entry(foo: String!): [s1]
+	singleEntry(id: String!): s3
 }`,
 			);
+		});
+	});
+
+	describe('toResolvers', function () {
+		it('should properly define needed resolvers', async function () {
+			const graphql = new Graphql(dictionary, {
+				query: {
+					entry: {
+						schema: 's-1',
+					},
+					singleEntry: {
+						schema: 's-3',
+						single: true,
+					},
+				},
+				customTypes: {
+					Date: null, // doesn't matter
+				},
+			});
+
+			const resolvers = graphql.toResolvers();
+
+			expect(Object.keys(resolvers)).to.deep.equal(['s3', 'Query']);
+
+			expect(resolvers['s1']).to.equal(undefined);
+
+			expect(Object.keys(resolvers['s3'])).to.deep.equal([
+				'parent',
+				'mount',
+			]);
+
+			expect(Object.keys(resolvers['Query'])).to.deep.equal([
+				'entry',
+				'singleEntry',
+			]);
+
+			expect(await resolvers['Query']['entry']({}, {})).to.deep.equal([
+				{
+					bar: 1.1,
+					foo: 'eins',
+				},
+			]);
+
+			expect(
+				await resolvers['Query']['singleEntry']({}, {}),
+			).to.deep.equal({
+				id: 'fier',
+				otherId: 'funf',
+			});
+
+			expect(await resolvers['s3']['parent']({}, {})).to.deep.equal({
+				hello: 'zwei',
+				world: 1.2,
+			});
+
+			expect(await resolvers['s3']['mount']({}, {})).to.deep.equal([
+				{
+					bar: 1.1,
+					foo: 'eins',
+				},
+			]);
+		});
+	});
+
+	describe('apollo server', function () {
+		let server;
+
+		beforeEach(function () {
+			const graphql = new Graphql(dictionary, {
+				query: {
+					entry: {
+						schema: 's-1',
+					},
+					singleEntry: {
+						schema: 's-3',
+						single: true,
+					},
+				},
+				customTypes: {
+					Date: null, // doesn't matter
+				},
+			});
+
+			server = new ApolloServer<BaseContext>({
+				typeDefs: graphql.toString(),
+				resolvers: graphql.toResolvers(),
+				// plugins
+			});
+		});
+
+		it('should work for single', async function () {
+			const response = await server.executeOperation({
+				query: `query Search($id: String!) { 
+                    singleEntry(id: $id) {
+                        id,
+						otherId,
+						parent {
+							hello,
+							world
+						},
+						mount {
+							foo,
+							bar
+						}
+                    }
+                }`,
+				variables: {id: 'someId'},
+			});
+
+			assert(response.body.kind === 'single');
+			expect(response.body.singleResult.data.singleEntry).to.deep.equal({
+				id: 'fier',
+				otherId: 'funf',
+				parent: {hello: 'zwei', world: 1.2},
+				mount: [{foo: 'eins', bar: 1.1}],
+			});
+		});
+
+		it('should work for multiple', async function () {
+			const response = await server.executeOperation({
+				query: `query Search($id: String!) { 
+                    entry(foo: $id) {
+                        foo,
+						bar
+                    }
+                }`,
+				variables: {id: 'someId'},
+			});
+
+			assert(response.body.kind === 'single');
+			expect(response.body.singleResult.data.entry).to.deep.equal([
+				{
+					bar: 1.1,
+					foo: 'eins',
+				},
+			]);
 		});
 	});
 });
