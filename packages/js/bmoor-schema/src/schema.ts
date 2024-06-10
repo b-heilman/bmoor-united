@@ -15,6 +15,7 @@ import {
 	SchemaReference,
 	SchemaSettings,
 } from './schema.interface';
+import { ContextInterface } from './context.interface';
 
 export class Schema<
 	ActionsT extends ConnectionActionsType = ConnectionActionsType,
@@ -127,6 +128,23 @@ export class Schema<
 		const connection = ctx.getConnection(this.connection.reference);
 
 		return connection(select);
+	}
+
+	async validate(
+		ctx: ContextInterface,
+		root: DynamicObject,
+		mode: 'create' | 'update' = 'create',
+	): Promise<string[]> {
+		const rtn = (await Promise.all(
+			this.getFields()
+			.map(field => field.validate(ctx, root, mode))
+		)).filter(error => error !== null)
+
+		if (rtn.length === 0){
+			return null;
+		} else {
+			return rtn;
+		}
 	}
 
 	toJSON(): SchemaJSON {

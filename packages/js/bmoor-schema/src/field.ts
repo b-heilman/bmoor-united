@@ -63,7 +63,7 @@ export class Field<T = any> implements FieldInterface {
 	validate(
 		ctx: ContextInterface,
 		root: DynamicObject<T>,
-		mode: 'create' | 'update' = null,
+		mode: 'create' | 'update' = 'create',
 	): Promise<string> {
 		if (this.validation) {
 			const validation = ctx.getValidation(this.validation.reference);

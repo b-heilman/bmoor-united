@@ -13,6 +13,7 @@ import {
 } from './field.interface';
 import {RelationshipJSON} from './relationship.interface';
 import {ValidationJSON} from './validation.interface';
+import { ContextInterface } from './context.interface';
 
 export type SchemaReference = string;
 
@@ -53,6 +54,12 @@ export interface SchemaInterface<
 
 	implode(root: DynamicObject): DynamicObject;
 	explode(root: DynamicObject): DynamicObject;
+
+	validate(
+		ctx: ContextInterface,
+		root: DynamicObject,
+		mode?: 'create' | 'update',
+	): Promise<string[]>
 
 	getConnectionActions(): ActionsT;
 

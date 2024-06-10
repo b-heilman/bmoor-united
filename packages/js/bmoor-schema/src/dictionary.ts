@@ -12,6 +12,8 @@ import {
 } from './typing.interface';
 import {ValidationReference} from './validation.interface';
 import {ValidatorInterface} from './validator.interface';
+import { ContextInterface } from './context.interface';
+import { DynamicObject } from '@bmoor/object';
 
 export class Dictionary<
 	TypingT extends TypingJSON,
@@ -78,7 +80,15 @@ export class Dictionary<
 
 	// eslint-disable-next-line  @typescript-eslint/no-explicit-any
 	async read(ref: SchemaReference, select: any): Promise<any[]> {
-		return this.getSchema('s-2').read(this, select);
+		return this.getSchema(ref).read(this, select);
+	}
+
+	async validate(
+		ref: SchemaReference,
+		root: DynamicObject,
+		mode: 'create' | 'update' = 'create',
+	): Promise<string[]> {
+		return this.getSchema(ref).validate(this, root, mode);
 	}
 
 	// TODO: figure out usages

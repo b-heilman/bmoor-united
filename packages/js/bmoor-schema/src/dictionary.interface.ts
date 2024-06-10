@@ -1,3 +1,4 @@
+import { DynamicObject } from '@bmoor/object';
 import {ConnectorContextInterface} from './connector/context.interface';
 import {
 	SchemaInterface,
@@ -20,6 +21,12 @@ export interface DictionaryInterface<
 
 	// eslint-disable-next-line  @typescript-eslint/no-explicit-any
 	read(ref: SchemaReference, select: any): Promise<any[]>;
+
+	validate(
+		ref: SchemaReference,
+		root: DynamicObject,
+		mode?: 'create' | 'update',
+	): Promise<string[]>
 
 	toJSON(): DictionaryJSON;
 }
