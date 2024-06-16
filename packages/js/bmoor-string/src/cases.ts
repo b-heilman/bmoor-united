@@ -8,7 +8,7 @@ export function toKebabCase(str: string): string {
 
 export function toCamelCase(str: string): string {
 	return str.replace(
-		/(^|[-\s]+)(\w)/g,
+		/(^|[-_\s]+)(\w)/g,
 		function (whole, left, right, index) {
 			if (index === 0) {
 				return right.toLowerCase();

@@ -3,11 +3,11 @@ import {strict as assert} from 'assert';
 import {expect} from 'chai';
 
 import {
-	BuilderGraphqlTypingJSON,
 	Connector,
 	Dictionary,
 	Schema,
 	SchemaInterface,
+	TypingJSON,
 	types,
 	validations,
 } from '@bmoor/schema';
@@ -15,10 +15,10 @@ import {
 import {Graphql} from './graphql';
 
 describe('@bmoor/schema-services : graphql', function () {
-	let dictionary: Dictionary<BuilderGraphqlTypingJSON, SchemaInterface>;
+	let dictionary: Dictionary<TypingJSON, SchemaInterface>;
 
 	beforeEach(function () {
-		dictionary = new Dictionary<BuilderGraphqlTypingJSON, SchemaInterface>(
+		dictionary = new Dictionary<TypingJSON, SchemaInterface>(
 			types,
 			validations,
 		);

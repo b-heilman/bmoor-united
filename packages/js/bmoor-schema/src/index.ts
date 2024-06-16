@@ -1,4 +1,3 @@
-export * from './builder/graphql.interface';
 export * from './builder/jsonschema.interface';
 export * from './connection.interface';
 export * from './connector/context.interface';

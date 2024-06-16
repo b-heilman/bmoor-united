@@ -1,6 +1,10 @@
 import {create} from '@bmoor/error';
 import {DynamicObject} from '@bmoor/object';
 
+import {BuilderGraphql} from './builder/graphql';
+import {BuilderJSONSchema} from './builder/jsonschema';
+import {BuilderJSONSchemaObject} from './builder/jsonschema.interface';
+import {BuilderTypescript} from './builder/typescript';
 import {
 	ConnectionActionsType,
 	ConnectionJSON,
@@ -15,12 +19,12 @@ import {
 	SchemaReference,
 	SchemaSettings,
 } from './schema.interface';
-import { ContextInterface } from './context.interface';
 
 export class Schema<
 	ActionsT extends ConnectionActionsType = ConnectionActionsType,
 > implements SchemaInterface<ActionsT>
 {
+	ctx: ConnectorContextInterface;
 	settings: SchemaJSON<ActionsT>;
 	fields: Record<FieldReference, FieldInterface>;
 	relationships: Record<SchemaReference, RelationshipJSON>;
@@ -60,6 +64,10 @@ export class Schema<
 		if (this.settings.connection) {
 			this.connection = this.settings.connection;
 		}
+	}
+
+	setContext(ctx: ConnectorContextInterface) {
+		this.ctx = ctx;
 	}
 
 	getReference(): SchemaReference {
@@ -131,16 +139,18 @@ export class Schema<
 	}
 
 	async validate(
-		ctx: ContextInterface,
 		root: DynamicObject,
 		mode: 'create' | 'update' = 'create',
 	): Promise<string[]> {
-		const rtn = (await Promise.all(
-			this.getFields()
-			.map(field => field.validate(ctx, root, mode))
-		)).filter(error => error !== null)
+		const rtn = (
+			await Promise.all(
+				this.getFields().map((field) =>
+					field.validate(this.ctx, root, mode),
+				),
+			)
+		).filter((error) => error !== null);
 
-		if (rtn.length === 0){
+		if (rtn.length === 0) {
 			return null;
 		} else {
 			return rtn;
@@ -149,5 +159,29 @@ export class Schema<
 
 	toJSON(): SchemaJSON {
 		return this.settings;
+	}
+
+	toJSONSchema(): BuilderJSONSchemaObject {
+		const builder = new BuilderJSONSchema(this.ctx);
+
+		builder.addSchema(this);
+
+		return builder.toJSON();
+	}
+
+	toGraphql(): string {
+		const builder = new BuilderGraphql(this.ctx);
+
+		builder.addSchema(this);
+
+		return builder.toString();
+	}
+
+	toTypescript(): string {
+		const builder = new BuilderTypescript(this.ctx);
+
+		builder.addSchema(this);
+
+		return builder.toString();
 	}
 }

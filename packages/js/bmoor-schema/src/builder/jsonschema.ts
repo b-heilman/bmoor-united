@@ -36,27 +36,29 @@ export class BuilderJSONSchema {
 
 		for (const link of chain) {
 			if ('properties' in cur) {
+				const ref = link.reference; // this.ctx.formatName(link.reference, 'jsonschema');
+
 				if (link.type === 'object') {
-					if (!(link.reference in cur.properties)) {
-						cur.properties[link.reference] = {
+					if (!(ref in cur.properties)) {
+						cur.properties[ref] = {
 							type: 'object',
 							properties: {},
 						};
 					}
 				} else if (link.type === 'array') {
-					if (!(link.reference in cur.properties)) {
-						cur.properties[link.reference] = {
+					if (!(ref in cur.properties)) {
+						cur.properties[ref] = {
 							type: 'array',
 							items: {},
 						};
 					}
 				} else {
-					cur.properties[link.reference] = {
+					cur.properties[ref] = {
 						type: this.ctx.getTyping(link.fieldType).json,
 					};
 				}
 
-				cur = cur.properties[link.reference];
+				cur = cur.properties[ref];
 			} else if ('items' in cur) {
 				if (link.type === 'object') {
 					if (!cur.items.type) {
@@ -78,6 +80,7 @@ export class BuilderJSONSchema {
 					cur = cur.items;
 				} else {
 					if (link.reference) {
+						const ref = link.reference; // this.ctx.formatName(link.reference, 'jsonschema');
 						if (!('properties' in cur.items)) {
 							cur.items = {
 								type: 'object',
@@ -85,7 +88,7 @@ export class BuilderJSONSchema {
 							};
 						}
 
-						cur = cur.items.properties[link.reference] = {
+						cur = cur.items.properties[ref] = {
 							type: this.ctx.getTyping(link.fieldType).json,
 						};
 					} else {

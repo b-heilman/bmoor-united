@@ -6,9 +6,9 @@ import {SchemaInterface} from '../schema.interface';
 import {types} from '../typing';
 import {TypingJSON} from '../typing.interface';
 import {validations} from '../validator';
-import {BuilderGraphql} from './graphql';
+import {BuilderTypescript} from './typescript';
 
-describe('@bmoor/schema :: BuilderGraphql', function () {
+describe('@bmoor/schema :: BuilderTypescript', function () {
 	it('should properly generate a json schema', function () {
 		const dictionary = new Dictionary<TypingJSON, SchemaInterface>(
 			types,
@@ -114,24 +114,24 @@ describe('@bmoor/schema :: BuilderGraphql', function () {
 			}),
 		);
 
-		const formatter = new BuilderGraphql(dictionary);
+		const formatter = new BuilderTypescript(dictionary);
 
 		formatter.addSchema(dictionary.getSchema('s-3'));
 
 		expect(formatter.toJSON()).to.deep.equal({
-			id: 'ID!',
-			otherId: 'String!',
-			'parent(hello: String, eins: String, zwei: Float)': 's2',
-			'mount(foo: String)': '[s1]',
+			id: 'string',
+			otherId: 'string',
+			parent: 's2',
+			mount: 's1[]',
 		});
 
 		expect(formatter.toString().replace(/\s/g, '')).to.deep.equal(
 			`
-			type s3 {
-			id: ID!
-			otherId: String!
-			parent(hello: String, eins: String, zwei: Float): s2
-			mount(foo: String): [s1]
+			interface s3 {
+			id: string
+			otherId: string
+			parent: s2
+			mount: s1[]
 			}
 		`.replace(/\s/g, ''),
 		);
@@ -169,41 +169,41 @@ describe('@bmoor/schema :: BuilderGraphql', function () {
 			}),
 		);
 
-		const formatter = new BuilderGraphql(dictionary);
+		const formatter = new BuilderTypescript(dictionary);
 
 		formatter.addSchema(dictionary.getSchema('s-1'));
 
 		expect(formatter.toJSON()).to.deep.equal({
 			foo: {
-				bar: 'String',
+				'bar?': 'string',
 			},
 			hello: {
-				world: 'Float',
+				'world?': 'number',
 			},
 			eins: {
 				zwei: {
-					drei: 'Float',
+					'drei?': 'number',
 				},
 			},
 		});
 
 		expect(formatter.toString()).to.deep.equal(
-			`type s1 {
+			`interface s1 {
 	foo: s1Foo
 	hello: s1Hello
 	eins: s1Eins
 }
-type s1Foo {
-	bar: String
+interface s1Foo {
+	bar?: string
 }
-type s1Hello {
-	world: Float
+interface s1Hello {
+	world?: number
 }
-type s1Eins {
+interface s1Eins {
 	zwei: s1EinsZwei
 }
-type s1EinsZwei {
-	drei: Float
+interface s1EinsZwei {
+	drei?: number
 }`,
 		);
 	});

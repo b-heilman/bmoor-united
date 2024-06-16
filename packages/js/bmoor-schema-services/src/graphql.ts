@@ -1,9 +1,9 @@
 import {
 	BuilderGraphql,
-	BuilderGraphqlTypingJSON,
 	ConnectorContextInterface,
 	DictionaryInterface,
 	SchemaInterface,
+	TypingJSON,
 	dictToGraphql,
 } from '@bmoor/schema';
 
@@ -53,7 +53,7 @@ function createSchemaResolver(
 }
 
 export class Graphql<
-	TypingT extends BuilderGraphqlTypingJSON,
+	TypingT extends TypingJSON,
 	SchemaT extends SchemaInterface,
 > {
 	settings: GraphqlJSON<TypingT, SchemaT>;
@@ -82,7 +82,10 @@ export class Graphql<
 			(agg, [key, query]) => {
 				const schema = this.dictionary.getSchema(query.schema);
 
-				const type = this.dictionary.formatName(schema.getReference());
+				const type = this.dictionary.formatName(
+					schema.getReference(),
+					'graphql',
+				);
 				const single = query.single || false;
 
 				const primary = schema.getPrimaryField();
@@ -114,7 +117,7 @@ export class Graphql<
 					.join('\n') + '\n';
 		}
 
-		return `${custom}${types}\n${dictToGraphql(queries, 'Query')}`;
+		return `${custom}${types}\n${dictToGraphql(this.dictionary, queries, 'Query')}`;
 	}
 
 	toResolvers(): GraphqlSchemaResolvers {
@@ -125,7 +128,8 @@ export class Graphql<
 			const resolvers = createSchemaResolver(this.dictionary, schema);
 
 			if (Object.keys(resolvers).length > 0) {
-				agg[this.dictionary.formatName(schema.getReference())] = resolvers;
+				agg[this.dictionary.formatName(schema.getReference(), 'graphql')] =
+					resolvers;
 			}
 
 			return agg;

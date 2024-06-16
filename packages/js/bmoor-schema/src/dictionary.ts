@@ -1,4 +1,5 @@
 import {create} from '@bmoor/error';
+import {DynamicObject} from '@bmoor/object';
 import {toCamelCase} from '@bmoor/string';
 
 import {ConnectionFn, ConnectionReference} from './connection.interface';
@@ -12,8 +13,6 @@ import {
 } from './typing.interface';
 import {ValidationReference} from './validation.interface';
 import {ValidatorInterface} from './validator.interface';
-import { ContextInterface } from './context.interface';
-import { DynamicObject } from '@bmoor/object';
 
 export class Dictionary<
 	TypingT extends TypingJSON,
@@ -67,6 +66,8 @@ export class Dictionary<
 			});
 		}
 
+		schema.setContext(this);
+
 		this.schemas[ref] = schema;
 	}
 
@@ -88,11 +89,9 @@ export class Dictionary<
 		root: DynamicObject,
 		mode: 'create' | 'update' = 'create',
 	): Promise<string[]> {
-		return this.getSchema(ref).validate(this, root, mode);
+		return this.getSchema(ref).validate(root, mode);
 	}
 
-	// TODO: figure out usages
-	// TODO: probably want to make this camelcase or snakecase transformation
 	formatName(ref: string): string {
 		return toCamelCase(ref);
 	}

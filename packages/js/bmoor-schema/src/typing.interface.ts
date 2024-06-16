@@ -2,6 +2,8 @@ export type TypingReference = string;
 
 export interface TypingJSON {
 	json: string;
+	graphql: string;
+	typescript: string;
 }
 
 export interface TypingInterface<T extends TypingJSON = TypingJSON> {

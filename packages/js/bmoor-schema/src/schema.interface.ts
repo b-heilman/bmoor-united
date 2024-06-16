@@ -1,10 +1,12 @@
 import {DynamicObject} from '@bmoor/object';
 
+import {BuilderJSONSchemaObject} from './builder/jsonschema.interface';
 import {
 	ConnectionActionsType,
 	ConnectionJSON,
 } from './connection.interface';
 import {ConnectorReadable} from './connector.interface';
+import {ConnectorContextInterface} from './connector/context.interface';
 import {
 	FieldInfo,
 	FieldInterface,
@@ -13,7 +15,6 @@ import {
 } from './field.interface';
 import {RelationshipJSON} from './relationship.interface';
 import {ValidationJSON} from './validation.interface';
-import { ContextInterface } from './context.interface';
 
 export type SchemaReference = string;
 
@@ -45,6 +46,8 @@ export interface SchemaSettings<
 export interface SchemaInterface<
 	ActionsT extends ConnectionActionsType = ConnectionActionsType,
 > extends ConnectorReadable<ActionsT> {
+	setContext(ctx: ConnectorContextInterface);
+
 	getReference(): SchemaReference;
 	getPrimaryField(): FieldInterface;
 	getFields(): FieldInterface[];
@@ -56,12 +59,14 @@ export interface SchemaInterface<
 	explode(root: DynamicObject): DynamicObject;
 
 	validate(
-		ctx: ContextInterface,
 		root: DynamicObject,
 		mode?: 'create' | 'update',
-	): Promise<string[]>
+	): Promise<string[]>;
 
 	getConnectionActions(): ActionsT;
 
 	toJSON(): SchemaJSON;
+	toJSONSchema(): BuilderJSONSchemaObject;
+	toGraphql(): string;
+	toTypescript(): string;
 }

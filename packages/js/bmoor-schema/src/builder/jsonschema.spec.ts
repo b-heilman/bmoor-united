@@ -1,12 +1,15 @@
 import {expect} from 'chai';
 
+import {Dictionary} from '../dictionary';
 import {Schema} from '../schema';
 import {types} from '../typing';
+import {validations} from '../validator';
 import {BuilderJSONSchema} from './jsonschema';
 
 describe('@bmoor/schema :: BuilderJSONSchema', function () {
 	it('should properly generate a json schema', function () {
 		const schema = new Schema({
+			reference: 'test',
 			fields: [
 				{
 					path: 'foo.bar',
@@ -27,7 +30,7 @@ describe('@bmoor/schema :: BuilderJSONSchema', function () {
 					},
 				},
 				{
-					path: 'hello[].otherWorld[]',
+					path: 'hello[].other_world[]',
 					info: {
 						type: 'string',
 					},
@@ -42,20 +45,11 @@ describe('@bmoor/schema :: BuilderJSONSchema', function () {
 			],
 		});
 
-		const formatter = new BuilderJSONSchema({
-			getValidation() {
-				return () => Promise.resolve('fail');
-			},
-			getTyping(ref) {
-				return types.getType(ref);
-			},
-			getSchema() {
-				return schema;
-			},
-			formatName(name) {
-				return name;
-			},
-		});
+		const dict = new Dictionary(types, validations);
+
+		dict.addSchema(schema);
+
+		const formatter = new BuilderJSONSchema(dict);
 
 		formatter.addSchema(schema);
 
@@ -82,7 +76,7 @@ describe('@bmoor/schema :: BuilderJSONSchema', function () {
 							world: {
 								type: 'number',
 							},
-							otherWorld: {
+							other_world: {
 								type: 'array',
 								items: {
 									type: 'string',

@@ -4,7 +4,7 @@ import {implode} from '@bmoor/path';
 
 import {BuilderJSONSchema} from './builder/jsonschema';
 import {BuilderJSONSchemaObject} from './builder/jsonschema.interface';
-import {ContextInterface} from './context.interface';
+import {ContextInterface, FormatInterface} from './context.interface';
 import {
 	SchemaInterface,
 	SchemaJSON,
@@ -52,28 +52,53 @@ export function toJSONSchema<T extends TypingJSON = TypingJSON>(
 }
 
 export function dictToGraphql(
+	ctx: FormatInterface,
 	root: DynamicObject,
 	namespace: string,
 ): string {
 	const children = [];
 	const schema = [];
 
-	let counter = 0;
-
 	for (const [key, value] of Object.entries(root)) {
 		if (typeof value === 'object') {
-			const child = namespace + '_' + counter;
+			const child = ctx.formatName(namespace + '_' + key, 'typescript');
 
-			children.push(dictToGraphql(value, child));
+			children.push(dictToGraphql(ctx, value, child));
 			schema.push(key + ': ' + child);
-
-			counter++;
 		} else {
 			schema.push(key + ': ' + value);
 		}
 	}
 
 	let content = `type ${namespace} {\n\t${schema.join('\n\t')}\n}`;
+
+	if (children.length) {
+		content = content + '\n' + children.join('\n');
+	}
+
+	return content;
+}
+
+export function dictToTypescript(
+	ctx: FormatInterface,
+	root: DynamicObject,
+	namespace: string,
+): string {
+	const children = [];
+	const schema = [];
+
+	for (const [key, value] of Object.entries(root)) {
+		if (typeof value === 'object') {
+			const child = ctx.formatName(namespace + '_' + key, 'typescript');
+
+			children.push(dictToTypescript(ctx, value, child));
+			schema.push(key + ': ' + child);
+		} else {
+			schema.push(key + ': ' + value);
+		}
+	}
+
+	let content = `interface ${namespace} {\n\t${schema.join('\n\t')}\n}`;
 
 	if (children.length) {
 		content = content + '\n' + children.join('\n');

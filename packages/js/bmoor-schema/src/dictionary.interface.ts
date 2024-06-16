@@ -1,4 +1,5 @@
-import { DynamicObject } from '@bmoor/object';
+import {DynamicObject} from '@bmoor/object';
+
 import {ConnectorContextInterface} from './connector/context.interface';
 import {
 	SchemaInterface,
@@ -26,7 +27,7 @@ export interface DictionaryInterface<
 		ref: SchemaReference,
 		root: DynamicObject,
 		mode?: 'create' | 'update',
-	): Promise<string[]>
+	): Promise<string[]>;
 
 	toJSON(): DictionaryJSON;
 }

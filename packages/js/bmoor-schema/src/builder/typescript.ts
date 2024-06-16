@@ -2,14 +2,12 @@ import {DynamicObject, set} from '@bmoor/object';
 
 import {ConnectorContextInterface} from '../connector/context.interface';
 import {FieldInterface} from '../field.interface';
-import {dictToGraphql} from '../methods';
+import {dictToTypescript} from '../methods';
 import {RelationshipJSON} from '../relationship.interface';
 import {SchemaInterface} from '../schema.interface';
 import {TypingJSON} from '../typing.interface';
 
-// TODO: I need to handle multiple dimensions and sub types
-
-export class BuilderGraphql<TypingT extends TypingJSON = TypingJSON> {
+export class BuilderTypescript<TypingT extends TypingJSON = TypingJSON> {
 	ctx: ConnectorContextInterface<TypingT>;
 	root: DynamicObject;
 	schema?: SchemaInterface;
@@ -36,11 +34,9 @@ export class BuilderGraphql<TypingT extends TypingJSON = TypingJSON> {
 		if (info.use !== 'synthetic') {
 			set(
 				this.root,
-				field.getPath(),
-				info.use === 'primary'
-					? 'ID!'
-					: this.ctx.getTyping(info.type).graphql +
-							(info.required ? '!' : ''),
+				field.getPath() +
+					(info.required || info.use === 'primary' ? '' : '?'),
+				this.ctx.getTyping(info.type).typescript,
 			);
 		}
 	}
@@ -51,34 +47,14 @@ export class BuilderGraphql<TypingT extends TypingJSON = TypingJSON> {
 	) {
 		const other = this.ctx.getSchema(relationship.other);
 
-		const attrs = relationship.otherFields
-			.map((attr) => {
-				// TODO: I need to handle filters...
-				const otherField = other.getField(attr);
-
-				return `${otherField.getReference()}: ${this.ctx.getTyping(otherField.getInfo().type).graphql}`;
-			})
-			.concat(
-				Object.entries(other.getConnectionActions() || {}).map(
-					([action, type]) => {
-						return `${action}: ${this.ctx.getTyping(type).graphql}`;
-					},
-				),
-			);
-
-		const attributes = attrs.join(', ');
-
-		let result = this.ctx.formatName(other.getReference(), 'graphql');
+		let result = this.ctx.formatName(other.getReference(), 'typescript');
 		if (relationship.type === 'toMany') {
-			result = '[' + result + ']';
+			result = result + '[]';
 		}
 
 		set(
 			this.root,
-			schema.getField(relationship.reference).getPath() +
-				'(' +
-				attributes +
-				')',
+			schema.getField(relationship.reference).getPath(),
 			result,
 		);
 	}
@@ -90,9 +66,9 @@ export class BuilderGraphql<TypingT extends TypingJSON = TypingJSON> {
 	toString() {
 		const name = this.ctx.formatName(
 			this.schema?.getReference() || '__replace__',
-			'graphql',
+			'typescript',
 		);
 
-		return dictToGraphql(this.ctx, this.root, name);
+		return dictToTypescript(this.ctx, this.root, name);
 	}
 }
