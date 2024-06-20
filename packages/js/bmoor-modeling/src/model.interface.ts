@@ -1,19 +1,27 @@
-import {Mapping} from '@bmoor/path';
+import {DynamicObject} from '@bmoor/object';
+import {
+	ConnectionActionsType,
+	SchemaInterface,
+	SchemaSettings,
+	SchemaStructure,
+} from '@bmoor/schema';
 
-import {ModelFieldInterface} from './model/field.interface';
-import {ModelFieldSet} from './model/field/set';
-
-export interface ModelSettings {
-	ref: string;
-	fields: ModelFieldSet;
+export interface ModelJSON<
+	ActionsT extends ConnectionActionsType = ConnectionActionsType,
+> extends SchemaSettings<ActionsT> {
+	deflate?: SchemaStructure;
+	inflate?: SchemaStructure;
 }
 
-export interface ModelInterface {
-	fields: Map<string, ModelFieldInterface>;
-	settings: ModelSettings;
-	deflate: Mapping;
-	inflate: Mapping;
+export interface ModelSettings<
+	ActionsT extends ConnectionActionsType = ConnectionActionsType,
+> extends ModelJSON<ActionsT> {}
 
-	getByPath(path: string): ModelFieldInterface;
-	toTypescript(): string;
+export interface ModelInterface<
+	ActionsT extends ConnectionActionsType = ConnectionActionsType,
+> extends SchemaInterface<ActionsT> {
+	// Internal representation to storage
+	deflate(input: DynamicObject): DynamicObject;
+	// Internal representation to external
+	inflate(input: DynamicObject): DynamicObject;
 }

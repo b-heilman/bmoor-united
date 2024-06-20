@@ -136,7 +136,6 @@ export class Graphql<
 		}, resolvers);
 
 		// TODO: I need to add types to resolvers
-
 		resolvers['Query'] = Object.entries(this.settings.query).reduce(
 			(agg, [key, query]) => {
 				const schema = this.dictionary.getSchema(query.schema);

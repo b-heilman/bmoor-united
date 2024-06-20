@@ -26,19 +26,23 @@ describe('@bmoor/schema-services : graphql', function () {
 		dictionary.addSchema(
 			new Schema({
 				reference: 's-1',
-				fields: [
+				info: {
+					foo: {
+						use: 'primary',
+						type: 'string',
+					},
+					bar: {
+						type: 'number',
+					},
+				},
+				structure: [
 					{
 						path: 'foo',
-						info: {
-							use: 'primary',
-							type: 'string',
-						},
+						ref: 'foo',
 					},
 					{
 						path: 'bar',
-						info: {
-							type: 'number',
-						},
+						ref: 'bar',
 					},
 				],
 				connection: {
@@ -50,19 +54,23 @@ describe('@bmoor/schema-services : graphql', function () {
 		dictionary.addSchema(
 			new Schema({
 				reference: 's-2',
-				fields: [
+				info: {
+					hello: {
+						use: 'primary',
+						type: 'string',
+					},
+					world: {
+						type: 'number',
+					},
+				},
+				structure: [
 					{
 						path: 'hello',
-						info: {
-							use: 'primary',
-							type: 'string',
-						},
+						ref: 'hello',
 					},
 					{
 						path: 'world',
-						info: {
-							type: 'number',
-						},
+						ref: 'world',
 					},
 				],
 				connection: {
@@ -78,34 +86,40 @@ describe('@bmoor/schema-services : graphql', function () {
 		dictionary.addSchema(
 			new Schema({
 				reference: 's-3',
-				fields: [
+				info: {
+					id: {
+						use: 'primary',
+						type: 'string',
+					},
+					otherId: {
+						required: true,
+						type: 'string',
+					},
+					mount: {
+						use: 'synthetic',
+						type: 'array',
+					},
+					parent: {
+						use: 'synthetic',
+						type: 'object',
+					},
+				},
+				structure: [
 					{
 						path: 'id',
-						info: {
-							use: 'primary',
-							type: 'string',
-						},
+						ref: 'id',
 					},
 					{
 						path: 'otherId',
-						info: {
-							required: true,
-							type: 'string',
-						},
+						ref: 'otherId',
 					},
 					{
 						path: 'mount',
-						info: {
-							use: 'synthetic',
-							type: 'array',
-						},
+						ref: 'mount',
 					},
 					{
 						path: 'parent',
-						info: {
-							use: 'synthetic',
-							type: 'object',
-						},
+						ref: 'parent',
 					},
 				],
 				relationships: [

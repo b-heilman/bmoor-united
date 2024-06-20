@@ -1,71 +1,92 @@
 import {Mapping} from '@bmoor/path';
-import {toProperCase} from '@bmoor/string';
+import {
+	ConnectionActionsType,
+	Schema,
+	reduceStructure,
+} from '@bmoor/schema';
 
 import {ModelInterface, ModelSettings} from './model.interface';
-import {ModelFieldInterface} from './model/field.interface';
 
 /***
  * A Model is all about the data's structure.  Actions to be performed against the model will
  * be in the service.
  ***/
-export class Model implements ModelInterface {
-	fields: Map<string, ModelFieldInterface>;
-	settings: ModelSettings;
+export class Model<
+		ActionsT extends ConnectionActionsType = ConnectionActionsType,
+	>
+	extends Schema<ActionsT>
+	implements ModelInterface
+{
+	deflator: {
+		from: Mapping;
+		to: Mapping;
+	};
+	inflator: {
+		from: Mapping;
+		to: Mapping;
+	};
 
-	deflate: Mapping;
-	inflate: Mapping;
+	constructor(settings: ModelSettings<ActionsT>) {
+		super(settings);
 
-	constructor(settings: ModelSettings) {
-		this.settings = settings;
-		this.fields = new Map<string, ModelFieldInterface>();
+		if (settings.inflate) {
+			const mappings = reduceStructure(settings.inflate).map((field) => ({
+				from: field.path,
+				to: this.getField(field.ref).getPath(),
+			}));
 
-		settings.fields.map((field) => {
-			this.fields.set(field.settings.external, field);
-		});
-
-		/***
-		 * I am building more efficient accessors that
-		 * work together rather than each field doing the
-		 * full path of access.  It also allows me to support
-		 * arrays
-		 ***/
-		// TODO: isFlat support
-		const toInternal = settings.fields.map((field) => {
-			return {
-				from: field.settings.external,
-				to: field.settings.storage,
+			this.inflator = {
+				from: new Mapping(mappings),
+				to: new Mapping(mappings.map((m) => ({from: m.to, to: m.from}))),
 			};
-		});
+		} else {
+			this.inflator = null;
+		}
 
-		const toExternal = settings.fields.map((field) => {
-			return {
-				from: field.settings.internal,
-				to: field.settings.external,
+		if (settings.deflate) {
+			const mappings = reduceStructure(settings.deflate).map((field) => ({
+				from: field.path,
+				to: this.getField(field.ref).getPath(),
+			}));
+
+			this.deflator = {
+				from: new Mapping(mappings),
+				to: new Mapping(mappings.map((m) => ({from: m.to, to: m.from}))),
 			};
-		});
-
-		this.deflate = new Mapping(toInternal);
-		this.inflate = new Mapping(toExternal);
+		} else {
+			this.deflator = null;
+		}
 	}
 
-	getByPath(external: string) {
-		return this.fields.get(external);
+	inflate(obj) {
+		if (this.inflator) {
+			return this.inflator.to.transform(obj);
+		} else {
+			return obj;
+		}
 	}
 
-	toTypescript(): string {
-		const res = this.settings.fields.toTypescript();
+	fromInflated(obj) {
+		if (this.inflator) {
+			return this.inflator.from.transform(obj);
+		} else {
+			return obj;
+		}
+	}
 
-		return Object.keys(res)
-			.flatMap((key) => {
-				const group = toProperCase(key);
-				return Object.keys(res[key]).map(
-					(usage) =>
-						'export interface ' +
-						group +
-						toProperCase(usage) +
-						res[key][usage],
-				);
-			})
-			.join('\n');
+	deflate(obj) {
+		if (this.deflator) {
+			return this.deflator.to.transform(obj);
+		} else {
+			return obj;
+		}
+	}
+
+	fromDeflated(obj) {
+		if (this.deflator) {
+			return this.deflator.from.transform(obj);
+		} else {
+			return obj;
+		}
 	}
 }

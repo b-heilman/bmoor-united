@@ -1,5 +1,2 @@
-Do not use this library, I am still working on publishing patterns
-
-https://docs.npmjs.com/creating-and-publishing-scoped-public-packages
-
-https://docs.npmjs.com/using-private-packages-in-a-ci-cd-workflow
+#----------- Thoughts -----------
+In the former version of this, I had internal and external schemas.  The problem became, which do you write your logic against?  Instead, I want to create external - internal - storage schemas.  External and storage will be extensions of internal fields.  All create, read, update, delete, etc actions will be written against the internal structure

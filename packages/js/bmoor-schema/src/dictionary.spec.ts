@@ -20,18 +20,22 @@ describe('@bmoor/schema :: Dictionary', function () {
 		dictionary.addSchema(
 			new Schema({
 				reference: 's-1',
-				fields: [
+				info: {
+					foo: {
+						type: 'string',
+					},
+					bar: {
+						type: 'number',
+					},
+				},
+				structure: [
 					{
 						path: 'foo',
-						info: {
-							type: 'string',
-						},
+						ref: 'foo',
 					},
 					{
 						path: 'bar',
-						info: {
-							type: 'number',
-						},
+						ref: 'bar',
 					},
 				],
 			}),
@@ -40,18 +44,22 @@ describe('@bmoor/schema :: Dictionary', function () {
 		dictionary.addSchema(
 			new Schema({
 				reference: 's-2',
-				fields: [
+				info: {
+					hello: {
+						type: 'string',
+					},
+					world: {
+						type: 'number',
+					},
+				},
+				structure: [
 					{
 						path: 'hello',
-						info: {
-							type: 'string',
-						},
+						ref: 'hello',
 					},
 					{
 						path: 'world',
-						info: {
-							type: 'number',
-						},
+						ref: 'world',
 					},
 				],
 				connection: {
@@ -70,34 +78,40 @@ describe('@bmoor/schema :: Dictionary', function () {
 				connection: {
 					reference: 'bar',
 				},
-				fields: [
+				info: {
+					id: {
+						use: 'primary',
+						type: 'string',
+					},
+					otherId: {
+						required: true,
+						type: 'string',
+					},
+					mount: {
+						use: 'synthetic',
+						type: 'array',
+					},
+					parent: {
+						use: 'synthetic',
+						type: 'object',
+					},
+				},
+				structure: [
 					{
 						path: 'id',
-						info: {
-							use: 'primary',
-							type: 'string',
-						},
+						ref: 'id',
 					},
 					{
 						path: 'otherId',
-						info: {
-							required: true,
-							type: 'string',
-						},
+						ref: 'otherId',
 					},
 					{
 						path: 'mount',
-						info: {
-							use: 'synthetic',
-							type: 'array',
-						},
+						ref: 'mount',
 					},
 					{
 						path: 'parent',
-						info: {
-							use: 'synthetic',
-							type: 'object',
-						},
+						ref: 'parent',
 					},
 				],
 				relationships: [

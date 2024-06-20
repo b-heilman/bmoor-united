@@ -6,34 +6,36 @@ describe('bmoor-schema :: schema', function () {
 	describe('implode', function () {
 		it('should work', function () {
 			const schema = new Schema({
-				fields: [
+				info: {
+					'f-1': {
+						type: 'string',
+					},
+					'f-2': {
+						type: 'number',
+					},
+					'f-3': {
+						type: 'number',
+					},
+					'f-4': {
+						type: 'string',
+					},
+				},
+				structure: [
 					{
 						ref: 'f-1',
 						path: 'foo.bar',
-						info: {
-							type: 'string',
-						},
 					},
 					{
 						ref: 'f-2',
 						path: 'foo.bar2',
-						info: {
-							type: 'number',
-						},
 					},
 					{
 						ref: 'f-3',
 						path: 'hello[].world',
-						info: {
-							type: 'number',
-						},
 					},
 					{
 						ref: 'f-4',
 						path: 'hello[].otherWorld[]',
-						info: {
-							type: 'string',
-						},
 					},
 				],
 			});
@@ -63,36 +65,32 @@ describe('bmoor-schema :: schema', function () {
 	describe('explode', function () {
 		it('should work', function () {
 			const schema = new Schema({
-				fields: [
-					{
-						ref: 'f-1',
-						path: 'foo.bar',
-						info: {
-							type: 'string',
-						},
+				info: {
+					'f-1': {
+						type: 'string',
 					},
-					{
-						ref: 'f-2',
-						path: 'foo.bar2',
-						info: {
-							type: 'number',
-						},
+					'f-2': {
+						type: 'number',
 					},
-					{
-						ref: 'f-3',
-						path: 'hello[].world',
-						info: {
-							type: 'number',
-						},
+					'f-3': {
+						type: 'number',
 					},
-					{
-						ref: 'f-4',
-						path: 'hello[].otherWorld[]',
-						info: {
-							type: 'string',
-						},
+					'f-4': {
+						type: 'string',
 					},
-				],
+				},
+				structure: {
+					foo: {
+						bar: 'f-1',
+						bar2: 'f-2',
+					},
+					hello: [
+						{
+							world: 'f-3',
+							otherWorld: ['f-4'],
+						},
+					],
+				},
 			});
 
 			const res = schema.explode({

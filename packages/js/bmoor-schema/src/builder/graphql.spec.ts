@@ -18,18 +18,22 @@ describe('@bmoor/schema :: BuilderGraphql', function () {
 		dictionary.addSchema(
 			new Schema({
 				reference: 's-1',
-				fields: [
+				info: {
+					foo: {
+						type: 'string',
+					},
+					bar: {
+						type: 'number',
+					},
+				},
+				structure: [
 					{
 						path: 'foo',
-						info: {
-							type: 'string',
-						},
+						ref: 'foo',
 					},
 					{
 						path: 'bar',
-						info: {
-							type: 'number',
-						},
+						ref: 'foo',
 					},
 				],
 			}),
@@ -38,18 +42,22 @@ describe('@bmoor/schema :: BuilderGraphql', function () {
 		dictionary.addSchema(
 			new Schema({
 				reference: 's-2',
-				fields: [
+				info: {
+					hello: {
+						type: 'string',
+					},
+					world: {
+						type: 'number',
+					},
+				},
+				structure: [
 					{
+						ref: 'hello',
 						path: 'hello',
-						info: {
-							type: 'string',
-						},
 					},
 					{
+						ref: 'world',
 						path: 'world',
-						info: {
-							type: 'number',
-						},
 					},
 				],
 				connection: {
@@ -65,34 +73,40 @@ describe('@bmoor/schema :: BuilderGraphql', function () {
 		dictionary.addSchema(
 			new Schema({
 				reference: 's-3',
-				fields: [
+				info: {
+					id: {
+						use: 'primary',
+						type: 'string',
+					},
+					otherId: {
+						required: true,
+						type: 'string',
+					},
+					mount: {
+						use: 'synthetic',
+						type: 'array',
+					},
+					parent: {
+						use: 'synthetic',
+						type: 'object',
+					},
+				},
+				structure: [
 					{
+						ref: 'id',
 						path: 'id',
-						info: {
-							use: 'primary',
-							type: 'string',
-						},
 					},
 					{
+						ref: 'otherId',
 						path: 'otherId',
-						info: {
-							required: true,
-							type: 'string',
-						},
 					},
 					{
+						ref: 'mount',
 						path: 'mount',
-						info: {
-							use: 'synthetic',
-							type: 'array',
-						},
 					},
 					{
+						ref: 'parent',
 						path: 'parent',
-						info: {
-							use: 'synthetic',
-							type: 'object',
-						},
 					},
 				],
 				relationships: [
@@ -146,24 +160,29 @@ describe('@bmoor/schema :: BuilderGraphql', function () {
 		dictionary.addSchema(
 			new Schema({
 				reference: 's-1',
-				fields: [
+				info: {
+					bar: {
+						type: 'string',
+					},
+					world: {
+						type: 'number',
+					},
+					drei: {
+						type: 'float',
+					},
+				},
+				structure: [
 					{
 						path: 'foo.bar',
-						info: {
-							type: 'string',
-						},
+						ref: 'bar',
 					},
 					{
 						path: 'hello.world',
-						info: {
-							type: 'number',
-						},
+						ref: 'world',
 					},
 					{
 						path: 'eins.zwei.drei',
-						info: {
-							type: 'float',
-						},
+						ref: 'drei',
 					},
 				],
 			}),

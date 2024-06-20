@@ -1,6 +1,6 @@
 import {expect} from 'chai';
 
-import {fromStructureSchema, toJSONSchema} from './methods';
+import {toJSONSchema} from './methods';
 import {Schema} from './schema';
 import {types} from './typing';
 
@@ -8,121 +8,39 @@ describe('@bmoor/schema :: methods', function () {
 	describe('toJSONSchema', function () {
 		it('should properly generate a json schema', function () {
 			const schema = new Schema({
-				fields: [
+				info: {
+					bar: {
+						type: 'string',
+					},
+					bar2: {
+						type: 'number',
+					},
+					world: {
+						type: 'number',
+					},
+					other: {
+						type: 'string',
+					},
+				},
+				structure: [
 					{
 						path: 'foo.bar',
-						info: {
-							type: 'string',
-						},
+						ref: 'bar',
 					},
 					{
 						path: 'foo.bar2',
-						info: {
-							type: 'number',
-						},
+						ref: 'bar2',
 					},
 					{
 						path: 'hello[].world',
-						info: {
-							type: 'number',
-						},
+						ref: 'world',
 					},
 					{
 						path: 'hello[].otherWorld[]',
-						info: {
-							type: 'string',
-						},
+						ref: 'other',
 					},
 				],
 			});
-
-			const ctx = {
-				getValidation() {
-					return () => Promise.resolve('fail');
-				},
-				getTyping(ref) {
-					return types.getType(ref);
-				},
-				getSchema() {
-					return schema;
-				},
-				getConnection() {
-					return null;
-				},
-				formatName(name) {
-					return name;
-				},
-			};
-
-			expect(toJSONSchema(ctx, schema)).to.deep.equal({
-				type: 'object',
-				properties: {
-					foo: {
-						type: 'object',
-						properties: {
-							bar: {
-								type: 'string',
-							},
-							bar2: {
-								type: 'number',
-							},
-						},
-					},
-
-					hello: {
-						type: 'array',
-						items: {
-							type: 'object',
-							properties: {
-								world: {
-									type: 'number',
-								},
-								otherWorld: {
-									type: 'array',
-									items: {
-										type: 'string',
-									},
-								},
-							},
-						},
-					},
-				},
-			});
-		});
-	});
-
-	describe('fromStructureSchema', function () {
-		it('should properly generate a json schema', function () {
-			const schema = new Schema(
-				fromStructureSchema({
-					structure: {
-						foo: {
-							bar: 'foo-bar',
-							bar2: 'foo-bar-2',
-						},
-						hello: [
-							{
-								world: 'hello-world',
-								otherWorld: ['other'],
-							},
-						],
-					},
-					info: {
-						'foo-bar': {
-							type: 'string',
-						},
-						'foo-bar-2': {
-							type: 'number',
-						},
-						'hello-world': {
-							type: 'number',
-						},
-						other: {
-							type: 'string',
-						},
-					},
-				}),
-			);
 
 			const ctx = {
 				getValidation() {

@@ -10,7 +10,6 @@ import {ConnectorContextInterface} from './connector/context.interface';
 import {
 	FieldInfo,
 	FieldInterface,
-	FieldJSON,
 	FieldReference,
 } from './field.interface';
 import {RelationshipJSON} from './relationship.interface';
@@ -18,22 +17,18 @@ import {ValidationJSON} from './validation.interface';
 
 export type SchemaReference = string;
 
-export interface SchemaStructured<
-	ActionsT extends ConnectionActionsType = ConnectionActionsType,
-> {
-	reference?: SchemaReference;
-	structure: DynamicObject<string | string[]>;
-	info: Record<string, FieldInfo>;
-	validators?: Record<FieldReference, ValidationJSON>;
-	relationships?: RelationshipJSON[];
-	connection?: ConnectionJSON<ActionsT>;
-}
+export type SchemaFieldSet = {ref: string; path: string}[];
+
+export type SchemaStructure =
+	| DynamicObject<string | string[]>
+	| SchemaFieldSet;
 
 export interface SchemaJSON<
 	ActionsT extends ConnectionActionsType = ConnectionActionsType,
 > {
 	reference?: SchemaReference;
-	fields: FieldJSON[];
+	structure: SchemaStructure;
+	info: Record<string, FieldInfo>;
 	validators?: Record<FieldReference, ValidationJSON>;
 	relationships?: RelationshipJSON[];
 	connection?: ConnectionJSON<ActionsT>;

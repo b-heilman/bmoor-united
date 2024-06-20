@@ -10,37 +10,44 @@ describe('@bmoor/schema :: BuilderJSONSchema', function () {
 	it('should properly generate a json schema', function () {
 		const schema = new Schema({
 			reference: 'test',
-			fields: [
+			info: {
+				'f-1': {
+					type: 'string',
+				},
+				'f-2': {
+					type: 'number',
+				},
+				'f-3': {
+					type: 'number',
+				},
+				'f-4': {
+					type: 'string',
+				},
+				fail: {
+					use: 'synthetic',
+					type: 'string',
+				},
+			},
+			structure: [
 				{
+					ref: 'f-1',
 					path: 'foo.bar',
-					info: {
-						type: 'string',
-					},
 				},
 				{
+					ref: 'f-2',
 					path: 'foo.bar2',
-					info: {
-						type: 'number',
-					},
 				},
 				{
+					ref: 'f-3',
 					path: 'hello[].world',
-					info: {
-						type: 'number',
-					},
 				},
 				{
+					ref: 'f-4',
 					path: 'hello[].other_world[]',
-					info: {
-						type: 'string',
-					},
 				},
 				{
+					ref: 'fail',
 					path: 'should.fail',
-					info: {
-						use: 'synthetic',
-						type: 'string',
-					},
 				},
 			],
 		});

@@ -8,6 +8,7 @@ import {
 import {ContextInterface} from './context.interface';
 import {ValidationJSON} from './validation.interface';
 
+export type FieldPath = string;
 export type FieldReference = string;
 
 export interface FieldInfo {
@@ -18,7 +19,7 @@ export interface FieldInfo {
 
 export interface FieldJSON {
 	ref?: FieldReference;
-	path: string;
+	path: FieldPath;
 	info: FieldInfo;
 }
 

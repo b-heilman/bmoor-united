@@ -1,5 +1,7 @@
+import {isArray} from '@bmoor/compare';
 import {create} from '@bmoor/error';
 import {DynamicObject} from '@bmoor/object';
+import {implode} from '@bmoor/path';
 
 import {BuilderGraphql} from './builder/graphql';
 import {BuilderJSONSchema} from './builder/jsonschema';
@@ -11,15 +13,44 @@ import {
 } from './connection.interface';
 import {ConnectorContextInterface} from './connector/context.interface';
 import {Field} from './field';
-import {FieldInterface, FieldReference} from './field.interface';
+import {
+	FieldInterface,
+	FieldJSON,
+	FieldReference,
+} from './field.interface';
 import {RelationshipJSON} from './relationship.interface';
 import {
+	SchemaFieldSet,
 	SchemaInterface,
 	SchemaJSON,
 	SchemaReference,
 	SchemaSettings,
+	SchemaStructure,
 } from './schema.interface';
 
+export function reduceStructure(
+	structure: SchemaStructure,
+): SchemaFieldSet {
+	if (Array.isArray(structure)) {
+		return structure;
+	} else {
+		const paths = implode(structure);
+		return Object.entries(paths).map(([path, reference]) => {
+			let ref: string;
+
+			if (isArray(reference)) {
+				ref = reference[0];
+			} else {
+				ref = <string>reference;
+			}
+
+			return {
+				ref,
+				path,
+			};
+		});
+	}
+}
 export class Schema<
 	ActionsT extends ConnectionActionsType = ConnectionActionsType,
 > implements SchemaInterface<ActionsT>
@@ -32,7 +63,15 @@ export class Schema<
 
 	constructor(schema: SchemaSettings<ActionsT>) {
 		this.settings = schema; // I'll probably change this later, but for now, is what it is
-		this.fields = schema.fields.reduce((agg, fieldSchema, dex) => {
+
+		const fields: FieldJSON[] = reduceStructure(schema.structure).map(
+			(field) =>
+				Object.assign(field, {
+					info: schema.info[field.ref],
+				}),
+		);
+
+		this.fields = fields.reduce((agg, fieldSchema, dex) => {
 			const field = new Field(fieldSchema);
 			const ref = field.getReference() || 'field_' + dex;
 

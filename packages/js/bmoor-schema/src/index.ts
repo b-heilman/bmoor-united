@@ -15,6 +15,6 @@ export {BuilderJSONSchema} from './builder/jsonschema';
 export {Connector} from './connector';
 export {Dictionary} from './dictionary';
 export {Field} from './field';
-export {Schema} from './schema';
+export {Schema, reduceStructure} from './schema';
 export {types, Typing} from './typing';
 export {validations, Validator} from './validator';
