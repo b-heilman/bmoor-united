@@ -1,8 +1,8 @@
 export type TypingReference = string;
 
+// TODO: support protobuf => protobufjs
 export interface TypingJSON {
 	json: string;
-	graphql: string;
 	typescript: string;
 }
 

@@ -2,8 +2,6 @@ import {create} from '@bmoor/error';
 import {DynamicObject} from '@bmoor/object';
 import {toCamelCase} from '@bmoor/string';
 
-import {ConnectionFn, ConnectionReference} from './connection.interface';
-import {ConnectorInterface} from './connector.interface';
 import {DictionaryInterface, DictionaryJSON} from './dictionary.interface';
 import {SchemaInterface, SchemaReference} from './schema.interface';
 import {
@@ -21,7 +19,6 @@ export class Dictionary<
 {
 	typing: TypingInterface<TypingT>;
 	schemas: Record<SchemaReference, SchemaT>;
-	connector: ConnectorInterface;
 	validator: ValidatorInterface;
 
 	constructor(
@@ -49,14 +46,6 @@ export class Dictionary<
 		return this.validator.getValidation(ref);
 	}
 
-	setConnector(connector: ConnectorInterface) {
-		this.connector = connector;
-	}
-
-	getConnection(ref: ConnectionReference): ConnectionFn {
-		return this.connector.getConnection(ref);
-	}
-
 	addSchema(schema: SchemaT) {
 		const ref = schema.getReference();
 
@@ -77,11 +66,6 @@ export class Dictionary<
 
 	getSchemas(): SchemaT[] {
 		return Object.values(this.schemas);
-	}
-
-	// eslint-disable-next-line  @typescript-eslint/no-explicit-any
-	async read(ref: SchemaReference, select: any): Promise<any[]> {
-		return this.getSchema(ref).read(this, select);
 	}
 
 	async validate(

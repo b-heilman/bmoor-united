@@ -1,6 +1,5 @@
 import {expect} from 'chai';
 
-import {Connector} from './connector';
 import {Dictionary} from './dictionary';
 import {Schema} from './schema';
 import {SchemaInterface} from './schema.interface';
@@ -62,22 +61,12 @@ describe('@bmoor/schema :: Dictionary', function () {
 						ref: 'world',
 					},
 				],
-				connection: {
-					reference: 'foo',
-					actions: {
-						eins: 'string',
-						zwei: 'float',
-					},
-				},
 			}),
 		);
 
 		dictionary.addSchema(
 			new Schema({
 				reference: 's-3',
-				connection: {
-					reference: 'bar',
-				},
 				info: {
 					id: {
 						use: 'primary',
@@ -132,40 +121,11 @@ describe('@bmoor/schema :: Dictionary', function () {
 				],
 			}),
 		);
-
-		dictionary.setConnector(
-			new Connector({
-				foo: async () => [
-					{
-						eins: 1,
-					},
-				],
-				bar: async () => [
-					{
-						zwei: 2,
-					},
-				],
-			}),
-		);
 	});
 
 	it('should allow reading', async function () {
-		const foo = await dictionary.getSchema('s-2').read(dictionary, {});
+		const ref2 = dictionary.getSchema('s-2').getReference();
 
-		expect(foo).to.deep.equal([
-			{
-				eins: 1,
-			},
-		]);
-
-		const bar = await dictionary.getSchema('s-3').read(dictionary, {
-			actions: {}, // should be optional
-		});
-
-		expect(bar).to.deep.equal([
-			{
-				zwei: 2,
-			},
-		]);
+		expect(ref2).to.deep.equal(['s-2']);
 	});
 });

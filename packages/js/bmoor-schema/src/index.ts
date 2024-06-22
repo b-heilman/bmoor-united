@@ -10,7 +10,7 @@ export * from './validation.interface';
 
 export * from './methods';
 
-export {BuilderGraphql} from './builder/graphql';
+export {BuilderGraphql} from '../../bmoor-modeling/src/builder/graphql';
 export {BuilderJSONSchema} from './builder/jsonschema';
 export {Connector} from './connector';
 export {Dictionary} from './dictionary';

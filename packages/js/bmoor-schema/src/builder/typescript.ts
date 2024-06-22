@@ -1,6 +1,6 @@
 import {DynamicObject, set} from '@bmoor/object';
 
-import {ConnectorContextInterface} from '../connector/context.interface';
+import {ContextInterface} from '../context.interface';
 import {FieldInterface} from '../field.interface';
 import {dictToTypescript} from '../methods';
 import {RelationshipJSON} from '../relationship.interface';
@@ -8,11 +8,11 @@ import {SchemaInterface} from '../schema.interface';
 import {TypingJSON} from '../typing.interface';
 
 export class BuilderTypescript<TypingT extends TypingJSON = TypingJSON> {
-	ctx: ConnectorContextInterface<TypingT>;
+	ctx: ContextInterface<TypingT>;
 	root: DynamicObject;
 	schema?: SchemaInterface;
 
-	constructor(ctx: ConnectorContextInterface<TypingT>) {
+	constructor(ctx: ContextInterface<TypingT>) {
 		this.ctx = ctx;
 		this.root = {};
 	}

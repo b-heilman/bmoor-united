@@ -60,13 +60,6 @@ describe('@bmoor/schema :: BuilderTypescript', function () {
 						ref: 'world',
 					},
 				],
-				connection: {
-					reference: 'junk',
-					actions: {
-						eins: 'string',
-						zwei: 'float',
-					},
-				},
 			}),
 		);
 

@@ -1,19 +1,18 @@
 import {UpdateDelta} from '../datum.interface';
 
 export interface ServiceAdapterInterface<
-	InternalRead,
-	InternalReference,
-	InternalCreate,
-	InternalUpdate,
-	InternalSearch,
+	StructureT,
+	ReferenceT,
+	DeltaT,
+	SearchT,
 > {
 	// TODO: make sure these are right? Seed and Delta are
 	//   generally external
-	create(content: InternalCreate[]): Promise<InternalRead[]>;
-	read(ids: InternalReference[]): Promise<InternalRead[]>;
+	create(content: StructureT[]): Promise<StructureT[]>;
+	read(ids: ReferenceT[]): Promise<StructureT[]>;
 	update(
-		content: UpdateDelta<InternalReference, InternalUpdate>[],
-	): Promise<InternalRead[]>;
-	delete?(ids: InternalReference[]): Promise<number>; // return the rows deleted
-	search?(search: InternalSearch): Promise<InternalRead[]>;
+		content: UpdateDelta<ReferenceT, DeltaT>[],
+	): Promise<StructureT[]>;
+	delete?(ids: ReferenceT[]): Promise<number>; // return the rows deleted
+	search?(search: SearchT): Promise<StructureT[]>;
 }

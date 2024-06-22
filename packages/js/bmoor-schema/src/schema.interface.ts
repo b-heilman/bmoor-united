@@ -1,12 +1,7 @@
 import {DynamicObject} from '@bmoor/object';
 
 import {BuilderJSONSchemaObject} from './builder/jsonschema.interface';
-import {
-	ConnectionActionsType,
-	ConnectionJSON,
-} from './connection.interface';
-import {ConnectorReadable} from './connector.interface';
-import {ConnectorContextInterface} from './connector/context.interface';
+import {ContextInterface} from './context.interface';
 import {
 	FieldInfo,
 	FieldInterface,
@@ -23,25 +18,18 @@ export type SchemaStructure =
 	| DynamicObject<string | string[]>
 	| SchemaFieldSet;
 
-export interface SchemaJSON<
-	ActionsT extends ConnectionActionsType = ConnectionActionsType,
-> {
+export interface SchemaJSON {
 	reference?: SchemaReference;
 	structure: SchemaStructure;
 	info: Record<string, FieldInfo>;
 	validators?: Record<FieldReference, ValidationJSON>;
 	relationships?: RelationshipJSON[];
-	connection?: ConnectionJSON<ActionsT>;
 }
 
-export interface SchemaSettings<
-	ActionsT extends ConnectionActionsType = ConnectionActionsType,
-> extends SchemaJSON<ActionsT> {}
+export interface SchemaSettings extends SchemaJSON {}
 
-export interface SchemaInterface<
-	ActionsT extends ConnectionActionsType = ConnectionActionsType,
-> extends ConnectorReadable<ActionsT> {
-	setContext(ctx: ConnectorContextInterface);
+export interface SchemaInterface {
+	setContext(ctx: ContextInterface);
 
 	getReference(): SchemaReference;
 	getPrimaryField(): FieldInterface;
@@ -57,8 +45,6 @@ export interface SchemaInterface<
 		root: DynamicObject,
 		mode?: 'create' | 'update',
 	): Promise<string[]>;
-
-	getConnectionActions(): ActionsT;
 
 	toJSON(): SchemaJSON;
 	toJSONSchema(): BuilderJSONSchemaObject;

@@ -1,11 +1,11 @@
 import {expect} from 'chai';
 
-import {Dictionary} from '../dictionary';
-import {Schema} from '../schema';
-import {SchemaInterface} from '../schema.interface';
-import {types} from '../typing';
-import {TypingJSON} from '../typing.interface';
-import {validations} from '../validator';
+import {Dictionary} from '../../../bmoor-schema/src/dictionary';
+import {Schema} from '../../../bmoor-schema/src/schema';
+import {SchemaInterface} from '../../../bmoor-schema/src/schema.interface';
+import {types} from '../../../bmoor-schema/src/typing';
+import {TypingJSON} from '../../../bmoor-schema/src/typing.interface';
+import {validations} from '../../../bmoor-schema/src/validator';
 import {BuilderGraphql} from './graphql';
 
 describe('@bmoor/schema :: BuilderGraphql', function () {
@@ -60,13 +60,6 @@ describe('@bmoor/schema :: BuilderGraphql', function () {
 						path: 'world',
 					},
 				],
-				connection: {
-					reference: 'junk',
-					actions: {
-						eins: 'string',
-						zwei: 'float',
-					},
-				},
 			}),
 		);
 

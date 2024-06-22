@@ -1,6 +1,6 @@
 import {DynamicObject} from '@bmoor/object';
 
-import {ConnectorContextInterface} from './connector/context.interface';
+import {ContextInterface} from './context.interface';
 import {
 	SchemaInterface,
 	SchemaJSON,
@@ -15,13 +15,10 @@ export interface DictionaryJSON {
 export interface DictionaryInterface<
 	TypingT extends TypingJSON,
 	SchemaT extends SchemaInterface = SchemaInterface,
-> extends ConnectorContextInterface<TypingT> {
+> extends ContextInterface<TypingT> {
 	addSchema(schema: SchemaT);
 	getSchema(ref: SchemaReference): SchemaT;
 	getSchemas(): SchemaT[];
-
-	// eslint-disable-next-line  @typescript-eslint/no-explicit-any
-	read(ref: SchemaReference, select: any): Promise<any[]>;
 
 	validate(
 		ref: SchemaReference,

@@ -1,137 +1,54 @@
 import {ContextSecurityInterface} from '@bmoor/context';
+import {ConnectionActionsType} from '@bmoor/schema';
 
 import {UpdateDelta} from './datum.interface';
-import {Model} from './model';
+import {ModelInterface} from './model.interface';
 import {ModelFieldInterface} from './model/field.interface';
-import {ServiceAccessorInterface} from './service/accessor.interface';
 import {ServiceAdapterInterface} from './service/adapter.interface';
 import {ServiceControllerInterface} from './service/controller.interface';
-import {ServiceValidatorInterface} from './service/validator.interface';
 
-export interface ServiceSettings<
-	ExternalRead,
-	ExternalReference,
-	ExternalCreate,
-	ExternalUpdate,
-	InternalRead,
-	InternalReference,
-	InternalCreate,
-	InternalUpdate,
-	InternalSearch,
-> {
+export interface ServiceSettings<StructureT, ReferenceT, DeltaT, SearchT> {
 	adapter: ServiceAdapterInterface<
-		InternalRead,
-		InternalReference,
-		InternalCreate,
-		InternalUpdate,
-		InternalSearch
+		StructureT,
+		ReferenceT,
+		DeltaT,
+		SearchT
 	>;
-	accessor: ServiceAccessorInterface<
-		ExternalRead,
-		ExternalReference,
-		InternalRead,
-		InternalReference
-	>;
-	controller: ServiceControllerInterface<
-		ExternalRead,
-		ExternalReference,
-		ExternalCreate,
-		ExternalUpdate
-	>;
-	validator?: ServiceValidatorInterface<
-		ExternalReference,
-		ExternalCreate,
-		ExternalUpdate
-	>;
-	model: Model;
+	controller: ServiceControllerInterface<StructureT, ReferenceT, DeltaT>;
 }
 
-export type ServiceActions<
-	ExternalRead,
-	ExternalReference,
-	ExternalCreate,
-	ExternalUpdate,
-	ExternalSearch,
-> = {
-	create?(datum: ExternalCreate, ctx?: ContextSecurityInterface): void;
-	read?(datum: ExternalRead, ctx?: ContextSecurityInterface): void;
-	update?(change: ExternalUpdate, ctx?: ContextSecurityInterface): void;
-	inflate?(datum: ExternalRead, ctx?: ContextSecurityInterface): void;
-	deflate?(
-		datum:
-			| ExternalRead
-			| ExternalReference
-			| ExternalCreate
-			| ExternalUpdate
-			| ExternalSearch,
-		ctx?: ContextSecurityInterface,
-	): void;
+export type ServiceHooks<StructureT, DeltaT> = {
+	onCreate?(ctx: ContextSecurityInterface, datum: StructureT): void;
+	onRead?(ctx: ContextSecurityInterface, datum: StructureT): void;
+	onUpdate?(ctx: ContextSecurityInterface, change: DeltaT): void;
+	onInflate?(ctx: ContextSecurityInterface, datum: StructureT): void;
+	onDeflate?(ctx: ContextSecurityInterface, datum: StructureT): void;
 };
 
 export interface ServiceInterface<
-	ExternalRead,
-	ExternalReference,
-	ExternalCreate,
-	ExternalUpdate,
-	ExternalSearch,
-	InternalRead,
-	InternalReference,
-	InternalCreate,
-	InternalUpdate,
-	InternalSearch,
+	StructureT,
+	ReferenceT,
+	DeltaT,
+	SearchT,
 > {
-	fields: Map<string, ModelFieldInterface>;
-	settings: ServiceSettings<
-		ExternalRead,
-		ExternalReference,
-		ExternalCreate,
-		ExternalUpdate,
-		InternalRead,
-		InternalReference,
-		InternalCreate,
-		InternalUpdate,
-		InternalSearch
-	>;
-	actions: ServiceActions<
-		ExternalRead,
-		ExternalReference,
-		ExternalCreate,
-		ExternalUpdate,
-		ExternalSearch
-	>;
-
 	create(
-		content: ExternalCreate[],
 		ctx: ContextSecurityInterface,
-	): Promise<ExternalRead[]>;
+		content: StructureT[],
+	): Promise<StructureT[]>;
 	read(
-		ids: ExternalReference[],
 		ctx: ContextSecurityInterface,
-	): Promise<ExternalRead[]>;
+		ids: StructureT[],
+	): Promise<StructureT[]>;
 	update(
-		content: UpdateDelta<ExternalReference, ExternalUpdate>[],
 		ctx: ContextSecurityInterface,
-	): Promise<ExternalRead[]>;
+		content: UpdateDelta<ReferenceT, DeltaT>[],
+	): Promise<StructureT[]>;
 	delete(
-		ids: ExternalReference[],
 		ctx: ContextSecurityInterface,
-	): Promise<ExternalRead[]>;
+		ids: ReferenceT[],
+	): Promise<StructureT[]>;
 	search(
-		search: ExternalSearch,
 		ctx: ContextSecurityInterface,
-	): Promise<ExternalRead[]>;
-
-	convertToInternal(
-		content:
-			| ExternalReference
-			| ExternalCreate
-			| ExternalCreate
-			| ExternalUpdate
-			| ExternalSearch,
-		ctx: ContextSecurityInterface,
-	): InternalReference | InternalCreate | InternalUpdate | InternalSearch;
-	convertToExternal(
-		content: InternalRead,
-		ctx: ContextSecurityInterface,
-	): ExternalRead;
+		search: SearchT,
+	): Promise<StructureT[]>;
 }

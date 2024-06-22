@@ -3,15 +3,11 @@ import {create} from '@bmoor/error';
 import {DynamicObject} from '@bmoor/object';
 import {implode} from '@bmoor/path';
 
-import {BuilderGraphql} from './builder/graphql';
+import {BuilderGraphql} from '../../bmoor-modeling/src/builder/graphql';
 import {BuilderJSONSchema} from './builder/jsonschema';
 import {BuilderJSONSchemaObject} from './builder/jsonschema.interface';
 import {BuilderTypescript} from './builder/typescript';
-import {
-	ConnectionActionsType,
-	ConnectionJSON,
-} from './connection.interface';
-import {ConnectorContextInterface} from './connector/context.interface';
+import {ContextInterface} from './context.interface';
 import {Field} from './field';
 import {
 	FieldInterface,
@@ -51,17 +47,13 @@ export function reduceStructure(
 		});
 	}
 }
-export class Schema<
-	ActionsT extends ConnectionActionsType = ConnectionActionsType,
-> implements SchemaInterface<ActionsT>
-{
-	ctx: ConnectorContextInterface;
-	settings: SchemaJSON<ActionsT>;
+export class Schema implements SchemaInterface {
+	ctx: ContextInterface;
+	settings: SchemaJSON;
 	fields: Record<FieldReference, FieldInterface>;
 	relationships: Record<SchemaReference, RelationshipJSON>;
-	connection: ConnectionJSON<ActionsT>;
 
-	constructor(schema: SchemaSettings<ActionsT>) {
+	constructor(schema: SchemaSettings) {
 		this.settings = schema; // I'll probably change this later, but for now, is what it is
 
 		const fields: FieldJSON[] = reduceStructure(schema.structure).map(
@@ -99,13 +91,9 @@ export class Schema<
 		} else {
 			this.relationships = {};
 		}
-
-		if (this.settings.connection) {
-			this.connection = this.settings.connection;
-		}
 	}
 
-	setContext(ctx: ConnectorContextInterface) {
+	setContext(ctx: ContextInterface) {
 		this.ctx = ctx;
 	}
 
@@ -164,17 +152,6 @@ export class Schema<
 		}
 
 		return rtn;
-	}
-
-	getConnectionActions(): ActionsT {
-		return this.connection?.actions;
-	}
-
-	// eslint-disable-next-line  @typescript-eslint/no-explicit-any
-	async read(ctx: ConnectorContextInterface, select: any): Promise<any[]> {
-		const connection = ctx.getConnection(this.connection.reference);
-
-		return connection(select);
 	}
 
 	async validate(
