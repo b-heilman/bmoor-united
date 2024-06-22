@@ -34,26 +34,38 @@ function buildActions<
 	>,
 	field: ModelFieldInterface,
 ): void {
-	if (field.actions.create) {
-		actions.create = actionExtend(actions.create, field.actions.create);
+	if (field.actions.onCreate) {
+		actions.onCreate = actionExtend(
+			actions.onCreate,
+			field.actions.onCreate,
+		);
 	}
 
-	if (field.actions.read) {
-		actions.read = actionExtend(actions.read, field.actions.read);
+	if (field.actions.onRead) {
+		actions.onRead = actionExtend(actions.onRead, field.actions.onRead);
 	}
 
-	if (field.actions.update) {
-		actions.update = actionExtend(actions.update, field.actions.update);
+	if (field.actions.onUpdate) {
+		actions.onUpdate = actionExtend(
+			actions.onUpdate,
+			field.actions.onUpdate,
+		);
 	}
 
 	// inflate are changes out of the database
-	if (field.actions.inflate) {
-		actions.inflate = actionExtend(actions.inflate, field.actions.inflate);
+	if (field.actions.onInflate) {
+		actions.onInflate = actionExtend(
+			actions.onInflate,
+			field.actions.onInflate,
+		);
 	}
 
 	// deflate are changes into the database
-	if (field.actions.deflate) {
-		actions.deflate = actionExtend(actions.deflate, field.actions.deflate);
+	if (field.actions.onDeflate) {
+		actions.onDeflate = actionExtend(
+			actions.onDeflate,
+			field.actions.onDeflate,
+		);
 	}
 }
 

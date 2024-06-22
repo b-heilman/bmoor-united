@@ -1,24 +1,22 @@
 import {ContextSecurityInterface} from '@bmoor/context';
 
 import {UpdateDelta} from '../datum.interface';
-import {ExternalKeyReader} from './accessor.interface';
+import {
+	DeltaType,
+	ReferenceType,
+	ServiceInterface,
+	StructureType,
+} from '../service.interface';
 import {
 	ServiceControllerInterface,
 	ServiceControllerSettings,
 } from './controller.interface';
 
 export class ServiceController<
-	ExternalRead,
-	ExternalReference,
-	ExternalCreate,
-	ExternalUpdate,
-> implements
-		ServiceControllerInterface<
-			ExternalRead,
-			ExternalReference,
-			ExternalCreate,
-			ExternalUpdate
-		>
+	StructureT = StructureType,
+	ReferenceT = ReferenceType,
+	DeltaT = DeltaType,
+> implements ServiceControllerInterface<StructureT, ReferenceT, DeltaT>
 {
 	settings: ServiceControllerSettings;
 
@@ -28,9 +26,10 @@ export class ServiceController<
 
 	// securing data that has been submitted
 	async canCreate(
-		datums: ExternalCreate[],
 		ctx: ContextSecurityInterface,
-	): Promise<ExternalCreate[]> {
+		service: ServiceInterface,
+		datums: StructureT[],
+	): Promise<StructureT[]> {
 		const permission = this.settings.permission?.create;
 
 		if (!permission || ctx.hasPermission(permission)) {
@@ -41,10 +40,10 @@ export class ServiceController<
 	}
 
 	async canRead(
-		datums: ExternalRead[],
-		fn: ExternalKeyReader<ExternalRead, ExternalReference>,
 		ctx: ContextSecurityInterface,
-	): Promise<ExternalRead[]> {
+		service: ServiceInterface,
+		datums: StructureT[],
+	): Promise<StructureT[]> {
 		const permission = this.settings.permission?.read;
 
 		if (!permission || ctx.hasPermission(permission)) {
@@ -55,9 +54,10 @@ export class ServiceController<
 	}
 
 	async canUpdate(
-		content: UpdateDelta<ExternalReference, ExternalUpdate>[],
 		ctx: ContextSecurityInterface,
-	): Promise<UpdateDelta<ExternalReference, ExternalUpdate>[]> {
+		service: ServiceInterface,
+		content: UpdateDelta<ReferenceT, DeltaT>[],
+	): Promise<UpdateDelta<ReferenceT, DeltaT>[]> {
 		const permission = this.settings.permission?.update;
 
 		if (!permission || ctx.hasPermission(permission)) {
@@ -68,9 +68,10 @@ export class ServiceController<
 	}
 
 	async canDelete(
-		content: ExternalReference[],
 		ctx: ContextSecurityInterface,
-	): Promise<ExternalReference[]> {
+		service: ServiceInterface,
+		content: ReferenceT[],
+	): Promise<ReferenceT[]> {
 		const permission = this.settings.permission?.delete;
 
 		if (!permission || ctx.hasPermission(permission)) {

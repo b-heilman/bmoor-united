@@ -25,8 +25,8 @@ export class Dictionary<
 		types: TypingInterface<TypingT>,
 		validator: ValidatorInterface,
 	) {
-		this.typing = types;
-		this.validator = validator;
+		this.setTyping(types);
+		this.setValidator(validator);
 		this.schemas = {};
 	}
 

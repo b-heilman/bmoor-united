@@ -48,6 +48,5 @@ export interface SchemaInterface {
 
 	toJSON(): SchemaJSON;
 	toJSONSchema(): BuilderJSONSchemaObject;
-	toGraphql(): string;
 	toTypescript(): string;
 }

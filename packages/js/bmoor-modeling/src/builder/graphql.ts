@@ -1,10 +1,13 @@
 import {DynamicObject, set} from '@bmoor/object';
-import {ContextInterface} from '@bmoor/schema/src/context.interface';
-import {FieldInterface} from '@bmoor/schema/src/field.interface';
-import {dictToGraphql} from '@bmoor/schema/src/methods';
-import {RelationshipJSON} from '@bmoor/schema/src/relationship.interface';
-import {SchemaInterface} from '@bmoor/schema/src/schema.interface';
-import {TypingJSON} from '@bmoor/schema/src/typing.interface';
+import {
+	FieldInterface,
+	RelationshipJSON,
+	SchemaInterface,
+} from '@bmoor/schema';
+
+import {ContextInterface} from '../context.interface';
+import {dictToGraphql} from '../methods';
+import {TypingJSON} from '../typing.interface';
 
 // TODO: I need to handle multiple dimensions and sub types
 
@@ -48,7 +51,7 @@ export class BuilderGraphql<TypingT extends TypingJSON = TypingJSON> {
 		schema: SchemaInterface,
 		relationship: RelationshipJSON,
 	) {
-		const other = this.ctx.getSchema(relationship.other);
+		const other = this.ctx.getService(relationship.other);
 
 		const attrs = relationship.otherFields
 			.map((attr) => {

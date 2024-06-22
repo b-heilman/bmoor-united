@@ -3,7 +3,6 @@ import {create} from '@bmoor/error';
 import {DynamicObject} from '@bmoor/object';
 import {implode} from '@bmoor/path';
 
-import {BuilderGraphql} from '../../bmoor-modeling/src/builder/graphql';
 import {BuilderJSONSchema} from './builder/jsonschema';
 import {BuilderJSONSchemaObject} from './builder/jsonschema.interface';
 import {BuilderTypescript} from './builder/typescript';
@@ -183,14 +182,6 @@ export class Schema implements SchemaInterface {
 		builder.addSchema(this);
 
 		return builder.toJSON();
-	}
-
-	toGraphql(): string {
-		const builder = new BuilderGraphql(this.ctx);
-
-		builder.addSchema(this);
-
-		return builder.toString();
 	}
 
 	toTypescript(): string {

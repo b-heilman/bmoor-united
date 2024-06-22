@@ -126,6 +126,6 @@ describe('@bmoor/schema :: Dictionary', function () {
 	it('should allow reading', async function () {
 		const ref2 = dictionary.getSchema('s-2').getReference();
 
-		expect(ref2).to.deep.equal(['s-2']);
+		expect(ref2).to.deep.equal('s-2');
 	});
 });

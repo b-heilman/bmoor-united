@@ -1,27 +1,39 @@
 import {DynamicObject} from '@bmoor/object';
 import {
-	ConnectionActionsType,
+	FieldReference,
 	SchemaInterface,
 	SchemaSettings,
 	SchemaStructure,
 } from '@bmoor/schema';
 
-export interface ModelJSON<
-	ActionsT extends ConnectionActionsType = ConnectionActionsType,
-> extends SchemaSettings<ActionsT> {
+import {HookReference} from './hook.interface';
+
+export type HookRegister =
+	| HookReference
+	| {ref: HookReference; args: object};
+export interface ModelJSON extends SchemaSettings {
 	deflate?: SchemaStructure;
 	inflate?: SchemaStructure;
+	hooks?: Record<FieldReference, HookRegister | HookRegister[]>;
 }
 
-export interface ModelSettings<
-	ActionsT extends ConnectionActionsType = ConnectionActionsType,
-> extends ModelJSON<ActionsT> {}
+export interface ModelSettings extends ModelJSON {}
 
 export interface ModelInterface<
-	ActionsT extends ConnectionActionsType = ConnectionActionsType,
-> extends SchemaInterface<ActionsT> {
+	StructureT = DynamicObject,
+	UpdateT = DynamicObject,
+> extends SchemaInterface {
 	// Internal representation to storage
-	deflate(input: DynamicObject): DynamicObject;
+	deflate(input: StructureT): DynamicObject;
+	fromDeflated(input: DynamicObject): StructureT;
+
 	// Internal representation to external
-	inflate(input: DynamicObject): DynamicObject;
+	inflate(input: StructureT): DynamicObject;
+	fromInflated(input: DynamicObject): StructureT;
+
+	onCreate(input: StructureT): StructureT;
+	onRead(input: StructureT): StructureT;
+	onUpdate(input: UpdateT): UpdateT;
+	onInflate(input: StructureT): StructureT;
+	onDeflate(input: StructureT): StructureT;
 }

@@ -1,13 +1,22 @@
 import {ContextSecurityInterface} from '@bmoor/context';
-import {ConnectionActionsType} from '@bmoor/schema';
+import {DynamicObject} from '@bmoor/object';
+import {SchemaInterface, TypingReference} from '@bmoor/schema';
 
 import {UpdateDelta} from './datum.interface';
-import {ModelInterface} from './model.interface';
-import {ModelFieldInterface} from './model/field.interface';
 import {ServiceAdapterInterface} from './service/adapter.interface';
 import {ServiceControllerInterface} from './service/controller.interface';
 
-export interface ServiceSettings<StructureT, ReferenceT, DeltaT, SearchT> {
+export type StructureType = DynamicObject;
+export type ReferenceType = DynamicObject;
+export type DeltaType = DynamicObject;
+export type SearchType = DynamicObject;
+
+export interface ServiceSettings<
+	StructureT = StructureType,
+	ReferenceT = ReferenceType,
+	DeltaT = DeltaType,
+	SearchT = SearchType,
+> {
 	adapter: ServiceAdapterInterface<
 		StructureT,
 		ReferenceT,
@@ -17,38 +26,59 @@ export interface ServiceSettings<StructureT, ReferenceT, DeltaT, SearchT> {
 	controller: ServiceControllerInterface<StructureT, ReferenceT, DeltaT>;
 }
 
-export type ServiceHooks<StructureT, DeltaT> = {
-	onCreate?(ctx: ContextSecurityInterface, datum: StructureT): void;
-	onRead?(ctx: ContextSecurityInterface, datum: StructureT): void;
-	onUpdate?(ctx: ContextSecurityInterface, change: DeltaT): void;
-	onInflate?(ctx: ContextSecurityInterface, datum: StructureT): void;
-	onDeflate?(ctx: ContextSecurityInterface, datum: StructureT): void;
-};
+export type ServiceDatumModifierFn<StructureT> = (
+	ctx: ContextSecurityInterface,
+	datum: StructureT,
+) => void;
+
+export type ServiceDeltaModifierFn<DeltaT> = (
+	ctx: ContextSecurityInterface,
+	datum: DeltaT,
+) => void;
+
+export interface ServiceHooks<
+	StructureT = StructureType,
+	DeltaT = DeltaType,
+> {
+	onCreate?: ServiceDatumModifierFn<StructureT>;
+	onRead?: ServiceDatumModifierFn<StructureT>;
+	onUpdate?: ServiceDeltaModifierFn<DeltaT>;
+	onInflate?: ServiceDatumModifierFn<StructureT>;
+	onDeflate?: ServiceDatumModifierFn<StructureT>;
+}
 
 export interface ServiceInterface<
-	StructureT,
-	ReferenceT,
-	DeltaT,
-	SearchT,
+	SchemaT = SchemaInterface,
+	StructureT = StructureType,
+	ReferenceT = ReferenceType,
+	DeltaT = DeltaType,
+	SearchT = SearchType,
+	ExternalT = StructureType,
 > {
+	settings: ServiceSettings<StructureT, ReferenceT, DeltaT, SearchT>;
+	hooks: ServiceHooks<StructureT, DeltaT>;
+
 	create(
 		ctx: ContextSecurityInterface,
-		content: StructureT[],
-	): Promise<StructureT[]>;
+		content: ExternalT[],
+	): Promise<ExternalT[]>;
 	read(
 		ctx: ContextSecurityInterface,
-		ids: StructureT[],
-	): Promise<StructureT[]>;
+		ids: ReferenceT[],
+	): Promise<ExternalT[]>;
 	update(
 		ctx: ContextSecurityInterface,
 		content: UpdateDelta<ReferenceT, DeltaT>[],
-	): Promise<StructureT[]>;
+	): Promise<ExternalT[]>;
 	delete(
 		ctx: ContextSecurityInterface,
 		ids: ReferenceT[],
-	): Promise<StructureT[]>;
+	): Promise<ExternalT[]>;
 	search(
 		ctx: ContextSecurityInterface,
 		search: SearchT,
-	): Promise<StructureT[]>;
+	): Promise<ExternalT[]>;
+
+	getSchema(): SchemaT;
+	getQueryParams(): Record<string, TypingReference>;
 }

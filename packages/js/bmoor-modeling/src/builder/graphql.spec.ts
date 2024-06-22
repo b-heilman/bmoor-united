@@ -1,11 +1,14 @@
 import {expect} from 'chai';
 
-import {Dictionary} from '../../../bmoor-schema/src/dictionary';
-import {Schema} from '../../../bmoor-schema/src/schema';
-import {SchemaInterface} from '../../../bmoor-schema/src/schema.interface';
-import {types} from '../../../bmoor-schema/src/typing';
-import {TypingJSON} from '../../../bmoor-schema/src/typing.interface';
-import {validations} from '../../../bmoor-schema/src/validator';
+import {
+	Dictionary,
+	Schema,
+	SchemaInterface,
+	TypingJSON,
+	types,
+	validations,
+} from '@bmoor/schema';
+
 import {BuilderGraphql} from './graphql';
 
 describe('@bmoor/schema :: BuilderGraphql', function () {
