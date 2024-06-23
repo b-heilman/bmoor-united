@@ -1,10 +1,10 @@
 import {DynamicObject} from '@bmoor/object';
 import {Mapping} from '@bmoor/path';
-import {FieldInterface, Schema, reduceStructure} from '@bmoor/schema';
+import {FieldInterface, Schema, SchemaInterface, reduceStructure} from '@bmoor/schema';
 
 import {ContextInterface} from './context.interface';
 import {HookInterface} from './hook.interface';
-import {ModelInterface, ModelJSON, ModelSettings} from './model.interface';
+import {ModelExternalGenerics, ModelInterface, ModelInternalGenerics, ModelJSON, ModelSettings, ModelStorageGenerics} from './model.interface';
 
 function runHooks(obj, model: Model, action: string) {
 	if ('hooks' in this.settings) {
@@ -49,10 +49,15 @@ function runHooks(obj, model: Model, action: string) {
  * A Model is all about the data's structure.  Actions to be performed against the model will
  * be in the service.
  ***/
-export class Model<StructureT = DynamicObject, UpdateT = DynamicObject>
-	extends Schema
-	implements ModelInterface<StructureT, UpdateT>
-{
+export class Model<
+	InternalT extends ModelInternalGenerics = ModelInternalGenerics,
+	ExternalT extends ModelExternalGenerics = ModelExternalGenerics,
+	StorageT extends ModelStorageGenerics = ModelStorageGenerics
+> extends Schema implements ModelInterface<
+	InternalT,
+	ExternalT,
+	StorageT
+> {
 	ctx: ContextInterface;
 	settings: ModelJSON;
 
@@ -101,24 +106,24 @@ export class Model<StructureT = DynamicObject, UpdateT = DynamicObject>
 		this.ctx = ctx;
 	}
 
-	inflate(obj: StructureT): DynamicObject {
+	inflate(obj: InternalT['structure']): ExternalT['structure'] {
 		if (this.inflator) {
 			return this.inflator.to.transform(obj);
 		} else {
-			return obj;
+			return <unknown>obj;
 		}
 	}
 
-	fromInflated(obj: DynamicObject): StructureT {
+	fromInflated(obj: ExternalT['structure']): InternalT['structure'] {
 		if (this.inflator) {
 			return this.inflator.from.transform(obj);
 		} else {
 			// TODO: How to check it StructureT actually == DynamicObject?
-			return <StructureT>obj;
+			return <unknown>obj;
 		}
 	}
 
-	deflate(obj: StructureT): DynamicObject {
+	deflate(obj: InternalT['structure']): StorageT['structure'] {
 		if (this.deflator) {
 			return this.deflator.to.transform(obj);
 		} else {
@@ -126,41 +131,31 @@ export class Model<StructureT = DynamicObject, UpdateT = DynamicObject>
 		}
 	}
 
-	fromDeflated(obj: DynamicObject): StructureT {
+	fromDeflated(obj: StorageT['structure']): InternalT['structure'] {
 		if (this.deflator) {
 			return this.deflator.from.transform(obj);
 		} else {
-			return <StructureT>obj;
+			return <unknown>obj;
 		}
 	}
 
-	onCreate(obj: StructureT): StructureT {
+	onCreate(obj: InternalT['structure']): void {
 		runHooks(obj, this, 'onCreate');
-
-		return obj;
 	}
 
-	onRead(obj: StructureT): StructureT {
+	onRead(obj: InternalT['structure']): void {
 		runHooks(obj, this, 'onRead');
-
-		return obj;
 	}
 
-	onUpdate(obj: UpdateT): UpdateT {
+	onUpdate(obj: InternalT['structure']): void {
 		runHooks(obj, this, 'onUpdate');
-
-		return obj;
 	}
 
-	onInflate(obj: StructureT): StructureT {
+	onInflate(obj: InternalT['structure']): void {
 		runHooks(obj, this, 'onInflate');
-
-		return obj;
 	}
 
-	onDeflate(obj: StructureT): StructureT {
+	onDeflate(obj: InternalT['structure']): void {
 		runHooks(obj, this, 'onDeflate');
-
-		return obj;
 	}
 }

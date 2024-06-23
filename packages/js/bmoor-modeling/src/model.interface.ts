@@ -8,6 +8,9 @@ import {
 
 import {HookReference} from './hook.interface';
 
+export type DeltaType = DynamicObject;
+export type StructureType = DynamicObject;
+
 export type HookRegister =
 	| HookReference
 	| {ref: HookReference; args: object};
@@ -19,21 +22,35 @@ export interface ModelJSON extends SchemaSettings {
 
 export interface ModelSettings extends ModelJSON {}
 
+export interface ModelInternalGenerics {
+	structure?: DynamicObject,
+	delta?: DynamicObject
+};
+
+export interface ModelExternalGenerics {
+	structure?: DynamicObject,
+};
+
+export interface ModelStorageGenerics {
+	structure?: DynamicObject,
+};
+
 export interface ModelInterface<
-	StructureT = DynamicObject,
-	UpdateT = DynamicObject,
+	InternalT extends ModelInternalGenerics = ModelInternalGenerics,
+	ExternalT extends ModelExternalGenerics = ModelExternalGenerics,
+	StorageT extends ModelStorageGenerics = ModelStorageGenerics
 > extends SchemaInterface {
 	// Internal representation to storage
-	deflate(input: StructureT): DynamicObject;
-	fromDeflated(input: DynamicObject): StructureT;
+	deflate(input: InternalT['structure']): StorageT['structure'];
+	fromDeflated(input: StorageT['structure']): InternalT['structure'];
 
 	// Internal representation to external
-	inflate(input: StructureT): DynamicObject;
-	fromInflated(input: DynamicObject): StructureT;
+	inflate(input: InternalT['structure']): ExternalT['structure'];
+	fromInflated(input: ExternalT['structure']): InternalT['structure'];
 
-	onCreate(input: StructureT): StructureT;
-	onRead(input: StructureT): StructureT;
-	onUpdate(input: UpdateT): UpdateT;
-	onInflate(input: StructureT): StructureT;
-	onDeflate(input: StructureT): StructureT;
+	onCreate(input: InternalT['structure']): void;
+	onRead(input: InternalT['structure']): void;
+	onUpdate(input: InternalT['delta']): void;
+	onInflate(input: InternalT['structure']): void;
+	onDeflate(input: InternalT['structure']): void;
 }

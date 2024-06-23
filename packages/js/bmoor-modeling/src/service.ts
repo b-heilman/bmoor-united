@@ -1,12 +1,18 @@
 import {ContextSecurityInterface} from '@bmoor/context';
+import {SchemaInterface, TypingReference} from '@bmoor/schema';
 
-import {UpdateDelta} from './datum.interface';
-import {ModelFieldInterface} from './model/field.interface';
 import {
-	ServiceActions,
+	ServiceUpdateDelta,
 	ServiceInterface,
 	ServiceSettings,
+	ReferenceType,
+	SearchType,
+	ServiceHooks,
+	ServiceInternalGenerics,
+	ServiceExternalGenerics,
+	ServiceStorageGenerics,
 } from './service.interface';
+import { DeltaType, ModelInterface, StructureType } from './model.interface';
 
 function actionExtend(old, action) {
 	if (old) {
@@ -17,20 +23,21 @@ function actionExtend(old, action) {
 		return action;
 	}
 }
-
+/*
 function buildActions<
-	ExternalRead,
-	ExternalReference,
-	ExternalCreate,
-	ExternalUpdate,
-	ExternalSearch,
+	SchemaT = SchemaInterface,
+	StructureT = StructureType,
+	ReferenceT = ReferenceType,
+	DeltaT = DeltaType,
+	SearchT = SearchType,
+	ExternalT = StructureType,
 >(
 	actions: ServiceActions<
-		ExternalRead,
-		ExternalReference,
+		ExternalT,
+		ReferenceT,
 		ExternalCreate,
-		ExternalUpdate,
-		ExternalSearch
+		DeltaT,
+		SearchT
 	>,
 	field: ModelFieldInterface,
 ): void {
@@ -68,116 +75,74 @@ function buildActions<
 		);
 	}
 }
-
+*/
 export class Service<
-	ExternalRead,
-	ExternalReference,
-	ExternalCreate,
-	ExternalUpdate,
-	ExternalSearch,
-	InternalRead,
-	InternalReference,
-	InternalCreate,
-	InternalUpdate,
-	InternalSearch,
-> implements
-		ServiceInterface<
-			ExternalRead,
-			ExternalReference,
-			ExternalCreate,
-			ExternalUpdate,
-			ExternalSearch,
-			InternalRead,
-			InternalReference, // TODO: can I drop these internals to constants here?
-			InternalCreate,
-			InternalUpdate,
-			InternalSearch
-		>
-{
-	fields: Map<string, ModelFieldInterface>;
-	settings: ServiceSettings<
-		ExternalRead,
-		ExternalReference,
-		ExternalCreate,
-		ExternalUpdate,
-		InternalRead,
-		InternalReference,
-		InternalCreate,
-		InternalUpdate,
-		InternalSearch
-	>;
-	actions: ServiceActions<
-		ExternalRead,
-		ExternalReference,
-		ExternalCreate,
-		ExternalUpdate,
-		ExternalSearch
-	>;
+	InternalT extends ServiceInternalGenerics = ServiceInternalGenerics,
+	ExternalT extends ServiceExternalGenerics = ServiceExternalGenerics,
+	StorageT extends ServiceStorageGenerics = ServiceStorageGenerics
+> implements ServiceInterface<
+	InternalT,
+	ExternalT,
+	StorageT
+> {
+	hooks?: ServiceHooks<InternalT>;
+	model: ModelInterface<InternalT, ExternalT, StorageT>;
+	settings: ServiceSettings<InternalT, StorageT>;
 
 	constructor(
-		settings: ServiceSettings<
-			ExternalRead,
-			ExternalReference,
-			ExternalCreate,
-			ExternalUpdate,
-			InternalRead,
-			InternalReference,
-			InternalCreate,
-			InternalUpdate,
-			InternalSearch
-		>,
+		model: ModelInterface<InternalT, ExternalT, StorageT>,
+		settings: ServiceSettings<InternalT, StorageT>,
+		hooks?: ServiceHooks<InternalT>
 	) {
+		this.hooks = hooks;
+		this.model = model;
 		this.settings = settings;
-		this.fields = new Map<string, ModelFieldInterface>();
-		this.actions = {};
-
-		settings.model.settings.fields.map((field) => {
-			buildActions<
-				ExternalRead,
-				ExternalReference,
-				ExternalCreate,
-				ExternalUpdate,
-				ExternalSearch
-			>(this.actions, field);
-		});
 	}
 
 	async create(
-		content: ExternalCreate[],
 		ctx: ContextSecurityInterface,
-	): Promise<ExternalRead[]> {
-		if (this.actions.create) {
-			content.map((datum) => this.actions.create(datum, ctx));
-		}
+		content: ExternalT['structure'][],
+	): Promise<ExternalT['structure'][]> {
+		const internal = content.map(
+			datum => {
+				const rtn = this.model.fromInflated(datum);
 
-		if (this.settings.validator?.validateCreate) {
-			// TODO: I need the concept of a compound error
-			const error = await this.settings.validator.validateCreate(content);
+				this.model.onCreate(rtn);
 
-			if (error) {
-				throw error;
+				return rtn;
 			}
-		}
-
-		const allowed = await this.settings.controller.canCreate(content, ctx);
-
-		const rtn = await this.settings.adapter.create(
-			<InternalCreate[]>(
-				allowed.map((datum) => this.convertToInternal(datum, ctx))
-			),
 		);
 
-		return rtn.map((datum) => this.convertToExternal(datum, ctx));
+		if (this.hooks.onCreate) {
+			internal.forEach((datum) => this.hooks.onCreate(ctx, datum));
+		}
+
+		const validations = (await Promise.all(
+			internal.map(datum => this.model.validate(datum, 'create'))
+		)).flat();
+
+		if (validations.length){
+			// TODO: How to report all the errors?
+			throw new Error(validations[0]);
+		}
+
+		const allowed = await this.settings.controller.canCreate(ctx, content, this);
+
+		const rtn = await this.settings.adapter.create(
+			allowed.map((datum) => this.model.deflate(datum))
+		);
+
+		return rtn.map((datum) => this.model.inflate(
+			this.model.fromDeflated(datum)
+		));
 	}
 
 	async read(
-		ids: ExternalReference[],
 		ctx: ContextSecurityInterface,
-	): Promise<ExternalRead[]> {
+		ids: ExternalT['reference'][],
+	): Promise<ExternalT[]> {
 		const res = await this.settings.adapter.read(
-			<InternalReference[]>(
-				ids.map((ref) => this.convertToInternal(ref, ctx))
-			),
+			ids.map((ref) => this.convertToInternal(ref, ctx))
 		);
 
 		const rtn = await this.settings.controller.canRead(
@@ -194,9 +159,9 @@ export class Service<
 	}
 
 	async update(
-		content: UpdateDelta<ExternalReference, ExternalUpdate>[],
 		ctx: ContextSecurityInterface,
-	): Promise<ExternalRead[]> {
+		content: ServiceUpdateDelta<ReferenceT, DeltaT>[],
+	): Promise<ExternalT[]> {
 		if (this.actions.update) {
 			content.map(({delta}) => this.actions.update(delta, ctx));
 		}
@@ -211,10 +176,10 @@ export class Service<
 		}
 
 		const send = await this.settings.controller.canUpdate(content, ctx);
-		const converted: UpdateDelta<InternalReference, InternalUpdate>[] =
+		const converted: UpdateDelta<ReferenceT, DeltaT>[] =
 			send.map((change) => ({
-				ref: <InternalReference>this.convertToInternal(change.ref, ctx),
-				delta: <InternalUpdate>this.convertToInternal(change.delta, ctx),
+				ref: <ReferenceT>this.convertToInternal(change.ref, ctx),
+				delta: <DeltaT>this.convertToInternal(change.delta, ctx),
 			}));
 
 		const rtn = await this.settings.adapter.update(converted);
@@ -223,15 +188,15 @@ export class Service<
 	}
 
 	async delete(
-		ids: ExternalReference[],
 		ctx: ContextSecurityInterface,
-	): Promise<ExternalRead[]> {
+		ids: ReferenceT[],
+	): Promise<ExternalT[]> {
 		// TODO: canDelete
 
 		const datums = await this.read(ids, ctx);
 
 		const count = await this.settings.adapter.delete(
-			<InternalReference[]>(
+			<ReferenceT[]>(
 				ids.map((ref) => this.convertToInternal(ref, ctx))
 			),
 		);
@@ -244,9 +209,9 @@ export class Service<
 	}
 
 	async search(
-		search: ExternalSearch,
 		ctx: ContextSecurityInterface,
-	): Promise<ExternalRead[]> {
+		search: SearchT,
+	): Promise<ExternalT[]> {
 		const res = await this.settings.adapter.search(
 			<InternalSearch>this.convertToInternal(search, ctx),
 		);
@@ -264,32 +229,11 @@ export class Service<
 		return rtn;
 	}
 
-	convertToInternal(
-		datum:
-			| ExternalReference
-			| ExternalCreate
-			| ExternalCreate
-			| ExternalUpdate
-			| ExternalSearch,
-		ctx: ContextSecurityInterface,
-	): InternalReference | InternalCreate | InternalUpdate | InternalSearch {
-		if (this.actions.deflate) {
-			this.actions.deflate(datum, ctx);
-		}
-
-		return this.settings.model.deflate.transform(datum);
+	getQueryParams(): Record<string, TypingReference> {
+		return {};
 	}
 
-	convertToExternal(
-		datum: InternalRead,
-		ctx: ContextSecurityInterface,
-	): ExternalRead {
-		const rtn = this.settings.model.inflate.transform(datum);
-
-		if (this.actions.inflate) {
-			this.actions.inflate(rtn, ctx);
-		}
-
-		return rtn;
+	getModel(): ModelInterface<StructureT, DeltaT, ExternalT> {
+		return this.model;
 	}
 }

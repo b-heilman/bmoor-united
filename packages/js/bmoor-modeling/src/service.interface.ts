@@ -2,28 +2,44 @@ import {ContextSecurityInterface} from '@bmoor/context';
 import {DynamicObject} from '@bmoor/object';
 import {SchemaInterface, TypingReference} from '@bmoor/schema';
 
-import {UpdateDelta} from './datum.interface';
-import {ServiceAdapterInterface} from './service/adapter.interface';
+import {ServiceAdapterGenerics, ServiceAdapterInterface} from './service/adapter.interface';
 import {ServiceControllerInterface} from './service/controller.interface';
+import { DeltaType, ModelExternalGenerics, ModelInterface, ModelInternalGenerics, ModelStorageGenerics, StructureType } from './model.interface';
 
-export type StructureType = DynamicObject;
 export type ReferenceType = DynamicObject;
-export type DeltaType = DynamicObject;
-export type SearchType = DynamicObject;
+export type SearchType = {
+	datum: DynamicObject,
+	params: DynamicObject
+};
+
+export interface ServiceInternalGenerics extends ModelInternalGenerics {
+	reference?: DynamicObject,
+	search?: DynamicObject
+}
+
+export interface ServiceExternalGenerics extends ModelExternalGenerics {
+	reference?: DynamicObject,
+	delta?: DynamicObject,
+	search?: DynamicObject
+}
+
+export interface ServiceStorageGenerics extends ServiceAdapterGenerics {
+
+}
+
+export interface ServiceUpdateDelta<
+	Generics extends ServiceInternalGenerics
+> {
+	ref: Generics['reference'];
+	delta: Generics['delta'];
+};
 
 export interface ServiceSettings<
-	StructureT = StructureType,
-	ReferenceT = ReferenceType,
-	DeltaT = DeltaType,
-	SearchT = SearchType,
+	InternalT extends ServiceInternalGenerics = ServiceInternalGenerics,
+	StorageT extends ServiceStorageGenerics = ServiceStorageGenerics
 > {
-	adapter: ServiceAdapterInterface<
-		StructureT,
-		ReferenceT,
-		DeltaT,
-		SearchT
-	>;
-	controller: ServiceControllerInterface<StructureT, ReferenceT, DeltaT>;
+	adapter: ServiceAdapterInterface<StorageT>;
+	controller: ServiceControllerInterface<InternalT>;
 }
 
 export type ServiceDatumModifierFn<StructureT> = (
@@ -37,48 +53,46 @@ export type ServiceDeltaModifierFn<DeltaT> = (
 ) => void;
 
 export interface ServiceHooks<
-	StructureT = StructureType,
-	DeltaT = DeltaType,
+	InternalT extends ServiceInternalGenerics = ServiceInternalGenerics
 > {
-	onCreate?: ServiceDatumModifierFn<StructureT>;
-	onRead?: ServiceDatumModifierFn<StructureT>;
-	onUpdate?: ServiceDeltaModifierFn<DeltaT>;
-	onInflate?: ServiceDatumModifierFn<StructureT>;
-	onDeflate?: ServiceDatumModifierFn<StructureT>;
+	onCreate?: ServiceDatumModifierFn<InternalT['structure']>;
+	onRead?: ServiceDatumModifierFn<InternalT['structure']>;
+	onUpdate?: ServiceDeltaModifierFn<InternalT['delta']>;
+	onInflate?: ServiceDatumModifierFn<InternalT['structure']>;
+	onDeflate?: ServiceDatumModifierFn<InternalT['structure']>;
 }
 
+export type ServiceQueryParams = Record<string, string | number>;
+
 export interface ServiceInterface<
-	SchemaT = SchemaInterface,
-	StructureT = StructureType,
-	ReferenceT = ReferenceType,
-	DeltaT = DeltaType,
-	SearchT = SearchType,
-	ExternalT = StructureType,
+	InternalT extends ServiceInternalGenerics = ServiceInternalGenerics,
+	ExternalT extends ServiceExternalGenerics = ServiceExternalGenerics,
+	StorageT extends ServiceStorageGenerics = ServiceStorageGenerics
 > {
-	settings: ServiceSettings<StructureT, ReferenceT, DeltaT, SearchT>;
-	hooks: ServiceHooks<StructureT, DeltaT>;
+	settings: ServiceSettings<InternalT, StorageT>;
+	hooks?: ServiceHooks<InternalT>;
 
 	create(
 		ctx: ContextSecurityInterface,
-		content: ExternalT[],
-	): Promise<ExternalT[]>;
+		content: ExternalT['structure'][],
+	): Promise<ExternalT['structure'][]>;
 	read(
 		ctx: ContextSecurityInterface,
-		ids: ReferenceT[],
-	): Promise<ExternalT[]>;
+		ids: ExternalT['reference'][],
+	): Promise<ExternalT['structure'][]>;
 	update(
 		ctx: ContextSecurityInterface,
-		content: UpdateDelta<ReferenceT, DeltaT>[],
-	): Promise<ExternalT[]>;
+		content: ServiceUpdateDelta<ExternalT>[],
+	): Promise<ExternalT['structure'][]>;
 	delete(
 		ctx: ContextSecurityInterface,
-		ids: ReferenceT[],
-	): Promise<ExternalT[]>;
+		ids: ExternalT['reference'][],
+	): Promise<ExternalT['structure'][]>;
 	search(
 		ctx: ContextSecurityInterface,
-		search: SearchT,
-	): Promise<ExternalT[]>;
+		search: ExternalT['search'],
+	): Promise<ExternalT['structure'][]>;
 
-	getSchema(): SchemaT;
-	getQueryParams(): Record<string, TypingReference>;
+	getModel(): ModelInterface<InternalT, ExternalT, StorageT>;
+	getQueryParams(): ServiceQueryParams;
 }
