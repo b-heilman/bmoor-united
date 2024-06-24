@@ -23,22 +23,22 @@ export interface ModelJSON extends SchemaSettings {
 export interface ModelSettings extends ModelJSON {}
 
 export interface ModelInternalGenerics {
-	structure?: DynamicObject,
-	delta?: DynamicObject
-};
+	structure?: DynamicObject;
+	delta?: DynamicObject;
+}
 
 export interface ModelExternalGenerics {
-	structure?: DynamicObject,
-};
+	structure?: DynamicObject;
+}
 
 export interface ModelStorageGenerics {
-	structure?: DynamicObject,
-};
+	structure?: DynamicObject;
+}
 
 export interface ModelInterface<
 	InternalT extends ModelInternalGenerics = ModelInternalGenerics,
 	ExternalT extends ModelExternalGenerics = ModelExternalGenerics,
-	StorageT extends ModelStorageGenerics = ModelStorageGenerics
+	StorageT extends ModelStorageGenerics = ModelStorageGenerics,
 > extends SchemaInterface {
 	// Internal representation to storage
 	deflate(input: InternalT['structure']): StorageT['structure'];

@@ -1,11 +1,7 @@
-import { SchemaInterface } from '@bmoor/schema';
 import {ContextSecurityInterface} from '@bmoor/context';
 
 import {
-	ReferenceType,
-	SearchType,
-	ServiceExternalGenerics,
-	ServiceInterface,
+	ServiceExternalGenerics, // ServiceInterface,
 	ServiceInternalGenerics,
 	ServiceStorageGenerics,
 	ServiceUpdateDelta,
@@ -14,18 +10,13 @@ import {
 	ServiceControllerInterface,
 	ServiceControllerSettings,
 } from './controller.interface';
-import { DeltaType, StructureType } from '../model.interface';
-
 
 export class ServiceController<
 	InternalT extends ServiceInternalGenerics = ServiceInternalGenerics,
 	ExternalT extends ServiceExternalGenerics = ServiceExternalGenerics,
-	StorageT extends ServiceStorageGenerics = ServiceStorageGenerics
-> implements ServiceControllerInterface<
-	InternalT,
-	ExternalT,
-	StorageT
-> {
+	StorageT extends ServiceStorageGenerics = ServiceStorageGenerics,
+> implements ServiceControllerInterface<InternalT, ExternalT, StorageT>
+{
 	settings: ServiceControllerSettings;
 
 	constructor(settings: ServiceControllerSettings) {
@@ -36,7 +27,7 @@ export class ServiceController<
 	async canCreate(
 		ctx: ContextSecurityInterface,
 		datums: InternalT['structure'][],
-		service: ServiceInterface<InternalT, ExternalT, StorageT>,
+		// service: ServiceInterface<InternalT, ExternalT, StorageT>,
 	): Promise<InternalT['structure'][]> {
 		const permission = this.settings.permission?.create;
 
@@ -50,7 +41,7 @@ export class ServiceController<
 	async canRead(
 		ctx: ContextSecurityInterface,
 		datums: InternalT['structure'][],
-		service: ServiceInterface<InternalT, ExternalT, StorageT>,
+		// service: ServiceInterface<InternalT, ExternalT, StorageT>,
 	): Promise<InternalT['structure'][]> {
 		const permission = this.settings.permission?.read;
 
@@ -64,7 +55,7 @@ export class ServiceController<
 	async canUpdate(
 		ctx: ContextSecurityInterface,
 		content: ServiceUpdateDelta<InternalT>[],
-		service: ServiceInterface<InternalT, ExternalT, StorageT>,
+		// service: ServiceInterface<InternalT, ExternalT, StorageT>,
 	): Promise<ServiceUpdateDelta<InternalT>[]> {
 		const permission = this.settings.permission?.update;
 
@@ -78,7 +69,7 @@ export class ServiceController<
 	async canDelete(
 		ctx: ContextSecurityInterface,
 		content: InternalT['reference'][],
-		service: ServiceInterface<InternalT, ExternalT, StorageT>,
+		// service: ServiceInterface<InternalT, ExternalT, StorageT>,
 	): Promise<InternalT['reference'][]> {
 		const permission = this.settings.permission?.delete;
 

@@ -22,7 +22,7 @@ export interface ServiceControllerSettings {
 export interface ServiceControllerInterface<
 	InternalT extends ServiceInternalGenerics = ServiceInternalGenerics,
 	ExternalT extends ServiceExternalGenerics = ServiceExternalGenerics,
-	StorageT extends ServiceStorageGenerics = ServiceStorageGenerics
+	StorageT extends ServiceStorageGenerics = ServiceStorageGenerics,
 > {
 	// securing data that has been requested
 	canRead(
@@ -46,7 +46,7 @@ export interface ServiceControllerInterface<
 
 	canDelete(
 		ctx: ContextSecurityInterface,
-		content: InternalT['reference'][],
+		content: InternalT['structure'][],
 		service: ServiceInterface<InternalT, ExternalT, StorageT>,
-	): Promise<InternalT['reference']>;
+	): Promise<InternalT['structure']>;
 }

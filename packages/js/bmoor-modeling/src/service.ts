@@ -1,28 +1,17 @@
 import {ContextSecurityInterface} from '@bmoor/context';
-import {SchemaInterface, TypingReference} from '@bmoor/schema';
+import {TypingReference} from '@bmoor/schema';
 
+import {ModelInterface} from './model.interface';
 import {
-	ServiceUpdateDelta,
-	ServiceInterface,
-	ServiceSettings,
-	ReferenceType,
-	SearchType,
-	ServiceHooks,
-	ServiceInternalGenerics,
 	ServiceExternalGenerics,
+	ServiceHooks,
+	ServiceInterface,
+	ServiceInternalGenerics,
+	ServiceSettings,
 	ServiceStorageGenerics,
+	ServiceUpdateDelta,
 } from './service.interface';
-import { DeltaType, ModelInterface, StructureType } from './model.interface';
 
-function actionExtend(old, action) {
-	if (old) {
-		return function (datum, ctx) {
-			return action(old(datum, ctx), ctx);
-		};
-	} else {
-		return action;
-	}
-}
 /*
 function buildActions<
 	SchemaT = SchemaInterface,
@@ -79,12 +68,9 @@ function buildActions<
 export class Service<
 	InternalT extends ServiceInternalGenerics = ServiceInternalGenerics,
 	ExternalT extends ServiceExternalGenerics = ServiceExternalGenerics,
-	StorageT extends ServiceStorageGenerics = ServiceStorageGenerics
-> implements ServiceInterface<
-	InternalT,
-	ExternalT,
-	StorageT
-> {
+	StorageT extends ServiceStorageGenerics = ServiceStorageGenerics,
+> implements ServiceInterface<InternalT, ExternalT, StorageT>
+{
 	hooks?: ServiceHooks<InternalT>;
 	model: ModelInterface<InternalT, ExternalT, StorageT>;
 	settings: ServiceSettings<InternalT, StorageT>;
@@ -92,7 +78,7 @@ export class Service<
 	constructor(
 		model: ModelInterface<InternalT, ExternalT, StorageT>,
 		settings: ServiceSettings<InternalT, StorageT>,
-		hooks?: ServiceHooks<InternalT>
+		hooks?: ServiceHooks<InternalT>,
 	) {
 		this.hooks = hooks;
 		this.model = model;
@@ -103,109 +89,130 @@ export class Service<
 		ctx: ContextSecurityInterface,
 		content: ExternalT['structure'][],
 	): Promise<ExternalT['structure'][]> {
-		const internal = content.map(
-			datum => {
-				const rtn = this.model.fromInflated(datum);
+		const internal = content.map((datum) => {
+			const rtn = this.model.fromInflated(datum);
 
-				this.model.onCreate(rtn);
+			this.model.onCreate(rtn);
 
-				return rtn;
-			}
-		);
+			return rtn;
+		});
 
 		if (this.hooks.onCreate) {
 			internal.forEach((datum) => this.hooks.onCreate(ctx, datum));
 		}
 
-		const validations = (await Promise.all(
-			internal.map(datum => this.model.validate(datum, 'create'))
-		)).flat();
+		const validations = (
+			await Promise.all(
+				internal.map((datum) => this.model.validate(datum, 'create')),
+			)
+		).flat();
 
-		if (validations.length){
+		if (validations.length) {
 			// TODO: How to report all the errors?
 			throw new Error(validations[0]);
 		}
 
-		const allowed = await this.settings.controller.canCreate(ctx, content, this);
-
-		const rtn = await this.settings.adapter.create(
-			allowed.map((datum) => this.model.deflate(datum))
+		const allowed = await this.settings.controller.canCreate(
+			ctx,
+			content,
+			this,
 		);
 
-		return rtn.map((datum) => this.model.inflate(
-			this.model.fromDeflated(datum)
-		));
+		const rtn = await this.settings.adapter.create(
+			allowed.map((datum) => this.model.deflate(datum)),
+		);
+
+		return rtn.map((datum) =>
+			this.model.inflate(this.model.fromDeflated(datum)),
+		);
 	}
 
-	async read(
+	async _read(
 		ctx: ContextSecurityInterface,
 		ids: ExternalT['reference'][],
-	): Promise<ExternalT[]> {
-		const res = await this.settings.adapter.read(
-			ids.map((ref) => this.convertToInternal(ref, ctx))
+	): Promise<InternalT['structure'][]> {
+		const stored = await this.settings.adapter.read(
+			ids.map((ref) => this.model.deflate(ref)),
 		);
 
 		const rtn = await this.settings.controller.canRead(
-			res.map((datum) => this.convertToExternal(datum, ctx)),
-			this.settings.accessor.getExternalKey,
 			ctx,
+			stored.map((datum) => this.model.fromDeflated(datum)),
+			this,
 		);
 
-		if (this.actions.read) {
-			rtn.map((datum) => this.actions.read(datum, ctx));
+		if (this.hooks.onRead) {
+			rtn.forEach((datum) => this.hooks.onRead(ctx, datum));
 		}
 
 		return rtn;
 	}
 
+	async read(
+		ctx: ContextSecurityInterface,
+		ids: ExternalT['reference'][],
+	): Promise<ExternalT['structure'][]> {
+		const rtn = await this._read(ctx, ids);
+
+		return rtn.map((datum) => this.model.inflate(datum));
+	}
+
 	async update(
 		ctx: ContextSecurityInterface,
-		content: ServiceUpdateDelta<ReferenceT, DeltaT>[],
-	): Promise<ExternalT[]> {
-		if (this.actions.update) {
-			content.map(({delta}) => this.actions.update(delta, ctx));
+		content: ServiceUpdateDelta<ExternalT>[],
+	): Promise<ExternalT['structure'][]> {
+		const updates = content.map(({ref, delta}) => ({
+			ref: this.model.deflate(ref),
+			delta: this.model.deflate(delta),
+		}));
+
+		if (this.hooks.onUpdate) {
+			updates.map(({delta}) => this.hooks.onUpdate(ctx, delta));
 		}
 
-		if (this.settings.validator?.validateUpdate) {
-			// TODO: I need the concept of a compound error
-			const error = await this.settings.validator.validateUpdate(content);
+		const validations = (
+			await Promise.all(
+				updates.map(({delta}) => this.model.validate(delta, 'update')),
+			)
+		).flat();
 
-			if (error) {
-				throw error;
-			}
+		if (validations.length) {
+			// TODO: How to report all the errors?
+			throw new Error(validations[0]);
 		}
 
-		const send = await this.settings.controller.canUpdate(content, ctx);
-		const converted: UpdateDelta<ReferenceT, DeltaT>[] =
-			send.map((change) => ({
-				ref: <ReferenceT>this.convertToInternal(change.ref, ctx),
-				delta: <DeltaT>this.convertToInternal(change.delta, ctx),
-			}));
+		const send = await this.settings.controller.canUpdate(
+			ctx,
+			updates,
+			this,
+		);
+		const rtn = await this.settings.adapter.update(send);
 
-		const rtn = await this.settings.adapter.update(converted);
-
-		return rtn.map((datum) => this.convertToExternal(datum, ctx));
+		return rtn.map((datum) =>
+			this.model.inflate(this.model.fromDeflated(datum)),
+		);
 	}
 
 	async delete(
 		ctx: ContextSecurityInterface,
-		ids: ReferenceT[],
+		ids: ExternalT['reference'][],
 	): Promise<ExternalT[]> {
-		// TODO: canDelete
-
-		const datums = await this.read(ids, ctx);
-
-		const count = await this.settings.adapter.delete(
-			<ReferenceT[]>(
-				ids.map((ref) => this.convertToInternal(ref, ctx))
-			),
+		const toDelete = await this.settings.controller.canDelete(
+			ctx,
+			await this._read(ctx, ids),
+			this,
 		);
 
-		if (count !== datums.length) {
+		const count = await this.settings.adapter.delete(
+			// TODO: toReference
+			toDelete.map((datum) => this.convertToInternal(ref, ctx)),
+		);
+
+		if (count !== toDelete.length) {
 			// TODO: do i care?
 		}
 
-		return datums;
+		return toDelete.map((datum) => this.model.inflate(datum));
 	}
 
 	async search(

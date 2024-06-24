@@ -1,42 +1,46 @@
 import {ContextSecurityInterface} from '@bmoor/context';
 import {DynamicObject} from '@bmoor/object';
-import {SchemaInterface, TypingReference} from '@bmoor/schema';
 
-import {ServiceAdapterGenerics, ServiceAdapterInterface} from './service/adapter.interface';
+import {
+	ModelExternalGenerics,
+	ModelInterface,
+	ModelInternalGenerics,
+} from './model.interface';
+import {
+	ServiceAdapterGenerics,
+	ServiceAdapterInterface,
+} from './service/adapter.interface';
 import {ServiceControllerInterface} from './service/controller.interface';
-import { DeltaType, ModelExternalGenerics, ModelInterface, ModelInternalGenerics, ModelStorageGenerics, StructureType } from './model.interface';
 
 export type ReferenceType = DynamicObject;
 export type SearchType = {
-	datum: DynamicObject,
-	params: DynamicObject
+	datum: DynamicObject;
+	params: DynamicObject;
 };
 
 export interface ServiceInternalGenerics extends ModelInternalGenerics {
-	reference?: DynamicObject,
-	search?: DynamicObject
+	reference?: DynamicObject;
+	search?: DynamicObject;
 }
 
 export interface ServiceExternalGenerics extends ModelExternalGenerics {
-	reference?: DynamicObject,
-	delta?: DynamicObject,
-	search?: DynamicObject
+	reference?: DynamicObject;
+	delta?: DynamicObject;
+	search?: DynamicObject;
 }
 
-export interface ServiceStorageGenerics extends ServiceAdapterGenerics {
-
-}
+export interface ServiceStorageGenerics extends ServiceAdapterGenerics {}
 
 export interface ServiceUpdateDelta<
-	Generics extends ServiceInternalGenerics
+	Generics extends ServiceInternalGenerics,
 > {
 	ref: Generics['reference'];
 	delta: Generics['delta'];
-};
+}
 
 export interface ServiceSettings<
 	InternalT extends ServiceInternalGenerics = ServiceInternalGenerics,
-	StorageT extends ServiceStorageGenerics = ServiceStorageGenerics
+	StorageT extends ServiceStorageGenerics = ServiceStorageGenerics,
 > {
 	adapter: ServiceAdapterInterface<StorageT>;
 	controller: ServiceControllerInterface<InternalT>;
@@ -53,7 +57,7 @@ export type ServiceDeltaModifierFn<DeltaT> = (
 ) => void;
 
 export interface ServiceHooks<
-	InternalT extends ServiceInternalGenerics = ServiceInternalGenerics
+	InternalT extends ServiceInternalGenerics = ServiceInternalGenerics,
 > {
 	onCreate?: ServiceDatumModifierFn<InternalT['structure']>;
 	onRead?: ServiceDatumModifierFn<InternalT['structure']>;
@@ -67,7 +71,7 @@ export type ServiceQueryParams = Record<string, string | number>;
 export interface ServiceInterface<
 	InternalT extends ServiceInternalGenerics = ServiceInternalGenerics,
 	ExternalT extends ServiceExternalGenerics = ServiceExternalGenerics,
-	StorageT extends ServiceStorageGenerics = ServiceStorageGenerics
+	StorageT extends ServiceStorageGenerics = ServiceStorageGenerics,
 > {
 	settings: ServiceSettings<InternalT, StorageT>;
 	hooks?: ServiceHooks<InternalT>;
