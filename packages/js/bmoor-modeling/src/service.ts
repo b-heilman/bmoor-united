@@ -87,15 +87,19 @@ export class Service<
 
 	async create(
 		ctx: ContextSecurityInterface,
-		content: InternalT['structure'][],
-	): Promise<InternalT['structure'][]> {
+		content: ExternalT['structure'][],
+	): Promise<ExternalT['structure'][]> {
+		const internal = content.map((datum) =>
+			this.model.onCreate(this.model.fromInflated(datum)),
+		);
+
 		if (this.hooks.onCreate) {
-			content.forEach((datum) => this.hooks.onCreate(ctx, datum));
+			internal.forEach((datum) => this.hooks.onCreate(ctx, datum));
 		}
 
 		const validations = (
 			await Promise.all(
-				content.map((datum) => this.model.validate(datum, 'create')),
+				internal.map((datum) => this.model.validate(datum, 'create')),
 			)
 		).flat();
 
@@ -106,7 +110,7 @@ export class Service<
 
 		const allowed = await this.settings.controller.canCreate(
 			ctx,
-			content,
+			internal,
 			this,
 		);
 
@@ -134,8 +138,8 @@ export class Service<
 
 	async read(
 		ctx: ContextSecurityInterface,
-		ids: InternalT['reference'][],
-	): Promise<InternalT['structure'][]> {
+		ids: ExternalT['reference'][],
+	): Promise<ExternalT['structure'][]> {
 		const res = await this.settings.adapter.read(
 			ids.map((datum) => this.model.deflate(datum)),
 		);

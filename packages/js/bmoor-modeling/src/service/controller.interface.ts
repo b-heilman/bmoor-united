@@ -46,7 +46,7 @@ export interface ServiceControllerInterface<
 
 	canDelete(
 		ctx: ContextSecurityInterface,
-		content: InternalT['reference'][],
+		content: InternalT['structure'][],
 		service: ServiceInterface<InternalT, ExternalT, StorageT>,
 	): Promise<InternalT['reference'][]>;
 }
