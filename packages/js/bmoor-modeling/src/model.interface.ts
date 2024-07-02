@@ -23,22 +23,22 @@ export interface ModelJSON extends SchemaSettings {
 export interface ModelSettings extends ModelJSON {}
 
 export interface ModelInternalGenerics {
-	structure?: DynamicObject,
-	delta?: DynamicObject
-};
+	structure?: DynamicObject;
+	delta?: DynamicObject;
+}
 
 export interface ModelExternalGenerics {
-	structure?: DynamicObject,
-};
+	structure?: DynamicObject;
+}
 
 export interface ModelStorageGenerics {
-	structure?: DynamicObject,
-};
+	structure?: DynamicObject;
+}
 
 export interface ModelInterface<
 	InternalT extends ModelInternalGenerics = ModelInternalGenerics,
 	ExternalT extends ModelExternalGenerics = ModelExternalGenerics,
-	StorageT extends ModelStorageGenerics = ModelStorageGenerics
+	StorageT extends ModelStorageGenerics = ModelStorageGenerics,
 > extends SchemaInterface {
 	// Internal representation to storage
 	deflate(input: InternalT['structure']): StorageT['structure'];
@@ -48,9 +48,9 @@ export interface ModelInterface<
 	inflate(input: InternalT['structure']): ExternalT['structure'];
 	fromInflated(input: ExternalT['structure']): InternalT['structure'];
 
-	onCreate(input: InternalT['structure']): void;
-	onRead(input: InternalT['structure']): void;
-	onUpdate(input: InternalT['delta']): void;
-	onInflate(input: InternalT['structure']): void;
-	onDeflate(input: InternalT['structure']): void;
+	onCreate(input: InternalT['structure']): InternalT['structure'];
+	onRead(input: InternalT['structure']): InternalT['structure'];
+	onUpdate(input: InternalT['delta']): InternalT['delta'];
+	onInflate(input: InternalT['structure']): InternalT['structure'];
+	onDeflate(input: InternalT['structure']): InternalT['structure'];
 }

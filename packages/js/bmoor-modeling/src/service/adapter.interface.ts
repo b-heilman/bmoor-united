@@ -1,19 +1,20 @@
-import { DynamicObject } from '@bmoor/object';
+import {DynamicObject} from '@bmoor/object';
+
 import {UpdateDelta} from '../datum.interface';
-import { ModelInternalGenerics } from '../model.interface';
+import {ModelInternalGenerics} from '../model.interface';
 
 export interface ServiceAdapterGenerics extends ModelInternalGenerics {
-	reference?: DynamicObject,
-	delta?: DynamicObject,
-	search?: DynamicObject
+	reference?: DynamicObject;
+	delta?: DynamicObject;
+	search?: DynamicObject;
 }
 
 export interface ServiceAdapterInterface<
-	AdapterT extends ServiceAdapterGenerics = ServiceAdapterGenerics
+	AdapterT extends ServiceAdapterGenerics = ServiceAdapterGenerics,
 > {
-	// TODO: make sure these are right? Seed and Delta are
-	//   generally external
-	create(content: AdapterT['structure'][]): Promise<AdapterT['structure'][]>;
+	create(
+		content: AdapterT['structure'][],
+	): Promise<AdapterT['structure'][]>;
 	read(ids: AdapterT['reference'][]): Promise<AdapterT['structure'][]>;
 	update(
 		content: UpdateDelta<AdapterT['reference'], AdapterT['delta']>[],

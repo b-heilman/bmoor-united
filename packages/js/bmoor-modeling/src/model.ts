@@ -1,10 +1,16 @@
-import {DynamicObject} from '@bmoor/object';
 import {Mapping} from '@bmoor/path';
-import {FieldInterface, Schema, SchemaInterface, reduceStructure} from '@bmoor/schema';
+import {FieldInterface, Schema, reduceStructure} from '@bmoor/schema';
 
 import {ContextInterface} from './context.interface';
 import {HookInterface} from './hook.interface';
-import {ModelExternalGenerics, ModelInterface, ModelInternalGenerics, ModelJSON, ModelSettings, ModelStorageGenerics} from './model.interface';
+import {
+	ModelExternalGenerics,
+	ModelInterface,
+	ModelInternalGenerics,
+	ModelJSON,
+	ModelSettings,
+	ModelStorageGenerics,
+} from './model.interface';
 
 function runHooks(obj, model: Model, action: string) {
 	if ('hooks' in this.settings) {
@@ -50,14 +56,13 @@ function runHooks(obj, model: Model, action: string) {
  * be in the service.
  ***/
 export class Model<
-	InternalT extends ModelInternalGenerics = ModelInternalGenerics,
-	ExternalT extends ModelExternalGenerics = ModelExternalGenerics,
-	StorageT extends ModelStorageGenerics = ModelStorageGenerics
-> extends Schema implements ModelInterface<
-	InternalT,
-	ExternalT,
-	StorageT
-> {
+		InternalT extends ModelInternalGenerics = ModelInternalGenerics,
+		ExternalT extends ModelExternalGenerics = ModelExternalGenerics,
+		StorageT extends ModelStorageGenerics = ModelStorageGenerics,
+	>
+	extends Schema
+	implements ModelInterface<InternalT, ExternalT, StorageT>
+{
 	ctx: ContextInterface;
 	settings: ModelJSON;
 
@@ -139,23 +144,33 @@ export class Model<
 		}
 	}
 
-	onCreate(obj: InternalT['structure']): void {
+	onCreate(obj: InternalT['structure']): InternalT['structure'] {
 		runHooks(obj, this, 'onCreate');
+
+		return obj;
 	}
 
-	onRead(obj: InternalT['structure']): void {
+	onRead(obj: InternalT['structure']): InternalT['structure'] {
 		runHooks(obj, this, 'onRead');
+
+		return obj;
 	}
 
-	onUpdate(obj: InternalT['structure']): void {
+	onUpdate(obj: InternalT['structure']): InternalT['structure'] {
 		runHooks(obj, this, 'onUpdate');
+
+		return obj;
 	}
 
-	onInflate(obj: InternalT['structure']): void {
+	onInflate(obj: InternalT['structure']): InternalT['structure'] {
 		runHooks(obj, this, 'onInflate');
+
+		return obj;
 	}
 
-	onDeflate(obj: InternalT['structure']): void {
+	onDeflate(obj: InternalT['structure']): InternalT['structure'] {
 		runHooks(obj, this, 'onDeflate');
+
+		return obj;
 	}
 }
