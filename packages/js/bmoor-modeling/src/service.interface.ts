@@ -1,5 +1,6 @@
 import {ContextSecurityInterface} from '@bmoor/context';
 import {DynamicObject} from '@bmoor/object';
+import {TypingReference} from '@bmoor/schema';
 
 import {
 	ModelExternalGenerics,
@@ -66,7 +67,7 @@ export interface ServiceHooks<
 	onDeflate?: ServiceDatumModifierFn<InternalT['structure']>;
 }
 
-export type ServiceQueryParams = Record<string, string | number>;
+export type ServiceQueryParams = Record<string, TypingReference>;
 
 export interface ServiceInterface<
 	InternalT extends ServiceInternalGenerics = ServiceInternalGenerics,

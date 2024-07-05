@@ -1,132 +1,227 @@
 import {expect} from 'chai';
 
-import {
-	Dictionary,
-	Schema,
-	SchemaInterface,
-	TypingJSON,
-	types,
-	validations,
-} from '@bmoor/schema';
+import {validations} from '@bmoor/schema';
 
+import {hooks} from '../hooker';
+import {Model} from '../model';
+import {Nexus} from '../nexus';
+import {Service} from '../service';
+import {types} from '../typing';
+import {TypingJSON} from '../typing.interface';
 import {BuilderGraphql} from './graphql';
 
 describe('@bmoor/schema :: BuilderGraphql', function () {
 	it('should properly generate a json schema', function () {
-		const dictionary = new Dictionary<TypingJSON, SchemaInterface>(
-			types,
-			validations,
-		);
+		const nexus = new Nexus<TypingJSON>(types, validations, hooks);
 
-		dictionary.addSchema(
-			new Schema({
-				reference: 's-1',
-				info: {
-					foo: {
-						type: 'string',
+		nexus.addService(
+			new Service(
+				new Model({
+					reference: 's-1',
+					info: {
+						foo: {
+							type: 'string',
+						},
+						bar: {
+							type: 'number',
+						},
 					},
-					bar: {
-						type: 'number',
+					structure: [
+						{
+							path: 'foo',
+							ref: 'foo',
+						},
+						{
+							path: 'bar',
+							ref: 'foo',
+						},
+					],
+				}),
+				{
+					adapter: {
+						async create() {
+							return null;
+						},
+						async read() {
+							return null;
+						},
+						async update() {
+							return null;
+						},
+						async delete() {
+							return null;
+						},
+					},
+					controller: {
+						async canCreate(ctx, datums) {
+							return datums;
+						},
+						async canRead(ctx, datums) {
+							return datums;
+						},
+						async canUpdate(ctx, datums) {
+							return datums;
+						},
+						async canDelete(ctx, datums) {
+							return datums;
+						},
 					},
 				},
-				structure: [
-					{
-						path: 'foo',
-						ref: 'foo',
-					},
-					{
-						path: 'bar',
-						ref: 'foo',
-					},
-				],
-			}),
+				{},
+			),
 		);
 
-		dictionary.addSchema(
-			new Schema({
-				reference: 's-2',
-				info: {
-					hello: {
-						type: 'string',
+		nexus.addService(
+			new Service(
+				new Model({
+					reference: 's-2',
+					info: {
+						hello: {
+							type: 'string',
+						},
+						world: {
+							type: 'number',
+						},
 					},
-					world: {
-						type: 'number',
+					structure: [
+						{
+							ref: 'hello',
+							path: 'hello',
+						},
+						{
+							ref: 'world',
+							path: 'world',
+						},
+					],
+				}),
+				{
+					adapter: {
+						async create() {
+							return null;
+						},
+						async read() {
+							return null;
+						},
+						async update() {
+							return null;
+						},
+						async delete() {
+							return null;
+						},
+					},
+					controller: {
+						async canCreate(ctx, datums) {
+							return datums;
+						},
+						async canRead(ctx, datums) {
+							return datums;
+						},
+						async canUpdate(ctx, datums) {
+							return datums;
+						},
+						async canDelete(ctx, datums) {
+							return datums;
+						},
 					},
 				},
-				structure: [
-					{
-						ref: 'hello',
-						path: 'hello',
-					},
-					{
-						ref: 'world',
-						path: 'world',
-					},
-				],
-			}),
+				{},
+			),
 		);
 
-		dictionary.addSchema(
-			new Schema({
-				reference: 's-3',
-				info: {
-					id: {
-						use: 'primary',
-						type: 'string',
+		nexus.addService(
+			new Service(
+				new Model({
+					reference: 's-3',
+					info: {
+						id: {
+							use: 'primary',
+							type: 'string',
+						},
+						otherId: {
+							required: true,
+							type: 'string',
+						},
+						mount: {
+							use: 'synthetic',
+							type: 'array',
+						},
+						parent: {
+							use: 'synthetic',
+							type: 'object',
+						},
 					},
-					otherId: {
-						required: true,
-						type: 'string',
+					structure: [
+						{
+							ref: 'id',
+							path: 'id',
+						},
+						{
+							ref: 'otherId',
+							path: 'otherId',
+						},
+						{
+							ref: 'mount',
+							path: 'mount',
+						},
+						{
+							ref: 'parent',
+							path: 'parent',
+						},
+					],
+					relationships: [
+						{
+							reference: 'parent',
+							type: 'toOne',
+							fields: ['otherId'],
+							other: 's-2',
+							otherFields: ['hello'],
+						},
+						{
+							reference: 'mount',
+							type: 'toMany',
+							fields: ['id'],
+							other: 's-1',
+							otherFields: ['foo'],
+						},
+					],
+				}),
+				{
+					adapter: {
+						async create() {
+							return null;
+						},
+						async read() {
+							return null;
+						},
+						async update() {
+							return null;
+						},
+						async delete() {
+							return null;
+						},
 					},
-					mount: {
-						use: 'synthetic',
-						type: 'array',
-					},
-					parent: {
-						use: 'synthetic',
-						type: 'object',
+					controller: {
+						async canCreate(ctx, datums) {
+							return datums;
+						},
+						async canRead(ctx, datums) {
+							return datums;
+						},
+						async canUpdate(ctx, datums) {
+							return datums;
+						},
+						async canDelete(ctx, datums) {
+							return datums;
+						},
 					},
 				},
-				structure: [
-					{
-						ref: 'id',
-						path: 'id',
-					},
-					{
-						ref: 'otherId',
-						path: 'otherId',
-					},
-					{
-						ref: 'mount',
-						path: 'mount',
-					},
-					{
-						ref: 'parent',
-						path: 'parent',
-					},
-				],
-				relationships: [
-					{
-						reference: 'parent',
-						type: 'toOne',
-						fields: ['otherId'],
-						other: 's-2',
-						otherFields: ['hello'],
-					},
-					{
-						reference: 'mount',
-						type: 'toMany',
-						fields: ['id'],
-						other: 's-1',
-						otherFields: ['foo'],
-					},
-				],
-			}),
+				{},
+			),
 		);
 
-		const formatter = new BuilderGraphql(dictionary);
+		const formatter = new BuilderGraphql(nexus);
 
-		formatter.addSchema(dictionary.getSchema('s-3'));
+		formatter.addSchema(nexus.getSchema('s-3'));
 
 		expect(formatter.toJSON()).to.deep.equal({
 			id: 'ID!',
@@ -148,45 +243,75 @@ describe('@bmoor/schema :: BuilderGraphql', function () {
 	});
 
 	it('should properly generate a complex schema', function () {
-		const dictionary = new Dictionary<TypingJSON, SchemaInterface>(
-			types,
-			validations,
-		);
+		const nexus = new Nexus<TypingJSON>(types, validations, hooks);
 
-		dictionary.addSchema(
-			new Schema({
-				reference: 's-1',
-				info: {
-					bar: {
-						type: 'string',
+		nexus.addService(
+			new Service(
+				new Model({
+					reference: 's-1',
+					info: {
+						bar: {
+							type: 'string',
+						},
+						world: {
+							type: 'number',
+						},
+						drei: {
+							type: 'float',
+						},
 					},
-					world: {
-						type: 'number',
+					structure: [
+						{
+							path: 'foo.bar',
+							ref: 'bar',
+						},
+						{
+							path: 'hello.world',
+							ref: 'world',
+						},
+						{
+							path: 'eins.zwei.drei',
+							ref: 'drei',
+						},
+					],
+				}),
+				{
+					adapter: {
+						async create() {
+							return null;
+						},
+						async read() {
+							return null;
+						},
+						async update() {
+							return null;
+						},
+						async delete() {
+							return null;
+						},
 					},
-					drei: {
-						type: 'float',
+					controller: {
+						async canCreate(ctx, datums) {
+							return datums;
+						},
+						async canRead(ctx, datums) {
+							return datums;
+						},
+						async canUpdate(ctx, datums) {
+							return datums;
+						},
+						async canDelete(ctx, datums) {
+							return datums;
+						},
 					},
 				},
-				structure: [
-					{
-						path: 'foo.bar',
-						ref: 'bar',
-					},
-					{
-						path: 'hello.world',
-						ref: 'world',
-					},
-					{
-						path: 'eins.zwei.drei',
-						ref: 'drei',
-					},
-				],
-			}),
+				{},
+			),
 		);
 
-		const formatter = new BuilderGraphql(dictionary);
+		const formatter = new BuilderGraphql(nexus);
 
-		formatter.addSchema(dictionary.getSchema('s-1'));
+		formatter.addSchema(nexus.getSchema('s-1'));
 
 		expect(formatter.toJSON()).to.deep.equal({
 			foo: {

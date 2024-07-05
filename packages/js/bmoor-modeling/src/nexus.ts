@@ -12,15 +12,12 @@ import {ModelInterface} from './model.interface';
 import {ServiceInterface} from './service.interface';
 import {TypingJSON} from './typing.interface';
 
-export class Nexus<
-		TypingT extends TypingJSON,
-		SchemaT extends ModelInterface,
-	>
-	extends Dictionary<TypingT, SchemaT>
+export class Nexus<TypingT extends TypingJSON>
+	extends Dictionary<TypingT, ModelInterface>
 	implements ContextInterface<TypingT>
 {
 	hooker: HookerInterface;
-	services: Record<SchemaReference, ServiceInterface<SchemaT>>;
+	services: Record<SchemaReference, ServiceInterface>;
 
 	constructor(
 		types: TypingInterface<TypingT>,
@@ -33,15 +30,15 @@ export class Nexus<
 		this.setHooker(hooker);
 	}
 
-	addService(service: ServiceInterface<SchemaT>) {
-		const schema = service.getSchema();
+	addService(service: ServiceInterface) {
+		const schema = service.getModel();
 
 		this.services[schema.getReference()] = service;
 
 		this.addSchema(schema);
 	}
 
-	getService(ref: SchemaReference): ServiceInterface<SchemaT> {
+	getService(ref: SchemaReference): ServiceInterface {
 		return this.services[ref];
 	}
 

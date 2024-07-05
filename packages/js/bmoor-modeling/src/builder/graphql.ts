@@ -51,17 +51,18 @@ export class BuilderGraphql<TypingT extends TypingJSON = TypingJSON> {
 		schema: SchemaInterface,
 		relationship: RelationshipJSON,
 	) {
-		const other = this.ctx.getService(relationship.other);
+		const service = this.ctx.getService(relationship.other);
+		const model = service.getModel();
 
 		const attrs = relationship.otherFields
 			.map((attr) => {
 				// TODO: I need to handle filters...
-				const otherField = other.getField(attr);
+				const otherField = model.getField(attr);
 
 				return `${otherField.getReference()}: ${this.ctx.getTyping(otherField.getInfo().type).graphql}`;
 			})
 			.concat(
-				Object.entries(other.getConnectionActions() || {}).map(
+				Object.entries(service.getQueryParams() || {}).map(
 					([action, type]) => {
 						return `${action}: ${this.ctx.getTyping(type).graphql}`;
 					},
@@ -70,7 +71,7 @@ export class BuilderGraphql<TypingT extends TypingJSON = TypingJSON> {
 
 		const attributes = attrs.join(', ');
 
-		let result = this.ctx.formatName(other.getReference(), 'graphql');
+		let result = this.ctx.formatName(model.getReference(), 'graphql');
 		if (relationship.type === 'toMany') {
 			result = '[' + result + ']';
 		}
