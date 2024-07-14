@@ -4,7 +4,7 @@ import {Model} from './model';
 
 describe('@bmoor-modeling::Model', function () {
 	describe('::inflate', function () {
-		it.only('should correctly create a typescript format', function () {
+		it('should correctly create a typescript format', function () {
 			const model = new Model({
 				reference: 'junk',
 				info: {
@@ -54,7 +54,7 @@ describe('@bmoor-modeling::Model', function () {
 	});
 
 	describe('::deflate', function () {
-		it.only('should correctly create a typescript format', function () {
+		it('should correctly create a typescript format', function () {
 			const model = new Model({
 				reference: 'junk',
 				info: {

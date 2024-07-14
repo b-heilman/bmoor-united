@@ -1,72 +1,25 @@
-/*
+/**
 import {expect} from 'chai';
 import {stub} from 'sinon';
 
 import {ContextSecurityInterface} from '@bmoor/context';
 
 import {Model} from './model';
-import {factory} from './model/field/set';
 import {Service} from './service';
-import {ServiceAccessorInterface} from './service/accessor.interface';
-import {ServiceAdapterInterface} from './service/adapter.interface';
-import {ServiceControllerInterface} from './service/controller.interface';
-import {ServiceValidatorInterface} from './service/validator.interface';
-
-// eslint-disable-next-line  @typescript-eslint/no-explicit-any
-export type ExternalRead = any;
-
-// eslint-disable-next-line  @typescript-eslint/no-explicit-any
-export type ExternalReference = any;
-
-// eslint-disable-next-line  @typescript-eslint/no-explicit-any
-export type ExternalCreate = any;
-
-// eslint-disable-next-line  @typescript-eslint/no-explicit-any
-export type ExternalUpdate = any;
-
-// eslint-disable-next-line  @typescript-eslint/no-explicit-any
-export type ExternalSearch = any;
-
-// eslint-disable-next-line  @typescript-eslint/no-explicit-any
-export type InternalRead = any;
-
-// eslint-disable-next-line  @typescript-eslint/no-explicit-any
-export type InternalReference = any;
-
-// eslint-disable-next-line  @typescript-eslint/no-explicit-any
-export type InternalCreate = any;
-
-// eslint-disable-next-line  @typescript-eslint/no-explicit-any
-export type InternalUpdate = any;
-
-// eslint-disable-next-line  @typescript-eslint/no-explicit-any
-export type InternalSearch = any;
+import { ServiceInternalGenerics, ServiceStorageGenerics, ServiceExternalGenerics } from './service.interface';
+import { ServiceAdapterInterface } from './service/adapter.interface';
+import { ServiceControllerInterface } from './service/controller.interface';
 
 describe('@bmoor-modeling::Service', function () {
-	let controller: ServiceControllerInterface<
-		ExternalRead,
-		ExternalReference,
-		ExternalCreate,
-		ExternalUpdate
-	> = null;
-	let adapter: ServiceAdapterInterface<
-		InternalReference,
-		InternalRead,
-		InternalCreate,
-		InternalUpdate,
-		InternalSearch
-	> = null;
-	let accessor: ServiceAccessorInterface<
-		ExternalRead,
-		ExternalReference,
-		InternalRead,
-		InternalReference
-	> = null;
-	let validator: ServiceValidatorInterface<
-		ExternalReference,
-		ExternalCreate,
-		ExternalUpdate
-	> = null;
+	type InternalT = ServiceInternalGenerics;
+	type ExternalT = ServiceExternalGenerics;
+	type StorageT = ServiceStorageGenerics;
+
+	let model: Model<InternalT, ExternalT, StorageT>;
+	let adapter: ServiceAdapterInterface<StorageT>;
+	let service: Service<InternalT, ExternalT, StorageT>;
+	let controller: ServiceControllerInterface<InternalT>;
+
 	let ctx: ContextSecurityInterface = null;
 
 	beforeEach(function () {
@@ -88,16 +41,16 @@ describe('@bmoor-modeling::Service', function () {
 			},
 		};
 		controller = {
-			async canRead(datums) {
+			async canCreate(ctx, datums) {
 				return datums;
 			},
-			async canCreate(datums) {
+			async canRead(ctx, datums) {
 				return datums;
 			},
-			async canUpdate(datums) {
+			async canUpdate(ctx, datums) {
 				return datums;
 			},
-			async canDelete(datums) {
+			async canDelete(ctx, datums) {
 				return datums;
 			},
 		};
@@ -115,33 +68,26 @@ describe('@bmoor-modeling::Service', function () {
 				return ids.length;
 			},
 		};
-		validator = {
-			validateCreate() {
-				return null;
-			},
-			validateUpdate() {
-				return null;
-			},
-		};
-		accessor = {
-			getInternalKey() {
-				return 'ok';
-			},
-			getExternalKey() {
-				return 'ok';
-			},
-		};
 	});
 
 	describe('actions', function () {
 		describe('create', function () {
 			it('should work', function () {
-				const service = new Service({
-					controller,
-					adapter,
-					accessor,
-					model: new Model({
-						ref: 'junk',
+				const service = new Service(
+					new Model({
+						reference: 'junk',
+						structure: {
+							f1: 'f-1',
+							f2: 'f-2'
+						},
+						info: {
+							f1: {
+								type: 'string'
+							},
+							f2: {
+								type: 'number'
+							}
+						}
 						fields: factory(
 							{
 								external: 'f1',
@@ -157,7 +103,11 @@ describe('@bmoor-modeling::Service', function () {
 							},
 						),
 					}),
-				});
+					{
+						adapter,
+						controller
+					}
+				);
 
 				const res = service.actions.create({
 					f1: 'v-1',
@@ -993,4 +943,4 @@ describe('@bmoor-modeling::Service', function () {
 		});
 	});
 });
-*/
+**/
