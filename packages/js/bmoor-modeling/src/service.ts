@@ -275,8 +275,8 @@ export class Service<
 		);
 	}
 
-	getQueryParams(): Record<string, TypingReference> {
-		return {};
+	getQueryActions(): Record<string, TypingReference> {
+		return this.settings.actions || {};
 	}
 
 	getModel(): ModelInterface<InternalT, ExternalT, StorageT> {

@@ -1,8 +1,7 @@
 import {Mapping} from '@bmoor/path';
-import {FieldInterface, Schema, reduceStructure} from '@bmoor/schema';
+import {Schema, reduceStructure} from '@bmoor/schema';
 
 import {ContextInterface} from './context.interface';
-import {HookInterface} from './hook.interface';
 import {
 	ModelExternalGenerics,
 	ModelInterface,
@@ -13,39 +12,37 @@ import {
 } from './model.interface';
 
 function runHooks(obj, model: Model, action: string) {
-	if ('hooks' in this.settings) {
+	if ('hooks' in model.settings) {
 		for (const row of Object.entries(model.settings.hooks)) {
 			const fieldRef = row[0];
+			const field = model.getField(fieldRef);
+			const actor = row[1];
 
-			let field: FieldInterface;
-			let hooks = row[1];
+			let hooks;
+			let hookArgs;
+			if (typeof actor === 'string') {
+				hooks = model.ctx.getHook(actor)[action];
+				hookArgs = {};
+			} else if (typeof actor === 'object' && 'ref' in actor) {
+				hooks = model.ctx.getHook(actor.ref);
+				hookArgs = actor.args;
+			} else {
+				hooks = actor[action];
+				hookArgs = {};
+			}
 
-			if (!Array.isArray(hooks)) {
+			if (!hooks) {
+				continue;
+			} else if (!Array.isArray(hooks)) {
 				hooks = [hooks];
 			}
 
 			for (const hook of hooks) {
-				let hookReg: HookInterface;
-				let hookArgs;
-				if (typeof hook === 'string') {
-					hookReg = model.ctx.getHook(hook);
-					hookArgs = {};
-				} else {
-					hookReg = model.ctx.getHook(hook.ref);
-					hookArgs = hook.args;
-				}
+				const value = field.read(obj);
+				const res = hook(value, hookArgs);
 
-				if (action in hookReg) {
-					if (!field) {
-						field = model.getField(fieldRef);
-					}
-
-					const value = field.read(obj);
-					const res = hookReg.onCreate(value, hookArgs);
-
-					if (res !== undefined) {
-						field.write(obj, res);
-					}
+				if (res !== undefined) {
+					field.write(obj, res);
 				}
 			}
 		}

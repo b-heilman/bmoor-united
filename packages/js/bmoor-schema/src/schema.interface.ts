@@ -21,7 +21,7 @@ export type SchemaStructure =
 export interface SchemaJSON {
 	reference?: SchemaReference;
 	structure: SchemaStructure;
-	info: Record<string, FieldInfo>;
+	info: Record<FieldReference, FieldInfo>;
 	validators?: Record<FieldReference, ValidationJSON>;
 	relationships?: RelationshipJSON[];
 }

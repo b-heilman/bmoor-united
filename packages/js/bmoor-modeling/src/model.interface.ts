@@ -6,18 +6,23 @@ import {
 	SchemaStructure,
 } from '@bmoor/schema';
 
-import {HookReference} from './hook.interface';
+import {HookFn, HookInterface, HookReference} from './hook.interface';
 
 export type DeltaType = DynamicObject;
 export type StructureType = DynamicObject;
 
-export type HookRegister =
+export type HookAction =
 	| HookReference
 	| {ref: HookReference; args: object};
+
+export type HookRegister =
+	| HookAction
+	| Partial<Record<keyof HookInterface, HookFn | HookFn[]>>;
+
 export interface ModelJSON extends SchemaSettings {
 	deflate?: SchemaStructure;
 	inflate?: SchemaStructure;
-	hooks?: Record<FieldReference, HookRegister | HookRegister[]>;
+	hooks?: Record<FieldReference, HookRegister>;
 }
 
 export interface ModelSettings extends ModelJSON {}

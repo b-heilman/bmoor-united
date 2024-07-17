@@ -62,7 +62,7 @@ export class BuilderGraphql<TypingT extends TypingJSON = TypingJSON> {
 				return `${otherField.getReference()}: ${this.ctx.getTyping(otherField.getInfo().type).graphql}`;
 			})
 			.concat(
-				Object.entries(service.getQueryParams() || {}).map(
+				Object.entries(service.getQueryActions() || {}).map(
 					([action, type]) => {
 						return `${action}: ${this.ctx.getTyping(type).graphql}`;
 					},

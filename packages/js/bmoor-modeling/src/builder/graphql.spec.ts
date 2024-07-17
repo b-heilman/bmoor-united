@@ -123,8 +123,11 @@ describe('@bmoor/schema :: BuilderGraphql', function () {
 							return datums;
 						},
 					},
+					actions: {
+						eins: 'string',
+						zwei: 'float',
+					},
 				},
-				{},
 			),
 		);
 

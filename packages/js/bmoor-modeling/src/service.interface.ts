@@ -45,6 +45,7 @@ export interface ServiceSettings<
 > {
 	adapter: ServiceAdapterInterface<StorageT>;
 	controller: ServiceControllerInterface<InternalT>;
+	actions?: ServiceQueryActions;
 }
 
 export type ServiceDatumModifierFn<StructureT> = (
@@ -67,7 +68,7 @@ export interface ServiceHooks<
 	onDeflate?: ServiceDatumModifierFn<InternalT['structure']>;
 }
 
-export type ServiceQueryParams = Record<string, TypingReference>;
+export type ServiceQueryActions = Record<string, TypingReference>;
 
 export interface ServiceInterface<
 	InternalT extends ServiceInternalGenerics = ServiceInternalGenerics,
@@ -119,5 +120,5 @@ export interface ServiceInterface<
 	): Promise<ExternalT['structure'][]>;
 
 	getModel(): ModelInterface<InternalT, ExternalT, StorageT>;
-	getQueryParams(): ServiceQueryParams;
+	getQueryActions(): ServiceQueryActions;
 }
