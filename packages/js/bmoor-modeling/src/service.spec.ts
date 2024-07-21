@@ -1,4 +1,3 @@
-/**
 import {expect} from 'chai';
 import {stub} from 'sinon';
 
@@ -70,211 +69,256 @@ describe('@bmoor-modeling::Service', function () {
 		};
 	});
 
-	describe('actions', function () {
-		describe('create', function () {
-			it('should work', function () {
-				const service = new Service(
-					new Model({
-						reference: 'junk',
-						structure: {
-							f1: 'f-1',
-							f2: 'f-2'
+	describe('::onCreate', function () {
+		it('should work', function () {
+			const service = new Service(
+				new Model({
+					reference: 'junk',
+					structure: {
+						field1: 'f1',
+						field2: 'f2',
+						field3: 'f3',
+					},
+					info: {
+						f1: {
+							type: 'string'
 						},
-						info: {
-							f1: {
-								type: 'string'
-							},
-							f2: {
-								type: 'number'
-							}
+						f2: {
+							type: 'number'
 						}
-						fields: factory(
-							{
-								external: 'f1',
-								onCreate(datum) {
-									datum.v = 1;
-								},
+					},
+					hooks: {
+						f2: {
+							onCreate(value) {
+								return value+'-2';
 							},
-							{
-								external: 'f2',
-								onCreate(datum, setter, getter) {
-									setter(datum, getter(datum) + '-2');
-								},
+						},
+						f3: {
+							onCreate() {
+								return 1;
 							},
-						),
-					}),
-					{
-						adapter,
-						controller
+						},
 					}
-				);
+				}),
+				{
+					adapter,
+					controller
+				}
+			);
 
-				const res = service.actions.create({
-					f1: 'v-1',
-					f2: 'v-2',
-				});
+			const res = service.onCreate(ctx, {
+				field1: 'v-1',
+				field2: 'v-2',
+			});
 
-				expect(res).to.deep.equal({
-					f1: 'v-1',
-					f2: 'v-2-2',
-					v: 1,
-				});
+			expect(res).to.deep.equal({
+				field1: 'v-1',
+				field2: 'v-2-2',
+				field3: 1,
 			});
 		});
-
-		describe('read', function () {
-			it('should work', function () {
-				const service = new Service({
-					controller,
+	});
+	
+	describe('::onRead', function () {
+		it('should work', function () {
+			const service = new Service(
+				new Model({
+					reference: 'junk',
+					structure: {
+						field1: 'f1',
+						field2: 'f2',
+						field3: 'f3',
+					},
+					info: {
+						f1: {
+							type: 'string'
+						},
+						f2: {
+							type: 'number'
+						}
+					},
+					hooks: {
+						f2: {
+							onRead(value) {
+								return value+'-2';
+							},
+						},
+						f3: {
+							onRead() {
+								return 1;
+							},
+						},
+					}
+				}),
+				{
 					adapter,
-					accessor,
-					model: new Model({
-						ref: 'junk',
-						fields: factory(
-							{
-								external: 'f1',
-								onRead(datum) {
-									datum.v = 1;
-								},
-							},
-							{
-								external: 'f2',
-								onRead(datum, setter, getter) {
-									setter(datum, getter(datum) + '-2');
-								},
-							},
-						),
-					}),
-				});
+					controller
+				}
+			);
 
-				const res = service.actions.read({
-					f1: 'v-1',
-					f2: 'v-2',
-				});
-
-				expect(res).to.deep.equal({
-					f1: 'v-1',
-					f2: 'v-2-2',
-					v: 1,
-				});
+			const res = service.onRead(ctx, {
+				field1: 'v-1',
+				field2: 'v-2',
 			});
-		});
 
-		describe('update', function () {
-			it('should work', function () {
-				const model = new Service({
-					controller,
-					adapter,
-					accessor,
-					model: new Model({
-						ref: 'junk',
-						fields: factory(
-							{
-								external: 'f1',
-								onUpdate(datum) {
-									datum.v = 1;
-								},
-							},
-							{
-								external: 'f2',
-								onUpdate(datum, setter, getter) {
-									setter(datum, getter(datum) + '-2');
-								},
-							},
-						),
-					}),
-				});
-
-				const res = model.actions.update({
-					f1: 'v-1',
-					f2: 'v-2',
-				});
-
-				expect(res).to.deep.equal({
-					f1: 'v-1',
-					f2: 'v-2-2',
-					v: 1,
-				});
-			});
-		});
-
-		describe('inflate', function () {
-			it('should work', function () {
-				const model = new Service({
-					controller,
-					adapter,
-					accessor,
-					model: new Model({
-						ref: 'junk',
-						fields: factory(
-							{
-								external: 'f1',
-								onInflate(datum) {
-									datum.v = 1;
-								},
-							},
-							{
-								external: 'f2',
-								onInflate(datum, setter, getter) {
-									setter(datum, getter(datum) + '-2');
-								},
-							},
-						),
-					}),
-				});
-
-				const res = model.actions.inflate({
-					f1: 'v-1',
-					f2: 'v-2',
-				});
-
-				expect(res).to.deep.equal({
-					f1: 'v-1',
-					f2: 'v-2-2',
-					v: 1,
-				});
-			});
-		});
-
-		describe('deflate', function () {
-			it('should work', function () {
-				const model = new Service({
-					controller,
-					adapter,
-					accessor,
-					model: new Model({
-						ref: 'junk',
-						fields: factory(
-							{
-								external: 'f1',
-								onDeflate(datum) {
-									datum.v = 1;
-								},
-							},
-							{
-								external: 'f2',
-								onDeflate(datum, setter, getter) {
-									setter(datum, getter(datum) + '-2');
-								},
-							},
-						),
-					}),
-				});
-
-				const res = model.actions.deflate({
-					f1: 'v-1',
-					f2: 'v-2',
-				});
-
-				expect(res).to.deep.equal({
-					f1: 'v-1',
-					f2: 'v-2-2',
-					v: 1,
-				});
+			expect(res).to.deep.equal({
+				field1: 'v-1',
+				field2: 'v-2-2',
+				field3: 1,
 			});
 		});
 	});
 
+	describe('::onUpdate', function () {
+		it('should work', function () {
+			const service = new Service(
+				new Model({
+					reference: 'junk',
+					structure: {
+						field1: 'f1',
+						field2: 'f2',
+						field3: 'f3',
+					},
+					info: {
+						f1: {
+							type: 'string'
+						},
+						f2: {
+							type: 'number'
+						}
+					},
+					hooks: {
+						f2: {
+							onUpdate(value) {
+								return value+'-2';
+							},
+						},
+						f3: {
+							onUpdate() {
+								return 1;
+							},
+						},
+					}
+				}),
+				{
+					adapter,
+					controller
+				}
+			);
+
+			const res = service.onUpdate(ctx, {
+				field1: 'v-1',
+				field2: 'v-2',
+			});
+
+			expect(res).to.deep.equal({
+				field1: 'v-1',
+				field2: 'v-2-2',
+				field3: 1,
+			});
+		});
+	});
+
+	describe('::onInflate', function () {
+		it('should work', function () {
+			const service = new Service(
+				new Model({
+					reference: 'junk',
+					structure: {
+						field1: 'f1',
+						field2: 'f2',
+						field3: 'f3',
+					},
+					info: {
+						f1: {
+							type: 'string'
+						},
+						f2: {
+							type: 'number'
+						}
+					},
+					hooks: {
+						f2: {
+							onInflate(value) {
+								return value+'-2';
+							},
+						},
+						f3: {
+							onInflate() {
+								return 1;
+							},
+						},
+					}
+				}),
+				{
+					adapter,
+					controller
+				}
+			);
+
+			const res = service.onInflate(ctx, {
+				field1: 'v-1',
+				field2: 'v-2',
+			});
+
+			expect(res).to.deep.equal({
+				field1: 'v-1',
+				field2: 'v-2-2',
+				field3: 1,
+			});
+		});
+	});
+
+	describe('::onDeflate', function () {
+		it('should work', function () {
+			const service = new Service(
+				new Model({
+					reference: 'junk',
+					structure: {
+						field1: 'f1',
+						field2: 'f2',
+						field3: 'f3',
+					},
+					info: {
+						f1: {
+							type: 'string'
+						},
+						f2: {
+							type: 'number'
+						}
+					},
+					hooks: {
+						f2: {
+							onDeflate(value) {
+								return value+'-2';
+							},
+						},
+						f3: {
+							onDeflate() {
+								return 1;
+							},
+						},
+					}
+				}),
+				{
+					adapter,
+					controller
+				}
+			);
+
+			const res = service.onDeflate(ctx, {
+				field1: 'v-1',
+				field2: 'v-2',
+			});
+
+			expect(res).to.deep.equal({
+				field1: 'v-1',
+				field2: 'v-2-2',
+				field3: 1,
+			});
+		});
+	});
+	/**
 	describe('crud methods', function () {
 		describe('create', function () {
 			it('should work without a validator', async function () {
@@ -941,6 +985,6 @@ describe('@bmoor-modeling::Service', function () {
 				},
 			]);
 		});
-	});
+		**/
 });
-**/
+

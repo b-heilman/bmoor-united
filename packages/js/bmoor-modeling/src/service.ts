@@ -12,66 +12,13 @@ import {
 	ServiceUpdateDelta,
 } from './service.interface';
 
-/*
-function buildActions<
-	SchemaT = SchemaInterface,
-	StructureT = StructureType,
-	ReferenceT = ReferenceType,
-	DeltaT = DeltaType,
-	SearchT = SearchType,
-	ExternalT = StructureType,
->(
-	actions: ServiceActions<
-		ExternalT,
-		ReferenceT,
-		ExternalCreate,
-		DeltaT,
-		SearchT
-	>,
-	field: ModelFieldInterface,
-): void {
-	if (field.actions.onCreate) {
-		actions.onCreate = actionExtend(
-			actions.onCreate,
-			field.actions.onCreate,
-		);
-	}
-
-	if (field.actions.onRead) {
-		actions.onRead = actionExtend(actions.onRead, field.actions.onRead);
-	}
-
-	if (field.actions.onUpdate) {
-		actions.onUpdate = actionExtend(
-			actions.onUpdate,
-			field.actions.onUpdate,
-		);
-	}
-
-	// inflate are changes out of the database
-	if (field.actions.onInflate) {
-		actions.onInflate = actionExtend(
-			actions.onInflate,
-			field.actions.onInflate,
-		);
-	}
-
-	// deflate are changes into the database
-	if (field.actions.onDeflate) {
-		actions.onDeflate = actionExtend(
-			actions.onDeflate,
-			field.actions.onDeflate,
-		);
-	}
-}
-*/
 export class Service<
 	InternalT extends ServiceInternalGenerics = ServiceInternalGenerics,
 	ExternalT extends ServiceExternalGenerics = ServiceExternalGenerics,
 	StorageT extends ServiceStorageGenerics = ServiceStorageGenerics,
 > implements ServiceInterface<InternalT, ExternalT, StorageT>
 {
-	hooks?: ServiceHooks<InternalT>;
+	hooks: ServiceHooks<InternalT>;
 	model: ModelInterface<InternalT, ExternalT, StorageT>;
 	settings: ServiceSettings<InternalT, StorageT>;
 
@@ -80,7 +27,7 @@ export class Service<
 		settings: ServiceSettings<InternalT, StorageT>,
 		hooks?: ServiceHooks<InternalT>,
 	) {
-		this.hooks = hooks;
+		this.hooks = hooks || {};
 		this.model = model;
 		this.settings = settings;
 	}
@@ -90,12 +37,8 @@ export class Service<
 		content: ExternalT['structure'][],
 	): Promise<ExternalT['structure'][]> {
 		const internal = content.map((datum) =>
-			this.model.onCreate(this.model.fromInflated(datum)),
+			this.onCreate(ctx, this.model.fromInflated(datum)),
 		);
-
-		if (this.hooks.onCreate) {
-			internal.forEach((datum) => this.hooks.onCreate(ctx, datum));
-		}
 
 		const validations = (
 			await Promise.all(
@@ -115,7 +58,7 @@ export class Service<
 		);
 
 		const rtn = await this.settings.adapter.create(
-			allowed.map((datum) => this.model.deflate(datum)),
+			allowed.map((datum) => this.deflate(ctx, datum)),
 		);
 
 		return rtn.map((datum) => this.model.fromDeflated(datum));
@@ -128,12 +71,12 @@ export class Service<
 		const internal = content.map((datum) => {
 			const rtn = this.model.fromInflated(datum);
 
-			return this.model.onCreate(rtn);
+			return this.onCreate(ctx, rtn);
 		});
 
 		const rtn = await this.create(ctx, internal);
 
-		return rtn.map((datum) => this.model.inflate(datum));
+		return rtn.map((datum) => this.inflate(ctx, datum));
 	}
 
 	async read(
@@ -141,13 +84,13 @@ export class Service<
 		ids: ExternalT['reference'][],
 	): Promise<ExternalT['structure'][]> {
 		const res = await this.settings.adapter.read(
-			ids.map((datum) => this.model.deflate(datum)),
+			ids.map((datum) => this.deflate(ctx, datum)),
 		);
 
 		return this.settings.controller.canRead(
 			ctx,
 			res.map((datum) =>
-				this.model.onRead(this.model.fromDeflated(datum)),
+				this.onRead(ctx, this.model.fromDeflated(datum)),
 			),
 			this,
 		);
@@ -162,7 +105,7 @@ export class Service<
 				ctx,
 				ids.map((datum) => this.model.fromInflated(datum)),
 			)
-		).map((datum) => this.model.inflate(datum));
+		).map((datum) => this.inflate(ctx, datum));
 	}
 
 	async update(
@@ -172,7 +115,7 @@ export class Service<
 		content = await this.settings.controller.canUpdate(
 			ctx,
 			content.map((change) => {
-				change.delta = this.model.onUpdate(change.delta);
+				change.delta = this.onUpdate(ctx, change.delta);
 
 				return change;
 			}),
@@ -192,8 +135,8 @@ export class Service<
 
 		const rtn = await this.settings.adapter.update(
 			content.map(({ref, delta}) => ({
-				ref: this.model.deflate(ref),
-				delta: this.model.deflate(delta),
+				ref: this.deflate(ctx, ref),
+				delta: this.deflate(ctx, delta),
 			})),
 		);
 
@@ -212,7 +155,7 @@ export class Service<
 					delta: this.model.fromInflated(delta),
 				})),
 			)
-		).map((datum) => this.model.inflate(datum));
+		).map((datum) => this.inflate(ctx, datum));
 	}
 
 	async delete(
@@ -227,7 +170,7 @@ export class Service<
 		const datums = await this.read(ctx, filtered);
 
 		const count = await this.settings.adapter.delete(
-			filtered.map((ref) => this.model.deflate(ref)),
+			filtered.map((ref) => this.deflate(ctx, ref)),
 		);
 
 		if (count !== datums.length) {
@@ -246,7 +189,7 @@ export class Service<
 				ctx,
 				ids.map((datum) => this.model.fromInflated(datum)),
 			)
-		).map((datum) => this.model.inflate(datum));
+		).map((datum) => this.inflate(ctx, datum));
 	}
 
 	async search(
@@ -254,13 +197,13 @@ export class Service<
 		search: InternalT['search'],
 	): Promise<InternalT['structure'][]> {
 		const res = await this.settings.adapter.search(
-			this.model.deflate(search),
+			this.deflate(ctx, search),
 		);
 
 		return this.settings.controller.canRead(
 			ctx,
 			res.map((datum) =>
-				this.model.onRead(this.model.fromDeflated(datum)),
+				this.onRead(ctx, this.model.fromDeflated(datum)),
 			),
 			this,
 		);
@@ -271,7 +214,7 @@ export class Service<
 		search: ExternalT['search'],
 	): Promise<ExternalT['structure'][]> {
 		return (await this.search(ctx, this.model.fromInflated(search))).map(
-			(datum) => this.model.inflate(datum),
+			(datum) => this.inflate(ctx, datum),
 		);
 	}
 
@@ -281,5 +224,88 @@ export class Service<
 
 	getModel(): ModelInterface<InternalT, ExternalT, StorageT> {
 		return this.model;
+	}
+
+	onCreate(
+		ctx: ContextSecurityInterface, 
+		obj: InternalT['structure']
+	): InternalT['structure'] {
+		this.model.onCreate(obj);
+
+		if (this.hooks.onCreate){
+			this.hooks.onCreate(ctx, obj);
+		}
+
+		return obj;
+	}
+
+	onRead(
+		ctx: ContextSecurityInterface, 
+		obj: InternalT['structure']
+	): InternalT['structure'] {
+		this.model.onRead(obj);
+
+		if (this.hooks.onRead){
+			this.hooks.onRead(ctx, obj);
+		}
+
+		return obj;
+	}
+
+	onUpdate(
+		ctx: ContextSecurityInterface,
+		obj: InternalT['structure']
+	): InternalT['structure'] {
+		this.model.onUpdate(obj);
+
+		if (this.hooks.onUpdate){
+			this.hooks.onUpdate(ctx, obj);
+		}
+
+		return obj;
+	}
+
+	onInflate(
+		ctx: ContextSecurityInterface, 
+		obj: InternalT['structure']
+	): InternalT['structure'] {
+		this.model.onInflate(obj);
+
+		if (this.hooks.onInflate){
+			this.hooks.onInflate(ctx, obj);
+		}
+
+		return obj;
+	}
+
+	inflate(
+		ctx: ContextSecurityInterface, 
+		obj: InternalT['structure']
+	): ExternalT['structure'] {
+		this.onInflate(ctx, obj);
+
+		return this.model.inflate(obj);
+	}
+
+	onDeflate(
+		ctx: ContextSecurityInterface,
+		obj: InternalT['structure']
+	): InternalT['structure'] {
+		this.model.onDeflate(obj);
+
+		if (this.hooks.onDeflate){
+			this.hooks.onDeflate(ctx, obj);
+		}
+
+		return obj;
+	}
+
+	deflate(
+		ctx: ContextSecurityInterface, 
+		obj: InternalT['structure']
+	): StorageT['structure'] {
+		this.onDeflate(ctx, obj);
+
+		return this.model.deflate(obj);
 	}
 }
