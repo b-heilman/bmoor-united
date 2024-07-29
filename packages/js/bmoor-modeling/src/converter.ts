@@ -40,9 +40,13 @@ export class Converter implements ConveterInterface {
 
 export const converter = new Converter({
 	string: {
-		json: (v: string) => JSON.parse(v),
+		json: (v: string) => {
+			return JSON.parse(v);
+		},
 	},
 	json: {
-		string: (v: object) => JSON.stringify(v),
+		string: (v: object) => {
+			return JSON.stringify(v);
+		},
 	},
 });

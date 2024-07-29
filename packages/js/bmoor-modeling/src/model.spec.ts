@@ -64,7 +64,66 @@ describe('@bmoor-modeling::Model', function () {
 			});
 		});
 
-		it('should properly convert', function () {});
+		it('should properly convert', function () {
+			const model = new Model(ctx, {
+				reference: 'junk',
+				structure: {
+					helloWorld: 'f-1',
+					foo: {
+						bar: 'f-2',
+					},
+				},
+				external: {
+					hello: {
+						world: 'f-1',
+					},
+					einsZwei: 'f-2',
+				},
+				info: {
+					'f-1': {
+						type: 'string',
+						external: 'json',
+					},
+					'f-2': {
+						type: 'number',
+					},
+				},
+			});
+
+			expect(
+				model.inflate({
+					helloWorld: '{"eins":1,"zwei":2}',
+					foo: {
+						bar: 2,
+					},
+				}),
+			).to.deep.equal({
+				hello: {
+					world: {
+						eins: 1,
+						zwei: 2,
+					},
+				},
+				einsZwei: 2,
+			});
+
+			expect(
+				model.fromInflated({
+					hello: {
+						world: {
+							eins: 1,
+							zwei: 2,
+						},
+					},
+					einsZwei: 2,
+				}),
+			).to.deep.equal({
+				helloWorld: '{"eins":1,"zwei":2}',
+				foo: {
+					bar: 2,
+				},
+			});
+		});
 	});
 
 	describe('::deflate', function () {

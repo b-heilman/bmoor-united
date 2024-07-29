@@ -25,14 +25,16 @@ export class Expressor {
 		settings: ExpressorExpressSettings = {},
 	): Expressable[] {
 		return tokens.map((token, pos) => {
-			settings.position =
-				pos === 0
-					? ExpressorExpressPosition.first
-					: pos === tokens.length - 1
+			const tokenSettings = Object.assign({}, settings, {
+				position:
+					pos === tokens.length - 1
 						? ExpressorExpressPosition.last
-						: ExpressorExpressPosition.middle;
+						: pos === 0
+							? ExpressorExpressPosition.first
+							: ExpressorExpressPosition.middle,
+			});
 
-			return token.toExpressable(this.compiler, settings);
+			return token.toExpressable(this.compiler, tokenSettings);
 		});
 	}
 

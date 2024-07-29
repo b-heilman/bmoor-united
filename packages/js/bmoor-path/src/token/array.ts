@@ -19,7 +19,7 @@ export class ArrayToken extends Token {
 			return new Expressable(this, ExpressableUsages.value, (arr) => {
 				let rtn;
 
-				if (settings.hook) {
+				if (settings.position === 'last' && settings.hook) {
 					rtn = arr.map((v) => settings.hook(v));
 				} else {
 					rtn = arr.slice(0);
@@ -39,7 +39,7 @@ export class ArrayToken extends Token {
 					rtn = arr.slice(begin || 0, end || arr.length);
 				}
 
-				if (settings.hook) {
+				if (settings.position === 'last' && settings.hook) {
 					return rtn.map((v) => settings.hook(v));
 				} else {
 					return rtn;

@@ -46,11 +46,15 @@ export class AccessorToken extends Token {
 					} else if (value === RTN_VALUE) {
 						return obj[this.content];
 					} else {
-						obj[this.content] = settings.hook
-							? settings.hook(value)
-							: value;
+						if (settings.position === 'last') {
+							obj[this.content] = settings.hook
+								? settings.hook(value)
+								: value;
 
-						return obj;
+							return obj;
+						} else {
+							obj[this.content] = value;
+						}
 					}
 				},
 			);
@@ -58,7 +62,7 @@ export class AccessorToken extends Token {
 			return new Expressable(this, ExpressableUsages.value, (obj) => {
 				const v = obj[this.content];
 
-				if (settings.hook) {
+				if (settings.position === 'last' && settings.hook) {
 					return settings.hook(v);
 				} else {
 					return v;
