@@ -7,6 +7,7 @@ import {
 
 import {ContextInterface} from '../context.interface';
 import {dictToGraphql} from '../methods';
+import {NexusInterface} from '../nexus.interface';
 import {TypingJSON} from '../typing.interface';
 
 // TODO: I need to handle multiple dimensions and sub types
@@ -14,11 +15,13 @@ import {TypingJSON} from '../typing.interface';
 export class BuilderGraphql<TypingT extends TypingJSON = TypingJSON> {
 	ctx: ContextInterface<TypingT>;
 	root: DynamicObject;
+	nexus: NexusInterface;
 	schema?: SchemaInterface;
 
-	constructor(ctx: ContextInterface<TypingT>) {
+	constructor(ctx: ContextInterface<TypingT>, nexus: NexusInterface) {
 		this.ctx = ctx;
 		this.root = {};
+		this.nexus = nexus;
 	}
 
 	addSchema(schema: SchemaInterface) {
@@ -51,7 +54,7 @@ export class BuilderGraphql<TypingT extends TypingJSON = TypingJSON> {
 		schema: SchemaInterface,
 		relationship: RelationshipJSON,
 	) {
-		const service = this.ctx.getService(relationship.other);
+		const service = this.nexus.getService(relationship.other);
 		const model = service.getModel();
 
 		const attrs = relationship.otherFields

@@ -9,10 +9,11 @@ import {ContextInterface} from './context.interface';
 import {ValidationJSON} from './validation.interface';
 
 export type FieldPath = string;
+export type FieldType = string;
 export type FieldReference = string;
 
 export interface FieldInfo {
-	type: string;
+	type: FieldType;
 	use?: 'primary' | 'synthetic';
 	required?: boolean;
 }
@@ -28,7 +29,7 @@ export interface FieldPathObject extends PathObject {}
 export interface FieldPathArray extends PathArray {}
 
 export interface FieldPathLeaf extends PathLeaf {
-	fieldType: string;
+	fieldType: FieldType;
 }
 
 export type FieldPathLink =

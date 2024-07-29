@@ -1,13 +1,22 @@
 import {expect} from 'chai';
 
+import {Context} from './context';
 import {toJSONSchema} from './methods';
 import {Schema} from './schema';
 import {types} from './typing';
+import {TypingJSON} from './typing.interface';
+import {validations} from './validator';
 
 describe('@bmoor/schema :: methods', function () {
+	let ctx;
+
+	beforeEach(function () {
+		ctx = new Context<TypingJSON>(types, validations);
+	});
+
 	describe('toJSONSchema', function () {
 		it('should properly generate a json schema', function () {
-			const schema = new Schema({
+			const schema = new Schema(ctx, {
 				info: {
 					bar: {
 						type: 'string',
@@ -41,24 +50,6 @@ describe('@bmoor/schema :: methods', function () {
 					},
 				],
 			});
-
-			const ctx = {
-				getValidation() {
-					return () => Promise.resolve('fail');
-				},
-				getTyping(ref) {
-					return types.getType(ref);
-				},
-				getSchema() {
-					return schema;
-				},
-				getConnection() {
-					return null;
-				},
-				formatName(name) {
-					return name;
-				},
-			};
 
 			expect(toJSONSchema(ctx, schema)).to.deep.equal({
 				type: 'object',

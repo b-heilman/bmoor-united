@@ -1,33 +1,23 @@
-import {
-	Dictionary,
-	SchemaReference,
-	TypingInterface,
-	ValidatorInterface,
-} from '@bmoor/schema';
+import {Knowledge, SchemaReference} from '@bmoor/schema';
 
-import {ContextInterface} from './context.interface';
-import {HookInterface, HookReference} from './hook.interface';
+import {ConveterInterface} from './converter.interface';
 import {HookerInterface} from './hooker.interface';
 import {ModelInterface} from './model.interface';
+import {NexusInterface} from './nexus.interface';
 import {ServiceInterface} from './service.interface';
-import {TypingJSON} from './typing.interface';
 
-export class Nexus<TypingT extends TypingJSON>
-	extends Dictionary<TypingT, ModelInterface>
-	implements ContextInterface<TypingT>
+export class Nexus
+	extends Knowledge<ModelInterface>
+	implements NexusInterface
 {
 	hooker: HookerInterface;
 	services: Record<SchemaReference, ServiceInterface>;
+	converter: ConveterInterface;
 
-	constructor(
-		types: TypingInterface<TypingT>,
-		validator: ValidatorInterface,
-		hooker: HookerInterface,
-	) {
-		super(types, validator);
+	constructor() {
+		super();
 
 		this.services = {};
-		this.setHooker(hooker);
 	}
 
 	addService(service: ServiceInterface) {
@@ -40,13 +30,5 @@ export class Nexus<TypingT extends TypingJSON>
 
 	getService(ref: SchemaReference): ServiceInterface {
 		return this.services[ref];
-	}
-
-	setHooker(hooker: HookerInterface) {
-		this.hooker = hooker;
-	}
-
-	getHook(ref: HookReference): HookInterface {
-		return this.hooker.getHook(ref);
 	}
 }

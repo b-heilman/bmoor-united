@@ -46,18 +46,24 @@ export class AccessorToken extends Token {
 					} else if (value === RTN_VALUE) {
 						return obj[this.content];
 					} else {
-						obj[this.content] = value;
+						obj[this.content] = settings.hook
+							? settings.hook(value)
+							: value;
 
 						return obj;
 					}
 				},
 			);
 		} else {
-			return new Expressable(
-				this,
-				ExpressableUsages.value,
-				(obj) => obj[this.content],
-			);
+			return new Expressable(this, ExpressableUsages.value, (obj) => {
+				const v = obj[this.content];
+
+				if (settings.hook) {
+					return settings.hook(v);
+				} else {
+					return v;
+				}
+			});
 		}
 	}
 }

@@ -16,6 +16,7 @@ describe('@bmoor/path - mapping', function () {
 				{
 					from: 'hello',
 					to: 'world',
+					hook: (a) => parseInt(a),
 				},
 				{
 					from: 'property.eins',
@@ -62,7 +63,7 @@ describe('@bmoor/path - mapping', function () {
 				),
 			).to.deep.equal({
 				bar: 1,
-				world: '2',
+				world: 2,
 				aField: {
 					dis: 3,
 					dat: 4,
@@ -102,7 +103,7 @@ describe('@bmoor/path - mapping', function () {
 				),
 			).to.deep.equal({
 				bar: 1,
-				world: '2',
+				world: 2,
 				aField: {
 					dis: 3,
 					dat: 4,
@@ -122,7 +123,7 @@ describe('@bmoor/path - mapping', function () {
 				}),
 			).to.deep.equal({
 				bar: 1,
-				world: '2',
+				world: 2,
 				aField: {
 					dis: 3,
 					dat: 4,
@@ -143,6 +144,7 @@ describe('@bmoor/path - mapping', function () {
 				{
 					from: 'foo[].eins',
 					to: 'hello[].zwei',
+					hook: (v) => 'z-' + v,
 				},
 				{
 					from: 'foo[].eins',
@@ -248,18 +250,67 @@ describe('@bmoor/path - mapping', function () {
 				hello: [
 					{
 						world: 'v-1-1',
-						zwei: 'v-1-2',
+						zwei: 'z-v-1-2',
 					},
 					{
 						world: 'v-2-1',
-						zwei: 'v-2-2',
+						zwei: 'z-v-2-2',
 					},
 					{
 						world: 'v-3-1',
-						zwei: 'v-3-2',
+						zwei: 'z-v-3-2',
 					},
 				],
 				flat: ['v-1-2', 'v-2-2', 'v-3-2'],
+				world: [
+					{
+						value: 1,
+					},
+					{
+						value: 2,
+					},
+					{
+						value: 3,
+					},
+				],
+			});
+		});
+
+		it('should transform correctly', function () {
+			const res = mappings.transform({
+				foo: [
+					{
+						bar: 'v-1-1',
+						eins: 'v-1-2',
+					},
+					{
+						bar: 'v-2-1',
+						eins: 'v-2-2',
+					},
+					{
+						bar: 'v-3-1',
+						eins: 'v-3-2',
+					},
+				],
+				bar: [1, 2, 3],
+			});
+
+			expect(res).to.deep.equal({
+				flat: ['v-1-2', 'v-2-2', 'v-3-2'],
+				hello: [
+					{
+						world: 'v-1-1',
+						zwei: 'z-v-1-2',
+					},
+					{
+						world: 'v-2-1',
+						zwei: 'z-v-2-2',
+					},
+					{
+						world: 'v-3-1',
+						zwei: 'z-v-3-2',
+					},
+				],
 				world: [
 					{
 						value: 1,

@@ -1,23 +1,22 @@
 import {expect} from 'chai';
 
-import {Dictionary} from './dictionary';
+import {Context} from './context';
+import {Knowledge} from './knowledge';
 import {Schema} from './schema';
 import {SchemaInterface} from './schema.interface';
 import {types} from './typing';
-import {TypingJSON} from './typing.interface';
 import {validations} from './validator';
 
-describe('@bmoor/schema :: Dictionary', function () {
-	let dictionary: Dictionary<TypingJSON, SchemaInterface>;
+describe('@bmoor/schema :: Knowledge', function () {
+	let ctx;
+	let knowledge: Knowledge<SchemaInterface>;
 
 	beforeEach(function () {
-		dictionary = new Dictionary<TypingJSON, SchemaInterface>(
-			types,
-			validations,
-		);
+		ctx = new Context(types, validations);
+		knowledge = new Knowledge<SchemaInterface>();
 
-		dictionary.addSchema(
-			new Schema({
+		knowledge.addSchema(
+			new Schema(ctx, {
 				reference: 's-1',
 				info: {
 					foo: {
@@ -40,8 +39,8 @@ describe('@bmoor/schema :: Dictionary', function () {
 			}),
 		);
 
-		dictionary.addSchema(
-			new Schema({
+		knowledge.addSchema(
+			new Schema(ctx, {
 				reference: 's-2',
 				info: {
 					hello: {
@@ -64,8 +63,8 @@ describe('@bmoor/schema :: Dictionary', function () {
 			}),
 		);
 
-		dictionary.addSchema(
-			new Schema({
+		knowledge.addSchema(
+			new Schema(ctx, {
 				reference: 's-3',
 				info: {
 					id: {
@@ -124,7 +123,7 @@ describe('@bmoor/schema :: Dictionary', function () {
 	});
 
 	it('should allow reading', async function () {
-		const ref2 = dictionary.getSchema('s-2').getReference();
+		const ref2 = knowledge.getSchema('s-2').getReference();
 
 		expect(ref2).to.deep.equal('s-2');
 	});

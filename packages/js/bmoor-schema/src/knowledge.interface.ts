@@ -1,21 +1,18 @@
 import {DynamicObject} from '@bmoor/object';
 
-import {ContextInterface} from './context.interface';
 import {
 	SchemaInterface,
 	SchemaJSON,
 	SchemaReference,
 } from './schema.interface';
-import {TypingJSON} from './typing.interface';
 
-export interface DictionaryJSON {
+export interface KnowledgeJSON {
 	schemas: SchemaJSON[];
 }
 
-export interface DictionaryInterface<
-	TypingT extends TypingJSON,
+export interface KnowledgeInterface<
 	SchemaT extends SchemaInterface = SchemaInterface,
-> extends ContextInterface<TypingT> {
+> {
 	addSchema(schema: SchemaT);
 	getSchema(ref: SchemaReference): SchemaT;
 	getSchemas(): SchemaT[];
@@ -26,5 +23,5 @@ export interface DictionaryInterface<
 		mode?: 'create' | 'update',
 	): Promise<string[]>;
 
-	toJSON(): DictionaryJSON;
+	toJSON(): KnowledgeJSON;
 }

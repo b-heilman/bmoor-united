@@ -1,15 +1,13 @@
-import {
-	ContextInterface as OldContext,
-	SchemaReference,
-} from '@bmoor/schema';
+import {FieldType, ContextInterface as OldContext} from '@bmoor/schema';
 
+import {ConvertFn} from './converter.interface';
 import {HookInterface, HookReference} from './hook.interface';
-import {ServiceInterface} from './service.interface';
 import {TypingJSON} from './typing.interface';
 
+// TODO: I might want to split context and nexus
 export interface ContextInterface<TypingT extends TypingJSON = TypingJSON>
 	extends OldContext<TypingT> {
-	getService(ref: SchemaReference): ServiceInterface;
-
 	getHook(ref: HookReference): HookInterface;
+
+	getConverter(from: FieldType, to: FieldType): ConvertFn;
 }

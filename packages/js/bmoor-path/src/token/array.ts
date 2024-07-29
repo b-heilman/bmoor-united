@@ -17,16 +17,32 @@ export class ArrayToken extends Token {
 	) {
 		if (settings.mode === ParserModes.write) {
 			return new Expressable(this, ExpressableUsages.value, (arr) => {
-				return arr.slice(0);
+				let rtn;
+
+				if (settings.hook) {
+					rtn = arr.map((v) => settings.hook(v));
+				} else {
+					rtn = arr.slice(0);
+				}
+
+				return rtn;
 			});
 		} else {
 			return new Expressable(this, ExpressableUsages.value, (arr) => {
+				let rtn;
+
 				if (this.content === '') {
-					return arr.slice(0);
+					rtn = arr.slice(0);
 				} else {
 					const [begin, end] = this.content.split(':');
 
-					return arr.slice(begin || 0, end || arr.length);
+					rtn = arr.slice(begin || 0, end || arr.length);
+				}
+
+				if (settings.hook) {
+					return rtn.map((v) => settings.hook(v));
+				} else {
+					return rtn;
 				}
 			});
 		}

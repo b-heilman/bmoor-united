@@ -38,4 +38,9 @@ export const types = new OldTyping<TypingJSON>({
 		graphql: null,
 		typescript: 'array',
 	},
+	json: {
+		json: 'object',
+		graphql: null,
+		typescript: 'object',
+	},
 });

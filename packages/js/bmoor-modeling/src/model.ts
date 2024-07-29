@@ -1,5 +1,12 @@
 import {Mapping} from '@bmoor/path';
-import {Schema, reduceStructure} from '@bmoor/schema';
+import {MappingSettings} from '@bmoor/path/src/mapping.interface';
+import {
+	FieldInterface,
+	FieldReference,
+	Schema,
+	SchemaStructure,
+	reduceStructure,
+} from '@bmoor/schema';
 
 import {ContextInterface} from './context.interface';
 import {
@@ -10,6 +17,11 @@ import {
 	ModelSettings,
 	ModelStorageGenerics,
 } from './model.interface';
+import {ModelField} from './model/field';
+import {
+	ModelFieldInterface,
+	ModelFieldJSON,
+} from './model/field.interface';
 
 function runHooks(obj, model: Model, action: string) {
 	if ('hooks' in model.settings) {
@@ -48,6 +60,58 @@ function runHooks(obj, model: Model, action: string) {
 		}
 	}
 }
+
+function reduceMapings(
+	model: Model,
+	settings: ModelSettings,
+	target: 'storage' | 'external',
+) {
+	const from: MappingSettings[] = [];
+	const to: MappingSettings[] = [];
+	const structure: SchemaStructure = settings[target];
+
+	for (const mapping of reduceStructure(structure)) {
+		const field = model.getField(mapping.ref);
+		const fieldInfo = field.getInfo();
+		const base = fieldInfo.type;
+		const other = fieldInfo[target];
+
+		let fromHook = null;
+		let toHook = null;
+
+		// TODO: validate types here?
+
+		if (other !== undefined && base !== other) {
+			const fromFn = model.ctx.getConverter(other, base);
+			if (fromFn) {
+				fromHook = fromFn;
+			}
+
+			const toFn = model.ctx.getConverter(base, other);
+			if (toFn) {
+				toHook = toFn;
+			}
+		}
+
+		from.push({
+			from: mapping.path,
+			to: field.getPath(),
+			hook: fromHook,
+		});
+
+		to.push({
+			from: field.getPath(),
+			to: mapping.path,
+			hook: toHook,
+		});
+	}
+
+	return {
+		from: new Mapping(from),
+		to: new Mapping(to),
+	};
+}
+
 /***
  * A Model is all about the data's structure.  Actions to be performed against the model will
  * be in the service.
@@ -61,6 +125,7 @@ export class Model<
 	implements ModelInterface<InternalT, ExternalT, StorageT>
 {
 	ctx: ContextInterface;
+	fields: Record<FieldReference, ModelFieldInterface>;
 	settings: ModelJSON;
 
 	deflator: {
@@ -72,40 +137,56 @@ export class Model<
 		to: Mapping;
 	};
 
-	constructor(settings: ModelSettings) {
-		super(settings);
+	constructor(ctx: ContextInterface, settings: ModelSettings) {
+		super(ctx, settings);
 
-		if (settings.inflate) {
-			const mappings = reduceStructure(settings.inflate).map((field) => ({
-				from: field.path,
-				to: this.getField(field.ref).getPath(),
-			}));
+		this.ctx = ctx;
 
-			this.inflator = {
-				from: new Mapping(mappings),
-				to: new Mapping(mappings.map((m) => ({from: m.to, to: m.from}))),
-			};
+		if (settings.external) {
+			this.inflator = reduceMapings(this, settings, 'external');
 		} else {
 			this.inflator = null;
 		}
 
-		if (settings.deflate) {
-			const mappings = reduceStructure(settings.deflate).map((field) => ({
-				from: field.path,
-				to: this.getField(field.ref).getPath(),
-			}));
-
-			this.deflator = {
-				from: new Mapping(mappings),
-				to: new Mapping(mappings.map((m) => ({from: m.to, to: m.from}))),
-			};
+		if (settings.storage) {
+			this.deflator = reduceMapings(this, settings, 'storage');
 		} else {
 			this.deflator = null;
 		}
 	}
 
-	setContext(ctx: ContextInterface) {
-		this.ctx = ctx;
+	defineFields(): Record<FieldReference, ModelFieldInterface> {
+		const schema = this.settings;
+		const fields: ModelFieldJSON[] = reduceStructure(schema.structure).map(
+			(field) =>
+				Object.assign(field, {
+					info: schema.info[field.ref],
+				}),
+		);
+
+		return fields.reduce((agg, fieldSchema, dex) => {
+			const field = new ModelField(fieldSchema);
+			const ref = field.getReference() || 'field_' + dex;
+
+			agg[ref] = field;
+
+			if (schema.validators) {
+				const validator = schema.validators[ref];
+				if (validator) {
+					field.setValidator(validator);
+				}
+			}
+
+			return agg;
+		}, {});
+	}
+
+	getFields(): FieldInterface[] {
+		return Object.values(this.fields);
+	}
+
+	getField(ref: FieldReference): ModelFieldInterface {
+		return this.fields[ref];
 	}
 
 	inflate(obj: InternalT['structure']): ExternalT['structure'] {

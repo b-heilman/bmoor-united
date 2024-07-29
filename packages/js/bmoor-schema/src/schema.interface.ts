@@ -1,12 +1,12 @@
 import {DynamicObject} from '@bmoor/object';
 
 import {BuilderJSONSchemaObject} from './builder/jsonschema.interface';
-import {ContextInterface} from './context.interface';
 import {
 	FieldInfo,
 	FieldInterface,
 	FieldReference,
 } from './field.interface';
+import {KnowledgeInterface} from './knowledge.interface';
 import {RelationshipJSON} from './relationship.interface';
 import {ValidationJSON} from './validation.interface';
 
@@ -29,7 +29,7 @@ export interface SchemaJSON {
 export interface SchemaSettings extends SchemaJSON {}
 
 export interface SchemaInterface {
-	setContext(ctx: ContextInterface);
+	setSpace(know: KnowledgeInterface);
 
 	getReference(): SchemaReference;
 	getPrimaryField(): FieldInterface;

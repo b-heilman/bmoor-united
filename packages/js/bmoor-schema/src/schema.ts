@@ -13,6 +13,7 @@ import {
 	FieldJSON,
 	FieldReference,
 } from './field.interface';
+import {Knowledge} from './knowledge';
 import {RelationshipJSON} from './relationship.interface';
 import {
 	SchemaFieldSet,
@@ -46,15 +47,29 @@ export function reduceStructure(
 		});
 	}
 }
+
 export class Schema implements SchemaInterface {
 	ctx: ContextInterface;
-	settings: SchemaJSON;
+	knowledge: Knowledge;
 	fields: Record<FieldReference, FieldInterface>;
+	settings: SchemaJSON;
 	relationships: Record<SchemaReference, RelationshipJSON>;
 
-	constructor(schema: SchemaSettings) {
+	constructor(ctx: ContextInterface, schema: SchemaSettings) {
+		this.ctx = ctx;
 		this.settings = schema; // I'll probably change this later, but for now, is what it is
 
+		this.fields = this.defineFields();
+		this.relationships = this.defineRelationships();
+	}
+
+	setSpace(know: Knowledge) {
+		this.knowledge = know;
+	}
+
+	defineFields(): Record<FieldReference, FieldInterface> {
+		const schema = this.settings;
+		// TODO: verify types here?
 		const fields: FieldJSON[] = reduceStructure(schema.structure).map(
 			(field) =>
 				Object.assign(field, {
@@ -62,7 +77,7 @@ export class Schema implements SchemaInterface {
 				}),
 		);
 
-		this.fields = fields.reduce((agg, fieldSchema, dex) => {
+		return fields.reduce((agg, fieldSchema, dex) => {
 			const field = new Field(fieldSchema);
 			const ref = field.getReference() || 'field_' + dex;
 
@@ -77,23 +92,20 @@ export class Schema implements SchemaInterface {
 
 			return agg;
 		}, {});
-
-		if (schema.relationships) {
-			this.relationships = schema.relationships.reduce(
-				(agg, relationship) => {
-					agg[relationship.other] = relationship;
-
-					return agg;
-				},
-				{},
-			);
-		} else {
-			this.relationships = {};
-		}
 	}
 
-	setContext(ctx: ContextInterface) {
-		this.ctx = ctx;
+	defineRelationships(): Record<SchemaReference, RelationshipJSON> {
+		const schema = this.settings;
+
+		if (schema.relationships) {
+			return schema.relationships.reduce((agg, relationship) => {
+				agg[relationship.other] = relationship;
+
+				return agg;
+			}, {});
+		} else {
+			return {};
+		}
 	}
 
 	getReference(): SchemaReference {
@@ -157,19 +169,13 @@ export class Schema implements SchemaInterface {
 		root: DynamicObject,
 		mode: 'create' | 'update' = 'create',
 	): Promise<string[]> {
-		const rtn = (
+		return (
 			await Promise.all(
 				this.getFields().map((field) =>
 					field.validate(this.ctx, root, mode),
 				),
 			)
 		).filter((error) => error !== null);
-
-		if (rtn.length === 0) {
-			return null;
-		} else {
-			return rtn;
-		}
 	}
 
 	toJSON(): SchemaJSON {
@@ -185,7 +191,7 @@ export class Schema implements SchemaInterface {
 	}
 
 	toTypescript(): string {
-		const builder = new BuilderTypescript(this.ctx);
+		const builder = new BuilderTypescript(this.ctx, this.knowledge);
 
 		builder.addSchema(this);
 

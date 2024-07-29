@@ -1,14 +1,20 @@
 import {expect} from 'chai';
 
-import {Dictionary} from '../dictionary';
+import {Context} from '../context';
 import {Schema} from '../schema';
 import {types} from '../typing';
 import {validations} from '../validator';
 import {BuilderJSONSchema} from './jsonschema';
 
 describe('@bmoor/schema :: BuilderJSONSchema', function () {
+	let ctx;
+
+	beforeEach(function () {
+		ctx = new Context(types, validations);
+	});
+
 	it('should properly generate a json schema', function () {
-		const schema = new Schema({
+		const schema = new Schema(ctx, {
 			reference: 'test',
 			info: {
 				'f-1': {
@@ -52,11 +58,7 @@ describe('@bmoor/schema :: BuilderJSONSchema', function () {
 			],
 		});
 
-		const dict = new Dictionary(types, validations);
-
-		dict.addSchema(schema);
-
-		const formatter = new BuilderJSONSchema(dict);
+		const formatter = new BuilderJSONSchema(ctx);
 
 		formatter.addSchema(schema);
 

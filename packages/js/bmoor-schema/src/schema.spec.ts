@@ -1,11 +1,21 @@
 import {expect} from 'chai';
 
+import {Context} from './context';
 import {Schema} from './schema';
+import {types} from './typing';
+import {TypingJSON} from './typing.interface';
+import {validations} from './validator';
 
 describe('bmoor-schema :: schema', function () {
+	let ctx;
+
+	beforeEach(function () {
+		ctx = new Context<TypingJSON>(types, validations);
+	});
+
 	describe('implode', function () {
 		it('should work', function () {
-			const schema = new Schema({
+			const schema = new Schema(ctx, {
 				info: {
 					'f-1': {
 						type: 'string',
@@ -64,7 +74,7 @@ describe('bmoor-schema :: schema', function () {
 
 	describe('explode', function () {
 		it('should work', function () {
-			const schema = new Schema({
+			const schema = new Schema(ctx, {
 				info: {
 					'f-1': {
 						type: 'string',

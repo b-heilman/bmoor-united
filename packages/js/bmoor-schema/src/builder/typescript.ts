@@ -2,6 +2,7 @@ import {DynamicObject, set} from '@bmoor/object';
 
 import {ContextInterface} from '../context.interface';
 import {FieldInterface} from '../field.interface';
+import {Knowledge} from '../knowledge';
 import {dictToTypescript} from '../methods';
 import {RelationshipJSON} from '../relationship.interface';
 import {SchemaInterface} from '../schema.interface';
@@ -11,10 +12,12 @@ export class BuilderTypescript<TypingT extends TypingJSON = TypingJSON> {
 	ctx: ContextInterface<TypingT>;
 	root: DynamicObject;
 	schema?: SchemaInterface;
+	knowledge: Knowledge;
 
-	constructor(ctx: ContextInterface<TypingT>) {
+	constructor(ctx: ContextInterface<TypingT>, know: Knowledge) {
 		this.ctx = ctx;
 		this.root = {};
+		this.knowledge = know;
 	}
 
 	addSchema(schema: SchemaInterface) {
@@ -45,7 +48,7 @@ export class BuilderTypescript<TypingT extends TypingJSON = TypingJSON> {
 		schema: SchemaInterface,
 		relationship: RelationshipJSON,
 	) {
-		const other = this.ctx.getSchema(relationship.other);
+		const other = this.knowledge.getSchema(relationship.other);
 
 		let result = this.ctx.formatName(other.getReference(), 'typescript');
 		if (relationship.type === 'toMany') {

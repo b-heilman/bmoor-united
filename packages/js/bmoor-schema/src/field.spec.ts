@@ -1,13 +1,18 @@
 import {expect} from 'chai';
 
-import {Dictionary} from './dictionary';
+import {Context} from './context';
 import {Field} from './field';
-import {SchemaInterface} from './schema.interface';
 import {types} from './typing';
 import {TypingJSON} from './typing.interface';
 import {validations} from './validator';
 
 describe('@bmoor/schema :: Field', function () {
+	let ctx;
+
+	beforeEach(function () {
+		ctx = new Context<TypingJSON>(types, validations);
+	});
+
 	describe('validate', function () {
 		it('should return back nothing if fine', async function () {
 			const field = new Field({
@@ -21,12 +26,7 @@ describe('@bmoor/schema :: Field', function () {
 				reference: 'string',
 			});
 
-			const dictionary = new Dictionary<TypingJSON, SchemaInterface>(
-				types,
-				validations,
-			);
-
-			const res = await field.validate(dictionary, {
+			const res = await field.validate(ctx, {
 				foo: 'bar',
 			});
 
@@ -45,10 +45,7 @@ describe('@bmoor/schema :: Field', function () {
 				reference: 'string',
 			});
 
-			const dictionary = new Dictionary<TypingJSON, SchemaInterface>(
-				types,
-				validations,
-			);
+			const dictionary = new Context<TypingJSON>(types, validations);
 
 			const res = await field.validate(dictionary, {
 				foo: 123,
@@ -70,12 +67,7 @@ describe('@bmoor/schema :: Field', function () {
 				reference: 'string',
 			});
 
-			const dictionary = new Dictionary<TypingJSON, SchemaInterface>(
-				types,
-				validations,
-			);
-
-			const res = await field.validate(dictionary, {
+			const res = await field.validate(ctx, {
 				foo: null,
 			});
 
@@ -95,12 +87,7 @@ describe('@bmoor/schema :: Field', function () {
 				reference: 'string',
 			});
 
-			const dictionary = new Dictionary<TypingJSON, SchemaInterface>(
-				types,
-				validations,
-			);
-
-			const res = await field.validate(dictionary, {
+			const res = await field.validate(ctx, {
 				foo: null,
 			});
 
@@ -120,12 +107,7 @@ describe('@bmoor/schema :: Field', function () {
 				reference: 'string',
 			});
 
-			const dictionary = new Dictionary<TypingJSON, SchemaInterface>(
-				types,
-				validations,
-			);
-
-			const res = await field.validate(dictionary, {}, 'update');
+			const res = await field.validate(ctx, {}, 'update');
 
 			expect(res).to.equal(null);
 		});

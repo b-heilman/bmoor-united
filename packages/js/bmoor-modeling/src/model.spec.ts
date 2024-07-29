@@ -2,16 +2,22 @@ import {expect} from 'chai';
 
 import {validations} from '@bmoor/schema';
 
+import {Context} from './context';
+import {converter} from './converter';
 import {Hooker, hooks} from './hooker';
 import {Model} from './model';
-import {Nexus} from './nexus';
 import {types} from './typing';
-import {TypingJSON} from './typing.interface';
 
 describe('@bmoor-modeling::Model', function () {
+	let ctx;
+
+	beforeEach(function () {
+		ctx = new Context(types, validations, hooks, converter);
+	});
+
 	describe('::inflate', function () {
-		it('should correctly create a typescript format', function () {
-			const model = new Model({
+		it('should correctly transform', function () {
+			const model = new Model(ctx, {
 				reference: 'junk',
 				structure: {
 					foo: {
@@ -19,7 +25,7 @@ describe('@bmoor-modeling::Model', function () {
 						bar2: 'f-2',
 					},
 				},
-				inflate: {
+				external: {
 					hello: {
 						world: 'f-1',
 					},
@@ -57,11 +63,13 @@ describe('@bmoor-modeling::Model', function () {
 				foo: {bar: 1, bar2: 2},
 			});
 		});
+
+		it('should properly convert', function () {});
 	});
 
 	describe('::deflate', function () {
-		it('should correctly create a typescript format', function () {
-			const model = new Model({
+		it('should correctly transform', function () {
+			const model = new Model(ctx, {
 				reference: 'junk',
 				structure: {
 					foo: {
@@ -69,7 +77,7 @@ describe('@bmoor-modeling::Model', function () {
 						bar2: 'f-2',
 					},
 				},
-				deflate: {
+				storage: {
 					hello: {
 						world: 'f-1',
 					},
@@ -110,11 +118,9 @@ describe('@bmoor-modeling::Model', function () {
 	});
 
 	describe('hooks', function () {
-		const nexus = new Nexus<TypingJSON>(types, validations, hooks);
-
 		describe('with function', function () {
 			it('should work', function () {
-				const model = new Model({
+				const model = new Model(ctx, {
 					reference: 'junk',
 					structure: {
 						foo: {
@@ -208,7 +214,7 @@ describe('@bmoor-modeling::Model', function () {
 
 		describe('with hook registry', function () {
 			it('should work', function () {
-				const model = new Model({
+				const model = new Model(ctx, {
 					reference: 'junk',
 					structure: {
 						foo: {
@@ -230,9 +236,7 @@ describe('@bmoor-modeling::Model', function () {
 					},
 				});
 
-				model.setContext(nexus);
-
-				nexus.setHooker(
+				ctx.setHooker(
 					new Hooker({
 						eins: {
 							onCreate: function (value) {

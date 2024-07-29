@@ -2,21 +2,23 @@ import {expect} from 'chai';
 
 import {validations} from '@bmoor/schema';
 
+import {Context} from '../context';
+import {converter} from '../converter';
 import {hooks} from '../hooker';
 import {Model} from '../model';
 import {Nexus} from '../nexus';
 import {Service} from '../service';
 import {types} from '../typing';
-import {TypingJSON} from '../typing.interface';
 import {BuilderGraphql} from './graphql';
 
 describe('@bmoor/schema :: BuilderGraphql', function () {
 	it('should properly generate a json schema', function () {
-		const nexus = new Nexus<TypingJSON>(types, validations, hooks);
+		const ctx = new Context(types, validations, hooks, converter);
+		const nexus = new Nexus();
 
 		nexus.addService(
 			new Service(
-				new Model({
+				new Model(ctx, {
 					reference: 's-1',
 					info: {
 						foo: {
@@ -73,7 +75,7 @@ describe('@bmoor/schema :: BuilderGraphql', function () {
 
 		nexus.addService(
 			new Service(
-				new Model({
+				new Model(ctx, {
 					reference: 's-2',
 					info: {
 						hello: {
@@ -133,7 +135,7 @@ describe('@bmoor/schema :: BuilderGraphql', function () {
 
 		nexus.addService(
 			new Service(
-				new Model({
+				new Model(ctx, {
 					reference: 's-3',
 					info: {
 						id: {
@@ -222,7 +224,7 @@ describe('@bmoor/schema :: BuilderGraphql', function () {
 			),
 		);
 
-		const formatter = new BuilderGraphql(nexus);
+		const formatter = new BuilderGraphql(ctx, nexus);
 
 		formatter.addSchema(nexus.getSchema('s-3'));
 
@@ -246,11 +248,12 @@ describe('@bmoor/schema :: BuilderGraphql', function () {
 	});
 
 	it('should properly generate a complex schema', function () {
-		const nexus = new Nexus<TypingJSON>(types, validations, hooks);
+		const ctx = new Context(types, validations, hooks, converter);
+		const nexus = new Nexus();
 
 		nexus.addService(
 			new Service(
-				new Model({
+				new Model(ctx, {
 					reference: 's-1',
 					info: {
 						bar: {
@@ -312,7 +315,7 @@ describe('@bmoor/schema :: BuilderGraphql', function () {
 			),
 		);
 
-		const formatter = new BuilderGraphql(nexus);
+		const formatter = new BuilderGraphql(ctx, nexus);
 
 		formatter.addSchema(nexus.getSchema('s-1'));
 

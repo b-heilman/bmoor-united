@@ -1,6 +1,6 @@
 import {Expressable} from '@bmoor/compiler';
 
-import {mapping} from './mapping.interface';
+import {MappingSettings} from './mapping.interface';
 import {ArrayInfo, OperandIndex, indexExpressables} from './operands';
 import {Parser, ReaderFunction, WriterFunction} from './parser';
 import {ParserModes} from './parser.interface';
@@ -11,10 +11,15 @@ function addMapping(
 	ref: string,
 	fromMap: OperandIndex,
 	toMap: OperandIndex,
-	m: mapping,
+	mapping: MappingSettings,
 ) {
-	const from: Expressable[] = pathParser.express(m.from, ParserModes.read);
-	const to: Expressable[] = pathParser.express(m.to, ParserModes.write);
+	const from: Expressable[] = pathParser.express(mapping.from, {
+		mode: ParserModes.read,
+	});
+	const to: Expressable[] = pathParser.express(mapping.to, {
+		mode: ParserModes.write,
+		hook: mapping.hook,
+	});
 
 	indexExpressables(ref, to, toMap, indexExpressables(ref, from, fromMap));
 }
@@ -110,6 +115,7 @@ function writeArray(
 
 	if (info.leafRef) {
 		// reading .foo[]
+		// NOTE: I feel like there's a bug here, but I have unit tests passing...
 		src[info.ref].map((datum, i) => {
 			tgt[i] = datum[info.leafRef];
 		});
@@ -195,13 +201,16 @@ export class Mapping {
 	read: ReaderFunction;
 	write: WriterFunction;
 
-	constructor(mappings: mapping[]) {
+	constructor(mappings: MappingSettings[]) {
 		// convert the mappings into a unified
 		const fromMap = new OperandIndex('root');
 		const toMap = new OperandIndex('root');
 
 		for (let i = 0, c = mappings.length; i < c; i++) {
-			addMapping(`p${i}`, fromMap, toMap, mappings[i]);
+			const ref = `p${i}`;
+			const mapping = mappings[i];
+
+			addMapping(ref, fromMap, toMap, mapping);
 		}
 
 		this.read = createReader(fromMap);

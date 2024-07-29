@@ -89,9 +89,7 @@ export class Service<
 
 		return this.settings.controller.canRead(
 			ctx,
-			res.map((datum) =>
-				this.onRead(ctx, this.model.fromDeflated(datum)),
-			),
+			res.map((datum) => this.onRead(ctx, this.model.fromDeflated(datum))),
 			this,
 		);
 	}
@@ -202,9 +200,7 @@ export class Service<
 
 		return this.settings.controller.canRead(
 			ctx,
-			res.map((datum) =>
-				this.onRead(ctx, this.model.fromDeflated(datum)),
-			),
+			res.map((datum) => this.onRead(ctx, this.model.fromDeflated(datum))),
 			this,
 		);
 	}
@@ -227,12 +223,12 @@ export class Service<
 	}
 
 	onCreate(
-		ctx: ContextSecurityInterface, 
-		obj: InternalT['structure']
+		ctx: ContextSecurityInterface,
+		obj: InternalT['structure'],
 	): InternalT['structure'] {
 		this.model.onCreate(obj);
 
-		if (this.hooks.onCreate){
+		if (this.hooks.onCreate) {
 			this.hooks.onCreate(ctx, obj);
 		}
 
@@ -240,12 +236,12 @@ export class Service<
 	}
 
 	onRead(
-		ctx: ContextSecurityInterface, 
-		obj: InternalT['structure']
+		ctx: ContextSecurityInterface,
+		obj: InternalT['structure'],
 	): InternalT['structure'] {
 		this.model.onRead(obj);
 
-		if (this.hooks.onRead){
+		if (this.hooks.onRead) {
 			this.hooks.onRead(ctx, obj);
 		}
 
@@ -254,11 +250,11 @@ export class Service<
 
 	onUpdate(
 		ctx: ContextSecurityInterface,
-		obj: InternalT['structure']
+		obj: InternalT['structure'],
 	): InternalT['structure'] {
 		this.model.onUpdate(obj);
 
-		if (this.hooks.onUpdate){
+		if (this.hooks.onUpdate) {
 			this.hooks.onUpdate(ctx, obj);
 		}
 
@@ -266,12 +262,12 @@ export class Service<
 	}
 
 	onInflate(
-		ctx: ContextSecurityInterface, 
-		obj: InternalT['structure']
+		ctx: ContextSecurityInterface,
+		obj: InternalT['structure'],
 	): InternalT['structure'] {
 		this.model.onInflate(obj);
 
-		if (this.hooks.onInflate){
+		if (this.hooks.onInflate) {
 			this.hooks.onInflate(ctx, obj);
 		}
 
@@ -279,8 +275,8 @@ export class Service<
 	}
 
 	inflate(
-		ctx: ContextSecurityInterface, 
-		obj: InternalT['structure']
+		ctx: ContextSecurityInterface,
+		obj: InternalT['structure'],
 	): ExternalT['structure'] {
 		this.onInflate(ctx, obj);
 
@@ -289,11 +285,11 @@ export class Service<
 
 	onDeflate(
 		ctx: ContextSecurityInterface,
-		obj: InternalT['structure']
+		obj: InternalT['structure'],
 	): InternalT['structure'] {
 		this.model.onDeflate(obj);
 
-		if (this.hooks.onDeflate){
+		if (this.hooks.onDeflate) {
 			this.hooks.onDeflate(ctx, obj);
 		}
 
@@ -301,8 +297,8 @@ export class Service<
 	}
 
 	deflate(
-		ctx: ContextSecurityInterface, 
-		obj: InternalT['structure']
+		ctx: ContextSecurityInterface,
+		obj: InternalT['structure'],
 	): StorageT['structure'] {
 		this.onDeflate(ctx, obj);
 

@@ -11,10 +11,9 @@ describe('@bmoor/path - operands', function () {
 
 	describe('indexExpressables', function () {
 		it('basic object path', function () {
-			const path: Expressable[] = pathParser.express(
-				'foo.bar.value',
-				ParserModes.read,
-			);
+			const path: Expressable[] = pathParser.express('foo.bar.value', {
+				mode: ParserModes.read,
+			});
 			const index = new OperandIndex('root');
 
 			indexExpressables('junk', path, index);
@@ -45,14 +44,12 @@ describe('@bmoor/path - operands', function () {
 		});
 
 		it('merging basic object paths', function () {
-			const path1: Expressable[] = pathParser.express(
-				'foo.bar.value1',
-				ParserModes.read,
-			);
-			const path2: Expressable[] = pathParser.express(
-				'foo.bar.value2',
-				ParserModes.read,
-			);
+			const path1: Expressable[] = pathParser.express('foo.bar.value1', {
+				mode: ParserModes.read,
+			});
+			const path2: Expressable[] = pathParser.express('foo.bar.value2', {
+				mode: ParserModes.read,
+			});
 			const index = new OperandIndex('root');
 
 			indexExpressables('v1', path1, index);
@@ -89,10 +86,9 @@ describe('@bmoor/path - operands', function () {
 		});
 
 		it('array as leafs', function () {
-			const path1: Expressable[] = pathParser.express(
-				'foo.bar[]',
-				ParserModes.read,
-			);
+			const path1: Expressable[] = pathParser.express('foo.bar[]', {
+				mode: ParserModes.read,
+			});
 			const index = new OperandIndex('root');
 
 			const stats1 = indexExpressables('v1', path1, index);
@@ -128,11 +124,11 @@ describe('@bmoor/path - operands', function () {
 			it('should work normal', function () {
 				const path1: Expressable[] = pathParser.express(
 					'foo.bar[].value1',
-					ParserModes.read,
+					{mode: ParserModes.read},
 				);
 				const path2: Expressable[] = pathParser.express(
 					'foo.bar[].value2',
-					ParserModes.read,
+					{mode: ParserModes.read},
 				);
 				const index = new OperandIndex('root');
 
@@ -190,29 +186,26 @@ describe('@bmoor/path - operands', function () {
 				// this is a big of a non-sensical test, but it does cover
 				// a few edge cases
 
-				const path1: Expressable[] = pathParser.express(
-					'foo.bar[]',
-					ParserModes.read,
-				);
-				const path2: Expressable[] = pathParser.express(
-					'foo.bar[]',
-					ParserModes.read,
-				);
+				const path1: Expressable[] = pathParser.express('foo.bar[]', {
+					mode: ParserModes.read,
+				});
+				const path2: Expressable[] = pathParser.express('foo.bar[]', {
+					mode: ParserModes.read,
+				});
 				const path3: Expressable[] = pathParser.express(
 					'foo.bar[].value',
-					ParserModes.write,
+					{mode: ParserModes.write},
 				);
 				const path4: Expressable[] = pathParser.express(
 					'foo.bar[].value2',
-					ParserModes.write,
+					{mode: ParserModes.write},
 				);
-				const path5: Expressable[] = pathParser.express(
-					'hello[]',
-					ParserModes.read,
-				);
+				const path5: Expressable[] = pathParser.express('hello[]', {
+					mode: ParserModes.read,
+				});
 				const path6: Expressable[] = pathParser.express(
 					'foo.bar[].value3',
-					ParserModes.write,
+					{mode: ParserModes.write},
 				);
 
 				const index = new OperandIndex('root');
@@ -332,11 +325,11 @@ describe('@bmoor/path - operands', function () {
 			it('should work with arrays stats', function () {
 				const path1: Expressable[] = pathParser.express(
 					'foo.bar[].value1',
-					ParserModes.read,
+					{mode: ParserModes.read},
 				);
 				const path2: Expressable[] = pathParser.express(
 					'foo.bar[].value2',
-					ParserModes.read,
+					{mode: ParserModes.read},
 				);
 				const index = new OperandIndex('root');
 
@@ -390,10 +383,9 @@ describe('@bmoor/path - operands', function () {
 
 		describe('back to back arrays', function () {
 			it('without and references', function () {
-				const path1: Expressable[] = pathParser.express(
-					'foo[][].bar',
-					ParserModes.read,
-				);
+				const path1: Expressable[] = pathParser.express('foo[][].bar', {
+					mode: ParserModes.read,
+				});
 				const index = new OperandIndex('root');
 
 				indexExpressables('v1', path1, index);
@@ -430,10 +422,9 @@ describe('@bmoor/path - operands', function () {
 			});
 
 			it('with references', function () {
-				const path1: Expressable[] = pathParser.express(
-					'foo[][].bar',
-					ParserModes.read,
-				);
+				const path1: Expressable[] = pathParser.express('foo[][].bar', {
+					mode: ParserModes.read,
+				});
 				const index = new OperandIndex('root');
 
 				indexExpressables('v1', path1, index, {
@@ -472,10 +463,9 @@ describe('@bmoor/path - operands', function () {
 			});
 
 			it('as a leaf', function () {
-				const path1: Expressable[] = pathParser.express(
-					'foo[][]',
-					ParserModes.read,
-				);
+				const path1: Expressable[] = pathParser.express('foo[][]', {
+					mode: ParserModes.read,
+				});
 				const index = new OperandIndex('root');
 
 				indexExpressables('v1', path1, index);
@@ -505,14 +495,12 @@ describe('@bmoor/path - operands', function () {
 			});
 
 			it('in a pair', function () {
-				const path1: Expressable[] = pathParser.express(
-					'foo[][].bar',
-					ParserModes.read,
-				);
-				const path2: Expressable[] = pathParser.express(
-					'foo[][].bar2',
-					ParserModes.read,
-				);
+				const path1: Expressable[] = pathParser.express('foo[][].bar', {
+					mode: ParserModes.read,
+				});
+				const path2: Expressable[] = pathParser.express('foo[][].bar2', {
+					mode: ParserModes.read,
+				});
 				const index = new OperandIndex('root');
 
 				indexExpressables('v1', path1, index);

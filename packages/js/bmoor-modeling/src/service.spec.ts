@@ -2,27 +2,37 @@ import {expect} from 'chai';
 import {stub} from 'sinon';
 
 import {ContextSecurityInterface} from '@bmoor/context';
+import {validations} from '@bmoor/schema';
 
+import {Context} from './context';
+import {converter} from './converter';
+import {hooks} from './hooker';
 import {Model} from './model';
 import {Service} from './service';
-import { ServiceInternalGenerics, ServiceStorageGenerics, ServiceExternalGenerics } from './service.interface';
-import { ServiceAdapterInterface } from './service/adapter.interface';
-import { ServiceControllerInterface } from './service/controller.interface';
+import {
+	// ServiceExternalGenerics,
+	ServiceInternalGenerics,
+	ServiceStorageGenerics,
+} from './service.interface';
+import {ServiceAdapterInterface} from './service/adapter.interface';
+import {ServiceControllerInterface} from './service/controller.interface';
+import {types} from './typing';
 
 describe('@bmoor-modeling::Service', function () {
 	type InternalT = ServiceInternalGenerics;
-	type ExternalT = ServiceExternalGenerics;
+	// type ExternalT = ServiceExternalGenerics;
 	type StorageT = ServiceStorageGenerics;
 
-	let model: Model<InternalT, ExternalT, StorageT>;
 	let adapter: ServiceAdapterInterface<StorageT>;
-	let service: Service<InternalT, ExternalT, StorageT>;
 	let controller: ServiceControllerInterface<InternalT>;
 
-	let ctx: ContextSecurityInterface = null;
+	let serverCtx;
+	let callCtx: ContextSecurityInterface = null;
 
 	beforeEach(function () {
-		ctx = {
+		serverCtx = new Context(types, validations, hooks, converter);
+
+		callCtx = {
 			hasPermission() {
 				return true;
 			},
@@ -72,7 +82,7 @@ describe('@bmoor-modeling::Service', function () {
 	describe('::onCreate', function () {
 		it('should work', function () {
 			const service = new Service(
-				new Model({
+				new Model(serverCtx, {
 					reference: 'junk',
 					structure: {
 						field1: 'f1',
@@ -81,16 +91,16 @@ describe('@bmoor-modeling::Service', function () {
 					},
 					info: {
 						f1: {
-							type: 'string'
+							type: 'string',
 						},
 						f2: {
-							type: 'number'
-						}
+							type: 'number',
+						},
 					},
 					hooks: {
 						f2: {
 							onCreate(value) {
-								return value+'-2';
+								return value + '-2';
 							},
 						},
 						f3: {
@@ -98,15 +108,15 @@ describe('@bmoor-modeling::Service', function () {
 								return 1;
 							},
 						},
-					}
+					},
 				}),
 				{
 					adapter,
-					controller
-				}
+					controller,
+				},
 			);
 
-			const res = service.onCreate(ctx, {
+			const res = service.onCreate(callCtx, {
 				field1: 'v-1',
 				field2: 'v-2',
 			});
@@ -118,11 +128,11 @@ describe('@bmoor-modeling::Service', function () {
 			});
 		});
 	});
-	
+
 	describe('::onRead', function () {
 		it('should work', function () {
 			const service = new Service(
-				new Model({
+				new Model(serverCtx, {
 					reference: 'junk',
 					structure: {
 						field1: 'f1',
@@ -131,16 +141,16 @@ describe('@bmoor-modeling::Service', function () {
 					},
 					info: {
 						f1: {
-							type: 'string'
+							type: 'string',
 						},
 						f2: {
-							type: 'number'
-						}
+							type: 'number',
+						},
 					},
 					hooks: {
 						f2: {
 							onRead(value) {
-								return value+'-2';
+								return value + '-2';
 							},
 						},
 						f3: {
@@ -148,15 +158,15 @@ describe('@bmoor-modeling::Service', function () {
 								return 1;
 							},
 						},
-					}
+					},
 				}),
 				{
 					adapter,
-					controller
-				}
+					controller,
+				},
 			);
 
-			const res = service.onRead(ctx, {
+			const res = service.onRead(callCtx, {
 				field1: 'v-1',
 				field2: 'v-2',
 			});
@@ -172,7 +182,7 @@ describe('@bmoor-modeling::Service', function () {
 	describe('::onUpdate', function () {
 		it('should work', function () {
 			const service = new Service(
-				new Model({
+				new Model(serverCtx, {
 					reference: 'junk',
 					structure: {
 						field1: 'f1',
@@ -181,16 +191,16 @@ describe('@bmoor-modeling::Service', function () {
 					},
 					info: {
 						f1: {
-							type: 'string'
+							type: 'string',
 						},
 						f2: {
-							type: 'number'
-						}
+							type: 'number',
+						},
 					},
 					hooks: {
 						f2: {
 							onUpdate(value) {
-								return value+'-2';
+								return value + '-2';
 							},
 						},
 						f3: {
@@ -198,15 +208,15 @@ describe('@bmoor-modeling::Service', function () {
 								return 1;
 							},
 						},
-					}
+					},
 				}),
 				{
 					adapter,
-					controller
-				}
+					controller,
+				},
 			);
 
-			const res = service.onUpdate(ctx, {
+			const res = service.onUpdate(callCtx, {
 				field1: 'v-1',
 				field2: 'v-2',
 			});
@@ -222,7 +232,7 @@ describe('@bmoor-modeling::Service', function () {
 	describe('::onInflate', function () {
 		it('should work', function () {
 			const service = new Service(
-				new Model({
+				new Model(serverCtx, {
 					reference: 'junk',
 					structure: {
 						field1: 'f1',
@@ -231,16 +241,16 @@ describe('@bmoor-modeling::Service', function () {
 					},
 					info: {
 						f1: {
-							type: 'string'
+							type: 'string',
 						},
 						f2: {
-							type: 'number'
-						}
+							type: 'number',
+						},
 					},
 					hooks: {
 						f2: {
 							onInflate(value) {
-								return value+'-2';
+								return value + '-2';
 							},
 						},
 						f3: {
@@ -248,15 +258,15 @@ describe('@bmoor-modeling::Service', function () {
 								return 1;
 							},
 						},
-					}
+					},
 				}),
 				{
 					adapter,
-					controller
-				}
+					controller,
+				},
 			);
 
-			const res = service.onInflate(ctx, {
+			const res = service.onInflate(callCtx, {
 				field1: 'v-1',
 				field2: 'v-2',
 			});
@@ -272,7 +282,7 @@ describe('@bmoor-modeling::Service', function () {
 	describe('::onDeflate', function () {
 		it('should work', function () {
 			const service = new Service(
-				new Model({
+				new Model(serverCtx, {
 					reference: 'junk',
 					structure: {
 						field1: 'f1',
@@ -281,16 +291,16 @@ describe('@bmoor-modeling::Service', function () {
 					},
 					info: {
 						f1: {
-							type: 'string'
+							type: 'string',
 						},
 						f2: {
-							type: 'number'
-						}
+							type: 'number',
+						},
 					},
 					hooks: {
 						f2: {
 							onDeflate(value) {
-								return value+'-2';
+								return value + '-2';
 							},
 						},
 						f3: {
@@ -298,15 +308,15 @@ describe('@bmoor-modeling::Service', function () {
 								return 1;
 							},
 						},
-					}
+					},
 				}),
 				{
 					adapter,
-					controller
-				}
+					controller,
+				},
 			);
 
-			const res = service.onDeflate(ctx, {
+			const res = service.onDeflate(callCtx, {
 				field1: 'v-1',
 				field2: 'v-2',
 			});
@@ -318,96 +328,104 @@ describe('@bmoor-modeling::Service', function () {
 			});
 		});
 	});
-	/**
+
 	describe('crud methods', function () {
 		describe('create', function () {
 			it('should work without a validator', async function () {
-				const service = new Service({
-					controller,
-					adapter,
-					accessor,
-					validator,
-					model: new Model({
-						ref: 'junk',
-						fields: factory(
-							{
-								external: 'f1',
+				const service = new Service(
+					new Model(serverCtx, {
+						reference: 'junk',
+						structure: {
+							field1: 'f1',
+							field2: 'f2',
+						},
+						storage: {
+							field1: 'f1',
+							field3: 'f2',
+						},
+						info: {
+							f1: {
+								type: 'string',
 							},
-							{
-								external: 'f2',
-								internal: 'f3',
+							f2: {
+								type: 'number',
 							},
-						),
+						},
 					}),
-				});
+					{
+						adapter,
+						controller,
+					},
+				);
 
 				const myStub = stub(adapter, 'create').resolves([
 					{
-						f1: 'foo',
-						f3: 'bar',
+						field1: 'foo',
+						field3: 'bar',
 					},
 				]);
 
-				const res = await service.create(
-					[
-						{
-							f1: 'val-1',
-							f2: 'val-2',
-						},
-					],
-					ctx,
-				);
+				const res = await service.create(callCtx, [
+					{
+						field1: 'val-1',
+						field2: 'val-2',
+					},
+				]);
 
 				expect(res).to.deep.equal([
 					{
-						f1: 'foo',
-						f2: 'bar',
+						field1: 'foo',
+						field2: 'bar',
 					},
 				]);
 
 				expect(myStub.getCall(0).args[0]).to.deep.equal([
 					{
-						f1: 'val-1',
-						f3: 'val-2',
+						field1: 'val-1',
+						field3: 'val-2',
 					},
 				]);
 			});
 
 			it('should work with a validator', async function () {
-				const service = new Service({
-					controller,
-					adapter,
-					accessor,
-					validator,
-					model: new Model({
-						ref: 'junk',
-						fields: factory(
-							{
-								external: 'f1',
+				const service = new Service(
+					new Model(serverCtx, {
+						reference: 'junk',
+						structure: {
+							field1: 'f1',
+							field2: 'f2',
+						},
+						storage: {
+							field1: 'f1',
+							field3: 'f2',
+						},
+						info: {
+							f1: {
+								type: 'string',
 							},
-							{
-								external: 'f2',
-								internal: 'f3',
+							f2: {
+								type: 'number',
 							},
-						),
+						},
 					}),
-				});
-
-				const myStub = stub(validator, 'validateCreate').resolves(
-					new Error('fail-whale'),
+					{
+						adapter,
+						controller,
+					},
 				);
+
+				const myStub = stub(service.model, 'validate').resolves([
+					'fail-whale',
+				]);
 
 				let failed = false;
 				try {
-					await service.create(
-						[
-							{
-								f1: 'val-1',
-								f2: 'val-2',
-							},
-						],
-						ctx,
-					);
+					await service.create(callCtx, [
+						{
+							f1: 'val-1',
+							f2: 'val-2',
+						},
+					]);
 				} catch (ex) {
 					failed = true;
 					if (ex instanceof Error) {
@@ -419,15 +437,52 @@ describe('@bmoor-modeling::Service', function () {
 
 				expect(failed).to.equal(true);
 
-				expect(myStub.getCall(0).args[0]).to.deep.equal([
-					{
-						f1: 'val-1',
-						f2: 'val-2',
-					},
-				]);
+				expect(myStub.getCall(0).args[0]).to.deep.equal({
+					f1: 'val-1',
+					f2: 'val-2',
+				});
 			});
 
-			it('should work with actions', async function () {
+			xit('should work with actions', async function () {
+				const service = new Service(
+					new Model(serverCtx, {
+						reference: 'junk',
+						structure: {
+							field1: 'f1',
+							field2: 'f2',
+						},
+						storage: {
+							field1: 'f1',
+							field3: 'f2',
+						},
+						info: {
+							f1: {
+								type: 'string',
+							},
+							f2: {
+								type: 'json',
+							},
+						},
+						hooks: {
+							f2: {
+								onUpdate(value) {
+									return value + '-2';
+								},
+							},
+							f3: {
+								onUpdate() {
+									return 1;
+								},
+							},
+						},
+					}),
+					{
+						adapter,
+						controller,
+					},
+				);
+
+				/*
 				const service = new Service({
 					controller,
 					adapter,
@@ -450,24 +505,23 @@ describe('@bmoor-modeling::Service', function () {
 						),
 					}),
 				});
+				*/
 
 				const myStub = stub(adapter, 'create').resolves([
 					{
-						f1: 'foo',
-						f3: '{"a":"value"}',
+						field1: 'foo',
+						field3: '{"a":"value"}',
 					},
 				]);
 
-				const res = await service.create(
-					[
-						{
-							f2: {
-								foo: 'bar',
-							},
+				const res = await service.create(callCtx, [
+					{
+						field1: 'helloWorld',
+						field2: {
+							foo: 'bar',
 						},
-					],
-					ctx,
-				);
+					},
+				]);
 
 				expect(res).to.deep.equal([
 					{
@@ -487,6 +541,7 @@ describe('@bmoor-modeling::Service', function () {
 			});
 		});
 
+		/**
 		describe('read', function () {
 			it('should work without a validator', async function () {
 				const service = new Service({
@@ -986,5 +1041,5 @@ describe('@bmoor-modeling::Service', function () {
 			]);
 		});
 		**/
+	});
 });
-

@@ -7,6 +7,10 @@ import {
 } from '@bmoor/schema';
 
 import {HookFn, HookInterface, HookReference} from './hook.interface';
+import {
+	ModelFieldInfo,
+	ModelFieldInterface,
+} from './model/field.interface';
 
 export type DeltaType = DynamicObject;
 export type StructureType = DynamicObject;
@@ -20,8 +24,9 @@ export type HookRegister =
 	| Partial<Record<keyof HookInterface, HookFn | HookFn[]>>;
 
 export interface ModelJSON extends SchemaSettings {
-	deflate?: SchemaStructure;
-	inflate?: SchemaStructure;
+	info: Record<FieldReference, ModelFieldInfo>;
+	external?: SchemaStructure;
+	storage?: SchemaStructure;
 	hooks?: Record<FieldReference, HookRegister>;
 }
 
@@ -45,6 +50,9 @@ export interface ModelInterface<
 	ExternalT extends ModelExternalGenerics = ModelExternalGenerics,
 	StorageT extends ModelStorageGenerics = ModelStorageGenerics,
 > extends SchemaInterface {
+	getFields(): ModelFieldInterface[];
+	getField(ref: FieldReference): ModelFieldInterface;
+
 	// Internal representation to storage
 	deflate(input: InternalT['structure']): StorageT['structure'];
 	fromDeflated(input: StorageT['structure']): InternalT['structure'];

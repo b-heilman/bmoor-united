@@ -188,20 +188,20 @@ export class Parser extends Compiler {
 
 	express(
 		str: string,
-		mode: ParserModes = ParserModes.read,
+		settings: ParserSettings = {mode: ParserModes.read},
 	): Expressable[] {
-		return this.expressor.express(this.parse(str), ExpressorModes.infix, <
-			ParserSettings
-		>{
-			mode,
-		});
+		return this.expressor.express(
+			this.parse(str),
+			ExpressorModes.infix,
+			settings,
+		);
 	}
 
 	compile(
 		str: string,
 		mode: ParserModes = ParserModes.read,
 	): ReaderFunction | WriterFunction {
-		const ops: Expressable[] = this.express(str, mode);
+		const ops: Expressable[] = this.express(str, {mode});
 
 		return mode === ParserModes.read
 			? createReader(ops)

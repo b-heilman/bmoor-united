@@ -1,22 +1,25 @@
 import {expect} from 'chai';
 
-import {Dictionary} from '../dictionary';
+import {Context} from '../context';
+import {Knowledge} from '../knowledge';
 import {Schema} from '../schema';
 import {SchemaInterface} from '../schema.interface';
 import {types} from '../typing';
-import {TypingJSON} from '../typing.interface';
 import {validations} from '../validator';
 import {BuilderTypescript} from './typescript';
 
 describe('@bmoor/schema :: BuilderTypescript', function () {
+	let ctx;
+
+	beforeEach(function () {
+		ctx = new Context(types, validations);
+	});
+
 	it('should properly generate a json schema', function () {
-		const dictionary = new Dictionary<TypingJSON, SchemaInterface>(
-			types,
-			validations,
-		);
+		const dictionary = new Knowledge<SchemaInterface>();
 
 		dictionary.addSchema(
-			new Schema({
+			new Schema(ctx, {
 				reference: 's-1',
 				info: {
 					foo: {
@@ -40,7 +43,7 @@ describe('@bmoor/schema :: BuilderTypescript', function () {
 		);
 
 		dictionary.addSchema(
-			new Schema({
+			new Schema(ctx, {
 				reference: 's-2',
 				info: {
 					hello: {
@@ -64,7 +67,7 @@ describe('@bmoor/schema :: BuilderTypescript', function () {
 		);
 
 		dictionary.addSchema(
-			new Schema({
+			new Schema(ctx, {
 				reference: 's-3',
 				info: {
 					id: {
@@ -121,7 +124,7 @@ describe('@bmoor/schema :: BuilderTypescript', function () {
 			}),
 		);
 
-		const formatter = new BuilderTypescript(dictionary);
+		const formatter = new BuilderTypescript(ctx, dictionary);
 
 		formatter.addSchema(dictionary.getSchema('s-3'));
 
@@ -145,13 +148,10 @@ describe('@bmoor/schema :: BuilderTypescript', function () {
 	});
 
 	it('should properly generate a complex schema', function () {
-		const dictionary = new Dictionary<TypingJSON, SchemaInterface>(
-			types,
-			validations,
-		);
+		const dictionary = new Knowledge<SchemaInterface>();
 
 		dictionary.addSchema(
-			new Schema({
+			new Schema(ctx, {
 				reference: 's-1',
 				info: {
 					bar: {
@@ -181,7 +181,7 @@ describe('@bmoor/schema :: BuilderTypescript', function () {
 			}),
 		);
 
-		const formatter = new BuilderTypescript(dictionary);
+		const formatter = new BuilderTypescript(ctx, dictionary);
 
 		formatter.addSchema(dictionary.getSchema('s-1'));
 
