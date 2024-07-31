@@ -3,174 +3,169 @@ import {strict as assert} from 'assert';
 import {expect} from 'chai';
 
 import {
-	Connector,
-	Dictionary,
-	Schema,
-	SchemaInterface,
-	TypingJSON,
+	Context,
+	Model,
+	Nexus,
+	Service,
+	converter,
+	hooks,
 	types,
-	validations,
-} from '@bmoor/schema';
+} from '@bmoor/modeling';
+import {validations} from '@bmoor/schema';
 
 import {Graphql} from './graphql';
 
 describe('@bmoor/schema-services : graphql', function () {
-	let dictionary: Dictionary<TypingJSON, SchemaInterface>;
+	const serverCtx = new Context(types, validations, hooks, converter);
+	let nexus: Nexus;
+	let adapter1;
+	let adapter2;
+	let adatper3;
 
 	beforeEach(function () {
-		dictionary = new Dictionary<TypingJSON, SchemaInterface>(
-			types,
-			validations,
+		nexus = new Nexus();
+
+		adapter1 = {
+			async create(content) {
+				return content;
+			},
+			async read(content) {
+				return content;
+			},
+			async update(content) {
+				return content;
+			},
+			async delete(ids) {
+				return ids.length;
+			},
+		};
+		nexus.addService(
+			new Service(
+				new Model(serverCtx, {
+					reference: 's-1',
+					info: {
+						foo: {
+							use: 'primary',
+							type: 'string',
+						},
+						bar: {
+							type: 'number',
+						},
+					},
+					structure: [
+						{
+							path: 'foo',
+							ref: 'foo',
+						},
+						{
+							path: 'bar',
+							ref: 'bar',
+						},
+					],
+				}),
+				{
+					adapter: adapter1,
+				},
+			),
 		);
 
-		dictionary.addSchema(
-			new Schema({
-				reference: 's-1',
-				info: {
-					foo: {
-						use: 'primary',
-						type: 'string',
+		nexus.addService(
+			new Service(
+				new Model(serverCtx, {
+					reference: 's-2',
+					info: {
+						hello: {
+							use: 'primary',
+							type: 'string',
+						},
+						world: {
+							type: 'number',
+						},
 					},
-					bar: {
-						type: 'number',
-					},
+					structure: [
+						{
+							path: 'hello',
+							ref: 'hello',
+						},
+						{
+							path: 'world',
+							ref: 'world',
+						},
+					],
+				}),
+				{
+					adapter: adapter2,
 				},
-				structure: [
-					{
-						path: 'foo',
-						ref: 'foo',
-					},
-					{
-						path: 'bar',
-						ref: 'bar',
-					},
-				],
-				connection: {
-					reference: 'foo',
-				},
-			}),
+			),
 		);
 
-		dictionary.addSchema(
-			new Schema({
-				reference: 's-2',
-				info: {
-					hello: {
-						use: 'primary',
-						type: 'string',
+		nexus.addService(
+			new Service(
+				new Model(serverCtx, {
+					reference: 's-3',
+					info: {
+						id: {
+							use: 'primary',
+							type: 'string',
+						},
+						otherId: {
+							required: true,
+							type: 'string',
+						},
+						mount: {
+							use: 'synthetic',
+							type: 'array',
+						},
+						parent: {
+							use: 'synthetic',
+							type: 'object',
+						},
 					},
-					world: {
-						type: 'number',
-					},
+					structure: [
+						{
+							path: 'id',
+							ref: 'id',
+						},
+						{
+							path: 'otherId',
+							ref: 'otherId',
+						},
+						{
+							path: 'mount',
+							ref: 'mount',
+						},
+						{
+							path: 'parent',
+							ref: 'parent',
+						},
+					],
+					relationships: [
+						{
+							reference: 'parent',
+							type: 'toOne',
+							fields: ['otherId'],
+							other: 's-2',
+							otherFields: ['hello'],
+						},
+						{
+							reference: 'mount',
+							type: 'toMany',
+							fields: ['id'],
+							other: 's-1',
+							otherFields: ['foo'],
+						},
+					],
+				}),
+				{
+					adapter: adatper3,
 				},
-				structure: [
-					{
-						path: 'hello',
-						ref: 'hello',
-					},
-					{
-						path: 'world',
-						ref: 'world',
-					},
-				],
-				connection: {
-					reference: 'hello',
-					actions: {
-						eins: 'string',
-						zwei: 'float',
-					},
-				},
-			}),
-		);
-
-		dictionary.addSchema(
-			new Schema({
-				reference: 's-3',
-				info: {
-					id: {
-						use: 'primary',
-						type: 'string',
-					},
-					otherId: {
-						required: true,
-						type: 'string',
-					},
-					mount: {
-						use: 'synthetic',
-						type: 'array',
-					},
-					parent: {
-						use: 'synthetic',
-						type: 'object',
-					},
-				},
-				structure: [
-					{
-						path: 'id',
-						ref: 'id',
-					},
-					{
-						path: 'otherId',
-						ref: 'otherId',
-					},
-					{
-						path: 'mount',
-						ref: 'mount',
-					},
-					{
-						path: 'parent',
-						ref: 'parent',
-					},
-				],
-				relationships: [
-					{
-						reference: 'parent',
-						type: 'toOne',
-						fields: ['otherId'],
-						other: 's-2',
-						otherFields: ['hello'],
-					},
-					{
-						reference: 'mount',
-						type: 'toMany',
-						fields: ['id'],
-						other: 's-1',
-						otherFields: ['foo'],
-					},
-				],
-				connection: {
-					reference: 'stub',
-				},
-			}),
-		);
-
-		dictionary.setConnector(
-			new Connector({
-				foo: async () => [
-					{
-						foo: 'eins',
-						bar: 1.1,
-					},
-				],
-				hello: async () => [
-					{
-						hello: 'zwei',
-						world: 1.2,
-					},
-				],
-				stub: async () => [
-					{
-						id: 'fier',
-						otherId: 'funf',
-					},
-				],
-			}),
+			),
 		);
 	});
 
 	describe('toGraphQL', function () {
 		it('should properly generate graphql', function () {
-			const graphql = new Graphql(dictionary, {
+			const graphql = new Graphql(serverCtx, nexus, {
 				query: {
 					entry: {
 						schema: 's-1',
@@ -211,7 +206,7 @@ type Query {
 
 	describe('toResolvers', function () {
 		it('should properly define needed resolvers', async function () {
-			const graphql = new Graphql(dictionary, {
+			const graphql = new Graphql(serverCtx, nexus, {
 				query: {
 					entry: {
 						schema: 's-1',
@@ -274,7 +269,7 @@ type Query {
 		let server;
 
 		beforeEach(function () {
-			const graphql = new Graphql(dictionary, {
+			const graphql = new Graphql(serverCtx, nexus, {
 				query: {
 					entry: {
 						schema: 's-1',

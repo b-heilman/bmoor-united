@@ -1,5 +1,5 @@
 {
-  "name": "@bmoor/schema-services",
+  "name": "@bmoor/modeling-services",
   "version": "0.2.1",
   "type": "module",
   "description": "Describing a data's structure in a way that is friendlier for databases",
@@ -22,7 +22,7 @@
   "scripts": {
     "build": "mkdir -p dist/; cp -r src/ dist/src;  cp package.json dist/package.json",
     "lint": "eslint ./src",
-    "test": "NODE_OPTIONS=\"--import=@bmoor/bootstrap/src/node-typescript.js\" mocha -r ts-node/register --recursive \"./src/**/*.spec.ts\"",
+    "test": "mocha --recursive \"./src/**/*.spec.ts\"",
     "publish": "echo \"error publishing...\""
   },
   "keywords": [

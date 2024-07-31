@@ -512,7 +512,7 @@ describe('@bmoor-modeling::Service', function () {
 			});
 		});
 
-		describe('externalCreate', function(){
+		describe('externalCreate', function () {
 			it('should work with external and storage', async function () {
 				const service = new Service(
 					new Model(serverCtx, {
@@ -522,10 +522,10 @@ describe('@bmoor-modeling::Service', function () {
 							struct2: 'f2',
 						},
 						external: {
-							data : {
-								p1: 'f1',
-								p2: 'f2'
-							}
+							data: {
+								prop1: 'f1',
+								prop2: 'f2',
+							},
 						},
 						storage: {
 							store1: 'f1',
@@ -564,19 +564,19 @@ describe('@bmoor-modeling::Service', function () {
 				const res = await service.externalCreate(callCtx, [
 					{
 						data: {
-							p1: 'helloWorld',
-							p2: 'bar'
-						}
+							prop1: 'helloWorld',
+							prop2: {foo: 'bar'},
+						},
 					},
 				]);
 
 				expect(res).to.deep.equal([
 					{
 						data: {
-							p1: 'foo',
-							p2: {
+							prop1: 'foo',
+							prop2: {
 								a: 'value',
-							}
+							},
 						},
 					},
 				]);
@@ -584,7 +584,7 @@ describe('@bmoor-modeling::Service', function () {
 				expect(myStub.getCall(0).args[0]).to.deep.equal([
 					{
 						store1: 'helloWorld-2',
-						store3: '{"foo":"bar"}',
+						store2: '{"foo":"bar"}',
 					},
 				]);
 			});
@@ -677,20 +677,17 @@ describe('@bmoor-modeling::Service', function () {
 					},
 				]);
 
-				const res = await service.update(
-					callCtx,
-					[
-						{
-							ref: {
-								field2: 123,
-							},
-							delta: {
-								field1: 'val-1',
-								field2: 'val-2',
-							},
+				const res = await service.update(callCtx, [
+					{
+						ref: {
+							field2: 123,
 						},
-					],
-				);
+						delta: {
+							field1: 'val-1',
+							field2: 'val-2',
+						},
+					},
+				]);
 
 				expect(res).to.deep.equal([
 					{
@@ -740,25 +737,22 @@ describe('@bmoor-modeling::Service', function () {
 				);
 
 				const myStub = stub(service.model, 'validate').resolves([
-					'fail-whale'
+					'fail-whale',
 				]);
 
 				let failed = false;
 				try {
-					await service.update(
-						callCtx,
-						[
-							{
-								ref: {
-									field1: 123,
-								},
-								delta: {
-									field1: 'val-1',
-									field2: 'val-2',
-								},
+					await service.update(callCtx, [
+						{
+							ref: {
+								field1: 123,
 							},
-						],
-					);
+							delta: {
+								field1: 'val-1',
+								field2: 'val-2',
+							},
+						},
+					]);
 				} catch (ex) {
 					failed = true;
 					if (ex instanceof Error) {
@@ -794,7 +788,7 @@ describe('@bmoor-modeling::Service', function () {
 							},
 							f2: {
 								type: 'json',
-								storage: 'string'
+								storage: 'string',
 							},
 						},
 					}),
@@ -811,21 +805,18 @@ describe('@bmoor-modeling::Service', function () {
 					},
 				]);
 
-				const res = await service.update(
-					callCtx,
-					[
-						{
-							ref: {
-								field1: 123,
-							},
-							delta: {
-								field2: {
-									foo: 'bar',
-								},
+				const res = await service.update(callCtx, [
+					{
+						ref: {
+							field1: 123,
+						},
+						delta: {
+							field2: {
+								foo: 'bar',
 							},
 						},
-					],
-				);
+					},
+				]);
 
 				expect(res).to.deep.equal([
 					{
@@ -877,7 +868,6 @@ describe('@bmoor-modeling::Service', function () {
 					},
 				);
 
-
 				const myStub = stub(adapter, 'delete').resolves(null);
 
 				stub(service, 'read').resolves([
@@ -887,14 +877,11 @@ describe('@bmoor-modeling::Service', function () {
 					},
 				]);
 
-				const res = await service.delete(
-					callCtx,
-					[
-						{
-							field2: 123,
-						},
-					],
-				);
+				const res = await service.delete(callCtx, [
+					{
+						field2: 123,
+					},
+				]);
 
 				expect(res).to.deep.equal([
 					{

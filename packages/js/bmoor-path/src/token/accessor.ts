@@ -60,6 +60,11 @@ export class AccessorToken extends Token {
 			);
 		} else {
 			return new Expressable(this, ExpressableUsages.value, (obj) => {
+				if (obj === undefined) {
+					// I think it's ok to silently fail here
+					return obj;
+				}
+
 				const v = obj[this.content];
 
 				if (settings.position === 'last' && settings.hook) {

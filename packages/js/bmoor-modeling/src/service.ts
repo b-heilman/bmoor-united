@@ -7,6 +7,7 @@ import {
 	ServiceHooks,
 	ServiceInterface,
 	ServiceInternalGenerics,
+	ServiceQuery,
 	ServiceSettings,
 	ServiceStorageGenerics,
 	ServiceUpdateDelta,
@@ -36,9 +37,7 @@ export class Service<
 		ctx: ContextSecurityInterface,
 		content: ExternalT['structure'][],
 	): Promise<ExternalT['structure'][]> {
-		const internal = content.map((datum) =>
-			this.onCreate(ctx, this.model.fromInflated(datum)),
-		);
+		const internal = content.map((datum) => this.onCreate(ctx, datum));
 
 		const validations = (
 			await Promise.all(
@@ -51,11 +50,9 @@ export class Service<
 			throw new Error(validations[0]);
 		}
 
-		const allowed = await this.settings.controller.canCreate(
-			ctx,
-			internal,
-			this,
-		);
+		const allowed = this.settings.controller
+			? await this.settings.controller.canCreate(ctx, internal, this)
+			: internal;
 
 		const rtn = await this.settings.adapter.create(
 			allowed.map((datum) => this.deflate(ctx, datum)),
@@ -68,11 +65,9 @@ export class Service<
 		ctx: ContextSecurityInterface,
 		content: ExternalT['structure'][],
 	): Promise<ExternalT['structure'][]> {
-		const internal = content.map((datum) => {
-			const rtn = this.model.fromInflated(datum);
-
-			return this.onCreate(ctx, rtn);
-		});
+		const internal = content.map((datum) =>
+			this.model.fromInflated(datum),
+		);
 
 		const rtn = await this.create(ctx, internal);
 
@@ -87,11 +82,15 @@ export class Service<
 			ids.map((datum) => this.deflate(ctx, datum)),
 		);
 
-		return this.settings.controller.canRead(
-			ctx,
-			res.map((datum) => this.onRead(ctx, this.model.fromDeflated(datum))),
-			this,
+		const rtn = res.map((datum) =>
+			this.onRead(ctx, this.model.fromDeflated(datum)),
 		);
+
+		if (this.settings.controller) {
+			return this.settings.controller.canRead(ctx, rtn, this);
+		} else {
+			return rtn;
+		}
 	}
 
 	async externalRead(
@@ -106,19 +105,74 @@ export class Service<
 		).map((datum) => this.inflate(ctx, datum));
 	}
 
+	// TODO: finsh
+	// This method is largely used to interface with graphql,
+	// you pass in how you are joining, and any filters to run
+	async select(
+		ctx: ContextSecurityInterface,
+		query: ServiceQuery,
+	): Promise<InternalT['structure'][]> {
+		const res = await this.settings.adapter.search(
+			this.deflate(ctx, query),
+		);
+
+		return this.settings.controller.canRead(
+			ctx,
+			res.map((datum) => this.onRead(ctx, this.model.fromDeflated(datum))),
+			this,
+		);
+	}
+
+	async externalSelect(
+		ctx: ContextSecurityInterface,
+		query: ServiceQuery,
+	): Promise<ExternalT['structure'][]> {
+		return (await this.search(ctx, query)).map((datum) =>
+			this.inflate(ctx, datum),
+		);
+	}
+
+	// TODO: finsh
+	// This method is calling a complex query that is based on,
+	// this object. It should use a query builder that I need to
+	// implement yet
+	async search(
+		ctx: ContextSecurityInterface,
+		search: InternalT['search'],
+	): Promise<InternalT['structure'][]> {
+		const res = await this.settings.adapter.search(
+			this.deflate(ctx, search),
+		);
+
+		return this.settings.controller.canRead(
+			ctx,
+			res.map((datum) => this.onRead(ctx, this.model.fromDeflated(datum))),
+			this,
+		);
+	}
+
+	async externalSearch(
+		ctx: ContextSecurityInterface,
+		search: ExternalT['search'],
+	): Promise<ExternalT['structure'][]> {
+		return (await this.search(ctx, this.model.fromInflated(search))).map(
+			(datum) => this.inflate(ctx, datum),
+		);
+	}
+
 	async update(
 		ctx: ContextSecurityInterface,
 		content: ServiceUpdateDelta<InternalT>[],
 	): Promise<InternalT['structure'][]> {
-		content = await this.settings.controller.canUpdate(
-			ctx,
-			content.map((change) => {
-				change.delta = this.onUpdate(ctx, change.delta);
+		const incoming = content.map((change) => {
+			change.delta = this.onUpdate(ctx, change.delta);
 
-				return change;
-			}),
-			this,
-		);
+			return change;
+		});
+
+		content = this.settings.controller
+			? await this.settings.controller.canUpdate(ctx, incoming, this)
+			: incoming;
 
 		const validations = (
 			await Promise.all(
@@ -160,11 +214,9 @@ export class Service<
 		ctx: ContextSecurityInterface,
 		ids: InternalT['reference'][],
 	): Promise<InternalT['structure'][]> {
-		const filtered = await this.settings.controller.canDelete(
-			ctx,
-			ids,
-			this,
-		);
+		const filtered = this.settings.controller
+			? await this.settings.controller.canDelete(ctx, ids, this)
+			: ids;
 		const datums = await this.read(ctx, filtered);
 
 		const count = await this.settings.adapter.delete(
@@ -188,30 +240,6 @@ export class Service<
 				ids.map((datum) => this.model.fromInflated(datum)),
 			)
 		).map((datum) => this.inflate(ctx, datum));
-	}
-
-	async search(
-		ctx: ContextSecurityInterface,
-		search: InternalT['search'],
-	): Promise<InternalT['structure'][]> {
-		const res = await this.settings.adapter.search(
-			this.deflate(ctx, search),
-		);
-
-		return this.settings.controller.canRead(
-			ctx,
-			res.map((datum) => this.onRead(ctx, this.model.fromDeflated(datum))),
-			this,
-		);
-	}
-
-	async externalSearch(
-		ctx: ContextSecurityInterface,
-		search: ExternalT['search'],
-	): Promise<ExternalT['structure'][]> {
-		return (await this.search(ctx, this.model.fromInflated(search))).map(
-			(datum) => this.inflate(ctx, datum),
-		);
 	}
 
 	getQueryActions(): Record<string, TypingReference> {

@@ -21,7 +21,7 @@
   "scripts": {
     "build": "mkdir -p dist/; cp -r src/ dist/src;  cp package.json dist/package.json",
     "lint": "eslint ./src",
-    "test": "NODE_OPTIONS=\"--import=@bmoor/bootstrap/src/node-typescript.js\" mocha -r ts-node/register --recursive \"./src/**/*.spec.ts\"",
+    "test": "mocha --recursive \"./src/**/*.spec.ts\"",
     "test:file": "mocha -r ts-node/register",
     "publish": "echo \"graph publishing...\""
   },

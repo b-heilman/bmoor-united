@@ -1,10 +1,6 @@
-import {
-	DictionaryInterface,
-	SchemaInterface,
-	SchemaReference,
-	TypingJSON,
-	TypingReference,
-} from '@bmoor/schema';
+import {ContextSecurityInterface} from '@bmoor/context';
+import {ModelInterface} from '@bmoor/modeling';
+import {SchemaReference, TypingReference} from '@bmoor/schema';
 
 export type GraphqlGenericType = Record<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any
 
@@ -27,14 +23,11 @@ export type GraphqlQueryReference = string;
 
 export type GraphqlQueryParams = Record<string, TypingReference>;
 
-export interface GraphqlQuery<
-	TypingT extends TypingJSON,
-	SchemaT extends SchemaInterface = SchemaInterface,
-> {
+export interface GraphqlQuery {
 	schema: SchemaReference;
 	hook?: {
 		fn: (
-			dict: DictionaryInterface<TypingT, SchemaT>,
+			ctx: ContextSecurityInterface,
 			params: Record<string, any>, // eslint-disable-line  @typescript-eslint/no-explicit-any
 		) => any[]; // eslint-disable-line  @typescript-eslint/no-explicit-any
 		params?: GraphqlQueryParams;
@@ -44,11 +37,8 @@ export interface GraphqlQuery<
 	// TODO: relationships to follow
 }
 
-export interface GraphqlJSON<
-	TypingT extends TypingJSON,
-	SchemaT extends SchemaInterface = SchemaInterface,
-> {
-	query: Record<GraphqlQueryReference, GraphqlQuery<TypingT, SchemaT>>;
+export interface GraphqlJSON {
+	query: Record<GraphqlQueryReference, GraphqlQuery>;
 	// eslint-disable-next-line  @typescript-eslint/no-explicit-any
 	customTypes?: Record<string, any>;
 }

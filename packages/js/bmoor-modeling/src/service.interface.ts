@@ -44,7 +44,7 @@ export interface ServiceSettings<
 	StorageT extends ServiceStorageGenerics = ServiceStorageGenerics,
 > {
 	adapter: ServiceAdapterInterface<StorageT>;
-	controller: ServiceControllerInterface<InternalT>;
+	controller?: ServiceControllerInterface<InternalT>;
 	actions?: ServiceQueryActions;
 }
 
@@ -70,6 +70,11 @@ export interface ServiceHooks<
 
 export type ServiceQueryActions = Record<string, TypingReference>;
 
+export type ServiceQuery = {
+	properties?: object;
+	actions?: object;
+};
+
 export interface ServiceInterface<
 	InternalT extends ServiceInternalGenerics = ServiceInternalGenerics,
 	ExternalT extends ServiceExternalGenerics = ServiceExternalGenerics,
@@ -94,6 +99,22 @@ export interface ServiceInterface<
 		ctx: ContextSecurityInterface,
 		ids: ExternalT['reference'][],
 	): Promise<ExternalT['structure'][]>;
+	select(
+		ctx: ContextSecurityInterface,
+		query: ServiceQuery,
+	): Promise<InternalT['structure'][]>;
+	externalSelect(
+		ctx: ContextSecurityInterface,
+		query: ServiceQuery,
+	): Promise<ExternalT['structure'][]>;
+	search(
+		ctx: ContextSecurityInterface,
+		search: InternalT['search'],
+	): Promise<InternalT['structure'][]>;
+	externalSearch(
+		ctx: ContextSecurityInterface,
+		search: ExternalT['search'],
+	): Promise<ExternalT['structure'][]>;
 	update(
 		ctx: ContextSecurityInterface,
 		content: ServiceUpdateDelta<InternalT>[],
@@ -109,14 +130,6 @@ export interface ServiceInterface<
 	externalDelete(
 		ctx: ContextSecurityInterface,
 		ids: ExternalT['reference'][],
-	): Promise<ExternalT['structure'][]>;
-	search(
-		ctx: ContextSecurityInterface,
-		search: InternalT['search'],
-	): Promise<InternalT['structure'][]>;
-	externalSearch(
-		ctx: ContextSecurityInterface,
-		search: ExternalT['search'],
 	): Promise<ExternalT['structure'][]>;
 
 	getModel(): ModelInterface<InternalT, ExternalT, StorageT>;
