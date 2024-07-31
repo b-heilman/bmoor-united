@@ -443,7 +443,7 @@ describe('@bmoor-modeling::Service', function () {
 				});
 			});
 
-			xit('should work with actions', async function () {
+			it('should work with actions', async function () {
 				const service = new Service(
 					new Model(serverCtx, {
 						reference: 'junk',
@@ -461,17 +461,13 @@ describe('@bmoor-modeling::Service', function () {
 							},
 							f2: {
 								type: 'json',
+								storage: 'string',
 							},
 						},
 						hooks: {
-							f2: {
-								onUpdate(value) {
+							f1: {
+								onCreate(value) {
 									return value + '-2';
-								},
-							},
-							f3: {
-								onUpdate() {
-									return 1;
 								},
 							},
 						},
@@ -481,31 +477,6 @@ describe('@bmoor-modeling::Service', function () {
 						controller,
 					},
 				);
-
-				/*
-				const service = new Service({
-					controller,
-					adapter,
-					accessor,
-					validator,
-					model: new Model({
-						ref: 'junk',
-						fields: factory(
-							{
-								external: 'f1',
-								onCreate: (datum, setter) => {
-									setter(datum, 'value');
-								},
-							},
-							{
-								external: 'f2',
-								internal: 'f3',
-								usage: 'json',
-							},
-						),
-					}),
-				});
-				*/
 
 				const myStub = stub(adapter, 'create').resolves([
 					{
@@ -525,8 +496,8 @@ describe('@bmoor-modeling::Service', function () {
 
 				expect(res).to.deep.equal([
 					{
-						f1: 'foo',
-						f2: {
+						field1: 'foo',
+						field2: {
 							a: 'value',
 						},
 					},
@@ -534,179 +505,259 @@ describe('@bmoor-modeling::Service', function () {
 
 				expect(myStub.getCall(0).args[0]).to.deep.equal([
 					{
-						f1: 'value',
-						f3: '{"foo":"bar"}',
+						field1: 'helloWorld-2',
+						field3: '{"foo":"bar"}',
 					},
 				]);
 			});
 		});
 
-		/**
-		describe('read', function () {
-			it('should work without a validator', async function () {
-				const service = new Service({
-					controller,
-					adapter,
-					accessor,
-					validator,
-					model: new Model({
-						ref: 'junk',
-						fields: factory(
-							{
-								external: 'key',
-								internal: 'id',
+		describe('externalCreate', function(){
+			it('should work with external and storage', async function () {
+				const service = new Service(
+					new Model(serverCtx, {
+						reference: 'junk',
+						structure: {
+							struct1: 'f1',
+							struct2: 'f2',
+						},
+						external: {
+							data : {
+								p1: 'f1',
+								p2: 'f2'
+							}
+						},
+						storage: {
+							store1: 'f1',
+							store2: 'f2',
+						},
+						info: {
+							f1: {
+								type: 'string',
 							},
-							{
-								external: 'f1',
+							f2: {
+								type: 'json',
+								storage: 'string',
 							},
-							{
-								external: 'f2',
-								internal: 'f3',
+						},
+						hooks: {
+							f1: {
+								onCreate(value) {
+									return value + '-2';
+								},
 							},
-						),
+						},
 					}),
-				});
-
-				const myStub = stub(adapter, 'read').resolves([
 					{
-						f1: 'foo',
-						f3: 'bar',
-						id: 123,
+						adapter,
+						controller,
+					},
+				);
+
+				const myStub = stub(adapter, 'create').resolves([
+					{
+						store1: 'foo',
+						store2: '{"a":"value"}',
 					},
 				]);
 
-				const res = await service.read([{key: 12}], ctx);
+				const res = await service.externalCreate(callCtx, [
+					{
+						data: {
+							p1: 'helloWorld',
+							p2: 'bar'
+						}
+					},
+				]);
 
 				expect(res).to.deep.equal([
 					{
-						f1: 'foo',
-						f2: 'bar',
-						key: 123,
+						data: {
+							p1: 'foo',
+							p2: {
+								a: 'value',
+							}
+						},
 					},
 				]);
 
 				expect(myStub.getCall(0).args[0]).to.deep.equal([
 					{
-						id: 12,
+						store1: 'helloWorld-2',
+						store3: '{"foo":"bar"}',
 					},
 				]);
 			});
+		});
 
-			xit('should work with actions', function () {
-				throw new Error('boo');
+		describe('read', function () {
+			it('should work without a validator', async function () {
+				const service = new Service(
+					new Model(serverCtx, {
+						reference: 'junk',
+						structure: {
+							field1: 'f1',
+							field2: 'f2',
+						},
+						storage: {
+							field1: 'f1',
+							field3: 'f2',
+						},
+						info: {
+							f1: {
+								type: 'string',
+							},
+							f2: {
+								type: 'number',
+							},
+						},
+					}),
+					{
+						adapter,
+						controller,
+					},
+				);
+
+				const myStub = stub(adapter, 'read').resolves([
+					{
+						field1: 'foo',
+						field3: 'bar',
+					},
+				]);
+
+				const res = await service.read(callCtx, [{field2: 12}]);
+
+				expect(res).to.deep.equal([
+					{
+						field1: 'foo',
+						field2: 'bar',
+					},
+				]);
+
+				expect(myStub.getCall(0).args[0]).to.deep.equal([
+					{
+						field3: 12,
+					},
+				]);
 			});
 		});
 
 		describe('update', function () {
 			it('should work without a validator', async function () {
-				const service = new Service({
-					controller,
-					adapter,
-					accessor,
-					validator,
-					model: new Model({
-						ref: 'junk',
-						fields: factory(
-							{
-								external: 'key',
-								internal: 'id',
+				const service = new Service(
+					new Model(serverCtx, {
+						reference: 'junk',
+						structure: {
+							field1: 'f1',
+							field2: 'f2',
+						},
+						storage: {
+							field1: 'f1',
+							field3: 'f2',
+						},
+						info: {
+							f1: {
+								type: 'string',
 							},
-							{
-								external: 'f1',
+							f2: {
+								type: 'number',
 							},
-							{
-								external: 'f2',
-								internal: 'f3',
-							},
-						),
+						},
 					}),
-				});
+					{
+						adapter,
+						controller,
+					},
+				);
 
 				const myStub = stub(adapter, 'update').resolves([
 					{
-						f1: 'foo',
-						f3: 'bar',
+						field1: 'foo',
+						field3: 'bar',
 					},
 				]);
 
 				const res = await service.update(
+					callCtx,
 					[
 						{
 							ref: {
-								key: 123,
+								field2: 123,
 							},
 							delta: {
-								f1: 'val-1',
-								f2: 'val-2',
+								field1: 'val-1',
+								field2: 'val-2',
 							},
 						},
 					],
-					ctx,
 				);
 
 				expect(res).to.deep.equal([
 					{
-						f1: 'foo',
-						f2: 'bar',
+						field1: 'foo',
+						field2: 'bar',
 					},
 				]);
 
 				expect(myStub.getCall(0).args[0]).to.deep.equal([
 					{
 						ref: {
-							id: 123,
+							field3: 123,
 						},
 						delta: {
-							f1: 'val-1',
-							f3: 'val-2',
+							field1: 'val-1',
+							field3: 'val-2',
 						},
 					},
 				]);
 			});
 
 			it('should work with a validator', async function () {
-				const service = new Service({
-					controller,
-					adapter,
-					accessor,
-					validator,
-					model: new Model({
-						ref: 'junk',
-						fields: factory(
-							{
-								external: 'key',
-								internal: 'id',
+				const service = new Service(
+					new Model(serverCtx, {
+						reference: 'junk',
+						structure: {
+							field1: 'f1',
+							field2: 'f2',
+						},
+						storage: {
+							field1: 'f1',
+							field3: 'f2',
+						},
+						info: {
+							f1: {
+								type: 'string',
 							},
-							{
-								external: 'f1',
+							f2: {
+								type: 'number',
 							},
-							{
-								external: 'f2',
-								internal: 'f3',
-							},
-						),
+						},
 					}),
-				});
-
-				const myStub = stub(validator, 'validateUpdate').resolves(
-					new Error('fail-whale'),
+					{
+						adapter,
+						controller,
+					},
 				);
+
+				const myStub = stub(service.model, 'validate').resolves([
+					'fail-whale'
+				]);
 
 				let failed = false;
 				try {
 					await service.update(
+						callCtx,
 						[
 							{
 								ref: {
-									key: 123,
+									field1: 123,
 								},
 								delta: {
-									f1: 'val-1',
-									f2: 'val-2',
+									field1: 'val-1',
+									field2: 'val-2',
 								},
 							},
 						],
-						ctx,
 					);
 				} catch (ex) {
 					failed = true;
@@ -719,73 +770,67 @@ describe('@bmoor-modeling::Service', function () {
 
 				expect(failed).to.equal(true);
 
-				expect(myStub.getCall(0).args[0]).to.deep.equal([
-					{
-						ref: {
-							key: 123,
-						},
-						delta: {
-							f1: 'val-1',
-							f2: 'val-2',
-						},
-					},
-				]);
+				expect(myStub.getCall(0).args[0]).to.deep.equal({
+					field1: 'val-1',
+					field2: 'val-2',
+				});
 			});
 
 			it('should work with actions', async function () {
-				const service = new Service({
-					controller,
-					adapter,
-					accessor,
-					validator,
-					model: new Model({
-						ref: 'junk',
-						fields: factory(
-							{
-								external: 'key',
+				const service = new Service(
+					new Model(serverCtx, {
+						reference: 'junk',
+						structure: {
+							field1: 'f1',
+							field2: 'f2',
+						},
+						storage: {
+							field1: 'f1',
+							field3: 'f2',
+						},
+						info: {
+							f1: {
+								type: 'string',
 							},
-							{
-								external: 'f1',
-								onUpdate: (datum, setter) => {
-									setter(datum, 'value');
-								},
+							f2: {
+								type: 'json',
+								storage: 'string'
 							},
-							{
-								external: 'f2',
-								internal: 'f3',
-								usage: 'json',
-							},
-						),
+						},
 					}),
-				});
+					{
+						adapter,
+						controller,
+					},
+				);
 
 				const myStub = stub(adapter, 'update').resolves([
 					{
-						f1: 'foo',
-						f3: '{"a":"value"}',
+						field1: 'foo',
+						field3: '{"a":"value"}',
 					},
 				]);
 
 				const res = await service.update(
+					callCtx,
 					[
 						{
 							ref: {
-								key: 123,
+								field1: 123,
 							},
 							delta: {
-								f2: {
+								field2: {
 									foo: 'bar',
 								},
 							},
 						},
 					],
-					ctx,
 				);
 
 				expect(res).to.deep.equal([
 					{
-						f1: 'foo',
-						f2: {
+						field1: 'foo',
+						field2: {
 							a: 'value',
 						},
 					},
@@ -794,11 +839,10 @@ describe('@bmoor-modeling::Service', function () {
 				expect(myStub.getCall(0).args[0]).to.deep.equal([
 					{
 						ref: {
-							key: 123,
+							field1: 123,
 						},
 						delta: {
-							f1: 'value',
-							f3: '{"foo":"bar"}',
+							field3: '{"foo":"bar"}',
 						},
 					},
 				]);
@@ -807,239 +851,64 @@ describe('@bmoor-modeling::Service', function () {
 
 		describe('delete', function () {
 			it('should work without a validator', async function () {
-				const service = new Service({
-					controller,
-					adapter,
-					accessor,
-					validator,
-					model: new Model({
-						ref: 'junk',
-						fields: factory(
-							{
-								external: 'key',
-								internal: 'id',
+				const service = new Service(
+					new Model(serverCtx, {
+						reference: 'junk',
+						structure: {
+							field1: 'f1',
+							field2: 'f2',
+						},
+						storage: {
+							field1: 'f1',
+							field3: 'f2',
+						},
+						info: {
+							f1: {
+								type: 'string',
 							},
-							{
-								external: 'f1',
+							f2: {
+								type: 'number',
 							},
-							{
-								external: 'f2',
-								internal: 'f3',
-							},
-						),
+						},
 					}),
-				});
+					{
+						adapter,
+						controller,
+					},
+				);
+
 
 				const myStub = stub(adapter, 'delete').resolves(null);
 
 				stub(service, 'read').resolves([
 					{
-						f1: 'foo',
-						f2: 'bar',
+						field1: 'foo',
+						field2: 'bar',
 					},
 				]);
 
 				const res = await service.delete(
+					callCtx,
 					[
 						{
-							key: 123,
+							field2: 123,
 						},
 					],
-					ctx,
 				);
 
 				expect(res).to.deep.equal([
 					{
-						f1: 'foo',
-						f2: 'bar',
+						field1: 'foo',
+						field2: 'bar',
 					},
 				]);
 
 				expect(myStub.getCall(0).args[0]).to.deep.equal([
 					{
-						id: 123,
+						field3: 123,
 					},
 				]);
 			});
-
-			xit('should work with actions', function () {
-				throw new Error('boo');
-			});
 		});
-	});
-
-	describe('model', function () {
-		it('should properly translate from internal to external and back', function () {
-			const service = new Service({
-				controller,
-				adapter,
-				accessor,
-				validator,
-				model: new Model({
-					ref: 'junk',
-					fields: factory(
-						{
-							internal: 'field.eins',
-							external: 'value1',
-						},
-						{
-							internal: 'field.zwei',
-							external: 'other.value2',
-						},
-						{
-							internal: 'value',
-							external: 'other.thing',
-						},
-					),
-				}),
-			});
-
-			const original = {
-				field: {
-					eins: 1,
-					zwei: 2,
-				},
-				value: 'foo-bar',
-			};
-
-			const external = service.convertToExternal(original, ctx);
-
-			const internal = service.convertToInternal(external, ctx);
-
-			expect(external).to.deep.equal({
-				value1: 1,
-				other: {
-					value2: 2,
-					thing: 'foo-bar',
-				},
-			});
-
-			expect(internal).to.deep.equal(original);
-		});
-	});
-
-	describe('with generics', function () {
-		interface ExternalReferenceGeneric {
-			key: number;
-		}
-
-		interface ExternalReadGeneric extends ExternalReferenceGeneric {
-			field1: string;
-			other: {
-				field2: number;
-			};
-		}
-
-		interface InternalReferenceGeneric {
-			id: number;
-		}
-
-		interface InternalReadGeneric extends InternalReferenceGeneric {
-			field1: string;
-			field2: number;
-		}
-
-		it('should allow correct invocation', async function () {
-			const service = new Service<
-				ExternalReadGeneric,
-				ExternalReferenceGeneric,
-				ExternalCreate,
-				ExternalUpdate,
-				ExternalSearch,
-				InternalReadGeneric,
-				InternalReferenceGeneric,
-				InternalCreate,
-				InternalUpdate,
-				InternalSearch
-			>({
-				controller,
-				adapter,
-				accessor,
-				validator,
-				model: new Model({
-					ref: 'junk',
-					fields: factory(
-						{
-							external: 'key',
-							internal: 'id',
-							usage: 'key',
-							jsonType: 'number',
-						},
-						{
-							external: 'field1',
-							internal: 'field1',
-							jsonType: 'string',
-						},
-						{
-							external: 'other.field2',
-							internal: 'field2',
-							jsonType: 'number',
-						},
-					),
-				}),
-			});
-
-			adapter.read = async function (): Promise<InternalReadGeneric[]> {
-				return [
-					{
-						id: 123,
-						field1: 'hello-world',
-						field2: 789,
-					},
-				];
-			};
-
-			const res1 = await service.read([], ctx);
-			expect(res1).to.deep.equal([
-				{
-					key: 123,
-					field1: 'hello-world',
-					other: {
-						field2: 789,
-					},
-				},
-			]);
-
-			const myStub = stub();
-
-			myStub.resolves([
-				{
-					id: 1233,
-					field1: 'hello-world-3',
-					field2: 7893,
-				},
-			]);
-
-			adapter.create = myStub;
-
-			const res2 = await service.create(
-				[
-					{
-						field1: 'hello-world-2',
-						other: {
-							field2: 7892,
-						},
-					},
-				],
-				ctx,
-			);
-			expect(res2).to.deep.equal([
-				{
-					key: 1233,
-					field1: 'hello-world-3',
-					other: {
-						field2: 7893,
-					},
-				},
-			]);
-
-			expect(myStub.getCall(0).args[0]).to.deep.equal([
-				{
-					field1: 'hello-world-2',
-					field2: 7892,
-				},
-			]);
-		});
-		**/
 	});
 });

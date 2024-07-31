@@ -174,6 +174,67 @@ describe('@bmoor-modeling::Model', function () {
 				foo: {bar: 1, bar2: 2},
 			});
 		});
+
+		it('should correctly convert', function () {
+			const model = new Model(ctx, {
+				reference: 'junk',
+				structure: {
+					helloWorld: 'f-1',
+					foo: {
+						bar: 'f-2',
+					},
+				},
+				storage: {
+					hello: {
+						world: 'f-1',
+					},
+					einsZwei: 'f-2',
+				},
+				info: {
+					'f-1': {
+						type: 'string',
+						storage: 'json',
+					},
+					'f-2': {
+						type: 'number',
+					},
+				},
+			});
+
+			expect(
+				model.deflate({
+					helloWorld: '{"eins":1,"zwei":2}',
+					foo: {
+						bar: 2,
+					},
+				}),
+			).to.deep.equal({
+				hello: {
+					world: {
+						eins: 1,
+						zwei: 2,
+					},
+				},
+				einsZwei: 2,
+			});
+
+			expect(
+				model.fromDeflated({
+					hello: {
+						world: {
+							eins: 1,
+							zwei: 2,
+						},
+					},
+					einsZwei: 2,
+				}),
+			).to.deep.equal({
+				helloWorld: '{"eins":1,"zwei":2}',
+				foo: {
+					bar: 2,
+				},
+			});
+		});
 	});
 
 	describe('hooks', function () {
