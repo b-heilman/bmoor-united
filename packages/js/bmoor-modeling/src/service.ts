@@ -7,11 +7,11 @@ import {
 	ServiceHooks,
 	ServiceInterface,
 	ServiceInternalGenerics,
-	ServiceQuery,
 	ServiceSettings,
 	ServiceStorageGenerics,
 	ServiceUpdateDelta,
 } from './service.interface';
+import {ServiceAdapterSelector} from './service/adapter.interface';
 
 export class Service<
 	InternalT extends ServiceInternalGenerics = ServiceInternalGenerics,
@@ -55,6 +55,7 @@ export class Service<
 			: internal;
 
 		const rtn = await this.settings.adapter.create(
+			ctx,
 			allowed.map((datum) => this.deflate(ctx, datum)),
 		);
 
@@ -79,6 +80,7 @@ export class Service<
 		ids: ExternalT['reference'][],
 	): Promise<ExternalT['structure'][]> {
 		const res = await this.settings.adapter.read(
+			ctx,
 			ids.map((datum) => this.deflate(ctx, datum)),
 		);
 
@@ -105,34 +107,45 @@ export class Service<
 		).map((datum) => this.inflate(ctx, datum));
 	}
 
-	// TODO: finsh
+	// TODO: finish
 	// This method is largely used to interface with graphql,
 	// you pass in how you are joining, and any filters to run
 	async select(
 		ctx: ContextSecurityInterface,
-		query: ServiceQuery,
+		selector: ServiceAdapterSelector,
 	): Promise<InternalT['structure'][]> {
-		const res = await this.settings.adapter.search(
-			this.deflate(ctx, query),
+		if (!this.settings.adapter.select) {
+			throw new Error(
+				'Adapter has no defined select method: ' +
+					this.model.getReference(),
+			);
+		}
+
+		const res = await this.settings.adapter.select(ctx, {
+			properties: this.deflate(ctx, selector.properties),
+			actions: selector.actions,
+		});
+
+		const rtn = res.map((datum) =>
+			this.onRead(ctx, this.model.fromDeflated(datum)),
 		);
 
-		return this.settings.controller.canRead(
-			ctx,
-			res.map((datum) => this.onRead(ctx, this.model.fromDeflated(datum))),
-			this,
-		);
+		this.settings.controller;
+		return this.settings.controller
+			? this.settings.controller.canRead(ctx, rtn, this)
+			: rtn;
 	}
 
 	async externalSelect(
 		ctx: ContextSecurityInterface,
-		query: ServiceQuery,
+		query: ServiceAdapterSelector,
 	): Promise<ExternalT['structure'][]> {
 		return (await this.search(ctx, query)).map((datum) =>
 			this.inflate(ctx, datum),
 		);
 	}
 
-	// TODO: finsh
+	// TODO: finish
 	// This method is calling a complex query that is based on,
 	// this object. It should use a query builder that I need to
 	// implement yet
@@ -140,15 +153,26 @@ export class Service<
 		ctx: ContextSecurityInterface,
 		search: InternalT['search'],
 	): Promise<InternalT['structure'][]> {
+		if (!this.settings.adapter.search) {
+			throw new Error(
+				'Adapter has no defined search method: ' +
+					this.model.getReference(),
+			);
+		}
+
 		const res = await this.settings.adapter.search(
+			ctx,
 			this.deflate(ctx, search),
 		);
 
-		return this.settings.controller.canRead(
-			ctx,
-			res.map((datum) => this.onRead(ctx, this.model.fromDeflated(datum))),
-			this,
+		const rtn = res.map((datum) =>
+			this.onRead(ctx, this.model.fromDeflated(datum)),
 		);
+
+		this.settings.controller;
+		return this.settings.controller
+			? this.settings.controller.canRead(ctx, rtn, this)
+			: rtn;
 	}
 
 	async externalSearch(
@@ -186,6 +210,7 @@ export class Service<
 		}
 
 		const rtn = await this.settings.adapter.update(
+			ctx,
 			content.map(({ref, delta}) => ({
 				ref: this.deflate(ctx, ref),
 				delta: this.deflate(ctx, delta),
@@ -220,6 +245,7 @@ export class Service<
 		const datums = await this.read(ctx, filtered);
 
 		const count = await this.settings.adapter.delete(
+			ctx,
 			filtered.map((ref) => this.deflate(ctx, ref)),
 		);
 

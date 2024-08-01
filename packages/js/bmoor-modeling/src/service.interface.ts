@@ -10,6 +10,7 @@ import {
 import {
 	ServiceAdapterGenerics,
 	ServiceAdapterInterface,
+	ServiceAdapterSelector,
 } from './service/adapter.interface';
 import {ServiceControllerInterface} from './service/controller.interface';
 
@@ -70,11 +71,6 @@ export interface ServiceHooks<
 
 export type ServiceQueryActions = Record<string, TypingReference>;
 
-export type ServiceQuery = {
-	properties?: object;
-	actions?: object;
-};
-
 export interface ServiceInterface<
 	InternalT extends ServiceInternalGenerics = ServiceInternalGenerics,
 	ExternalT extends ServiceExternalGenerics = ServiceExternalGenerics,
@@ -101,11 +97,11 @@ export interface ServiceInterface<
 	): Promise<ExternalT['structure'][]>;
 	select(
 		ctx: ContextSecurityInterface,
-		query: ServiceQuery,
+		selector: ServiceAdapterSelector,
 	): Promise<InternalT['structure'][]>;
 	externalSelect(
 		ctx: ContextSecurityInterface,
-		query: ServiceQuery,
+		selector: ServiceAdapterSelector,
 	): Promise<ExternalT['structure'][]>;
 	search(
 		ctx: ContextSecurityInterface,

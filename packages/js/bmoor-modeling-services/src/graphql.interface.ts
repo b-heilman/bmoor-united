@@ -1,5 +1,4 @@
 import {ContextSecurityInterface} from '@bmoor/context';
-import {ModelInterface} from '@bmoor/modeling';
 import {SchemaReference, TypingReference} from '@bmoor/schema';
 
 export type GraphqlGenericType = Record<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any

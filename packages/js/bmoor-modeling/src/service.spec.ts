@@ -64,16 +64,16 @@ describe('@bmoor-modeling::Service', function () {
 			},
 		};
 		adapter = {
-			async create(content) {
+			async create(ctx, content) {
 				return content;
 			},
-			async read(content) {
+			async read(ctx, content) {
 				return content;
 			},
-			async update(content) {
+			async update(ctx, content) {
 				return content;
 			},
-			async delete(ids) {
+			async delete(ctx, ids) {
 				return ids.length;
 			},
 		};
@@ -379,7 +379,7 @@ describe('@bmoor-modeling::Service', function () {
 					},
 				]);
 
-				expect(myStub.getCall(0).args[0]).to.deep.equal([
+				expect(myStub.getCall(0).args[1]).to.deep.equal([
 					{
 						field1: 'val-1',
 						field3: 'val-2',
@@ -503,7 +503,7 @@ describe('@bmoor-modeling::Service', function () {
 					},
 				]);
 
-				expect(myStub.getCall(0).args[0]).to.deep.equal([
+				expect(myStub.getCall(0).args[1]).to.deep.equal([
 					{
 						field1: 'helloWorld-2',
 						field3: '{"foo":"bar"}',
@@ -581,7 +581,7 @@ describe('@bmoor-modeling::Service', function () {
 					},
 				]);
 
-				expect(myStub.getCall(0).args[0]).to.deep.equal([
+				expect(myStub.getCall(0).args[1]).to.deep.equal([
 					{
 						store1: 'helloWorld-2',
 						store2: '{"foo":"bar"}',
@@ -634,7 +634,7 @@ describe('@bmoor-modeling::Service', function () {
 					},
 				]);
 
-				expect(myStub.getCall(0).args[0]).to.deep.equal([
+				expect(myStub.getCall(0).args[1]).to.deep.equal([
 					{
 						field3: 12,
 					},
@@ -658,8 +658,8 @@ describe('@bmoor-modeling::Service', function () {
 						external: {
 							data: {
 								prop1: 'f1',
-								prop2: 'f2'
-							}
+								prop2: 'f2',
+							},
 						},
 						info: {
 							f1: {
@@ -683,18 +683,20 @@ describe('@bmoor-modeling::Service', function () {
 					},
 				]);
 
-				const res = await service.externalRead(callCtx, [{data: {prop2: 12}}]);
+				const res = await service.externalRead(callCtx, [
+					{data: {prop2: 12}},
+				]);
 
 				expect(res).to.deep.equal([
 					{
 						data: {
 							prop1: 'foo',
 							prop2: 'bar',
-						}
+						},
 					},
 				]);
 
-				expect(myStub.getCall(0).args[0]).to.deep.equal([
+				expect(myStub.getCall(0).args[1]).to.deep.equal([
 					{
 						store2: 12,
 					},
@@ -756,7 +758,7 @@ describe('@bmoor-modeling::Service', function () {
 					},
 				]);
 
-				expect(myStub.getCall(0).args[0]).to.deep.equal([
+				expect(myStub.getCall(0).args[1]).to.deep.equal([
 					{
 						ref: {
 							field3: 123,
@@ -887,7 +889,7 @@ describe('@bmoor-modeling::Service', function () {
 					},
 				]);
 
-				expect(myStub.getCall(0).args[0]).to.deep.equal([
+				expect(myStub.getCall(0).args[1]).to.deep.equal([
 					{
 						ref: {
 							field1: 123,
@@ -917,7 +919,7 @@ describe('@bmoor-modeling::Service', function () {
 							data: {
 								prop1: 'f1',
 								prop2: 'f2',
-							}
+							},
 						},
 						info: {
 							f1: {
@@ -946,13 +948,13 @@ describe('@bmoor-modeling::Service', function () {
 						ref: {
 							data: {
 								prop2: 123,
-							}
+							},
 						},
 						delta: {
 							data: {
 								prop1: 'val-1',
 								prop2: 'val-2',
-							}
+							},
 						},
 					},
 				]);
@@ -962,11 +964,11 @@ describe('@bmoor-modeling::Service', function () {
 						data: {
 							prop1: 'foo',
 							prop2: 'bar',
-						}
+						},
 					},
 				]);
 
-				expect(myStub.getCall(0).args[0]).to.deep.equal([
+				expect(myStub.getCall(0).args[1]).to.deep.equal([
 					{
 						ref: {
 							store2: 123,
@@ -1030,7 +1032,7 @@ describe('@bmoor-modeling::Service', function () {
 					},
 				]);
 
-				expect(myStub.getCall(0).args[0]).to.deep.equal([
+				expect(myStub.getCall(0).args[1]).to.deep.equal([
 					{
 						field3: 123,
 					},
@@ -1054,8 +1056,8 @@ describe('@bmoor-modeling::Service', function () {
 						external: {
 							data: {
 								prop1: 'f1',
-								prop2: 'f2'
-							}
+								prop2: 'f2',
+							},
 						},
 						info: {
 							f1: {
@@ -1085,7 +1087,7 @@ describe('@bmoor-modeling::Service', function () {
 					{
 						data: {
 							prop2: 123,
-						}
+						},
 					},
 				]);
 
@@ -1094,11 +1096,11 @@ describe('@bmoor-modeling::Service', function () {
 						data: {
 							prop1: 'foo',
 							prop2: 'bar',
-						}
+						},
 					},
 				]);
 
-				expect(myStub.getCall(0).args[0]).to.deep.equal([
+				expect(myStub.getCall(0).args[1]).to.deep.equal([
 					{
 						store2: 123,
 					},

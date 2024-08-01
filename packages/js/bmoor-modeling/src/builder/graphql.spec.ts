@@ -220,7 +220,6 @@ describe('@bmoor/schema :: BuilderGraphql', function () {
 						},
 					},
 				},
-				{},
 			),
 		);
 
