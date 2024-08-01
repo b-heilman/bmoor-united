@@ -16,7 +16,7 @@ import {validations} from '@bmoor/schema';
 
 import {Graphql} from './graphql';
 
-describe('@bmoor/schema-services : graphql', function () {
+describe('@bmoor/modeling-services : graphql', function () {
 	const serverCtx = new Context(types, validations, hooks, converter);
 	let nexus: Nexus;
 	let adapter1: ServiceAdapterInterface;
@@ -40,12 +40,70 @@ describe('@bmoor/schema-services : graphql', function () {
 				return ids.length;
 			},
 			async select(/*ctx, selector*/) {
-				return [];
+				return [
+					{
+						foo: 'eins',
+						bar: 1.1,
+					},
+				];
 			},
 			async search(/*ctx, search*/) {
 				return [];
 			},
 		};
+
+		adapter2 = {
+			async create(ctx, content) {
+				return content;
+			},
+			async read(ctx, content) {
+				return content;
+			},
+			async update(ctx, content) {
+				return content;
+			},
+			async delete(ctx, ids) {
+				return ids.length;
+			},
+			async select(/*ctx, selector*/) {
+				return [
+					{
+						hello: 'zwei',
+						world: 1.2,
+					},
+				];
+			},
+			async search(/*ctx, search*/) {
+				return [];
+			},
+		};
+
+		adapter3 = {
+			async create(ctx, content) {
+				return content;
+			},
+			async read(ctx, content) {
+				return content;
+			},
+			async update(ctx, content) {
+				return content;
+			},
+			async delete(ctx, ids) {
+				return ids.length;
+			},
+			async select(/*ctx, selector*/) {
+				return [
+					{
+						id: 'fier',
+						otherId: 'funf',
+					},
+				];
+			},
+			async search(/*ctx, search*/) {
+				return [];
+			},
+		};
+
 		nexus.addService(
 			new Service(
 				new Model(serverCtx, {
@@ -76,26 +134,6 @@ describe('@bmoor/schema-services : graphql', function () {
 			),
 		);
 
-		adapter2 = {
-			async create(ctx, content) {
-				return content;
-			},
-			async read(ctx, content) {
-				return content;
-			},
-			async update(ctx, content) {
-				return content;
-			},
-			async delete(ctx, ids) {
-				return ids.length;
-			},
-			async select(/*ctx, selector*/) {
-				return [];
-			},
-			async search(/*ctx, search*/) {
-				return [];
-			},
-		};
 		nexus.addService(
 			new Service(
 				new Model(serverCtx, {
@@ -130,26 +168,6 @@ describe('@bmoor/schema-services : graphql', function () {
 			),
 		);
 
-		adapter3 = {
-			async create(ctx, content) {
-				return content;
-			},
-			async read(ctx, content) {
-				return content;
-			},
-			async update(ctx, content) {
-				return content;
-			},
-			async delete(ctx, ids) {
-				return ids.length;
-			},
-			async select(/*ctx, selector*/) {
-				return [];
-			},
-			async search(/*ctx, search*/) {
-				return [];
-			},
-		};
 		nexus.addService(
 			new Service(
 				new Model(serverCtx, {

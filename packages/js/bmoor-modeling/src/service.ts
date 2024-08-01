@@ -140,7 +140,7 @@ export class Service<
 		ctx: ContextSecurityInterface,
 		query: ServiceAdapterSelector,
 	): Promise<ExternalT['structure'][]> {
-		return (await this.search(ctx, query)).map((datum) =>
+		return (await this.select(ctx, query)).map((datum) =>
 			this.inflate(ctx, datum),
 		);
 	}

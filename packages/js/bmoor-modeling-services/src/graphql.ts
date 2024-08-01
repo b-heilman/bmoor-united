@@ -64,6 +64,7 @@ function createSchemaResolver(
 						return null;
 					},
 				};
+
 				const res = await other.externalSelect(callCtx, {
 					properties,
 					actions,
