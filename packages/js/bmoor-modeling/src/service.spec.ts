@@ -642,6 +642,66 @@ describe('@bmoor-modeling::Service', function () {
 			});
 		});
 
+		describe('externalRead', function () {
+			it('should work without a validator', async function () {
+				const service = new Service(
+					new Model(serverCtx, {
+						reference: 'junk',
+						structure: {
+							field1: 'f1',
+							field2: 'f2',
+						},
+						storage: {
+							store1: 'f1',
+							store2: 'f2',
+						},
+						external: {
+							data: {
+								prop1: 'f1',
+								prop2: 'f2'
+							}
+						},
+						info: {
+							f1: {
+								type: 'string',
+							},
+							f2: {
+								type: 'number',
+							},
+						},
+					}),
+					{
+						adapter,
+						controller,
+					},
+				);
+
+				const myStub = stub(adapter, 'read').resolves([
+					{
+						store1: 'foo',
+						store2: 'bar',
+					},
+				]);
+
+				const res = await service.externalRead(callCtx, [{data: {prop2: 12}}]);
+
+				expect(res).to.deep.equal([
+					{
+						data: {
+							prop1: 'foo',
+							prop2: 'bar',
+						}
+					},
+				]);
+
+				expect(myStub.getCall(0).args[0]).to.deep.equal([
+					{
+						store2: 12,
+					},
+				]);
+			});
+		});
+
 		describe('update', function () {
 			it('should work without a validator', async function () {
 				const service = new Service(
@@ -840,6 +900,86 @@ describe('@bmoor-modeling::Service', function () {
 			});
 		});
 
+		describe('externalUpdate', function () {
+			it('should work without a validator', async function () {
+				const service = new Service(
+					new Model(serverCtx, {
+						reference: 'junk',
+						structure: {
+							field1: 'f1',
+							field2: 'f2',
+						},
+						storage: {
+							store1: 'f1',
+							store2: 'f2',
+						},
+						external: {
+							data: {
+								prop1: 'f1',
+								prop2: 'f2',
+							}
+						},
+						info: {
+							f1: {
+								type: 'string',
+							},
+							f2: {
+								type: 'number',
+							},
+						},
+					}),
+					{
+						adapter,
+						controller,
+					},
+				);
+
+				const myStub = stub(adapter, 'update').resolves([
+					{
+						store1: 'foo',
+						store2: 'bar',
+					},
+				]);
+
+				const res = await service.externalUpdate(callCtx, [
+					{
+						ref: {
+							data: {
+								prop2: 123,
+							}
+						},
+						delta: {
+							data: {
+								prop1: 'val-1',
+								prop2: 'val-2',
+							}
+						},
+					},
+				]);
+
+				expect(res).to.deep.equal([
+					{
+						data: {
+							prop1: 'foo',
+							prop2: 'bar',
+						}
+					},
+				]);
+
+				expect(myStub.getCall(0).args[0]).to.deep.equal([
+					{
+						ref: {
+							store2: 123,
+						},
+						delta: {
+							store1: 'val-1',
+							store2: 'val-2',
+						},
+					},
+				]);
+			});
+		});
+
 		describe('delete', function () {
 			it('should work without a validator', async function () {
 				const service = new Service(
@@ -893,6 +1033,74 @@ describe('@bmoor-modeling::Service', function () {
 				expect(myStub.getCall(0).args[0]).to.deep.equal([
 					{
 						field3: 123,
+					},
+				]);
+			});
+		});
+
+		describe('externalDelete', function () {
+			it('should work without a validator', async function () {
+				const service = new Service(
+					new Model(serverCtx, {
+						reference: 'junk',
+						structure: {
+							field1: 'f1',
+							field2: 'f2',
+						},
+						storage: {
+							store1: 'f1',
+							store2: 'f2',
+						},
+						external: {
+							data: {
+								prop1: 'f1',
+								prop2: 'f2'
+							}
+						},
+						info: {
+							f1: {
+								type: 'string',
+							},
+							f2: {
+								type: 'number',
+							},
+						},
+					}),
+					{
+						adapter,
+						controller,
+					},
+				);
+
+				const myStub = stub(adapter, 'delete').resolves(null);
+
+				stub(service, 'read').resolves([
+					{
+						field1: 'foo',
+						field2: 'bar',
+					},
+				]);
+
+				const res = await service.externalDelete(callCtx, [
+					{
+						data: {
+							prop2: 123,
+						}
+					},
+				]);
+
+				expect(res).to.deep.equal([
+					{
+						data: {
+							prop1: 'foo',
+							prop2: 'bar',
+						}
+					},
+				]);
+
+				expect(myStub.getCall(0).args[0]).to.deep.equal([
+					{
+						store2: 123,
 					},
 				]);
 			});
