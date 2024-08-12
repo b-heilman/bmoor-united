@@ -13,11 +13,16 @@ export class Mapper {
 	addModel(model) {
 		const fields = model.incomingSettings.fields;
 
-		for (let property in fields) {
-			let field = fields[property];
+		for (const property in fields) {
+			const field = fields[property];
 
 			if (field.link) {
-				this.addLink(model.name, property, field.link.name, field.link.field);
+				this.addLink(
+					model.name,
+					property,
+					field.link.name,
+					field.link.field,
+				);
 			}
 		}
 	}
@@ -28,24 +33,25 @@ export class Mapper {
 
 		from.addLink({
 			from: fromTable,
-			fromPath, 
-			to: toTable, 
-			toPath, 
+			fromPath,
+			to: toTable,
+			toPath,
 			metadata: {
-				direction: 'outgoing'
-			}
+				direction: 'outgoing',
+			},
 		});
 
-		const to = this.hubs[toTable] || (this.hubs[toTable] = new Hub(toTable));
+		const to =
+			this.hubs[toTable] || (this.hubs[toTable] = new Hub(toTable));
 
 		to.addLink({
 			from: toTable,
-			fromPath: toPath, 
-			to: fromTable, 
-			toPath: fromPath, 
+			fromPath: toPath,
+			to: fromTable,
+			toPath: fromPath,
 			metadata: {
-				direction: 'incoming'
-			}
+				direction: 'incoming',
+			},
 		});
 	}
 
@@ -55,7 +61,7 @@ export class Mapper {
 
 	getByDirection(name, direction) {
 		return this.hubs[name].connections.filter(
-			(d) => d.metadata.direction === direction
+			(d) => d.metadata.direction === direction,
 		);
 	}
 

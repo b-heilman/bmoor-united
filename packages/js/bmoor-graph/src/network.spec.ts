@@ -1,7 +1,7 @@
 import {expect} from 'chai';
 
-import {Mapper} from './network/mapper.js';
 import {Network} from './network.js';
+import {Mapper} from './network/mapper.js';
 
 describe('@bmoor/graph - network', function () {
 	describe('::search', function () {
@@ -15,7 +15,9 @@ describe('@bmoor/graph - network', function () {
 			const network = new Network(mapper);
 
 			expect(
-				network.search(['table-1', 'table-2', 'table-4'], 3).map((t) => t.ref)
+				network
+					.search(['table-1', 'table-2', 'table-4'], 3)
+					.map((t) => t.ref),
 			).to.deep.equal(['table-1', 'table-2', 'table-4', 'table-3']);
 		});
 
@@ -30,7 +32,9 @@ describe('@bmoor/graph - network', function () {
 			const network = new Network(mapper);
 
 			expect(
-				network.search(['table-1', 'table-2', 'table-4'], 3).map((t) => t.ref)
+				network
+					.search(['table-1', 'table-2', 'table-4'], 3)
+					.map((t) => t.ref),
 			).to.deep.equal(['table-1', 'table-2', 'table-4']);
 		});
 
@@ -45,7 +49,9 @@ describe('@bmoor/graph - network', function () {
 			const network = new Network(mapper);
 
 			expect(
-				network.search(['table-1', 'table-3', 'table-4'], 3).map((t) => t.ref)
+				network
+					.search(['table-1', 'table-3', 'table-4'], 3)
+					.map((t) => t.ref),
 			).to.deep.equal(['table-1', 'table-3', 'table-4']);
 		});
 
@@ -84,9 +90,9 @@ describe('@bmoor/graph - network', function () {
 				expect(
 					network
 						.search(['table-1', 'table-3'], 3, {
-							stub: ['table-2']
+							stub: ['table-2'],
 						})
-						.map((t) => t.ref)
+						.map((t) => t.ref),
 				).to.deep.equal(['table-1', 'table-3', 'table-5', 'table-4']);
 			});
 		});
@@ -108,10 +114,10 @@ describe('@bmoor/graph - network', function () {
 					network
 						.search(['table-1', 'table-3'], 3, {
 							join: {
-								'table-4': ['table-3'] // only table-4 can link to table-3
-							}
+								'table-4': ['table-3'], // only table-4 can link to table-3
+							},
 						})
-						.map((t) => t.ref)
+						.map((t) => t.ref),
 				).to.deep.equal(['table-1', 'table-3', 'table-2', 'table-4']);
 			});
 
@@ -132,10 +138,10 @@ describe('@bmoor/graph - network', function () {
 						.search(['table-1', 'table-3'], 3, {
 							join: {
 								'table-4': ['table-3'], // only table-4 can link to table-3
-								'table-3': ['table-2']
-							}
+								'table-3': ['table-2'],
+							},
 						})
-						.map((t) => t.ref)
+						.map((t) => t.ref),
 				).to.deep.equal(['table-1', 'table-3', 'table-5', 'table-4']);
 			});
 		});
@@ -157,42 +163,44 @@ describe('@bmoor/graph - network', function () {
 			expect(
 				network
 					.requirements(['table-6', 'table-3', 'table-4'], 3)
-					.map((t) => t.ref)
+					.map((t) => t.ref),
 			).to.deep.equal(['table-6', 'table-4', 'table-5', 'table-3']);
 
 			expect(
 				network
 					.requirements(['table-3', 'table-4', 'table-6'], 3)
-					.map((t) => t.ref)
+					.map((t) => t.ref),
 			).to.deep.equal(['table-4', 'table-6', 'table-5', 'table-3']);
 
 			expect(
 				network
 					.requirements(['table-6', 'table-4', 'table-3'], 3)
-					.map((t) => t.ref)
+					.map((t) => t.ref),
 			).to.deep.equal(['table-6', 'table-4', 'table-5', 'table-3']);
 
-			let master = [
+			const master = [
 				'table-1',
 				'table-7',
 				'table-2',
 				'table-3',
 				'table-4',
 				'table-6',
-				'table-5'
+				'table-5',
 			];
-			expect(network.requirements(master, 3).map((t) => t.ref)).to.deep.equal([
+			expect(
+				network.requirements(master, 3).map((t) => t.ref),
+			).to.deep.equal([
 				'table-7',
 				'table-2',
 				'table-4',
 				'table-6',
 				'table-5',
 				'table-3',
-				'table-1'
+				'table-1',
 			]);
 
 			expect(
-				network.requirements(master.reverse(), 3).map((t) => t.ref)
+				network.requirements(master.reverse(), 3).map((t) => t.ref),
 			).to.deep.equal([
 				'table-4',
 				'table-2',
@@ -200,7 +208,7 @@ describe('@bmoor/graph - network', function () {
 				'table-6',
 				'table-5',
 				'table-3',
-				'table-1'
+				'table-1',
 			]);
 		});
 
@@ -226,9 +234,9 @@ describe('@bmoor/graph - network', function () {
 						'table-4',
 						'table-3',
 						'table-2',
-						'table-1'
+						'table-1',
 					],
-					1
+					1,
 				)
 				.map((t) => t.ref);
 
@@ -239,7 +247,7 @@ describe('@bmoor/graph - network', function () {
 				'table-5',
 				'table-2',
 				'table-7',
-				'table-1'
+				'table-1',
 			]);
 
 			results = network
@@ -251,9 +259,9 @@ describe('@bmoor/graph - network', function () {
 						'table-4',
 						'table-5',
 						'table-6',
-						'table-7'
+						'table-7',
 					],
-					1
+					1,
 				)
 				.map((t) => t.ref);
 
@@ -264,7 +272,7 @@ describe('@bmoor/graph - network', function () {
 				'table-5',
 				'table-6',
 				'table-1',
-				'table-7'
+				'table-7',
 			]);
 
 			results = network
@@ -276,9 +284,9 @@ describe('@bmoor/graph - network', function () {
 						'table-4',
 						'table-2',
 						'table-6',
-						'table-5'
+						'table-5',
 					],
-					1
+					1,
 				)
 				.map((t) => t.ref);
 
@@ -289,7 +297,7 @@ describe('@bmoor/graph - network', function () {
 				'table-6',
 				'table-5',
 				'table-1',
-				'table-7'
+				'table-7',
 			]);
 		});
 
@@ -308,7 +316,7 @@ describe('@bmoor/graph - network', function () {
 
 			const network = new Network(mapper);
 
-			let results = network
+			const results = network
 				.requirements(
 					[
 						'table-7',
@@ -317,9 +325,9 @@ describe('@bmoor/graph - network', function () {
 						'table-4',
 						'table-3',
 						'table-2',
-						'table-1'
+						'table-1',
 					],
-					1
+					1,
 				)
 				.map((t) => t.ref);
 
@@ -330,7 +338,7 @@ describe('@bmoor/graph - network', function () {
 				'table-2',
 				'table-5',
 				'table-4',
-				'table-1'
+				'table-1',
 			]);
 		});
 	});
@@ -351,29 +359,29 @@ describe('@bmoor/graph - network', function () {
 			expect(
 				network
 					.anchored(['table-6', 'table-3', 'table-4'], 3)
-					.map((t) => t.ref)
+					.map((t) => t.ref),
 			).to.deep.equal(['table-3', 'table-4', 'table-5', 'table-6']);
 
 			expect(
 				network
 					.anchored(['table-3', 'table-4', 'table-6'], 3)
-					.map((t) => t.ref)
+					.map((t) => t.ref),
 			).to.deep.equal(['table-3', 'table-4', 'table-5', 'table-6']);
 
 			expect(
 				network
 					.anchored(['table-6', 'table-4', 'table-3'], 3)
-					.map((t) => t.ref)
+					.map((t) => t.ref),
 			).to.deep.equal(['table-3', 'table-4', 'table-5', 'table-6']);
 
-			let master = [
+			const master = [
 				'table-1',
 				'table-7',
 				'table-2',
 				'table-3',
 				'table-4',
 				'table-6',
-				'table-5'
+				'table-5',
 			];
 			expect(network.anchored(master, 3).map((t) => t.ref)).to.deep.equal([
 				'table-3',
@@ -382,11 +390,11 @@ describe('@bmoor/graph - network', function () {
 				'table-5',
 				'table-2',
 				'table-6',
-				'table-7'
+				'table-7',
 			]);
 
 			expect(
-				network.anchored(master.reverse(), 3).map((t) => t.ref)
+				network.anchored(master.reverse(), 3).map((t) => t.ref),
 			).to.deep.equal([
 				'table-3',
 				'table-5',
@@ -394,7 +402,7 @@ describe('@bmoor/graph - network', function () {
 				'table-1',
 				'table-6',
 				'table-2',
-				'table-7'
+				'table-7',
 			]);
 		});
 	});
@@ -416,7 +424,7 @@ describe('@bmoor/graph - network', function () {
 			expect(
 				network
 					.path('table-6', 'table-4', ['table-6', 'table-3', 'table-4'], 3)
-					.map((t) => t.ref)
+					.map((t) => t.ref),
 			).to.deep.equal(['table-6', 'table-5', 'table-3', 'table-4']);
 
 			expect(
@@ -425,9 +433,9 @@ describe('@bmoor/graph - network', function () {
 						'table-1',
 						'table-4',
 						['table-1', 'table-2', 'table-3', 'table-4'],
-						3
+						3,
 					)
-					.map((t) => t.ref)
+					.map((t) => t.ref),
 			).to.deep.equal(['table-1', 'table-3', 'table-4']);
 
 			expect(
@@ -436,9 +444,9 @@ describe('@bmoor/graph - network', function () {
 						'table-1',
 						'table-3',
 						['table-1', 'table-2', 'table-3', 'table-4'],
-						3
+						3,
 					)
-					.map((t) => t.ref)
+					.map((t) => t.ref),
 			).to.deep.equal(['table-1', 'table-3']);
 
 			expect(
@@ -447,9 +455,9 @@ describe('@bmoor/graph - network', function () {
 						'table-4',
 						'table-1',
 						['table-1', 'table-2', 'table-3', 'table-4'],
-						3
+						3,
 					)
-					.map((t) => t.ref)
+					.map((t) => t.ref),
 			).to.deep.equal(['table-4', 'table-3', 'table-1']);
 		});
 	});

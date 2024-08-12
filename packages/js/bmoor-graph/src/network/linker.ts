@@ -1,17 +1,17 @@
-import { Hub } from "./hub";
-import { HubLink } from "./hub.interface";
-import { Mapper } from "./mapper";
+import {Hub} from './hub';
+import {HubLink} from './hub.interface';
+import {Mapper} from './mapper';
 
 type LinkCheck = {
-	count: number, 
-	hub: Hub,
-	parent?: LinkCheck
-}
+	count: number;
+	hub: Hub;
+	parent?: LinkCheck;
+};
 
 type LinkerSearchSettings = {
-	allowed? : Record<string, Record<string, boolean>>, 
-	block? : string[]
-}
+	allowed?: Record<string, Record<string, boolean>>;
+	block?: string[];
+};
 
 // search a map for connective nodes, do it x deep
 export class Linker {
@@ -30,7 +30,7 @@ export class Linker {
 	// search for tables within x jumps
 	// TODO: need to define settings
 	search(toName, count = 999, settings: LinkerSearchSettings = {}): Hub[] {
-		let connection = this.hub.getLink(toName);
+		const connection = this.hub.getLink(toName);
 
 		if (connection) {
 			return [this.hub, this.mapper.getHub(toName)];
@@ -60,7 +60,7 @@ export class Linker {
 			) {
 				toCheck.push({
 					count: count - 1,
-					hub: hub
+					hub: hub,
 				});
 				traversed[link.to] = true;
 			}
@@ -78,7 +78,7 @@ export class Linker {
 					toCheck.push({
 						count: check.count - 1,
 						hub: childLink,
-						parent: check // for building path later
+						parent: check, // for building path later
 					});
 					traversed[link.to] = true;
 				}

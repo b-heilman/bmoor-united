@@ -1,7 +1,7 @@
 import {expect} from 'chai';
 
 import {Linker} from './linker.js';
-import  {Mapper} from './mapper.js';
+import {Mapper} from './mapper.js';
 
 describe('@bmoor/graph - network/linker', function () {
 	it('should work with a linear path', function () {
@@ -17,7 +17,7 @@ describe('@bmoor/graph - network/linker', function () {
 			'table-1',
 			'table-2',
 			'table-3',
-			'table-4'
+			'table-4',
 		]);
 	});
 
@@ -33,7 +33,7 @@ describe('@bmoor/graph - network/linker', function () {
 		expect(linker.search('table-3', 3).map((t) => t.ref)).to.deep.equal([
 			'table-1',
 			'table-2',
-			'table-3'
+			'table-3',
 		]);
 	});
 
@@ -72,7 +72,7 @@ describe('@bmoor/graph - network/linker', function () {
 
 		expect(linker.search('table-2', 1).map((t) => t.ref)).to.deep.equal([
 			'table-1',
-			'table-2'
+			'table-2',
 		]);
 	});
 
@@ -88,7 +88,7 @@ describe('@bmoor/graph - network/linker', function () {
 
 		expect(linker.search('table-4', 3).map((t) => t.ref)).to.deep.equal([
 			'table-1',
-			'table-4'
+			'table-4',
 		]);
 	});
 
@@ -105,7 +105,7 @@ describe('@bmoor/graph - network/linker', function () {
 		expect(linker.search('table-4', 3).map((t) => t.ref)).to.deep.equal([
 			'table-1',
 			'table-2',
-			'table-4'
+			'table-4',
 		]);
 	});
 
@@ -122,8 +122,8 @@ describe('@bmoor/graph - network/linker', function () {
 
 			expect(
 				linker.search('table-4', 3, {
-					block: ['table-2']
-				})
+					block: ['table-2'],
+				}),
 			).to.equal(null);
 		});
 
@@ -142,9 +142,9 @@ describe('@bmoor/graph - network/linker', function () {
 			expect(
 				linker
 					.search('table-3', 3, {
-						block: ['table-2']
+						block: ['table-2'],
 					})
-					.map((t) => t.ref)
+					.map((t) => t.ref),
 			).to.deep.equal(['table-1', 'table-5', 'table-4', 'table-3']);
 		});
 	});
@@ -168,11 +168,11 @@ describe('@bmoor/graph - network/linker', function () {
 						allowed: {
 							'table-3': {
 								'table-2': true,
-								'table-4': false
-							}
-						}
+								'table-4': false,
+							},
+						},
 					})
-					.map((t) => t.ref)
+					.map((t) => t.ref),
 			).to.deep.equal(['table-1', 'table-2', 'table-3']);
 		});
 
@@ -194,14 +194,14 @@ describe('@bmoor/graph - network/linker', function () {
 						allowed: {
 							'table-3': {
 								'table-2': false,
-								'table-4': true
+								'table-4': true,
 							},
 							'table-2': {
-								'table-1': true
-							}
-						}
+								'table-1': true,
+							},
+						},
 					})
-					.map((t) => t.ref)
+					.map((t) => t.ref),
 			).to.deep.equal(['table-1', 'table-2', 'table-4', 'table-3']);
 		});
 
@@ -223,14 +223,14 @@ describe('@bmoor/graph - network/linker', function () {
 						allowed: {
 							'table-3': {
 								'table-2': false,
-								'table-4': true
+								'table-4': true,
 							},
 							'table-2': {
-								'table-1': false
-							}
-						}
+								'table-1': false,
+							},
+						},
 					})
-					.map((t) => t.ref)
+					.map((t) => t.ref),
 			).to.deep.equal(['table-1', 'table-5', 'table-4', 'table-3']);
 		});
 	});

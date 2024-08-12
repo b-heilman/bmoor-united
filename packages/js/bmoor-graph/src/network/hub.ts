@@ -1,11 +1,11 @@
 import {makeGetter} from '@bmoor/object';
 
-import { HubLink } from './hub.interface';
+import {HubLink} from './hub.interface';
 
 export class Hub {
 	ref: string;
-	connections: HubLink[]
-	connectors: Record<string, HubLink[]>
+	connections: HubLink[];
+	connectors: Record<string, HubLink[]>;
 
 	constructor(ref: string) {
 		this.ref = ref;
@@ -25,10 +25,10 @@ export class Hub {
 	}
 
 	addLink(connection: HubLink) {
-		if (connection.from !== this.ref){
+		if (connection.from !== this.ref) {
 			throw new Error(
-				`adding connection from that does not match ref: ${connection.from} vs ${this.ref}` 
-			)
+				`adding connection from that does not match ref: ${connection.from} vs ${this.ref}`,
+			);
 		}
 
 		const existing = this.connectors[connection.to];
@@ -59,7 +59,7 @@ export class Hub {
 		const connections = subset ? this.prune(subset) : this.connections;
 
 		return connections.filter(
-			(connection) => getter(connection.metadata) === value
+			(connection) => getter(connection.metadata) === value,
 		);
 	}
 

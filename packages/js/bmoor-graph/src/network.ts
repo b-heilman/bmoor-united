@@ -1,12 +1,12 @@
-import { HubLink } from './network/hub.interface.js';
-import { Hub } from './network/hub.js';
+import {HubLink} from './network/hub.interface.js';
+import {Hub} from './network/hub.js';
 import {Linker} from './network/linker.js';
-import { Mapper } from './network/mapper.js';
+import {Mapper} from './network/mapper.js';
 
 // Builds a network give a mapper
 type NetworkSettings = {
-	join?: Record<string, string[]>
-	stub?: string[]
+	join?: Record<string, string[]>;
+	stub?: string[];
 };
 
 export class Network {
@@ -18,24 +18,31 @@ export class Network {
 
 	// given a set of targets, see if they all connect, limiting depth of search
 	// this is pretty brute force
-	search(toSearch: string[], depth = 999, settings: NetworkSettings = {}): Hub[] {
-		const joinModels = Object.keys(settings.join || {}).reduce((agg, model) => {
-			const tables = settings.join[model];
+	search(
+		toSearch: string[],
+		depth = 999,
+		settings: NetworkSettings = {},
+	): Hub[] {
+		const joinModels = Object.keys(settings.join || {}).reduce(
+			(agg, model) => {
+				const tables = settings.join[model];
 
-			return tables.reduce((inner, table) => {
-				let incoming = inner[table];
+				return tables.reduce((inner, table) => {
+					let incoming = inner[table];
 
-				if (!incoming) {
-					incoming = {};
+					if (!incoming) {
+						incoming = {};
 
-					inner[table] = incoming;
-				}
+						inner[table] = incoming;
+					}
 
-				incoming[model] = true;
+					incoming[model] = true;
 
-				return inner;
-			}, agg);
-		}, {});
+					return inner;
+				}, agg);
+			},
+			{},
+		);
 
 		const stubModels = (settings.stub || []).reduce((agg, table) => {
 			agg[table] = true;
@@ -48,9 +55,7 @@ export class Network {
 
 		if (models.length === 1) {
 			// I feel a little dirty for this... but...
-			return [
-				this.mapper.getHub(models[0])
-			];
+			return [this.mapper.getHub(models[0])];
 		}
 
 		let contains = models.reduce((agg, name) => {
@@ -71,9 +76,9 @@ export class Network {
 
 				// run only the following names, it's n!, but the ifs reduce n
 				masterModels.slice(i + 1).forEach((nextName) => {
-					let results = linker.search(nextName, depthTarget, {
+					const results = linker.search(nextName, depthTarget, {
 						allowed: joinModels,
-						block: Object.keys(stubModels)
+						block: Object.keys(stubModels),
 					});
 
 					if (results) {
@@ -171,7 +176,7 @@ export class Network {
 		const priority = hubs
 			.map((hub) => ({
 				hub,
-				connections: hub.prune(names)
+				connections: hub.prune(names),
 			}))
 			.sort((a, b) => b.connections.length - a.connections.length); // I want higher counts first
 
@@ -207,14 +212,17 @@ export class Network {
 			return hubs;
 		}
 
-		const dex: Record<string, {hub:Hub, links: HubLink[]}> = hubs.reduce((agg, hub) => {
-			agg[hub.ref] = {
-				hub,
-				links: []
-			};
+		const dex: Record<string, {hub: Hub; links: HubLink[]}> = hubs.reduce(
+			(agg, hub) => {
+				agg[hub.ref] = {
+					hub,
+					links: [],
+				};
 
-			return agg;
-		}, {});
+				return agg;
+			},
+			{},
+		);
 
 		const names = Object.keys(dex);
 
@@ -229,11 +237,11 @@ export class Network {
 			return [cur.hub];
 		}
 
-		let search = [
+		const search = [
 			{
 				node: cur,
-				path: [cur.hub]
-			}
+				path: [cur.hub],
+			},
 		];
 
 		while (search.length) {
@@ -255,7 +263,7 @@ export class Network {
 
 						search.push({
 							node: cur,
-							path: slice
+							path: slice,
 						});
 					}
 				}
@@ -270,8 +278,8 @@ export class Network {
 			...new Set(
 				fromArr
 					.map((fromName) => this.path(fromName, toName, toSearch, depth))
-					.flat()
-			)
+					.flat(),
+			),
 		];
 	}
 }

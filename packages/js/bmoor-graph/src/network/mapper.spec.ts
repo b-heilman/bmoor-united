@@ -23,8 +23,8 @@ describe('@bmoor/graph - network/mapper', function () {
 				to: 'table-2',
 				toPath: 'eins',
 				metadata: {
-					direction: 'outgoing'
-				}
+					direction: 'outgoing',
+				},
 			},
 			{
 				from: 'table-1',
@@ -32,9 +32,9 @@ describe('@bmoor/graph - network/mapper', function () {
 				to: 'table-4',
 				toPath: 'eins',
 				metadata: {
-					direction: 'incoming'
-				}
-			}
+					direction: 'incoming',
+				},
+			},
 		]);
 
 		expect(table1.reduceConnectors()).to.deep.equal({
@@ -45,9 +45,9 @@ describe('@bmoor/graph - network/mapper', function () {
 					to: 'table-2',
 					toPath: 'eins',
 					metadata: {
-						direction: 'outgoing'
-					}
-				}
+						direction: 'outgoing',
+					},
+				},
 			],
 			'table-4': [
 				{
@@ -56,10 +56,10 @@ describe('@bmoor/graph - network/mapper', function () {
 					to: 'table-4',
 					toPath: 'eins',
 					metadata: {
-						direction: 'incoming'
-					}
-				}
-			]
+						direction: 'incoming',
+					},
+				},
+			],
 		});
 
 		expect(table2.reduceConnections()).to.deep.equal([
@@ -69,8 +69,8 @@ describe('@bmoor/graph - network/mapper', function () {
 				to: 'table-1',
 				toPath: 'id',
 				metadata: {
-					direction: 'incoming'
-				}
+					direction: 'incoming',
+				},
 			},
 			{
 				from: 'table-2',
@@ -78,9 +78,9 @@ describe('@bmoor/graph - network/mapper', function () {
 				to: 'table-3',
 				toPath: 'zwei',
 				metadata: {
-					direction: 'outgoing'
-				}
-			}
+					direction: 'outgoing',
+				},
+			},
 		]);
 
 		expect(table2.reduceConnectors()).to.deep.equal({
@@ -91,9 +91,9 @@ describe('@bmoor/graph - network/mapper', function () {
 					to: 'table-1',
 					toPath: 'id',
 					metadata: {
-						direction: 'incoming'
-					}
-				}
+						direction: 'incoming',
+					},
+				},
 			],
 			'table-3': [
 				{
@@ -102,10 +102,10 @@ describe('@bmoor/graph - network/mapper', function () {
 					to: 'table-3',
 					toPath: 'zwei',
 					metadata: {
-						direction: 'outgoing'
-					}
-				}
-			]
+						direction: 'outgoing',
+					},
+				},
+			],
 		});
 
 		expect(table3.reduceConnections()).to.deep.equal([
@@ -115,8 +115,8 @@ describe('@bmoor/graph - network/mapper', function () {
 				to: 'table-2',
 				toPath: 'id',
 				metadata: {
-					direction: 'incoming'
-				}
+					direction: 'incoming',
+				},
 			},
 			{
 				from: 'table-3',
@@ -124,22 +124,22 @@ describe('@bmoor/graph - network/mapper', function () {
 				fromPath: 'id',
 				toPath: 'drei',
 				metadata: {
-					direction: 'outgoing'
-				}
-			}
+					direction: 'outgoing',
+				},
+			},
 		]);
 
 		expect(table3.reduceConnectors()).to.deep.equal({
 			'table-2': [
 				{
 					from: 'table-3',
-				to: 'table-2',
+					to: 'table-2',
 					fromPath: 'zwei',
 					toPath: 'id',
 					metadata: {
-						direction: 'incoming'
-					}
-				}
+						direction: 'incoming',
+					},
+				},
 			],
 			'table-4': [
 				{
@@ -148,10 +148,10 @@ describe('@bmoor/graph - network/mapper', function () {
 					fromPath: 'id',
 					toPath: 'drei',
 					metadata: {
-						direction: 'outgoing'
-					}
-				}
-			]
+						direction: 'outgoing',
+					},
+				},
+			],
 		});
 
 		expect(table4.reduceConnections()).to.deep.equal([
@@ -161,8 +161,8 @@ describe('@bmoor/graph - network/mapper', function () {
 				fromPath: 'drei',
 				toPath: 'id',
 				metadata: {
-					direction: 'incoming'
-				}
+					direction: 'incoming',
+				},
 			},
 			{
 				from: 'table-4',
@@ -170,9 +170,9 @@ describe('@bmoor/graph - network/mapper', function () {
 				fromPath: 'eins',
 				toPath: 'id',
 				metadata: {
-					direction: 'outgoing'
-				}
-			}
+					direction: 'outgoing',
+				},
+			},
 		]);
 
 		expect(table4.reduceConnectors()).to.deep.equal({
@@ -183,9 +183,9 @@ describe('@bmoor/graph - network/mapper', function () {
 					fromPath: 'drei',
 					toPath: 'id',
 					metadata: {
-						direction: 'incoming'
-					}
-				}
+						direction: 'incoming',
+					},
+				},
 			],
 			'table-1': [
 				{
@@ -194,10 +194,10 @@ describe('@bmoor/graph - network/mapper', function () {
 					fromPath: 'eins',
 					toPath: 'id',
 					metadata: {
-						direction: 'outgoing'
-					}
-				}
-			]
+						direction: 'outgoing',
+					},
+				},
+			],
 		});
 	});
 
@@ -421,19 +421,19 @@ describe('@bmoor/graph - network/mapper', function () {
 
 		it('should let me get all incoming routes', function () {
 			expect(
-				mapper.getByDirection('table-1', 'incoming').map((t) => t.to)
+				mapper.getByDirection('table-1', 'incoming').map((t) => t.to),
 			).to.deep.equal(['table-2', 'table-4']);
 
 			expect(
-				mapper.getByDirection('table-1', 'outgoing').map((t) => t.to)
+				mapper.getByDirection('table-1', 'outgoing').map((t) => t.to),
 			).to.deep.equal([]);
 
 			expect(
-				mapper.getByDirection('table-4', 'incoming').map((t) => t.to)
+				mapper.getByDirection('table-4', 'incoming').map((t) => t.to),
 			).to.deep.equal(['table-3', 'table-5']);
 
 			expect(
-				mapper.getByDirection('table-4', 'outgoing').map((t) => t.to)
+				mapper.getByDirection('table-4', 'outgoing').map((t) => t.to),
 			).to.deep.equal(['table-1']);
 		});
 	});
