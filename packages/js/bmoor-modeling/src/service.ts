@@ -13,6 +13,15 @@ import {
 } from './service.interface';
 import {ServiceAdapterSelector} from './service/adapter.interface';
 
+function getStorageModel(model: ModelInterface) {
+	return {
+		name: model.getReference(),
+		fields: model.getFields().map((field) => ({
+			path: field.getStoragePath(),
+		})),
+	};
+}
+
 export class Service<
 	InternalT extends ServiceInternalGenerics = ServiceInternalGenerics,
 	ExternalT extends ServiceExternalGenerics = ServiceExternalGenerics,
@@ -37,6 +46,7 @@ export class Service<
 		ctx: ContextSecurityInterface,
 		content: ExternalT['structure'][],
 	): Promise<ExternalT['structure'][]> {
+		const model = this.getModel();
 		const internal = content.map((datum) => this.onCreate(ctx, datum));
 
 		const validations = (
@@ -54,12 +64,16 @@ export class Service<
 			? await this.settings.controller.canCreate(ctx, internal, this)
 			: internal;
 
-		const rtn = await this.settings.adapter.create(
-			ctx,
-			allowed.map((datum) => this.deflate(ctx, datum)),
-		);
+		const res = await this.settings.adapter.create(ctx, {
+			model: getStorageModel(model),
+			params: allowed.map((datum) => {
+				return model.implodeStorage(this.deflate(ctx, datum));
+			}),
+		});
 
-		return rtn.map((datum) => this.model.fromDeflated(datum));
+		return res.map((datum) =>
+			this.onRead(ctx, this.model.fromDeflated(datum)),
+		);
 	}
 
 	async externalCreate(
@@ -79,10 +93,21 @@ export class Service<
 		ctx: ContextSecurityInterface,
 		ids: ExternalT['reference'][],
 	): Promise<ExternalT['structure'][]> {
-		const res = await this.settings.adapter.read(
-			ctx,
-			ids.map((datum) => this.deflate(ctx, datum)),
-		);
+		const model = this.getModel();
+		const fields = model.getPrimaryFields();
+		const res = await this.settings.adapter.read(ctx, {
+			select: {
+				models: [getStorageModel(model)],
+			},
+			params: {
+				ops: fields.map((field) => ({
+					series: model.getReference(),
+					path: field.getStoragePath(),
+					operator: 'eq',
+					value: ids.map((datum) => field.read(datum)),
+				})),
+			},
+		});
 
 		const rtn = res.map((datum) =>
 			this.onRead(ctx, this.model.fromDeflated(datum)),
@@ -114,16 +139,20 @@ export class Service<
 		ctx: ContextSecurityInterface,
 		selector: ServiceAdapterSelector,
 	): Promise<InternalT['structure'][]> {
-		if (!this.settings.adapter.select) {
-			throw new Error(
-				'Adapter has no defined select method: ' +
-					this.model.getReference(),
-			);
-		}
-
-		const res = await this.settings.adapter.select(ctx, {
-			properties: this.deflate(ctx, selector.properties),
-			actions: selector.actions,
+		const model = this.getModel();
+		const imploded = model.implode(this.deflate(ctx, selector.properties));
+		const res = await this.settings.adapter.read(ctx, {
+			select: {
+				models: [getStorageModel(model)],
+			},
+			params: {
+				ops: Object.entries(imploded).map(([path, value]) => ({
+					series: model.getReference(),
+					path,
+					operator: 'eq',
+					value,
+				})),
+			},
 		});
 
 		const rtn = res.map((datum) =>
@@ -153,17 +182,21 @@ export class Service<
 		ctx: ContextSecurityInterface,
 		search: InternalT['search'],
 	): Promise<InternalT['structure'][]> {
-		if (!this.settings.adapter.search) {
-			throw new Error(
-				'Adapter has no defined search method: ' +
-					this.model.getReference(),
-			);
-		}
-
-		const res = await this.settings.adapter.search(
-			ctx,
-			this.deflate(ctx, search),
-		);
+		const model = this.getModel();
+		const imploded = model.implode(this.deflate(ctx, search));
+		const res = await this.settings.adapter.read(ctx, {
+			select: {
+				models: [getStorageModel(model)],
+			},
+			params: {
+				ops: Object.entries(imploded).map(([path, value]) => ({
+					series: model.getReference(),
+					path,
+					operator: 'eq',
+					value,
+				})),
+			},
+		});
 
 		const rtn = res.map((datum) =>
 			this.onRead(ctx, this.model.fromDeflated(datum)),
@@ -188,6 +221,7 @@ export class Service<
 		ctx: ContextSecurityInterface,
 		content: ServiceUpdateDelta<InternalT>[],
 	): Promise<InternalT['structure'][]> {
+		const model = this.getModel();
 		const incoming = content.map((change) => {
 			change.delta = this.onUpdate(ctx, change.delta);
 
@@ -209,15 +243,26 @@ export class Service<
 			throw new Error(validations[0]);
 		}
 
-		const rtn = await this.settings.adapter.update(
-			ctx,
-			content.map(({ref, delta}) => ({
-				ref: this.deflate(ctx, ref),
-				delta: this.deflate(ctx, delta),
-			})),
+		const rtn = await Promise.all(
+			content.map((change) =>
+				this.settings.adapter.update(ctx, {
+					model: getStorageModel(model),
+					params: [model.implodeStorage(this.deflate(ctx, change.delta))],
+					where: {
+						params: {
+							ops: model.getPrimaryFields().map((field) => ({
+								series: model.getReference(),
+								path: field.getStoragePath(),
+								operator: 'eq',
+								value: field.read(change.ref),
+							})),
+						},
+					},
+				}),
+			),
 		);
 
-		return rtn.map((datum) => this.model.fromDeflated(datum));
+		return rtn.flat().map((datum) => this.model.fromDeflated(datum));
 	}
 
 	async externalUpdate(
@@ -239,6 +284,8 @@ export class Service<
 		ctx: ContextSecurityInterface,
 		ids: InternalT['reference'][],
 	): Promise<InternalT['structure'][]> {
+		const model = this.getModel();
+		const fields = model.getPrimaryFields();
 		const filtered = this.settings.controller
 			? await this.settings.controller.canDelete(ctx, ids, this)
 			: ids;
@@ -246,7 +293,18 @@ export class Service<
 
 		const count = await this.settings.adapter.delete(
 			ctx,
-			filtered.map((ref) => this.deflate(ctx, ref)),
+			{
+				model: getStorageModel(model),
+				params: {
+					ops: fields.map((field) => ({
+						series: model.getReference(),
+						path: field.getStoragePath(),
+						operator: 'eq',
+						value: ids.map((datum) => field.read(datum)),
+					})),
+				},
+			},
+			// filtered.map((ref) => this.deflate(ctx, ref)),
 		);
 
 		if (count !== datums.length) {

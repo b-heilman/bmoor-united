@@ -25,14 +25,20 @@ describe('src/connectors/sql.js', function () {
 						},
 					],
 				},
-				params: ['v-1', 'v-2', 'v-3'],
+				params: [
+					{
+						name: 'v-1',
+						title: 'v-2',
+						json: 'v-3',
+					},
+				],
 			});
 
 			expect(stmt.sql.replace(/\s+/g, '')).to.deep.equal(
 				`
 				INSERT INTO model-1 (\`name\`, \`title\`, \`json\`)
 				SET ?;
-				`.replace(/\s+/g, ''),
+			`.replace(/\s+/g, ''),
 			);
 
 			expect(stmt.params).to.deep.equal([['v-1', 'v-2', 'v-3']]);
@@ -56,7 +62,13 @@ describe('src/connectors/sql.js', function () {
 						},
 					],
 				},
-				params: ['v-1', 'v-2', 'v-3'],
+				params: [
+					{
+						name: 'v-1',
+						title: 'v-2',
+						json: 'v-3',
+					},
+				],
 				where: {
 					params: {
 						ops: [
@@ -76,7 +88,7 @@ describe('src/connectors/sql.js', function () {
 				UPDATE \`model-1\`
 				SET ?
 				WHERE \`model-1\`.\`id\`=?;
-				`.replace(/\s+/g, ''),
+			`.replace(/\s+/g, ''),
 			);
 
 			expect(stmt.params).to.deep.equal([
@@ -92,17 +104,15 @@ describe('src/connectors/sql.js', function () {
 				model: {
 					name: 'model-1',
 				},
-				where: {
-					params: {
-						ops: [
-							{
-								series: 'model-1',
-								path: 'id',
-								operator: 'eq',
-								value: 'foo-bar',
-							},
-						],
-					},
+				params: {
+					ops: [
+						{
+							series: 'model-1',
+							path: 'id',
+							operator: 'eq',
+							value: 'foo-bar',
+						},
+					],
 				},
 			});
 
@@ -110,7 +120,7 @@ describe('src/connectors/sql.js', function () {
 				`
 				DELETE FROM \`model-1\`
 				WHERE \`model-1\`.\`id\` = ?;
-				`.replace(/\s+/g, ''),
+			`.replace(/\s+/g, ''),
 			);
 
 			expect(stmt.params).to.deep.equal(['foo-bar']);
@@ -154,7 +164,8 @@ describe('src/connectors/sql.js', function () {
 				`
 				SELECT \`model-1\`.\`name\`,\`model-1\`.\`title\`,\`model-1\`.\`json\`
 				FROM \`model-1\` AS \`model-1\`
-				WHERE \`model-1\`.\`id\`=?`.replace(/\s+/g, ''),
+				WHERE \`model-1\`.\`id\`=?
+			`.replace(/\s+/g, ''),
 			);
 
 			expect(stmt.params).to.deep.equal(['foo-bar']);
@@ -185,7 +196,8 @@ describe('src/connectors/sql.js', function () {
 			expect(stmt.sql.replace(/\s+/g, '')).to.deep.equal(
 				`
 				SELECT \`model-1\`.\`name\`,\`model-1\`.\`title\`,\`model-1\`.\`json\`
-				FROM \`model-1\` AS \`model-1\``.replace(/\s+/g, ''),
+				FROM \`model-1\` AS \`model-1\`
+			`.replace(/\s+/g, ''),
 			);
 
 			expect(stmt.params).to.deep.equal([]);
@@ -215,12 +227,12 @@ describe('src/connectors/sql.js', function () {
 			});
 
 			expect(stmt.sql.replace(/\s+/g, '')).to.equal(
-				`SELECT
-				\`model-1\`.\`name\` AS \`ref\`,
-				\`model-1\`.\`title\`,
-				\`model-1\`.\`json\`
-				FROM
-				\`model-1\` AS \`model-1\`
+				`
+				SELECT
+					\`model-1\`.\`name\` AS \`ref\`,
+					\`model-1\`.\`title\`,
+					\`model-1\`.\`json\`
+				FROM \`model-1\` AS \`model-1\`
 			`.replace(/\s+/g, ''),
 			);
 
@@ -305,19 +317,19 @@ describe('src/connectors/sql.js', function () {
 			});
 
 			expect(stmt.sql.replace(/\s+/g, '')).to.equal(
-				`SELECT
-				\`test-item\`.\`name\` AS \`test-item_0\`, 
-				\`test-person\`.\`name\` AS \`test-person_1\`,
-				\`test-category\`.\`name\`,
-				\`test-category\`.\`fooId\`
+				`
+				SELECT
+					\`test-item\`.\`name\` AS \`test-item_0\`, 
+					\`test-person\`.\`name\` AS \`test-person_1\`,
+					\`test-category\`.\`name\`,
+					\`test-category\`.\`fooId\`
 				FROM
-				\`foo-bar\` AS \`test-item\`
-					INNER JOIN \`test-person\` AS \`test-person\`
-						ON \`test-person\`.\`itemId\` = \`test-item\`.\`id\`
-					LEFT JOIN \`test-category\` AS \`test-category\`
-						ON \`test-category\`.\`itemId\` = \`test-item\`.\`id\`
-				WHERE
-				\`test-item\`.\`id\`=?
+					\`foo-bar\` AS \`test-item\`
+						INNER JOIN \`test-person\` AS \`test-person\`
+							ON \`test-person\`.\`itemId\` = \`test-item\`.\`id\`
+						LEFT JOIN \`test-category\` AS \`test-category\`
+							ON \`test-category\`.\`itemId\` = \`test-item\`.\`id\`
+				WHERE \`test-item\`.\`id\`=?
 					AND \`test-person\`.\`foo\`=?
 			`.replace(/\s+/g, ''),
 			);

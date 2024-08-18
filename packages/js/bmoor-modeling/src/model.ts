@@ -1,12 +1,6 @@
 import {Mapping} from '@bmoor/path';
 import {MappingSettings} from '@bmoor/path/src/mapping.interface';
-import {
-	FieldInterface,
-	FieldReference,
-	Schema,
-	SchemaStructure,
-	reduceStructure,
-} from '@bmoor/schema';
+import {FieldReference, Schema, reduceStructure} from '@bmoor/schema';
 
 import {ContextInterface} from './context.interface';
 import {
@@ -63,15 +57,14 @@ function runHooks(obj, model: Model, action: string) {
 
 function reduceMapings(
 	model: Model,
-	settings: ModelSettings,
+	structure: Record<string, string>,
 	target: 'storage' | 'external',
 ) {
 	const from: MappingSettings[] = [];
 	const to: MappingSettings[] = [];
-	const structure: SchemaStructure = settings[target];
 
-	for (const mapping of reduceStructure(structure)) {
-		const field = model.getField(mapping.ref);
+	for (const [ref, path] of Object.entries(structure)) {
+		const field = model.getField(ref);
 		const fieldInfo = field.getInfo();
 		const base = fieldInfo.type;
 		const other = fieldInfo[target];
@@ -94,14 +87,14 @@ function reduceMapings(
 		}
 
 		from.push({
-			from: mapping.path,
+			from: path,
 			to: field.getPath(),
 			hook: fromHook,
 		});
 
 		to.push({
 			from: field.getPath(),
-			to: mapping.path,
+			to: path,
 			hook: toHook,
 		});
 	}
@@ -126,6 +119,8 @@ export class Model<
 {
 	ctx: ContextInterface;
 	fields: Record<FieldReference, ModelFieldInterface>;
+	externalPaths: Record<string, string>;
+	storagePaths: Record<string, string>;
 	settings: ModelJSON;
 
 	deflator: {
@@ -140,38 +135,60 @@ export class Model<
 	constructor(ctx: ContextInterface, settings: ModelSettings) {
 		super(ctx, settings);
 
-		this.ctx = ctx;
-
-		if (settings.external) {
-			this.inflator = reduceMapings(this, settings, 'external');
+		if (Object.keys(this.externalPaths).length) {
+			this.inflator = reduceMapings(this, this.externalPaths, 'external');
 		} else {
 			this.inflator = null;
 		}
 
-		if (settings.storage) {
-			this.deflator = reduceMapings(this, settings, 'storage');
+		if (Object.keys(this.storagePaths).length) {
+			this.deflator = reduceMapings(this, this.storagePaths, 'storage');
 		} else {
 			this.deflator = null;
 		}
 	}
 
 	defineFields(): Record<FieldReference, ModelFieldInterface> {
-		const schema = this.settings;
-		const fields: ModelFieldJSON[] = reduceStructure(schema.structure).map(
-			(field) =>
-				Object.assign(field, {
-					info: schema.info[field.ref],
-				}),
+		const settings = this.settings;
+
+		if ('external' in settings) {
+			const reducedExternal = reduceStructure(settings['external']);
+			this.externalPaths = reducedExternal.reduce((agg, {ref, path}) => {
+				agg[ref] = path;
+				return agg;
+			}, {});
+		} else {
+			this.externalPaths = {};
+		}
+
+		if ('storage' in settings) {
+			const reducedStorage = reduceStructure(settings['storage']);
+			this.storagePaths = reducedStorage.reduce((agg, {ref, path}) => {
+				agg[ref] = path;
+				return agg;
+			}, {});
+		} else {
+			this.storagePaths = {};
+		}
+
+		const fields: ModelFieldJSON[] = reduceStructure(
+			settings.structure,
+		).map((field) =>
+			Object.assign(field, {
+				info: settings.info[field.ref],
+				externalPath: this.externalPaths[field.ref],
+				storagePath: this.storagePaths[field.ref],
+			}),
 		);
 
-		return fields.reduce((agg, fieldSchema, dex) => {
+		const fieldDex = fields.reduce((agg, fieldSchema, dex) => {
 			const field = new ModelField(fieldSchema);
 			const ref = field.getReference() || 'field_' + dex;
 
 			agg[ref] = field;
 
-			if (schema.validators) {
-				const validator = schema.validators[ref];
+			if (settings.validators) {
+				const validator = settings.validators[ref];
 				if (validator) {
 					field.setValidator(validator);
 				}
@@ -179,14 +196,20 @@ export class Model<
 
 			return agg;
 		}, {});
+
+		return fieldDex;
 	}
 
-	getFields(): FieldInterface[] {
+	getFields(): ModelFieldInterface[] {
 		return Object.values(this.fields);
 	}
 
 	getField(ref: FieldReference): ModelFieldInterface {
 		return this.fields[ref];
+	}
+
+	getPrimaryFields(): ModelFieldInterface[] {
+		return <ModelFieldInterface[]>super.getPrimaryFields();
 	}
 
 	inflate(obj: InternalT['structure']): ExternalT['structure'] {
@@ -212,6 +235,60 @@ export class Model<
 		} else {
 			return obj;
 		}
+	}
+
+	implode(datum: InternalT['structure']): Record<string, unknown> {
+		const rtn = {};
+
+		for (const [key, field] of Object.entries(this.fields)) {
+			const value = field.read(datum);
+			if (value !== undefined) {
+				rtn[key] = value;
+			}
+		}
+
+		return rtn;
+	}
+
+	explode(root: Record<string, unknown>): InternalT['structure'] {
+		const rtn = {};
+
+		for (const [key, field] of Object.entries(this.fields)) {
+			if (key in root) {
+				field.write(rtn, root[key]);
+			}
+		}
+
+		return rtn;
+	}
+
+	implodeStorage(datum: StorageT['structure']): Record<string, unknown> {
+		const rtn = {};
+
+		for (const field of Object.values(this.fields)) {
+			const path = field.getStoragePath();
+			const value = field.readStorage(datum);
+
+			if (value !== undefined) {
+				rtn[path] = value;
+			}
+		}
+
+		return rtn;
+	}
+
+	explodeStorage(datum: Record<string, unknown>): StorageT['structure'] {
+		const rtn = {};
+
+		for (const field of Object.values(this.fields)) {
+			const path = field.getStoragePath();
+
+			if (path in datum) {
+				field.writeStorage(rtn, datum[path]);
+			}
+		}
+
+		return rtn;
 	}
 
 	fromDeflated(obj: StorageT['structure']): InternalT['structure'] {

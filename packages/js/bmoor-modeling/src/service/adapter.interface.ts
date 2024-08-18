@@ -1,8 +1,13 @@
 import {ContextSecurityInterface} from '@bmoor/context';
 import {DynamicObject} from '@bmoor/object';
 
-import {UpdateDelta} from '../datum.interface';
 import {ModelInternalGenerics} from '../model.interface';
+import {
+	RequestCreate,
+	RequestDelete,
+	RequestRead,
+	RequestUpdate,
+} from '../request.interface';
 
 export type ServiceAdapterSelector = {
 	properties?: DynamicObject;
@@ -21,26 +26,18 @@ export interface ServiceAdapterInterface<
 > {
 	create(
 		ctx: ContextSecurityInterface,
-		content: AdapterT['structure'][],
-	): Promise<AdapterT['structure'][]>;
+		request: RequestCreate,
+	): Promise<AdapterT['reference'][]>;
 	read(
 		ctx: ContextSecurityInterface,
-		ids: AdapterT['reference'][],
+		request: RequestRead,
 	): Promise<AdapterT['structure'][]>;
 	update(
 		ctx: ContextSecurityInterface,
-		content: UpdateDelta<AdapterT['reference'], AdapterT['delta']>[],
+		request: RequestUpdate,
 	): Promise<AdapterT['structure'][]>;
 	delete?(
 		ctx: ContextSecurityInterface,
-		ids: AdapterT['reference'][],
+		request: RequestDelete,
 	): Promise<number>; // return the rows deleted
-	select?(
-		ctx: ContextSecurityInterface,
-		search: AdapterT['select'],
-	): Promise<AdapterT['structure'][]>;
-	search?(
-		ctx: ContextSecurityInterface,
-		search: AdapterT['search'],
-	): Promise<AdapterT['structure'][]>;
 }

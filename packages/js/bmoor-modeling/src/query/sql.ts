@@ -1,21 +1,23 @@
 import {
-	SqlDeleteRequest,
-	SqlInsertRequest,
+	RequestCreate,
+	RequestDelete,
+	RequestRead,
+	RequestSelect,
+	RequestUpdate,
+	RequestWhere,
+	RequestWhereArrayMethods,
+	RequestWhereExpression,
+	RequestWhereJoin,
+	RequestWhereScalarMethods,
+} from '../request.interface';
+import {
 	SqlPrepared,
-	SqlQueryRequest,
-	SqlSelectRequest,
 	SqlSelectResponse,
-	SqlUpdateRequest,
-	SqlWhereArrayMethods,
-	SqlWhereExpression,
-	SqlWhereJoin,
-	SqlWhereRequest,
 	SqlWhereResponse,
-	SqlWhereScalarMethods,
 } from './sql.interface';
 
 export function translateExpressable(
-	expression: SqlWhereExpression,
+	expression: RequestWhereExpression,
 ): SqlWhereResponse {
 	const where = [];
 	const params = [];
@@ -33,12 +35,12 @@ export function translateExpressable(
 
 				// has to be a param
 				if (Array.isArray(op.value)) {
-					const comp = SqlWhereArrayMethods[operator];
+					const comp = RequestWhereArrayMethods[operator];
 
 					where.push(`\`${op.series}\`.\`${path}\`${comp}(?)`);
 					params.push(op.value);
 				} else {
-					const comp = SqlWhereScalarMethods[operator];
+					const comp = RequestWhereScalarMethods[operator];
 
 					where.push(`\`${op.series}\`.\`${path}\`${comp}?`);
 					params.push(op.value);
@@ -48,12 +50,12 @@ export function translateExpressable(
 	}
 
 	return {
-		where: where.join(SqlWhereJoin[expression.join || 'and']),
+		where: where.join(RequestWhereJoin[expression.join || 'and']),
 		params,
 	};
 }
 
-export function translateWhere(stmt: SqlWhereRequest): SqlWhereResponse {
+export function translateWhere(stmt: RequestWhere): SqlWhereResponse {
 	let res;
 
 	if (stmt.params) {
@@ -92,9 +94,7 @@ export function translateWhere(stmt: SqlWhereRequest): SqlWhereResponse {
 }
 
 // expect the
-export function translateSelect(
-	stmt: SqlSelectRequest,
-): SqlSelectResponse {
+export function translateSelect(stmt: RequestSelect): SqlSelectResponse {
 	const reduction = stmt.models.reduce(
 		(agg, model) => {
 			const modelName = model.name;
@@ -168,7 +168,7 @@ export function translateSelect(
 	};
 }
 
-export function prepareQuery(stmt: SqlQueryRequest): SqlPrepared {
+export function prepareQuery(stmt: RequestRead): SqlPrepared {
 	const select = translateSelect(stmt.select);
 	const where = translateWhere(stmt);
 
@@ -192,7 +192,7 @@ export function prepareQuery(stmt: SqlQueryRequest): SqlPrepared {
 	};
 }
 
-export function prepareInsert(stmt: SqlInsertRequest): SqlPrepared {
+export function prepareInsert(stmt: RequestCreate): SqlPrepared {
 	// ` ON DUPLICATE KEY UPDATE ?`;
 	/*stmt.getInOrder().forEach((model) => {
 		const keyField = model.model.getKeyField();
@@ -224,22 +224,12 @@ export function prepareInsert(stmt: SqlInsertRequest): SqlPrepared {
 		INSERT INTO ${stmt.model.name} (\`${fields.join('`,`')}\`) SET ?;
 		`,
 		// TODO: how to handle if one or many arrays
-		params: [stmt.params],
+		params: stmt.params.map((row) => fields.map((field) => row[field])),
 	};
 }
 
-export function prepareUpdate(stmt: SqlUpdateRequest): SqlPrepared {
+export function prepareUpdate(stmt: RequestUpdate): SqlPrepared {
 	const where = translateWhere(stmt.where);
-
-	if (stmt.model.fields.length !== stmt.params.length) {
-		throw new Error('named fields and data fields do not match');
-	}
-
-	const params = stmt.model.fields.reduce((agg, field, i) => {
-		agg[field.path] = stmt.params[i];
-
-		return agg;
-	}, {});
 
 	// I assume there will always be a where
 	return {
@@ -247,12 +237,12 @@ export function prepareUpdate(stmt: SqlUpdateRequest): SqlPrepared {
 		UPDATE \`${stmt.model.name}\` SET ?
 		WHERE ${where.where};
 		`,
-		params: [params, ...where.params],
+		params: [stmt.params[0], ...where.params],
 	};
 }
 
-export function prepareDelete(stmt: SqlDeleteRequest): SqlPrepared {
-	const where = translateWhere(stmt.where);
+export function prepareDelete(stmt: RequestDelete): SqlPrepared {
+	const where = translateWhere(stmt);
 
 	// I assume there will always be a where
 	return {

@@ -26,6 +26,7 @@ describe('@bmoor-modeling::Service', function () {
 	let adapter: ServiceAdapterInterface<StorageT>;
 	let controller: ServiceControllerInterface<InternalT>;
 
+	let responseData;
 	let serverCtx;
 	let callCtx: ContextSecurityInterface = null;
 
@@ -64,19 +65,21 @@ describe('@bmoor-modeling::Service', function () {
 			},
 		};
 		adapter = {
-			async create(ctx, content) {
-				return content;
+			async create() {
+				return responseData;
 			},
-			async read(ctx, content) {
-				return content;
+			async read() {
+				return responseData;
 			},
-			async update(ctx, content) {
-				return content;
+			async update() {
+				return responseData;
 			},
-			async delete(ctx, ids) {
-				return ids.length;
+			async delete() {
+				return responseData.length;
 			},
 		};
+
+		responseData = [];
 	});
 
 	describe('::onCreate', function () {
@@ -379,12 +382,25 @@ describe('@bmoor-modeling::Service', function () {
 					},
 				]);
 
-				expect(myStub.getCall(0).args[1]).to.deep.equal([
-					{
-						field1: 'val-1',
-						field3: 'val-2',
+				expect(myStub.getCall(0).args[1]).to.deep.equal({
+					model: {
+						name: 'junk',
+						fields: [
+							{
+								path: 'field1',
+							},
+							{
+								path: 'field3',
+							},
+						],
 					},
-				]);
+					params: [
+						{
+							field1: 'val-1',
+							field3: 'val-2',
+						},
+					],
+				});
 			});
 
 			it('should work with a validator', async function () {
@@ -503,12 +519,25 @@ describe('@bmoor-modeling::Service', function () {
 					},
 				]);
 
-				expect(myStub.getCall(0).args[1]).to.deep.equal([
-					{
-						field1: 'helloWorld-2',
-						field3: '{"foo":"bar"}',
+				expect(myStub.getCall(0).args[1]).to.deep.equal({
+					model: {
+						name: 'junk',
+						fields: [
+							{
+								path: 'field1',
+							},
+							{
+								path: 'field3',
+							},
+						],
 					},
-				]);
+					params: [
+						{
+							field1: 'helloWorld-2',
+							field3: '{"foo":"bar"}',
+						},
+					],
+				});
 			});
 		});
 
@@ -581,12 +610,25 @@ describe('@bmoor-modeling::Service', function () {
 					},
 				]);
 
-				expect(myStub.getCall(0).args[1]).to.deep.equal([
-					{
-						store1: 'helloWorld-2',
-						store2: '{"foo":"bar"}',
+				expect(myStub.getCall(0).args[1]).to.deep.equal({
+					model: {
+						name: 'junk',
+						fields: [
+							{
+								path: 'store1',
+							},
+							{
+								path: 'store2',
+							},
+						],
 					},
-				]);
+					params: [
+						{
+							store1: 'helloWorld-2',
+							store2: '{"foo":"bar"}',
+						},
+					],
+				});
 			});
 		});
 
@@ -609,6 +651,7 @@ describe('@bmoor-modeling::Service', function () {
 							},
 							f2: {
 								type: 'number',
+								use: 'primary',
 							},
 						},
 					}),
@@ -634,11 +677,33 @@ describe('@bmoor-modeling::Service', function () {
 					},
 				]);
 
-				expect(myStub.getCall(0).args[1]).to.deep.equal([
-					{
-						field3: 12,
+				expect(myStub.getCall(0).args[1]).to.deep.equal({
+					select: {
+						models: [
+							{
+								name: 'junk',
+								fields: [
+									{
+										path: 'field1',
+									},
+									{
+										path: 'field3',
+									},
+								],
+							},
+						],
 					},
-				]);
+					params: {
+						ops: [
+							{
+								series: 'junk',
+								path: 'field3',
+								operator: 'eq',
+								value: [12],
+							},
+						],
+					},
+				});
 			});
 		});
 
@@ -666,6 +731,7 @@ describe('@bmoor-modeling::Service', function () {
 								type: 'string',
 							},
 							f2: {
+								use: 'primary',
 								type: 'number',
 							},
 						},
@@ -696,11 +762,33 @@ describe('@bmoor-modeling::Service', function () {
 					},
 				]);
 
-				expect(myStub.getCall(0).args[1]).to.deep.equal([
-					{
-						store2: 12,
+				expect(myStub.getCall(0).args[1]).to.deep.equal({
+					select: {
+						models: [
+							{
+								name: 'junk',
+								fields: [
+									{
+										path: 'store1',
+									},
+									{
+										path: 'store2',
+									},
+								],
+							},
+						],
 					},
-				]);
+					params: {
+						ops: [
+							{
+								series: 'junk',
+								path: 'store2',
+								operator: 'eq',
+								value: [12],
+							},
+						],
+					},
+				});
 			});
 		});
 
@@ -722,6 +810,7 @@ describe('@bmoor-modeling::Service', function () {
 								type: 'string',
 							},
 							f2: {
+								use: 'primary',
 								type: 'number',
 							},
 						},
@@ -758,17 +847,37 @@ describe('@bmoor-modeling::Service', function () {
 					},
 				]);
 
-				expect(myStub.getCall(0).args[1]).to.deep.equal([
-					{
-						ref: {
-							field3: 123,
-						},
-						delta: {
+				expect(myStub.getCall(0).args[1]).to.deep.equal({
+					model: {
+						name: 'junk',
+						fields: [
+							{
+								path: 'field1',
+							},
+							{
+								path: 'field3',
+							},
+						],
+					},
+					params: [
+						{
 							field1: 'val-1',
 							field3: 'val-2',
 						},
+					],
+					where: {
+						params: {
+							ops: [
+								{
+									series: 'junk',
+									path: 'field3',
+									operator: 'eq',
+									value: 123,
+								},
+							],
+						},
 					},
-				]);
+				});
 			});
 
 			it('should work with a validator', async function () {
@@ -841,11 +950,12 @@ describe('@bmoor-modeling::Service', function () {
 							field2: 'f2',
 						},
 						storage: {
-							field1: 'f1',
-							field3: 'f2',
+							store1: 'f1',
+							store2: 'f2',
 						},
 						info: {
 							f1: {
+								use: 'primary',
 								type: 'string',
 							},
 							f2: {
@@ -862,8 +972,8 @@ describe('@bmoor-modeling::Service', function () {
 
 				const myStub = stub(adapter, 'update').resolves([
 					{
-						field1: 'foo',
-						field3: '{"a":"value"}',
+						store1: 'foo',
+						store2: '{"a":"value"}',
 					},
 				]);
 
@@ -889,16 +999,36 @@ describe('@bmoor-modeling::Service', function () {
 					},
 				]);
 
-				expect(myStub.getCall(0).args[1]).to.deep.equal([
-					{
-						ref: {
-							field1: 123,
+				expect(myStub.getCall(0).args[1]).to.deep.equal({
+					model: {
+						name: 'junk',
+						fields: [
+							{
+								path: 'store1',
+							},
+							{
+								path: 'store2',
+							},
+						],
+					},
+					params: [
+						{
+							store2: '{"foo":"bar"}',
 						},
-						delta: {
-							field3: '{"foo":"bar"}',
+					],
+					where: {
+						params: {
+							ops: [
+								{
+									series: 'junk',
+									path: 'store1',
+									operator: 'eq',
+									value: 123,
+								},
+							],
 						},
 					},
-				]);
+				});
 			});
 		});
 
@@ -926,6 +1056,7 @@ describe('@bmoor-modeling::Service', function () {
 								type: 'string',
 							},
 							f2: {
+								use: 'primary',
 								type: 'number',
 							},
 						},
@@ -968,17 +1099,37 @@ describe('@bmoor-modeling::Service', function () {
 					},
 				]);
 
-				expect(myStub.getCall(0).args[1]).to.deep.equal([
-					{
-						ref: {
-							store2: 123,
-						},
-						delta: {
+				expect(myStub.getCall(0).args[1]).to.deep.equal({
+					model: {
+						name: 'junk',
+						fields: [
+							{
+								path: 'store1',
+							},
+							{
+								path: 'store2',
+							},
+						],
+					},
+					params: [
+						{
 							store1: 'val-1',
 							store2: 'val-2',
 						},
+					],
+					where: {
+						params: {
+							ops: [
+								{
+									series: 'junk',
+									path: 'store2',
+									operator: 'eq',
+									value: 123,
+								},
+							],
+						},
 					},
-				]);
+				});
 			});
 		});
 
@@ -1000,6 +1151,7 @@ describe('@bmoor-modeling::Service', function () {
 								type: 'string',
 							},
 							f2: {
+								use: 'primary',
 								type: 'number',
 							},
 						},
@@ -1032,11 +1184,29 @@ describe('@bmoor-modeling::Service', function () {
 					},
 				]);
 
-				expect(myStub.getCall(0).args[1]).to.deep.equal([
-					{
-						field3: 123,
+				expect(myStub.getCall(0).args[1]).to.deep.equal({
+					model: {
+						name: 'junk',
+						fields: [
+							{
+								path: 'field1',
+							},
+							{
+								path: 'field3',
+							},
+						],
 					},
-				]);
+					params: {
+						ops: [
+							{
+								series: 'junk',
+								path: 'field3',
+								operator: 'eq',
+								value: [123],
+							},
+						],
+					},
+				});
 			});
 		});
 
@@ -1064,6 +1234,7 @@ describe('@bmoor-modeling::Service', function () {
 								type: 'string',
 							},
 							f2: {
+								use: 'primary',
 								type: 'number',
 							},
 						},
@@ -1100,11 +1271,29 @@ describe('@bmoor-modeling::Service', function () {
 					},
 				]);
 
-				expect(myStub.getCall(0).args[1]).to.deep.equal([
-					{
-						store2: 123,
+				expect(myStub.getCall(0).args[1]).to.deep.equal({
+					model: {
+						name: 'junk',
+						fields: [
+							{
+								path: 'store1',
+							},
+							{
+								path: 'store2',
+							},
+						],
 					},
-				]);
+					params: {
+						ops: [
+							{
+								series: 'junk',
+								path: 'store2',
+								operator: 'eq',
+								value: [123],
+							},
+						],
+					},
+				});
 			});
 		});
 	});

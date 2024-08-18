@@ -1,5 +1,4 @@
 import {isArray} from '@bmoor/compare';
-import {create} from '@bmoor/error';
 import {DynamicObject} from '@bmoor/object';
 import {implode} from '@bmoor/path';
 
@@ -112,21 +111,10 @@ export class Schema implements SchemaInterface {
 		return this.settings.reference;
 	}
 
-	getPrimaryField(): FieldInterface {
-		const res = this.getFields().filter(
+	getPrimaryFields(): FieldInterface[] {
+		return this.getFields().filter(
 			(field) => field.getInfo().use === 'primary',
 		);
-
-		if (res.length > 1) {
-			throw create(
-				'unable to have multiple primaries: ' + this.getReference(),
-				{
-					code: 'BMS_SCHEMA_MULTIPLE_PRIMARIES',
-				},
-			);
-		}
-
-		return res[0];
 	}
 
 	getFields(): FieldInterface[] {

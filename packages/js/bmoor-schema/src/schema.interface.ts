@@ -32,7 +32,7 @@ export interface SchemaInterface {
 	setSpace(know: KnowledgeInterface);
 
 	getReference(): SchemaReference;
-	getPrimaryField(): FieldInterface;
+	getPrimaryFields(): FieldInterface[];
 	getFields(): FieldInterface[];
 	getField(ref: FieldReference): FieldInterface;
 	getRelationships(): RelationshipJSON[];

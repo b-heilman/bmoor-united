@@ -52,6 +52,7 @@ export interface ModelInterface<
 > extends SchemaInterface {
 	getFields(): ModelFieldInterface[];
 	getField(ref: FieldReference): ModelFieldInterface;
+	getPrimaryFields(): ModelFieldInterface[];
 
 	// Internal representation to storage
 	deflate(input: InternalT['structure']): StorageT['structure'];
@@ -60,6 +61,12 @@ export interface ModelInterface<
 	// Internal representation to external
 	inflate(input: InternalT['structure']): ExternalT['structure'];
 	fromInflated(input: ExternalT['structure']): InternalT['structure'];
+
+	implode(datum: InternalT['structure']): Record<string, unknown>;
+	explode(datum: Record<string, unknown>): InternalT['structure'];
+
+	implodeStorage(datum: StorageT['structure']): Record<string, unknown>;
+	explodeStorage(datum: Record<string, unknown>): StorageT['structure'];
 
 	onCreate(input: InternalT['structure']): InternalT['structure'];
 	onRead(input: InternalT['structure']): InternalT['structure'];
