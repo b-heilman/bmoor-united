@@ -33,7 +33,7 @@ function createSchemaResolver(
 				actions: GraphqlGenericType,
 			) => {
 				// This is the code that runs to process joins
-				const properties = relationship.otherFields.reduce(
+				const params = relationship.otherFields.reduce(
 					(mappedArgs, targetRef, i) => {
 						const srcField = model.getField(relationship.fields[i]);
 						const targetField = otherModel.getField(targetRef);
@@ -66,7 +66,7 @@ function createSchemaResolver(
 				};
 
 				const res = await other.externalSelect(callCtx, {
-					properties,
+					params,
 					actions,
 				});
 
@@ -121,19 +121,23 @@ export class Graphql<
 				);
 				const single = query.single || false;
 
-				const primary = service.getModel().getPrimaryField();
-				const primaryType = this.serverCtx.getTyping(
-					primary.getInfo().type,
-				).graphql;
-				const params = [
-					`${primary.getReference()}: ${primaryType}!`,
-				].concat(
-					Object.entries(service.getQueryActions() || {}).map(
-						([action, type]) => {
-							return `${action}: ${this.serverCtx.getTyping(type).graphql}`;
-						},
-					),
-				);
+				const primaries = service.getModel().getPrimaryFields();
+
+				const params = primaries
+					.map((field) => {
+						const primaryType = this.serverCtx.getTyping(
+							field.getInfo().type,
+						).graphql;
+
+						return `${field.getReference()}: ${primaryType}!`;
+					})
+					.concat(
+						Object.entries(service.getQueryActions() || {}).map(
+							([action, type]) => {
+								return `${action}: ${this.serverCtx.getTyping(type).graphql}`;
+							},
+						),
+					);
 
 				agg[`${key}(${params.join(', ')})`] = single ? type : `[${type}]`;
 
@@ -183,11 +187,13 @@ export class Graphql<
 					actions: GraphqlGenericType,
 				) => {
 					// This is the code that runs to process joins
-					const properties = {};
-					const primary = model.getPrimaryField();
+					const params = {};
+					const primaries = model.getPrimaryFields();
 
 					// translate from reference to structure
-					primary.write(properties, actions[primary.getReference()]);
+					for (const field of primaries) {
+						field.write(params, actions[field.getReference()]);
+					}
 
 					// TODO: need to generate a security context here based on
 					//   what is passed
@@ -210,7 +216,7 @@ export class Graphql<
 					};
 
 					const res = await service.externalSelect(callCtx, {
-						properties,
+						params,
 						actions,
 					});
 

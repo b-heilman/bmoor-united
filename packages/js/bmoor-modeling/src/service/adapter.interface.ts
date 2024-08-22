@@ -5,12 +5,13 @@ import {ModelInternalGenerics} from '../model.interface';
 import {
 	RequestCreate,
 	RequestDelete,
+	RequestParameters,
 	RequestRead,
 	RequestUpdate,
 } from '../request.interface';
 
 export type ServiceAdapterSelector = {
-	properties?: DynamicObject;
+	params?: RequestParameters;
 	actions?: DynamicObject;
 };
 

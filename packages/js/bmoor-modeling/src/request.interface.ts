@@ -1,3 +1,5 @@
+export type RequestParameters = Record<string, unknown>;
+
 export interface RequestCreate {
 	model: {
 		name: string;
@@ -5,7 +7,7 @@ export interface RequestCreate {
 			path: string;
 		}[];
 	};
-	params: Record<string, unknown>[];
+	params: RequestParameters[];
 }
 
 export interface RequestSelect {

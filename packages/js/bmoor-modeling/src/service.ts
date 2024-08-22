@@ -140,7 +140,9 @@ export class Service<
 		selector: ServiceAdapterSelector,
 	): Promise<InternalT['structure'][]> {
 		const model = this.getModel();
-		const imploded = model.implode(this.deflate(ctx, selector.properties));
+		const imploded = model.implodeStorage(
+			this.deflate(ctx, selector.params),
+		);
 		const res = await this.settings.adapter.read(ctx, {
 			select: {
 				models: [getStorageModel(model)],
@@ -159,7 +161,8 @@ export class Service<
 			this.onRead(ctx, this.model.fromDeflated(datum)),
 		);
 
-		this.settings.controller;
+		// TODO: I need to do something about the actions here
+
 		return this.settings.controller
 			? this.settings.controller.canRead(ctx, rtn, this)
 			: rtn;

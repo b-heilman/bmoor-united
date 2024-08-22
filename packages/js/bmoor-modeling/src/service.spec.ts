@@ -1296,5 +1296,29 @@ describe('@bmoor-modeling::Service', function () {
 				});
 			});
 		});
+
+		describe('select', function () {
+			xit('should work', function () {
+				console.log('TODO');
+			});
+		});
+
+		describe('externalSelect', function () {
+			xit('should work', function () {
+				console.log('TODO');
+			});
+		});
+
+		describe('search', function () {
+			xit('should work', function () {
+				console.log('TODO');
+			});
+		});
+
+		describe('externalSearch', function () {
+			xit('should work', function () {
+				console.log('TODO');
+			});
+		});
 	});
 });

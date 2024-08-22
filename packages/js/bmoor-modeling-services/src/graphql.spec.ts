@@ -1,6 +1,7 @@
 import {ApolloServer, BaseContext} from '@apollo/server';
 import {strict as assert} from 'assert';
 import {expect} from 'chai';
+import {stub} from 'sinon';
 
 import {
 	Context,
@@ -27,80 +28,47 @@ describe('@bmoor/modeling-services : graphql', function () {
 		nexus = new Nexus();
 
 		adapter1 = {
-			async create(ctx, content) {
-				return content;
+			async create() {
+				return [{junk: 'create - 1'}];
 			},
-			async read(ctx, content) {
-				return content;
+			async read() {
+				return [{junk: 'read - 1'}];
 			},
-			async update(ctx, content) {
-				return content;
+			async update() {
+				return [{junk: 'update - 1'}];
 			},
-			async delete(ctx, ids) {
-				return ids.length;
-			},
-			async select(/*ctx, selector*/) {
-				return [
-					{
-						foo: 'eins',
-						bar: 1.1,
-					},
-				];
-			},
-			async search(/*ctx, search*/) {
-				return [];
+			async delete() {
+				return 0;
 			},
 		};
 
 		adapter2 = {
-			async create(ctx, content) {
-				return content;
+			async create() {
+				return [{junk: 'create - 2'}];
 			},
-			async read(ctx, content) {
-				return content;
+			async read() {
+				return [{junk: 'read - 2'}];
 			},
-			async update(ctx, content) {
-				return content;
+			async update() {
+				return [{junk: 'update - 2'}];
 			},
-			async delete(ctx, ids) {
-				return ids.length;
-			},
-			async select(/*ctx, selector*/) {
-				return [
-					{
-						hello: 'zwei',
-						world: 1.2,
-					},
-				];
-			},
-			async search(/*ctx, search*/) {
-				return [];
+			async delete() {
+				return 0;
 			},
 		};
 
 		adapter3 = {
-			async create(ctx, content) {
-				return content;
+			async create() {
+				return [{junk: 'create - 3'}];
 			},
-			async read(ctx, content) {
-				return content;
+			async read() {
+				return [{junk: 'read - 3'}];
 			},
-			async update(ctx, content) {
-				return content;
+			async update() {
+				return [{junk: 'update - 3'}];
 			},
-			async delete(ctx, ids) {
-				return ids.length;
-			},
-			async select(/*ctx, selector*/) {
-				return [
-					{
-						id: 'fier',
-						otherId: 'funf',
-					},
-				];
-			},
-			async search(/*ctx, search*/) {
-				return [];
+			async delete() {
+				return 0;
 			},
 		};
 
@@ -306,10 +274,45 @@ type Query {
 				'singleEntry',
 			]);
 
+			const read1 = stub(adapter1, 'read').resolves([
+				{
+					bar: 1.1,
+					foo: 'eins',
+				},
+			]);
+
 			expect(await resolvers['Query']['entry']({}, {})).to.deep.equal([
 				{
 					bar: 1.1,
 					foo: 'eins',
+				},
+			]);
+			expect(read1.getCall(0).args[1]).to.deep.equal({
+				"select": {
+				  "models": [
+					{
+					  "name": "s-1",
+					  "fields": [
+						{
+						  "path": "foo"
+						},
+						{
+						  "path": "bar"
+						}
+					  ]
+					}
+				  ]
+				},
+				"params": {
+				  "ops": []
+				}
+			  });
+			read1.restore();
+
+			const read2 = stub(adapter3, 'read').resolves([
+				{
+					id: 'fier',
+					otherId: 'funf',
 				},
 			]);
 
@@ -319,11 +322,73 @@ type Query {
 				id: 'fier',
 				otherId: 'funf',
 			});
+			expect(read2.getCall(0).args[1]).to.deep.equal({
+				"select": {
+				  "models": [
+					{
+					  "name": "s-3",
+					  "fields": [
+						{
+						  "path": "id"
+						},
+						{
+						  "path": "otherId"
+						},
+						{
+						  "path": "mount"
+						},
+						{
+						  "path": "parent"
+						}
+					  ]
+					}
+				  ]
+				},
+				"params": {
+				  "ops": []
+				}
+			  });
+			read2.restore();
+
+			const read3 = stub(adapter2, 'read').resolves([
+				{
+					hello: 'zwei',
+					world: 1.2,
+				},
+			]);
 
 			expect(await resolvers['s3']['parent']({}, {})).to.deep.equal({
 				hello: 'zwei',
 				world: 1.2,
 			});
+			expect(read3.getCall(0).args[1]).to.deep.equal({
+				"select": {
+				  "models": [
+					{
+					  "name": "s-2",
+					  "fields": [
+						{
+						  "path": "hello"
+						},
+						{
+						  "path": "world"
+						}
+					  ]
+					}
+				  ]
+				},
+				"params": {
+				  "ops": []
+				}
+			  });
+			read3.restore();
+
+			const read4 = stub(adapter1, 'read').resolves([
+				{
+					bar: 1.1,
+					foo: 'eins',
+				},
+			]);
 
 			expect(await resolvers['s3']['mount']({}, {})).to.deep.equal([
 				{
@@ -331,6 +396,26 @@ type Query {
 					foo: 'eins',
 				},
 			]);
+			expect(read4.getCall(0).args[1]).to.deep.equal({
+				"select": {
+				  "models": [
+					{
+					  "name": "s-1",
+					  "fields": [
+						{
+						  "path": "foo"
+						},
+						{
+						  "path": "bar"
+						}
+					  ]
+					}
+				  ]
+				},
+				"params": {
+				  "ops": []
+				}
+			});
 		});
 	});
 
@@ -361,6 +446,27 @@ type Query {
 		});
 
 		it('should work for single', async function () {
+			const read1 = stub(adapter1, 'read').resolves([
+				{
+					bar: 1.1,
+					foo: 'eins',
+				},
+			]);
+
+			const read2 = stub(adapter2, 'read').resolves([
+				{
+					hello: 'zwei',
+					world: 1.2,
+				},
+			]);
+
+			const read3 = stub(adapter3, 'read').resolves([
+				{
+					id: 'fier',
+					otherId: 'funf',
+				},
+			]);
+
 			const response = await server.executeOperation({
 				query: `query Search($id: String!) { 
                     singleEntry(id: $id) {
@@ -386,9 +492,106 @@ type Query {
 				parent: {hello: 'zwei', world: 1.2},
 				mount: [{foo: 'eins', bar: 1.1}],
 			});
+
+			expect(read1.getCall(0).args[1]).to.deep.equal({
+				"select": {
+				  "models": [
+					{
+					  "name": "s-1",
+					  "fields": [
+						{
+						  "path": "foo"
+						},
+						{
+						  "path": "bar"
+						}
+					  ]
+					}
+				  ]
+				},
+				"params": {
+				  "ops": [
+					{
+					  "series": "s-1",
+					  "path": "foo",
+					  "operator": "eq",
+					  "value": "fier"
+					}
+				  ]
+				}
+			  });
+
+			expect(read2.getCall(0).args[1]).to.deep.equal({
+				"select": {
+				  "models": [
+					{
+					  "name": "s-2",
+					  "fields": [
+						{
+						  "path": "hello"
+						},
+						{
+						  "path": "world"
+						}
+					  ]
+					}
+				  ]
+				},
+				"params": {
+				  "ops": [
+					{
+					  "series": "s-2",
+					  "path": "hello",
+					  "operator": "eq",
+					  "value": "funf"
+					}
+				  ]
+				}
+			});
+
+			expect(read3.getCall(0).args[1]).to.deep.equal({
+				"select": {
+				  "models": [
+					{
+					  "name": "s-3",
+					  "fields": [
+						{
+						  "path": "id"
+						},
+						{
+						  "path": "otherId"
+						},
+						{
+						  "path": "mount"
+						},
+						{
+						  "path": "parent"
+						}
+					  ]
+					}
+				  ]
+				},
+				"params": {
+				  "ops": [
+					{
+					  "series": "s-3",
+					  "path": "id",
+					  "operator": "eq",
+					  "value": "someId"
+					}
+				  ]
+				}
+			});
 		});
 
 		it('should work for multiple', async function () {
+			const read1 = stub(adapter1, 'read').resolves([
+				{
+					bar: 1.1,
+					foo: 'eins',
+				},
+			]);
+
 			const response = await server.executeOperation({
 				query: `query Search($id: String!) { 
                     entry(foo: $id) {
@@ -406,6 +609,34 @@ type Query {
 					foo: 'eins',
 				},
 			]);
+
+			expect(read1.getCall(0).args[1]).to.deep.equal({
+				"select": {
+				  "models": [
+					{
+					  "name": "s-1",
+					  "fields": [
+						{
+						  "path": "foo"
+						},
+						{
+						  "path": "bar"
+						}
+					  ]
+					}
+				  ]
+				},
+				"params": {
+				  "ops": [
+					{
+					  "series": "s-1",
+					  "path": "foo",
+					  "operator": "eq",
+					  "value": "someId"
+					}
+				  ]
+				}
+			});
 		});
 	});
 });
