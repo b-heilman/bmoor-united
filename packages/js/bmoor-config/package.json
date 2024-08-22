@@ -1,0 +1,32 @@
+{
+  "name": "@bmoor/config",
+  "version": "0.4.0",
+  "type": "module",
+  "description": "Better ways to work with objects",
+  "main": "src/index.ts",
+  "files": [
+    "src/*[!.spec].js",
+    "src/**/*[!.spec].js"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/b-heilman/bmoor-united.git"
+  },
+  "author": "Brian Heilman",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/b-heilman/bmoor-united/issues"
+  },
+  "homepage": "https://github.com/b-heilman/bmoor-united/blob/main/packages/bmoor-config/README.md",
+  "dependencies": {
+    "@bmoor/error": "^0.2.1",
+    "@bmoor/object": "^0.2.1"
+  },
+  "scripts": {
+    "build": "mkdir -p dist/; cp -r src/ dist/src;  cp package.json dist/package.json",
+    "lint": "eslint ./src",
+    "test": "mocha --recursive \"./src/**/*.spec.ts\"",
+    "publish": "echo \"config publishing...\""
+  },
+  "keywords": []
+}

@@ -3,6 +3,7 @@
 dist/
 build/
 node_modules/
+__pycache__/
 /.settings
 /.project
 

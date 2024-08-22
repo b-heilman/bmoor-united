@@ -1,9 +1,21 @@
 {
+	"plugins": ["@trivago/prettier-plugin-sort-imports"],
+
 	"printWidth": 75,
 	"tabWidth": 2,
 	"useTabs": true,
 	"singleQuote": true,
 	"quoteProps": "as-needed",
-	"trailingComma": "none",
-	"bracketSpacing": false
+	"trailingComma": "all",
+	"bracketSpacing": false,
+	
+	"importOrder": [
+		"^react(.*)", 
+		"<THIRD_PARTY_MODULES>", 
+		"^@bmoor/(.*)$",
+		"^[./]" 
+	],
+  	"importOrderSortSpecifiers": true,
+    "importOrderSeparation": true,
+	"importOrderParserPlugins": ["typescript"]
 }

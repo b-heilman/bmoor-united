@@ -1,0 +1,16 @@
+{
+  "name": "nfl_crawler",
+  "version": "0.4.0",
+  "type": "module",
+  "description": "",
+  "main": "src/run.ts",
+  "scripts": {},
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "apache-arrow": "^10.0.1",
+    "node-fetch": "^2.6.1",
+    "parquetjs-lite": "^0.8.7",
+    "ts-node": "^10.9.1"
+  }
+}

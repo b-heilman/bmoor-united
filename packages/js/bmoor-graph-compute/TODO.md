@@ -1,0 +1,11 @@
+- [ ] Add partion to events
+  - [ ] Allow nodes to have features by partition
+    - [ ] features for priors
+    - [ ] features for rankings
+  - [ ] ? Can I improve calculations for timestamp so I don't need to recalculate
+- [ ] ? How do I set new features between seasons
+  - [ ] ? Can I merge the seasons, and add a weight modifier for between seasons that is essentially season priors
+- [ ] ? Is array of object or object or arrays more efficient for dataframe ouput
+- [ ] Add actors that can have features
+  - [ ] calculate actor features by partition
+  - [ ] caculate features for node using actors for a partition

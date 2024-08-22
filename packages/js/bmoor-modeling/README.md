@@ -1,0 +1,2 @@
+#----------- Thoughts -----------
+In the former version of this, I had internal and external schemas.  The problem became, which do you write your logic against?  Instead, I want to create external - internal - storage schemas.  External and storage will be extensions of internal fields.  All create, read, update, delete, etc actions will be written against the internal structure

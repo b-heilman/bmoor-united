@@ -1,0 +1,1 @@
+export {pearsonCorrelation} from './correlation';

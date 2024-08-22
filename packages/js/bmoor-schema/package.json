@@ -1,0 +1,32 @@
+{
+  "name": "@bmoor/schema",
+  "version": "0.2.1",
+  "type": "module",
+  "description": "Describing a data's structure in a way that is friendlier for databases",
+  "main": "src/index.ts",
+  "files": [
+    "src/*[!.spec].js",
+    "src/**/*[!.spec].js"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/b-heilman/bmoor-united.git"
+  },
+  "author": "Brian Heilman",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/b-heilman/bmoor-united/issues"
+  },
+  "homepage": "https://github.com/b-heilman/bmoor-united/blob/main/packages/bmoor-error/README.md",
+  "dependencies": {},
+  "scripts": {
+    "build": "mkdir -p dist/; cp -r src/ dist/src;  cp package.json dist/package.json",
+    "lint": "eslint ./src",
+    "test": "mocha --recursive \"./src/**/*.spec.ts\"",
+    "publish": "echo \"error publishing...\""
+  },
+  "keywords": [
+    "error",
+    "error management"
+  ]
+}

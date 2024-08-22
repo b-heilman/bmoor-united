@@ -1,0 +1,29 @@
+{
+  "name": "@bmoor/context",
+  "version": "0.1.1",
+  "type": "module",
+  "description": "Better ways to work with objects",
+  "main": "src/index.ts",
+  "files": [
+    "src/*[!.spec].js",
+    "src/**/*[!.spec].js"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/b-heilman/bmoor-united.git"
+  },
+  "author": "Brian Heilman",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/b-heilman/bmoor-united/issues"
+  },
+  "homepage": "https://github.com/b-heilman/bmoor-united/blob/main/packages/bmoor-context/README.md",
+  "dependencies": {},
+  "scripts": {
+    "build": "mkdir -p dist/; cp -r src/ dist/src;  cp package.json dist/package.json",
+    "lint": "eslint ./src",
+    "test": "mocha --recursive \"./src/**/*.spec.ts\"",
+    "publish": "echo \"context publishing...\""
+  },
+  "keywords": []
+}
