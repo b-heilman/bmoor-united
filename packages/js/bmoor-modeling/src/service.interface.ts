@@ -10,25 +10,22 @@ import {
 import {
 	ServiceAdapterGenerics,
 	ServiceAdapterInterface,
-	ServiceAdapterSelector,
 } from './service/adapter.interface';
 import {ServiceControllerInterface} from './service/controller.interface';
+import { ServiceSearchType } from './service/search.interface';
+import { ServiceSelectSettings, ServiceSelectActionType, ServiceSelectType } from './service/select.interface';
 
 export type ReferenceType = DynamicObject;
-export type SearchType = {
-	datum: DynamicObject;
-	params: DynamicObject;
-};
 
 export interface ServiceInternalGenerics extends ModelInternalGenerics {
 	reference?: DynamicObject;
-	search?: DynamicObject;
+	search?: ServiceSearchType;
 }
 
 export interface ServiceExternalGenerics extends ModelExternalGenerics {
 	reference?: DynamicObject;
 	delta?: DynamicObject;
-	search?: DynamicObject;
+	search?: ServiceSearchType;
 }
 
 export interface ServiceStorageGenerics extends ServiceAdapterGenerics {}
@@ -46,7 +43,7 @@ export interface ServiceSettings<
 > {
 	adapter: ServiceAdapterInterface<StorageT>;
 	controller?: ServiceControllerInterface<InternalT>;
-	actions?: ServiceQueryActions;
+	actions?: ServiceSelectSettings;
 }
 
 export type ServiceDatumModifierFn<StructureT> = (
@@ -68,8 +65,6 @@ export interface ServiceHooks<
 	onInflate?: ServiceDatumModifierFn<InternalT['structure']>;
 	onDeflate?: ServiceDatumModifierFn<InternalT['structure']>;
 }
-
-export type ServiceQueryActions = Record<string, TypingReference>;
 
 export interface ServiceInterface<
 	InternalT extends ServiceInternalGenerics = ServiceInternalGenerics,
@@ -97,11 +92,11 @@ export interface ServiceInterface<
 	): Promise<ExternalT['structure'][]>;
 	select(
 		ctx: ContextSecurityInterface,
-		selector: ServiceAdapterSelector,
+		selector: ServiceSelectType,
 	): Promise<InternalT['structure'][]>;
 	externalSelect(
 		ctx: ContextSecurityInterface,
-		selector: ServiceAdapterSelector,
+		selector: ServiceSelectType,
 	): Promise<ExternalT['structure'][]>;
 	search(
 		ctx: ContextSecurityInterface,
@@ -129,5 +124,5 @@ export interface ServiceInterface<
 	): Promise<ExternalT['structure'][]>;
 
 	getModel(): ModelInterface<InternalT, ExternalT, StorageT>;
-	getQueryActions(): ServiceQueryActions;
+	getSelectActionTypes(): Record<ServiceSelectActionType, TypingReference>;
 }

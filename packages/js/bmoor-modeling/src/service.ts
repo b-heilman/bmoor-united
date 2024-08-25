@@ -1,5 +1,4 @@
 import {ContextSecurityInterface} from '@bmoor/context';
-import {TypingReference} from '@bmoor/schema';
 
 import {ModelInterface} from './model.interface';
 import {
@@ -11,7 +10,8 @@ import {
 	ServiceStorageGenerics,
 	ServiceUpdateDelta,
 } from './service.interface';
-import {ServiceAdapterSelector} from './service/adapter.interface';
+import {ServiceSelectActionType, ServiceSelectType} from './service/select.interface';
+import { TypingReference } from '@bmoor/schema';
 
 function getStorageModel(model: ModelInterface) {
 	return {
@@ -137,9 +137,22 @@ export class Service<
 	// you pass in how you are joining, and any filters to run
 	async select(
 		ctx: ContextSecurityInterface,
-		selector: ServiceAdapterSelector,
+		selector: ServiceSelectType,
 	): Promise<InternalT['structure'][]> {
 		const model = this.getModel();
+		const actions = this.settings.actions ? 
+			Object.entries(selector.actions).reduce(
+				(agg, [type, cmd]) => {
+					const info = this.settings.actions[type];
+
+					if (info && !info.fn && (!info.isAllowed || info.isAllowed(cmd))){
+						agg[type] = cmd;
+					}
+
+					return agg;
+				},
+				{}
+			) : {};
 		const imploded = model.implodeStorage(
 			this.deflate(ctx, selector.params),
 		);
@@ -155,23 +168,43 @@ export class Service<
 					value,
 				})),
 			},
-		});
+		}, actions);
 
 		const rtn = res.map((datum) =>
 			this.onRead(ctx, this.model.fromDeflated(datum)),
 		);
 
-		// TODO: I need to do something about the actions here
+		const rtn2 = await (
+			this.settings.controller
+				? this.settings.controller.canRead(ctx, rtn, this)
+				: rtn
+		);
 
-		return this.settings.controller
-			? this.settings.controller.canRead(ctx, rtn, this)
-			: rtn;
+		if (this.settings.actions){
+			return Object.entries(selector.actions).reduce(
+				(agg, [type, cmd]) => {
+					const info = this.settings.actions[type];
+
+					if (info && info.fn && (!info.isAllowed || info.isAllowed(cmd))){
+						agg = info.fn(agg, cmd);
+						agg[type] = cmd;
+					}
+
+					return agg;
+				},
+				rtn2
+			);
+		} else {
+			return rtn2;
+		}
 	}
 
 	async externalSelect(
 		ctx: ContextSecurityInterface,
-		query: ServiceAdapterSelector,
+		query: ServiceSelectType,
 	): Promise<ExternalT['structure'][]> {
+		query.params = this.model.fromInflated(query.params);
+
 		return (await this.select(ctx, query)).map((datum) =>
 			this.inflate(ctx, datum),
 		);
@@ -211,11 +244,22 @@ export class Service<
 			: rtn;
 	}
 
+	getSelectActionTypes(): Record<ServiceSelectActionType, TypingReference> {
+		return Object.entries(this.settings.actions || {}).reduce(
+			(agg, [actionName, actionInfo]) => {
+				agg[actionName] = actionInfo.type;
+
+				return agg;
+			},
+			{}
+		)
+	}
+
 	async externalSearch(
 		ctx: ContextSecurityInterface,
 		search: ExternalT['search'],
 	): Promise<ExternalT['structure'][]> {
-		return (await this.search(ctx, this.model.fromInflated(search))).map(
+		return (await this.search(ctx, this.model.fromInflated(search.datum))).map(
 			(datum) => this.inflate(ctx, datum),
 		);
 	}
@@ -327,10 +371,6 @@ export class Service<
 				ids.map((datum) => this.model.fromInflated(datum)),
 			)
 		).map((datum) => this.inflate(ctx, datum));
-	}
-
-	getQueryActions(): Record<string, TypingReference> {
-		return this.settings.actions || {};
 	}
 
 	getModel(): ModelInterface<InternalT, ExternalT, StorageT> {

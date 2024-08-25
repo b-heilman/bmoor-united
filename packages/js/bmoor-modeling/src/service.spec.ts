@@ -1298,19 +1298,403 @@ describe('@bmoor-modeling::Service', function () {
 		});
 
 		describe('select', function () {
-			xit('should work', function () {
-				console.log('TODO');
+			it('should work without actions', async function () {
+				const service = new Service(
+					new Model(serverCtx, {
+						reference: 'junk',
+						structure: {
+							field1: 'f1',
+							field2: 'f2',
+						},
+						storage: {
+							field1: 'f1',
+							field3: 'f2',
+						},
+						info: {
+							f1: {
+								type: 'string',
+							},
+							f2: {
+								type: 'number',
+								use: 'primary',
+							},
+						},
+					}),
+					{
+						adapter,
+						controller,
+					},
+				);
+
+				const myStub = stub(adapter, 'read').resolves([
+					{
+						field1: 'foo',
+						field3: 'bar',
+					},
+				]);
+
+				const res = await service.select(callCtx, {
+					params: {
+						field2: 12
+					},
+					actions: {
+						sort: 'field',
+						filter: 'do_it',
+						junk: 'some_value'
+					}
+				});
+
+				expect(res).to.deep.equal([
+					{
+						field1: 'foo',
+						field2: 'bar',
+					},
+				]);
+
+				expect(myStub.getCall(0).args[1]).to.deep.equal({
+					select: {
+						models: [
+							{
+								name: 'junk',
+								fields: [
+									{
+										path: 'field1',
+									},
+									{
+										path: 'field3',
+									},
+								],
+							},
+						],
+					},
+					params: {
+						ops: [
+							{
+								series: 'junk',
+								path: 'field3',
+								operator: 'eq',
+								value: 12,
+							},
+						],
+					},
+				});
+
+				expect(myStub.getCall(0).args[2]).to.deep.equal({});
+			});
+
+			it('should work with actions', async function () {
+				let called = false;
+				const service = new Service(
+					new Model(serverCtx, {
+						reference: 'junk',
+						structure: {
+							field1: 'f1',
+							field2: 'f2',
+						},
+						storage: {
+							field1: 'f1',
+							field3: 'f2',
+						},
+						info: {
+							f1: {
+								type: 'string',
+							},
+							f2: {
+								type: 'number',
+								use: 'primary',
+							},
+						},
+					}),
+					{
+						adapter,
+						controller,
+						actions: {
+							sort: {
+								type: 'string'
+							},
+							filter: {
+								type: 'string',
+								fn: (input, cmd) => {
+									return input.concat(input);
+								}
+							}
+						}
+					},
+				);
+
+				const myStub = stub(adapter, 'read').resolves([
+					{
+						field1: 'foo',
+						field3: 'bar',
+					},
+				]);
+
+				const res = await service.select(callCtx, {
+					params: {
+						field2: 12
+					},
+					actions: {
+						sort: 'field',
+						filter: 'do_it',
+						junk: 'some_value'
+					}
+				});
+
+				expect(res).to.deep.equal([
+					{
+						field1: 'foo',
+						field2: 'bar',
+					},
+					{
+						field1: 'foo',
+						field2: 'bar',
+					},
+				]);
+
+				expect(myStub.getCall(0).args[1]).to.deep.equal({
+					select: {
+						models: [
+							{
+								name: 'junk',
+								fields: [
+									{
+										path: 'field1',
+									},
+									{
+										path: 'field3',
+									},
+								],
+							},
+						],
+					},
+					params: {
+						ops: [
+							{
+								series: 'junk',
+								path: 'field3',
+								operator: 'eq',
+								value: 12,
+							},
+						],
+					},
+				});
+
+				// TODO: probably want to 
+				expect(myStub.getCall(0).args[2]).to.deep.equal({
+					sort: 'field'
+				});
 			});
 		});
 
 		describe('externalSelect', function () {
-			xit('should work', function () {
-				console.log('TODO');
+			it('should work without actions', async function () {
+				let called = false;
+				const service = new Service(
+					new Model(serverCtx, {
+						reference: 'junk',
+						structure: {
+							field1: 'f1',
+							field2: 'f2',
+						},
+						storage: {
+							store1: 'f1',
+							store2: 'f2',
+						},
+						external: {
+							data: {
+								prop1: 'f1',
+								prop2: 'f2',
+							},
+						},
+						info: {
+							f1: {
+								type: 'string',
+							},
+							f2: {
+								use: 'primary',
+								type: 'number',
+							},
+						},
+					}),
+					{
+						adapter,
+						controller,
+					},
+				);
+
+				const myStub = stub(adapter, 'read').resolves([
+					{
+						store1: 'foo',
+						store2: 'bar',
+					},
+				]);
+
+				const res = await service.externalSelect(callCtx, {
+					params: {
+						data: {prop2: 12}
+					},
+					actions: {
+						sort: 'field',
+						filter: 'do_it',
+						junk: 'some_value'
+					}
+				});
+
+				expect(res).to.deep.equal([
+					{
+						data: {
+							prop1: 'foo',
+							prop2: 'bar',
+						},
+					},
+				]);
+
+				expect(myStub.getCall(0).args[1]).to.deep.equal({
+					select: {
+						models: [
+							{
+								name: 'junk',
+								fields: [
+									{
+										path: 'store1',
+									},
+									{
+										path: 'store2',
+									},
+								],
+							},
+						],
+					},
+					params: {
+						ops: [
+							{
+								series: 'junk',
+								path: 'store2',
+								operator: 'eq',
+								value: 12,
+							},
+						],
+					},
+				});
+
+				expect(myStub.getCall(0).args[2]).to.deep.equal({});
+			});
+
+			it('should work with actions', async function () {
+				let called = false;
+				const service = new Service(
+					new Model(serverCtx, {
+						reference: 'junk',
+						structure: {
+							field1: 'f1',
+							field2: 'f2',
+						},
+						storage: {
+							store1: 'f1',
+							store2: 'f2',
+						},
+						external: {
+							data: {
+								prop1: 'f1',
+								prop2: 'f2',
+							},
+						},
+						info: {
+							f1: {
+								type: 'string',
+							},
+							f2: {
+								use: 'primary',
+								type: 'number',
+							},
+						},
+					}),
+					{
+						adapter,
+						controller,
+						actions: {
+							sort: {
+								type: 'string'
+							},
+							filter: {
+								type: 'string',
+								fn: (input, cmd) => {
+									return input.concat(input);
+								}
+							}
+						}
+					},
+				);
+
+				const myStub = stub(adapter, 'read').resolves([
+					{
+						store1: 'foo',
+						store2: 'bar',
+					},
+				]);
+
+				const res = await service.externalSelect(callCtx, {
+					params: {
+						data: {prop2: 12}
+					},
+					actions: {
+						sort: 'field',
+						filter: 'do_it',
+						junk: 'some_value'
+					}
+				});
+
+				expect(res).to.deep.equal([
+					{
+						data: {
+							prop1: 'foo',
+							prop2: 'bar',
+						},
+					},
+					{
+						data: {
+							prop1: 'foo',
+							prop2: 'bar',
+						},
+					},
+				]);
+
+				expect(myStub.getCall(0).args[1]).to.deep.equal({
+					select: {
+						models: [
+							{
+								name: 'junk',
+								fields: [
+									{
+										path: 'store1',
+									},
+									{
+										path: 'store2',
+									},
+								],
+							},
+						],
+					},
+					params: {
+						ops: [
+							{
+								series: 'junk',
+								path: 'store2',
+								operator: 'eq',
+								value: 12,
+							},
+						],
+					},
+				});
+
+				expect(myStub.getCall(0).args[2]).to.deep.equal({
+					sort: 'field'
+				});
 			});
 		});
 
 		describe('search', function () {
-			xit('should work', function () {
+			xit('should work', async function () {
 				console.log('TODO');
 			});
 		});

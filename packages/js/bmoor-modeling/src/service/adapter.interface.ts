@@ -5,20 +5,18 @@ import {ModelInternalGenerics} from '../model.interface';
 import {
 	RequestCreate,
 	RequestDelete,
-	RequestParameters,
 	RequestRead,
 	RequestUpdate,
 } from '../request.interface';
-
-export type ServiceAdapterSelector = {
-	params?: RequestParameters;
-	actions?: DynamicObject;
-};
+import {
+	ServiceSelectType,
+	ServiceSelectActionsType
+} from './select.interface';
 
 export interface ServiceAdapterGenerics extends ModelInternalGenerics {
 	reference?: DynamicObject;
 	delta?: DynamicObject;
-	select?: ServiceAdapterSelector;
+	select?: ServiceSelectType;
 	search?: DynamicObject;
 }
 
@@ -32,6 +30,7 @@ export interface ServiceAdapterInterface<
 	read(
 		ctx: ContextSecurityInterface,
 		request: RequestRead,
+		actions?: ServiceSelectActionsType
 	): Promise<AdapterT['structure'][]>;
 	update(
 		ctx: ContextSecurityInterface,

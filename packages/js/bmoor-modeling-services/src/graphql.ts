@@ -132,7 +132,7 @@ export class Graphql<
 						return `${field.getReference()}: ${primaryType}!`;
 					})
 					.concat(
-						Object.entries(service.getQueryActions() || {}).map(
+						Object.entries(service.getSelectActionTypes() || {}).map(
 							([action, type]) => {
 								return `${action}: ${this.serverCtx.getTyping(type).graphql}`;
 							},

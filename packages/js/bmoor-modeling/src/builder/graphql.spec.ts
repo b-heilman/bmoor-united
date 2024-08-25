@@ -126,8 +126,12 @@ describe('@bmoor/schema :: BuilderGraphql', function () {
 						},
 					},
 					actions: {
-						eins: 'string',
-						zwei: 'float',
+						eins: {
+							type: 'string'
+						},
+						zwei: {
+							type: 'float'
+						},
 					},
 				},
 			),

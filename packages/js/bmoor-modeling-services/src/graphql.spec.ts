@@ -129,8 +129,12 @@ describe('@bmoor/modeling-services : graphql', function () {
 				{
 					adapter: adapter2,
 					actions: {
-						eins: 'string',
-						zwei: 'float',
+						eins: {
+							type: 'string'
+						},
+						zwei: {
+							type: 'float'
+						},
 					},
 				},
 			),
