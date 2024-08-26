@@ -1,6 +1,6 @@
 import {expect} from 'chai';
 
-import {Context} from './context';
+import {SchemaContext} from './schema/context';
 import {toJSONSchema} from './methods';
 import {Schema} from './schema';
 import {types} from './typing';
@@ -11,7 +11,7 @@ describe('@bmoor/schema :: methods', function () {
 	let ctx;
 
 	beforeEach(function () {
-		ctx = new Context<TypingJSON>(types, validations);
+		ctx = new SchemaContext<TypingJSON>(types, validations);
 	});
 
 	describe('toJSONSchema', function () {

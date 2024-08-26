@@ -2,11 +2,15 @@ import {create} from '@bmoor/error';
 import {DynamicObject} from '@bmoor/object';
 import {toCamelCase} from '@bmoor/string';
 
-import {KnowledgeInterface, KnowledgeJSON} from './knowledge.interface';
-import {SchemaInterface, SchemaReference} from './schema.interface';
+import {SchemaInterface, SchemaReference} from '../schema.interface';
+import {
+	EnvironmentContextInterface,
+	EnvironmentContextJSON,
+} from './context.interface';
 
-export class Knowledge<SchemaT extends SchemaInterface = SchemaInterface>
-	implements KnowledgeInterface<SchemaT>
+export class EnvironmentContext<
+	SchemaT extends SchemaInterface = SchemaInterface,
+> implements EnvironmentContextInterface<SchemaT>
 {
 	schemas: Record<SchemaReference, SchemaT>;
 
@@ -48,7 +52,7 @@ export class Knowledge<SchemaT extends SchemaInterface = SchemaInterface>
 		return toCamelCase(ref);
 	}
 
-	toJSON(): KnowledgeJSON {
+	toJSON(): EnvironmentContextJSON {
 		return {
 			schemas: Object.values(this.schemas).map((schema) =>
 				schema.toJSON(),

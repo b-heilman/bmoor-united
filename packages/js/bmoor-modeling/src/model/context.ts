@@ -1,19 +1,19 @@
 import {
 	FieldType,
-	Context as OldContext,
+	SchemaContext,
 	TypingInterface,
 	ValidatorInterface,
 } from '@bmoor/schema';
 
-import {ContextInterface} from './context.interface';
-import {ConvertFn, ConveterInterface} from './converter.interface';
-import {HookInterface, HookReference} from './hook.interface';
-import {HookerInterface} from './hooker.interface';
-import {TypingJSON} from './typing.interface';
+import {ConvertFn, ConveterInterface} from '../converter.interface';
+import {HookInterface, HookReference} from '../hook.interface';
+import {HookerInterface} from '../hooker.interface';
+import {TypingJSON} from '../typing.interface';
+import {ModelContextInterface} from './context.interface';
 
-export class Context<TypingT extends TypingJSON>
-	extends OldContext<TypingT>
-	implements ContextInterface<TypingT>
+export class ModelContext<TypingT extends TypingJSON>
+	extends SchemaContext<TypingT>
+	implements ModelContextInterface<TypingT>
 {
 	hooker: HookerInterface;
 	converter: ConveterInterface;

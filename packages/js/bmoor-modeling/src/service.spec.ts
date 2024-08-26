@@ -1,10 +1,8 @@
 import {expect} from 'chai';
 import {stub} from 'sinon';
 
-import {ContextSecurityInterface} from '@bmoor/context';
 import {validations} from '@bmoor/schema';
 
-import {Context} from './context';
 import {converter} from './converter';
 import {hooks} from './hooker';
 import {Model} from './model';
@@ -15,8 +13,10 @@ import {
 	ServiceStorageGenerics,
 } from './service.interface';
 import {ServiceAdapterInterface} from './service/adapter.interface';
+import {ModelContext} from './model/context';
 import {ServiceControllerInterface} from './service/controller.interface';
 import {types} from './typing';
+import { ServiceContextInterface } from './service/context.interface';
 
 describe('@bmoor-modeling::Service', function () {
 	type InternalT = ServiceInternalGenerics;
@@ -28,10 +28,10 @@ describe('@bmoor-modeling::Service', function () {
 
 	let responseData;
 	let serverCtx;
-	let callCtx: ContextSecurityInterface = null;
+	let callCtx: ServiceContextInterface = null;
 
 	beforeEach(function () {
-		serverCtx = new Context(types, validations, hooks, converter);
+		serverCtx = new ModelContext(types, validations, hooks, converter);
 
 		callCtx = {
 			hasPermission() {
@@ -49,6 +49,7 @@ describe('@bmoor-modeling::Service', function () {
 			getVariable() {
 				return null;
 			},
+			env: null
 		};
 		controller = {
 			async canCreate(ctx, datums) {
@@ -1335,13 +1336,13 @@ describe('@bmoor-modeling::Service', function () {
 
 				const res = await service.select(callCtx, {
 					params: {
-						field2: 12
+						field2: 12,
 					},
 					actions: {
 						sort: 'field',
 						filter: 'do_it',
-						junk: 'some_value'
-					}
+						junk: 'some_value',
+					},
 				});
 
 				expect(res).to.deep.equal([
@@ -1383,7 +1384,6 @@ describe('@bmoor-modeling::Service', function () {
 			});
 
 			it('should work with actions', async function () {
-				let called = false;
 				const service = new Service(
 					new Model(serverCtx, {
 						reference: 'junk',
@@ -1410,15 +1410,15 @@ describe('@bmoor-modeling::Service', function () {
 						controller,
 						actions: {
 							sort: {
-								type: 'string'
+								type: 'string',
 							},
 							filter: {
 								type: 'string',
-								fn: (input, cmd) => {
+								fn: (input) => {
 									return input.concat(input);
-								}
-							}
-						}
+								},
+							},
+						},
 					},
 				);
 
@@ -1431,13 +1431,13 @@ describe('@bmoor-modeling::Service', function () {
 
 				const res = await service.select(callCtx, {
 					params: {
-						field2: 12
+						field2: 12,
 					},
 					actions: {
 						sort: 'field',
 						filter: 'do_it',
-						junk: 'some_value'
-					}
+						junk: 'some_value',
+					},
 				});
 
 				expect(res).to.deep.equal([
@@ -1479,16 +1479,15 @@ describe('@bmoor-modeling::Service', function () {
 					},
 				});
 
-				// TODO: probably want to 
+				// TODO: probably want to
 				expect(myStub.getCall(0).args[2]).to.deep.equal({
-					sort: 'field'
+					sort: 'field',
 				});
 			});
 		});
 
 		describe('externalSelect', function () {
 			it('should work without actions', async function () {
-				let called = false;
 				const service = new Service(
 					new Model(serverCtx, {
 						reference: 'junk',
@@ -1531,13 +1530,13 @@ describe('@bmoor-modeling::Service', function () {
 
 				const res = await service.externalSelect(callCtx, {
 					params: {
-						data: {prop2: 12}
+						data: {prop2: 12},
 					},
 					actions: {
 						sort: 'field',
 						filter: 'do_it',
-						junk: 'some_value'
-					}
+						junk: 'some_value',
+					},
 				});
 
 				expect(res).to.deep.equal([
@@ -1581,7 +1580,6 @@ describe('@bmoor-modeling::Service', function () {
 			});
 
 			it('should work with actions', async function () {
-				let called = false;
 				const service = new Service(
 					new Model(serverCtx, {
 						reference: 'junk',
@@ -1614,15 +1612,15 @@ describe('@bmoor-modeling::Service', function () {
 						controller,
 						actions: {
 							sort: {
-								type: 'string'
+								type: 'string',
 							},
 							filter: {
 								type: 'string',
-								fn: (input, cmd) => {
+								fn: (input) => {
 									return input.concat(input);
-								}
-							}
-						}
+								},
+							},
+						},
 					},
 				);
 
@@ -1635,13 +1633,13 @@ describe('@bmoor-modeling::Service', function () {
 
 				const res = await service.externalSelect(callCtx, {
 					params: {
-						data: {prop2: 12}
+						data: {prop2: 12},
 					},
 					actions: {
 						sort: 'field',
 						filter: 'do_it',
-						junk: 'some_value'
-					}
+						junk: 'some_value',
+					},
 				});
 
 				expect(res).to.deep.equal([
@@ -1688,7 +1686,7 @@ describe('@bmoor-modeling::Service', function () {
 				});
 
 				expect(myStub.getCall(0).args[2]).to.deep.equal({
-					sort: 'field'
+					sort: 'field',
 				});
 			});
 		});

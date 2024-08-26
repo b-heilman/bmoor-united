@@ -9,8 +9,8 @@ import {
 	RequestUpdate,
 } from '../request.interface';
 import {
+	ServiceSelectActionsType,
 	ServiceSelectType,
-	ServiceSelectActionsType
 } from './select.interface';
 
 export interface ServiceAdapterGenerics extends ModelInternalGenerics {
@@ -30,7 +30,7 @@ export interface ServiceAdapterInterface<
 	read(
 		ctx: ContextSecurityInterface,
 		request: RequestRead,
-		actions?: ServiceSelectActionsType
+		actions?: ServiceSelectActionsType,
 	): Promise<AdapterT['structure'][]>;
 	update(
 		ctx: ContextSecurityInterface,

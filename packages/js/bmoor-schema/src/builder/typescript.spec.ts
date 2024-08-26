@@ -1,9 +1,9 @@
 import {expect} from 'chai';
 
-import {Context} from '../context';
-import {Knowledge} from '../knowledge';
+import {EnvironmentContext} from '../environment/context';
 import {Schema} from '../schema';
 import {SchemaInterface} from '../schema.interface';
+import {SchemaContext} from '../schema/context';
 import {types} from '../typing';
 import {validations} from '../validator';
 import {BuilderTypescript} from './typescript';
@@ -12,11 +12,11 @@ describe('@bmoor/schema :: BuilderTypescript', function () {
 	let ctx;
 
 	beforeEach(function () {
-		ctx = new Context(types, validations);
+		ctx = new SchemaContext(types, validations);
 	});
 
 	it('should properly generate a json schema', function () {
-		const dictionary = new Knowledge<SchemaInterface>();
+		const dictionary = new EnvironmentContext<SchemaInterface>();
 
 		dictionary.addSchema(
 			new Schema(ctx, {
@@ -148,7 +148,7 @@ describe('@bmoor/schema :: BuilderTypescript', function () {
 	});
 
 	it('should properly generate a complex schema', function () {
-		const dictionary = new Knowledge<SchemaInterface>();
+		const dictionary = new EnvironmentContext<SchemaInterface>();
 
 		dictionary.addSchema(
 			new Schema(ctx, {

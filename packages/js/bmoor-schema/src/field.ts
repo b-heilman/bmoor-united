@@ -1,7 +1,9 @@
 import {DynamicObject} from '@bmoor/object';
 import {Path, PathInterface} from '@bmoor/path';
 
-import {ContextInterface} from './context.interface';
+import {
+	SchemaContextInterface
+} from './schema/context.interface';
 import {
 	FieldInfo,
 	FieldInterface,
@@ -61,7 +63,7 @@ export class Field<T = any> implements FieldInterface {
 	}
 
 	validate(
-		ctx: ContextInterface,
+		ctx: SchemaContextInterface,
 		root: DynamicObject<T>,
 		mode: 'create' | 'update' = 'create',
 	): Promise<string> {

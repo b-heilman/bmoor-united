@@ -1,19 +1,19 @@
 import {expect} from 'chai';
 
-import {Context} from './context';
-import {Knowledge} from './knowledge';
-import {Schema} from './schema';
-import {SchemaInterface} from './schema.interface';
-import {types} from './typing';
-import {validations} from './validator';
+import {Schema} from '../schema';
+import {SchemaInterface} from '../schema.interface';
+import {SchemaContext} from '../schema/context';
+import {types} from '../typing';
+import {validations} from '../validator';
+import {EnvironmentContext} from './context';
 
 describe('@bmoor/schema :: Knowledge', function () {
 	let ctx;
-	let knowledge: Knowledge<SchemaInterface>;
+	let knowledge: EnvironmentContext<SchemaInterface>;
 
 	beforeEach(function () {
-		ctx = new Context(types, validations);
-		knowledge = new Knowledge<SchemaInterface>();
+		ctx = new SchemaContext(types, validations);
+		knowledge = new EnvironmentContext<SchemaInterface>();
 
 		knowledge.addSchema(
 			new Schema(ctx, {

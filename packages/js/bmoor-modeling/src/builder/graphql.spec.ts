@@ -2,19 +2,19 @@ import {expect} from 'chai';
 
 import {validations} from '@bmoor/schema';
 
-import {Context} from '../context';
 import {converter} from '../converter';
+import {EnvironmentContext} from '../environment/context';
 import {hooks} from '../hooker';
 import {Model} from '../model';
-import {Nexus} from '../nexus';
 import {Service} from '../service';
+import {ModelContext} from '../model/context';
 import {types} from '../typing';
 import {BuilderGraphql} from './graphql';
 
 describe('@bmoor/schema :: BuilderGraphql', function () {
 	it('should properly generate a json schema', function () {
-		const ctx = new Context(types, validations, hooks, converter);
-		const nexus = new Nexus();
+		const ctx = new ModelContext(types, validations, hooks, converter);
+		const nexus = new EnvironmentContext();
 
 		nexus.addService(
 			new Service(
@@ -127,10 +127,10 @@ describe('@bmoor/schema :: BuilderGraphql', function () {
 					},
 					actions: {
 						eins: {
-							type: 'string'
+							type: 'string',
 						},
 						zwei: {
-							type: 'float'
+							type: 'float',
 						},
 					},
 				},
@@ -251,8 +251,8 @@ describe('@bmoor/schema :: BuilderGraphql', function () {
 	});
 
 	it('should properly generate a complex schema', function () {
-		const ctx = new Context(types, validations, hooks, converter);
-		const nexus = new Nexus();
+		const ctx = new ModelContext(types, validations, hooks, converter);
+		const nexus = new EnvironmentContext();
 
 		nexus.addService(
 			new Service(

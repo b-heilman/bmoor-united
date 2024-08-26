@@ -1,7 +1,7 @@
 import {expect} from 'chai';
 
-import {Context} from '../context';
 import {Schema} from '../schema';
+import {SchemaContext} from '../schema/context';
 import {types} from '../typing';
 import {validations} from '../validator';
 import {BuilderJSONSchema} from './jsonschema';
@@ -10,7 +10,7 @@ describe('@bmoor/schema :: BuilderJSONSchema', function () {
 	let ctx;
 
 	beforeEach(function () {
-		ctx = new Context(types, validations);
+		ctx = new SchemaContext(types, validations);
 	});
 
 	it('should properly generate a json schema', function () {

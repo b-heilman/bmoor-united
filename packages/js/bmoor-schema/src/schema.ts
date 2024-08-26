@@ -5,14 +5,14 @@ import {implode} from '@bmoor/path';
 import {BuilderJSONSchema} from './builder/jsonschema';
 import {BuilderJSONSchemaObject} from './builder/jsonschema.interface';
 import {BuilderTypescript} from './builder/typescript';
-import {ContextInterface} from './context.interface';
+import {SchemaContextInterface} from './schema/context.interface';
 import {Field} from './field';
 import {
 	FieldInterface,
 	FieldJSON,
 	FieldReference,
 } from './field.interface';
-import {Knowledge} from './knowledge';
+import {EnvironmentContext} from './environment/context';
 import {RelationshipJSON} from './relationship.interface';
 import {
 	SchemaFieldSet,
@@ -48,13 +48,13 @@ export function reduceStructure(
 }
 
 export class Schema implements SchemaInterface {
-	ctx: ContextInterface;
-	knowledge: Knowledge;
+	ctx: SchemaContextInterface;
+	env: EnvironmentContext;
 	fields: Record<FieldReference, FieldInterface>;
 	settings: SchemaJSON;
 	relationships: Record<SchemaReference, RelationshipJSON>;
 
-	constructor(ctx: ContextInterface, schema: SchemaSettings) {
+	constructor(ctx: SchemaContextInterface, schema: SchemaSettings) {
 		this.ctx = ctx;
 		this.settings = schema; // I'll probably change this later, but for now, is what it is
 
@@ -62,8 +62,8 @@ export class Schema implements SchemaInterface {
 		this.relationships = this.defineRelationships();
 	}
 
-	setSpace(know: Knowledge) {
-		this.knowledge = know;
+	setSpace(env: EnvironmentContext) {
+		this.env = env;
 	}
 
 	defineFields(): Record<FieldReference, FieldInterface> {
@@ -179,7 +179,7 @@ export class Schema implements SchemaInterface {
 	}
 
 	toTypescript(): string {
-		const builder = new BuilderTypescript(this.ctx, this.knowledge);
+		const builder = new BuilderTypescript(this.ctx, this.env);
 
 		builder.addSchema(this);
 

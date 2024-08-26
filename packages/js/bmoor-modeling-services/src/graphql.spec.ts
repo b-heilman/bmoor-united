@@ -4,9 +4,9 @@ import {expect} from 'chai';
 import {stub} from 'sinon';
 
 import {
-	Context,
+	ModelContext,
 	Model,
-	Nexus,
+	EnvironmentContext,
 	Service,
 	ServiceAdapterInterface,
 	converter,
@@ -18,14 +18,14 @@ import {validations} from '@bmoor/schema';
 import {Graphql} from './graphql';
 
 describe('@bmoor/modeling-services : graphql', function () {
-	const serverCtx = new Context(types, validations, hooks, converter);
-	let nexus: Nexus;
+	const modelCtx = new ModelContext(types, validations, hooks, converter);
+	let env: EnvironmentContext;
 	let adapter1: ServiceAdapterInterface;
 	let adapter2: ServiceAdapterInterface;
 	let adapter3: ServiceAdapterInterface;
 
 	beforeEach(function () {
-		nexus = new Nexus();
+		env = new EnvironmentContext();
 
 		adapter1 = {
 			async create() {
@@ -72,9 +72,9 @@ describe('@bmoor/modeling-services : graphql', function () {
 			},
 		};
 
-		nexus.addService(
+		env.addService(
 			new Service(
-				new Model(serverCtx, {
+				new Model(modelCtx, {
 					reference: 's-1',
 					info: {
 						foo: {
@@ -102,9 +102,9 @@ describe('@bmoor/modeling-services : graphql', function () {
 			),
 		);
 
-		nexus.addService(
+		env.addService(
 			new Service(
-				new Model(serverCtx, {
+				new Model(modelCtx, {
 					reference: 's-2',
 					info: {
 						hello: {
@@ -130,19 +130,19 @@ describe('@bmoor/modeling-services : graphql', function () {
 					adapter: adapter2,
 					actions: {
 						eins: {
-							type: 'string'
+							type: 'string',
 						},
 						zwei: {
-							type: 'float'
+							type: 'float',
 						},
 					},
 				},
 			),
 		);
 
-		nexus.addService(
+		env.addService(
 			new Service(
-				new Model(serverCtx, {
+				new Model(modelCtx, {
 					reference: 's-3',
 					info: {
 						id: {
@@ -206,7 +206,7 @@ describe('@bmoor/modeling-services : graphql', function () {
 
 	describe('toGraphQL', function () {
 		it('should properly generate graphql', function () {
-			const graphql = new Graphql(serverCtx, nexus, {
+			const graphql = new Graphql(modelCtx, env, {
 				query: {
 					entry: {
 						schema: 's-1',
@@ -247,7 +247,7 @@ type Query {
 
 	describe('toResolvers', function () {
 		it('should properly define needed resolvers', async function () {
-			const graphql = new Graphql(serverCtx, nexus, {
+			const graphql = new Graphql(modelCtx, env, {
 				query: {
 					entry: {
 						schema: 's-1',
@@ -292,25 +292,25 @@ type Query {
 				},
 			]);
 			expect(read1.getCall(0).args[1]).to.deep.equal({
-				"select": {
-				  "models": [
-					{
-					  "name": "s-1",
-					  "fields": [
+				select: {
+					models: [
 						{
-						  "path": "foo"
+							name: 's-1',
+							fields: [
+								{
+									path: 'foo',
+								},
+								{
+									path: 'bar',
+								},
+							],
 						},
-						{
-						  "path": "bar"
-						}
-					  ]
-					}
-				  ]
+					],
 				},
-				"params": {
-				  "ops": []
-				}
-			  });
+				params: {
+					ops: [],
+				},
+			});
 			read1.restore();
 
 			const read2 = stub(adapter3, 'read').resolves([
@@ -327,31 +327,31 @@ type Query {
 				otherId: 'funf',
 			});
 			expect(read2.getCall(0).args[1]).to.deep.equal({
-				"select": {
-				  "models": [
-					{
-					  "name": "s-3",
-					  "fields": [
+				select: {
+					models: [
 						{
-						  "path": "id"
+							name: 's-3',
+							fields: [
+								{
+									path: 'id',
+								},
+								{
+									path: 'otherId',
+								},
+								{
+									path: 'mount',
+								},
+								{
+									path: 'parent',
+								},
+							],
 						},
-						{
-						  "path": "otherId"
-						},
-						{
-						  "path": "mount"
-						},
-						{
-						  "path": "parent"
-						}
-					  ]
-					}
-				  ]
+					],
 				},
-				"params": {
-				  "ops": []
-				}
-			  });
+				params: {
+					ops: [],
+				},
+			});
 			read2.restore();
 
 			const read3 = stub(adapter2, 'read').resolves([
@@ -366,25 +366,25 @@ type Query {
 				world: 1.2,
 			});
 			expect(read3.getCall(0).args[1]).to.deep.equal({
-				"select": {
-				  "models": [
-					{
-					  "name": "s-2",
-					  "fields": [
+				select: {
+					models: [
 						{
-						  "path": "hello"
+							name: 's-2',
+							fields: [
+								{
+									path: 'hello',
+								},
+								{
+									path: 'world',
+								},
+							],
 						},
-						{
-						  "path": "world"
-						}
-					  ]
-					}
-				  ]
+					],
 				},
-				"params": {
-				  "ops": []
-				}
-			  });
+				params: {
+					ops: [],
+				},
+			});
 			read3.restore();
 
 			const read4 = stub(adapter1, 'read').resolves([
@@ -401,24 +401,24 @@ type Query {
 				},
 			]);
 			expect(read4.getCall(0).args[1]).to.deep.equal({
-				"select": {
-				  "models": [
-					{
-					  "name": "s-1",
-					  "fields": [
+				select: {
+					models: [
 						{
-						  "path": "foo"
+							name: 's-1',
+							fields: [
+								{
+									path: 'foo',
+								},
+								{
+									path: 'bar',
+								},
+							],
 						},
-						{
-						  "path": "bar"
-						}
-					  ]
-					}
-				  ]
+					],
 				},
-				"params": {
-				  "ops": []
-				}
+				params: {
+					ops: [],
+				},
 			});
 		});
 	});
@@ -427,7 +427,7 @@ type Query {
 		let server;
 
 		beforeEach(function () {
-			const graphql = new Graphql(serverCtx, nexus, {
+			const graphql = new Graphql(modelCtx, env, {
 				query: {
 					entry: {
 						schema: 's-1',
@@ -498,93 +498,93 @@ type Query {
 			});
 
 			expect(read1.getCall(0).args[1]).to.deep.equal({
-				"select": {
-				  "models": [
-					{
-					  "name": "s-1",
-					  "fields": [
+				select: {
+					models: [
 						{
-						  "path": "foo"
+							name: 's-1',
+							fields: [
+								{
+									path: 'foo',
+								},
+								{
+									path: 'bar',
+								},
+							],
 						},
-						{
-						  "path": "bar"
-						}
-					  ]
-					}
-				  ]
+					],
 				},
-				"params": {
-				  "ops": [
-					{
-					  "series": "s-1",
-					  "path": "foo",
-					  "operator": "eq",
-					  "value": "fier"
-					}
-				  ]
-				}
-			  });
+				params: {
+					ops: [
+						{
+							series: 's-1',
+							path: 'foo',
+							operator: 'eq',
+							value: 'fier',
+						},
+					],
+				},
+			});
 
 			expect(read2.getCall(0).args[1]).to.deep.equal({
-				"select": {
-				  "models": [
-					{
-					  "name": "s-2",
-					  "fields": [
+				select: {
+					models: [
 						{
-						  "path": "hello"
+							name: 's-2',
+							fields: [
+								{
+									path: 'hello',
+								},
+								{
+									path: 'world',
+								},
+							],
 						},
-						{
-						  "path": "world"
-						}
-					  ]
-					}
-				  ]
+					],
 				},
-				"params": {
-				  "ops": [
-					{
-					  "series": "s-2",
-					  "path": "hello",
-					  "operator": "eq",
-					  "value": "funf"
-					}
-				  ]
-				}
+				params: {
+					ops: [
+						{
+							series: 's-2',
+							path: 'hello',
+							operator: 'eq',
+							value: 'funf',
+						},
+					],
+				},
 			});
 
 			expect(read3.getCall(0).args[1]).to.deep.equal({
-				"select": {
-				  "models": [
-					{
-					  "name": "s-3",
-					  "fields": [
+				select: {
+					models: [
 						{
-						  "path": "id"
+							name: 's-3',
+							fields: [
+								{
+									path: 'id',
+								},
+								{
+									path: 'otherId',
+								},
+								{
+									path: 'mount',
+								},
+								{
+									path: 'parent',
+								},
+							],
 						},
-						{
-						  "path": "otherId"
-						},
-						{
-						  "path": "mount"
-						},
-						{
-						  "path": "parent"
-						}
-					  ]
-					}
-				  ]
+					],
 				},
-				"params": {
-				  "ops": [
-					{
-					  "series": "s-3",
-					  "path": "id",
-					  "operator": "eq",
-					  "value": "someId"
-					}
-				  ]
-				}
+				params: {
+					ops: [
+						{
+							series: 's-3',
+							path: 'id',
+							operator: 'eq',
+							value: 'someId',
+						},
+					],
+				},
 			});
 		});
 
@@ -615,31 +615,31 @@ type Query {
 			]);
 
 			expect(read1.getCall(0).args[1]).to.deep.equal({
-				"select": {
-				  "models": [
-					{
-					  "name": "s-1",
-					  "fields": [
+				select: {
+					models: [
 						{
-						  "path": "foo"
+							name: 's-1',
+							fields: [
+								{
+									path: 'foo',
+								},
+								{
+									path: 'bar',
+								},
+							],
 						},
-						{
-						  "path": "bar"
-						}
-					  ]
-					}
-				  ]
+					],
 				},
-				"params": {
-				  "ops": [
-					{
-					  "series": "s-1",
-					  "path": "foo",
-					  "operator": "eq",
-					  "value": "someId"
-					}
-				  ]
-				}
+				params: {
+					ops: [
+						{
+							series: 's-1',
+							path: 'foo',
+							operator: 'eq',
+							value: 'someId',
+						},
+					],
+				},
 			});
 		});
 	});

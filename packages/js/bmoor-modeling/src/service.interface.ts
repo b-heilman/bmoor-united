@@ -1,7 +1,8 @@
-import {ContextSecurityInterface} from '@bmoor/context';
+
 import {DynamicObject} from '@bmoor/object';
 import {TypingReference} from '@bmoor/schema';
 
+import {ServiceContextInterface} from './service/context.interface';
 import {
 	ModelExternalGenerics,
 	ModelInterface,
@@ -12,8 +13,12 @@ import {
 	ServiceAdapterInterface,
 } from './service/adapter.interface';
 import {ServiceControllerInterface} from './service/controller.interface';
-import { ServiceSearchType } from './service/search.interface';
-import { ServiceSelectSettings, ServiceSelectActionType, ServiceSelectType } from './service/select.interface';
+import {ServiceSearchType} from './service/search.interface';
+import {
+	ServiceSelectActionType,
+	ServiceSelectSettings,
+	ServiceSelectType,
+} from './service/select.interface';
 
 export type ReferenceType = DynamicObject;
 
@@ -47,12 +52,12 @@ export interface ServiceSettings<
 }
 
 export type ServiceDatumModifierFn<StructureT> = (
-	ctx: ContextSecurityInterface,
+	ctx: ServiceContextInterface,
 	datum: StructureT,
 ) => void;
 
 export type ServiceDeltaModifierFn<DeltaT> = (
-	ctx: ContextSecurityInterface,
+	ctx: ServiceContextInterface,
 	datum: DeltaT,
 ) => void;
 
@@ -75,51 +80,51 @@ export interface ServiceInterface<
 	hooks?: ServiceHooks<InternalT>;
 
 	create(
-		ctx: ContextSecurityInterface,
+		ctx: ServiceContextInterface,
 		content: InternalT['structure'][],
 	): Promise<InternalT['structure'][]>;
 	externalCreate(
-		ctx: ContextSecurityInterface,
+		ctx: ServiceContextInterface,
 		content: ExternalT['structure'][],
 	): Promise<ExternalT['structure'][]>;
 	read(
-		ctx: ContextSecurityInterface,
+		ctx: ServiceContextInterface,
 		ids: InternalT['reference'][],
 	): Promise<InternalT['structure'][]>;
 	externalRead(
-		ctx: ContextSecurityInterface,
+		ctx: ServiceContextInterface,
 		ids: ExternalT['reference'][],
 	): Promise<ExternalT['structure'][]>;
 	select(
-		ctx: ContextSecurityInterface,
+		ctx: ServiceContextInterface,
 		selector: ServiceSelectType,
 	): Promise<InternalT['structure'][]>;
 	externalSelect(
-		ctx: ContextSecurityInterface,
+		ctx: ServiceContextInterface,
 		selector: ServiceSelectType,
 	): Promise<ExternalT['structure'][]>;
 	search(
-		ctx: ContextSecurityInterface,
+		ctx: ServiceContextInterface,
 		search: InternalT['search'],
 	): Promise<InternalT['structure'][]>;
 	externalSearch(
-		ctx: ContextSecurityInterface,
+		ctx: ServiceContextInterface,
 		search: ExternalT['search'],
 	): Promise<ExternalT['structure'][]>;
 	update(
-		ctx: ContextSecurityInterface,
+		ctx: ServiceContextInterface,
 		content: ServiceUpdateDelta<InternalT>[],
 	): Promise<InternalT['structure'][]>;
 	externalUpdate(
-		ctx: ContextSecurityInterface,
+		ctx: ServiceContextInterface,
 		content: ServiceUpdateDelta<ExternalT>[],
 	): Promise<ExternalT['structure'][]>;
 	delete(
-		ctx: ContextSecurityInterface,
+		ctx: ServiceContextInterface,
 		ids: InternalT['reference'][],
 	): Promise<InternalT['structure'][]>;
 	externalDelete(
-		ctx: ContextSecurityInterface,
+		ctx: ServiceContextInterface,
 		ids: ExternalT['reference'][],
 	): Promise<ExternalT['structure'][]>;
 

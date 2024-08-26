@@ -1,8 +1,8 @@
 import {DynamicObject} from '@bmoor/object';
-import {FormatInterface} from '@bmoor/schema';
+import {SchemaFormatInterface} from '@bmoor/schema';
 
 export function dictToGraphql(
-	ctx: FormatInterface,
+	ctx: SchemaFormatInterface,
 	root: DynamicObject,
 	namespace: string,
 ): string {

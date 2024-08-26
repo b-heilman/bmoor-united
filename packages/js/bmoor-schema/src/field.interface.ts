@@ -5,7 +5,7 @@ import {
 	PathObject,
 } from '@bmoor/path/src/path.interface';
 
-import {ContextInterface} from './context.interface';
+import {SchemaContextInterface} from './schema/context.interface';
 import {ValidationJSON} from './validation.interface';
 
 export type FieldPath = string;
@@ -47,7 +47,7 @@ export interface FieldInterface<T = any> {
 	setValidator(settings: ValidationJSON);
 	// Only returns a string if invalid, otherwise returns null
 	validate(
-		ctx: ContextInterface,
+		ctx: SchemaContextInterface,
 		root: DynamicObject<T>,
 		mode: 'create' | 'update',
 	): Promise<string>;

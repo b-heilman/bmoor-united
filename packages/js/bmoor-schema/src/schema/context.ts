@@ -1,16 +1,16 @@
 import {toCamelCase} from '@bmoor/string';
 
-import {ContextInterface} from './context.interface';
 import {
 	TypingInterface,
 	TypingJSON,
 	TypingReference,
-} from './typing.interface';
-import {ValidationReference} from './validation.interface';
-import {ValidatorInterface} from './validator.interface';
+} from '../typing.interface';
+import {ValidationReference} from '../validation.interface';
+import {ValidatorInterface} from '../validator.interface';
+import {SchemaContextInterface} from './context.interface';
 
-export class Context<TypingT extends TypingJSON>
-	implements ContextInterface<TypingT>
+export class SchemaContext<TypingT extends TypingJSON>
+	implements SchemaContextInterface<TypingT>
 {
 	typing: TypingInterface<TypingT>;
 	validator: ValidatorInterface;

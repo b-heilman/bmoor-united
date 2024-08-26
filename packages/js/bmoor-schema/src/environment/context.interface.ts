@@ -4,13 +4,13 @@ import {
 	SchemaInterface,
 	SchemaJSON,
 	SchemaReference,
-} from './schema.interface';
+} from '../schema.interface';
 
-export interface KnowledgeJSON {
+export interface EnvironmentContextJSON {
 	schemas: SchemaJSON[];
 }
 
-export interface KnowledgeInterface<
+export interface EnvironmentContextInterface<
 	SchemaT extends SchemaInterface = SchemaInterface,
 > {
 	addSchema(schema: SchemaT);
@@ -23,5 +23,5 @@ export interface KnowledgeInterface<
 		mode?: 'create' | 'update',
 	): Promise<string[]>;
 
-	toJSON(): KnowledgeJSON;
+	toJSON(): EnvironmentContextJSON;
 }

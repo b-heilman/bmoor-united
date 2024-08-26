@@ -5,23 +5,26 @@ import {
 	SchemaInterface,
 } from '@bmoor/schema';
 
-import {ContextInterface} from '../context.interface';
+import {EnvironmentContextInterface} from '../environment/context.interface';
 import {dictToGraphql} from '../methods';
-import {NexusInterface} from '../nexus.interface';
+import {ModelContextInterface} from '../model/context.interface';
 import {TypingJSON} from '../typing.interface';
 
 // TODO: I need to handle multiple dimensions and sub types
 
 export class BuilderGraphql<TypingT extends TypingJSON = TypingJSON> {
-	ctx: ContextInterface<TypingT>;
+	ctx: ModelContextInterface<TypingT>;
 	root: DynamicObject;
-	nexus: NexusInterface;
+	env: EnvironmentContextInterface;
 	schema?: SchemaInterface;
 
-	constructor(ctx: ContextInterface<TypingT>, nexus: NexusInterface) {
+	constructor(
+		ctx: ModelContextInterface<TypingT>,
+		env: EnvironmentContextInterface,
+	) {
 		this.ctx = ctx;
 		this.root = {};
-		this.nexus = nexus;
+		this.env = env;
 	}
 
 	addSchema(schema: SchemaInterface) {
@@ -54,7 +57,7 @@ export class BuilderGraphql<TypingT extends TypingJSON = TypingJSON> {
 		schema: SchemaInterface,
 		relationship: RelationshipJSON,
 	) {
-		const service = this.nexus.getService(relationship.other);
+		const service = this.env.getService(relationship.other);
 		const model = service.getModel();
 
 		const attrs = relationship.otherFields

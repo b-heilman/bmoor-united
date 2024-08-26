@@ -1,16 +1,16 @@
-import {ContextInterface} from '../context.interface';
 import {FieldInterface} from '../field.interface';
 import {SchemaInterface} from '../schema.interface';
+import {SchemaContextInterface} from '../schema/context.interface';
 import {
 	BuilderJSONSchemaNode,
 	BuilderJSONSchemaObject,
 } from './jsonschema.interface';
 
 export class BuilderJSONSchema {
-	ctx: ContextInterface;
+	ctx: SchemaContextInterface;
 	root: BuilderJSONSchemaObject;
 
-	constructor(ctx: ContextInterface) {
+	constructor(ctx: SchemaContextInterface) {
 		this.ctx = ctx;
 		this.root = {
 			type: 'object',

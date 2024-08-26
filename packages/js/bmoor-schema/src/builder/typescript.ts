@@ -1,20 +1,23 @@
 import {DynamicObject, set} from '@bmoor/object';
 
-import {ContextInterface} from '../context.interface';
+import {EnvironmentContextInterface} from '../environment/context.interface';
 import {FieldInterface} from '../field.interface';
-import {Knowledge} from '../knowledge';
 import {dictToTypescript} from '../methods';
 import {RelationshipJSON} from '../relationship.interface';
 import {SchemaInterface} from '../schema.interface';
+import {SchemaContextInterface} from '../schema/context.interface';
 import {TypingJSON} from '../typing.interface';
 
 export class BuilderTypescript<TypingT extends TypingJSON = TypingJSON> {
-	ctx: ContextInterface<TypingT>;
+	ctx: SchemaContextInterface<TypingT>;
 	root: DynamicObject;
 	schema?: SchemaInterface;
-	knowledge: Knowledge;
+	knowledge: EnvironmentContextInterface;
 
-	constructor(ctx: ContextInterface<TypingT>, know: Knowledge) {
+	constructor(
+		ctx: SchemaContextInterface<TypingT>,
+		know: EnvironmentContextInterface,
+	) {
 		this.ctx = ctx;
 		this.root = {};
 		this.knowledge = know;

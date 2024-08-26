@@ -2,12 +2,15 @@ import {DynamicObject} from '@bmoor/object';
 
 import {BuilderJSONSchema} from './builder/jsonschema';
 import {BuilderJSONSchemaObject} from './builder/jsonschema.interface';
-import {ContextInterface, FormatInterface} from './context.interface';
+import {
+	SchemaContextInterface, 
+	SchemaFormatInterface
+} from './schema/context.interface';
 import {SchemaInterface} from './schema.interface';
 import {TypingJSON} from './typing.interface';
 
 export function toJSONSchema<T extends TypingJSON = TypingJSON>(
-	ctx: ContextInterface<T>,
+	ctx: SchemaContextInterface<T>,
 	schema: SchemaInterface,
 ): BuilderJSONSchemaObject {
 	const formatter = new BuilderJSONSchema(ctx);
@@ -18,7 +21,7 @@ export function toJSONSchema<T extends TypingJSON = TypingJSON>(
 }
 
 export function dictToTypescript(
-	ctx: FormatInterface,
+	ctx: SchemaFormatInterface,
 	root: DynamicObject,
 	namespace: string,
 ): string {

@@ -1,4 +1,4 @@
-import {ContextSecurityInterface} from '@bmoor/context';
+import {TypingReference} from '@bmoor/schema';
 
 import {ModelInterface} from './model.interface';
 import {
@@ -10,8 +10,11 @@ import {
 	ServiceStorageGenerics,
 	ServiceUpdateDelta,
 } from './service.interface';
-import {ServiceSelectActionType, ServiceSelectType} from './service/select.interface';
-import { TypingReference } from '@bmoor/schema';
+import {ServiceContextInterface} from './service/context.interface';
+import {
+	ServiceSelectActionType,
+	ServiceSelectType,
+} from './service/select.interface';
 
 function getStorageModel(model: ModelInterface) {
 	return {
@@ -43,7 +46,7 @@ export class Service<
 	}
 
 	async create(
-		ctx: ContextSecurityInterface,
+		ctx: ServiceContextInterface,
 		content: ExternalT['structure'][],
 	): Promise<ExternalT['structure'][]> {
 		const model = this.getModel();
@@ -77,7 +80,7 @@ export class Service<
 	}
 
 	async externalCreate(
-		ctx: ContextSecurityInterface,
+		ctx: ServiceContextInterface,
 		content: ExternalT['structure'][],
 	): Promise<ExternalT['structure'][]> {
 		const internal = content.map((datum) =>
@@ -90,7 +93,7 @@ export class Service<
 	}
 
 	async read(
-		ctx: ContextSecurityInterface,
+		ctx: ServiceContextInterface,
 		ids: ExternalT['reference'][],
 	): Promise<ExternalT['structure'][]> {
 		const model = this.getModel();
@@ -121,7 +124,7 @@ export class Service<
 	}
 
 	async externalRead(
-		ctx: ContextSecurityInterface,
+		ctx: ServiceContextInterface,
 		ids: ExternalT['reference'][],
 	): Promise<ExternalT['structure'][]> {
 		return (
@@ -136,63 +139,71 @@ export class Service<
 	// This method is largely used to interface with graphql,
 	// you pass in how you are joining, and any filters to run
 	async select(
-		ctx: ContextSecurityInterface,
+		ctx: ServiceContextInterface,
 		selector: ServiceSelectType,
 	): Promise<InternalT['structure'][]> {
 		const model = this.getModel();
-		const actions = this.settings.actions ? 
-			Object.entries(selector.actions).reduce(
-				(agg, [type, cmd]) => {
+		const actions = this.settings.actions
+			? Object.entries(selector.actions).reduce((agg, [type, cmd]) => {
 					const info = this.settings.actions[type];
 
-					if (info && !info.fn && (!info.isAllowed || info.isAllowed(cmd))){
+					if (
+						info &&
+						!info.fn &&
+						(!info.isAllowed || info.isAllowed(cmd))
+					) {
 						agg[type] = cmd;
 					}
 
 					return agg;
-				},
-				{}
-			) : {};
+				}, {})
+			: {};
 		const imploded = model.implodeStorage(
 			this.deflate(ctx, selector.params),
 		);
-		const res = await this.settings.adapter.read(ctx, {
-			select: {
-				models: [getStorageModel(model)],
+		const res = await this.settings.adapter.read(
+			ctx,
+			{
+				select: {
+					models: [getStorageModel(model)],
+				},
+				params: {
+					ops: Object.entries(imploded).map(([path, value]) => ({
+						series: model.getReference(),
+						path,
+						operator: 'eq',
+						value,
+					})),
+				},
 			},
-			params: {
-				ops: Object.entries(imploded).map(([path, value]) => ({
-					series: model.getReference(),
-					path,
-					operator: 'eq',
-					value,
-				})),
-			},
-		}, actions);
+			actions,
+		);
 
 		const rtn = res.map((datum) =>
 			this.onRead(ctx, this.model.fromDeflated(datum)),
 		);
 
-		const rtn2 = await (
-			this.settings.controller
-				? this.settings.controller.canRead(ctx, rtn, this)
-				: rtn
-		);
+		const rtn2 = await (this.settings.controller
+			? this.settings.controller.canRead(ctx, rtn, this)
+			: rtn);
 
-		if (this.settings.actions){
+		if (this.settings.actions) {
 			return Object.entries(selector.actions).reduce(
 				(agg, [type, cmd]) => {
 					const info = this.settings.actions[type];
 
-					if (info && info.fn && (!info.isAllowed || info.isAllowed(cmd))){
+					if (
+						info &&
+						info.fn &&
+						(!info.isAllowed || info.isAllowed(cmd))
+					) {
 						agg = info.fn(agg, cmd);
 						agg[type] = cmd;
 					}
 
 					return agg;
 				},
-				rtn2
+				rtn2,
 			);
 		} else {
 			return rtn2;
@@ -200,7 +211,7 @@ export class Service<
 	}
 
 	async externalSelect(
-		ctx: ContextSecurityInterface,
+		ctx: ServiceContextInterface,
 		query: ServiceSelectType,
 	): Promise<ExternalT['structure'][]> {
 		query.params = this.model.fromInflated(query.params);
@@ -210,12 +221,26 @@ export class Service<
 		);
 	}
 
+	getSelectActionTypes(): Record<
+		ServiceSelectActionType,
+		TypingReference
+	> {
+		return Object.entries(this.settings.actions || {}).reduce(
+			(agg, [actionName, actionInfo]) => {
+				agg[actionName] = actionInfo.type;
+
+				return agg;
+			},
+			{},
+		);
+	}
+
 	// TODO: finish
 	// This method is calling a complex query that is based on,
 	// this object. It should use a query builder that I need to
 	// implement yet
 	async search(
-		ctx: ContextSecurityInterface,
+		ctx: ServiceContextInterface,
 		search: InternalT['search'],
 	): Promise<InternalT['structure'][]> {
 		const model = this.getModel();
@@ -244,28 +269,17 @@ export class Service<
 			: rtn;
 	}
 
-	getSelectActionTypes(): Record<ServiceSelectActionType, TypingReference> {
-		return Object.entries(this.settings.actions || {}).reduce(
-			(agg, [actionName, actionInfo]) => {
-				agg[actionName] = actionInfo.type;
-
-				return agg;
-			},
-			{}
-		)
-	}
-
 	async externalSearch(
-		ctx: ContextSecurityInterface,
+		ctx: ServiceContextInterface,
 		search: ExternalT['search'],
 	): Promise<ExternalT['structure'][]> {
-		return (await this.search(ctx, this.model.fromInflated(search.datum))).map(
-			(datum) => this.inflate(ctx, datum),
-		);
+		return (
+			await this.search(ctx, this.model.fromInflated(search.datum))
+		).map((datum) => this.inflate(ctx, datum));
 	}
 
 	async update(
-		ctx: ContextSecurityInterface,
+		ctx: ServiceContextInterface,
 		content: ServiceUpdateDelta<InternalT>[],
 	): Promise<InternalT['structure'][]> {
 		const model = this.getModel();
@@ -313,7 +327,7 @@ export class Service<
 	}
 
 	async externalUpdate(
-		ctx: ContextSecurityInterface,
+		ctx: ServiceContextInterface,
 		content: ServiceUpdateDelta<ExternalT>[],
 	): Promise<ExternalT['structure'][]> {
 		return (
@@ -328,7 +342,7 @@ export class Service<
 	}
 
 	async delete(
-		ctx: ContextSecurityInterface,
+		ctx: ServiceContextInterface,
 		ids: InternalT['reference'][],
 	): Promise<InternalT['structure'][]> {
 		const model = this.getModel();
@@ -362,7 +376,7 @@ export class Service<
 	}
 
 	async externalDelete(
-		ctx: ContextSecurityInterface,
+		ctx: ServiceContextInterface,
 		ids: ExternalT['reference'][],
 	): Promise<ExternalT['structure'][]> {
 		return (
@@ -378,7 +392,7 @@ export class Service<
 	}
 
 	onCreate(
-		ctx: ContextSecurityInterface,
+		ctx: ServiceContextInterface,
 		obj: InternalT['structure'],
 	): InternalT['structure'] {
 		this.model.onCreate(obj);
@@ -391,7 +405,7 @@ export class Service<
 	}
 
 	onRead(
-		ctx: ContextSecurityInterface,
+		ctx: ServiceContextInterface,
 		obj: InternalT['structure'],
 	): InternalT['structure'] {
 		this.model.onRead(obj);
@@ -404,7 +418,7 @@ export class Service<
 	}
 
 	onUpdate(
-		ctx: ContextSecurityInterface,
+		ctx: ServiceContextInterface,
 		obj: InternalT['structure'],
 	): InternalT['structure'] {
 		this.model.onUpdate(obj);
@@ -417,7 +431,7 @@ export class Service<
 	}
 
 	onInflate(
-		ctx: ContextSecurityInterface,
+		ctx: ServiceContextInterface,
 		obj: InternalT['structure'],
 	): InternalT['structure'] {
 		this.model.onInflate(obj);
@@ -430,7 +444,7 @@ export class Service<
 	}
 
 	inflate(
-		ctx: ContextSecurityInterface,
+		ctx: ServiceContextInterface,
 		obj: InternalT['structure'],
 	): ExternalT['structure'] {
 		this.onInflate(ctx, obj);
@@ -439,7 +453,7 @@ export class Service<
 	}
 
 	onDeflate(
-		ctx: ContextSecurityInterface,
+		ctx: ServiceContextInterface,
 		obj: InternalT['structure'],
 	): InternalT['structure'] {
 		this.model.onDeflate(obj);
@@ -452,7 +466,7 @@ export class Service<
 	}
 
 	deflate(
-		ctx: ContextSecurityInterface,
+		ctx: ServiceContextInterface,
 		obj: InternalT['structure'],
 	): StorageT['structure'] {
 		this.onDeflate(ctx, obj);

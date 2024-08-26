@@ -1,8 +1,8 @@
 import {
 	BuilderGraphql,
-	ContextInterface,
+	EnvironmentContextInterface,
 	ModelInterface,
-	NexusInterface,
+	ModelContextInterface,
 	ServiceInterface,
 	TypingJSON,
 	dictToGraphql,
@@ -16,7 +16,7 @@ import {
 } from './graphql.interface';
 
 function createSchemaResolver(
-	nexus: NexusInterface,
+	nexus: EnvironmentContextInterface,
 	service: ServiceInterface,
 ): GraphqlSchemaSynthetics {
 	const model = service.getModel();
@@ -83,26 +83,26 @@ export class Graphql<
 	TypingT extends TypingJSON,
 	ModelT extends ModelInterface,
 > {
-	nexus: NexusInterface<ModelT>;
+	env: EnvironmentContextInterface<ModelT>;
 	settings: GraphqlJSON;
-	serverCtx: ContextInterface<TypingT>;
+	modelCtx: ModelContextInterface<TypingT>;
 
 	constructor(
-		ctx: ContextInterface<TypingT>,
-		nexus: NexusInterface<ModelT>,
+		ctx: ModelContextInterface<TypingT>,
+		env: EnvironmentContextInterface<ModelT>,
 		settings: GraphqlJSON,
 	) {
-		this.nexus = nexus;
+		this.env = env;
 		this.settings = settings;
-		this.serverCtx = ctx;
+		this.modelCtx = ctx;
 	}
 
 	toString(): string {
-		const types = Object.values(this.nexus.getSchemas())
+		const types = Object.values(this.env.getSchemas())
 			.map((schema) => {
 				const builder = new BuilderGraphql<TypingT>(
-					this.serverCtx,
-					this.nexus,
+					this.modelCtx,
+					this.env,
 				);
 
 				builder.addSchema(schema);
@@ -113,9 +113,9 @@ export class Graphql<
 
 		const queries = Object.entries(this.settings.query).reduce(
 			(agg, [key, query]) => {
-				const service = this.nexus.getService(query.schema);
+				const service = this.env.getService(query.schema);
 
-				const type = this.serverCtx.formatName(
+				const type = this.modelCtx.formatName(
 					service.getModel().getReference(),
 					'graphql',
 				);
@@ -125,7 +125,7 @@ export class Graphql<
 
 				const params = primaries
 					.map((field) => {
-						const primaryType = this.serverCtx.getTyping(
+						const primaryType = this.modelCtx.getTyping(
 							field.getInfo().type,
 						).graphql;
 
@@ -134,7 +134,7 @@ export class Graphql<
 					.concat(
 						Object.entries(service.getSelectActionTypes() || {}).map(
 							([action, type]) => {
-								return `${action}: ${this.serverCtx.getTyping(type).graphql}`;
+								return `${action}: ${this.modelCtx.getTyping(type).graphql}`;
 							},
 						),
 					);
@@ -154,21 +154,21 @@ export class Graphql<
 					.join('\n') + '\n';
 		}
 
-		return `${custom}${types}\n${dictToGraphql(this.serverCtx, queries, 'Query')}`;
+		return `${custom}${types}\n${dictToGraphql(this.modelCtx, queries, 'Query')}`;
 	}
 
 	toResolvers(): GraphqlSchemaResolvers {
 		const resolvers: GraphqlSchemaResolvers = {};
 
 		// Add the collection resolvers
-		Object.values(this.nexus.getSchemas()).reduce((agg, schema) => {
+		Object.values(this.env.getSchemas()).reduce((agg, schema) => {
 			const resolvers = createSchemaResolver(
-				this.nexus,
-				this.nexus.getService(schema.getReference()),
+				this.env,
+				this.env.getService(schema.getReference()),
 			);
 
 			if (Object.keys(resolvers).length > 0) {
-				agg[this.serverCtx.formatName(schema.getReference(), 'graphql')] =
+				agg[this.modelCtx.formatName(schema.getReference(), 'graphql')] =
 					resolvers;
 			}
 
@@ -178,7 +178,7 @@ export class Graphql<
 		// TODO: I need to add types to resolvers
 		resolvers['Query'] = Object.entries(this.settings.query).reduce(
 			(agg, [key, query]) => {
-				const service = this.nexus.getService(query.schema);
+				const service = this.env.getService(query.schema);
 				const model = service.getModel();
 				const single = query.single || false;
 

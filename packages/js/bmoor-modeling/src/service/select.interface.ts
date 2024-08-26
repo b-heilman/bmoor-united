@@ -1,13 +1,14 @@
-import { TypingReference } from '@bmoor/schema';
+import {TypingReference} from '@bmoor/schema';
 
-import {
-	RequestParameters,
-} from '../request.interface';
+import {RequestParameters} from '../request.interface';
 
 export type ServiceSelectActionType = string;
-export type ServiceSelectActionCommand = string
+export type ServiceSelectActionCommand = string;
 
-export type ServiceSelectActionsType = Record<ServiceSelectActionType, ServiceSelectActionCommand>;
+export type ServiceSelectActionsType = Record<
+	ServiceSelectActionType,
+	ServiceSelectActionCommand
+>;
 
 export type ServiceSelectType = {
 	params?: RequestParameters;
@@ -15,9 +16,10 @@ export type ServiceSelectType = {
 };
 
 export type ServiceSelectSettings = Record<
-    ServiceSelectActionType, {
-        type: TypingReference
-        fn?: (input: unknown[], cmd: ServiceSelectActionCommand) => unknown[]
-        isAllowed?: (cmd: ServiceSelectActionCommand) => boolean
-    }
+	ServiceSelectActionType,
+	{
+		type: TypingReference;
+		fn?: (input: unknown[], cmd: ServiceSelectActionCommand) => unknown[];
+		isAllowed?: (cmd: ServiceSelectActionCommand) => boolean;
+	}
 >;

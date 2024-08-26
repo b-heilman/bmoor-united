@@ -2,7 +2,7 @@ import {Mapping} from '@bmoor/path';
 import {MappingSettings} from '@bmoor/path/src/mapping.interface';
 import {FieldReference, Schema, reduceStructure} from '@bmoor/schema';
 
-import {ContextInterface} from './context.interface';
+import {ModelContextInterface} from './model/context.interface';
 import {
 	ModelExternalGenerics,
 	ModelInterface,
@@ -117,7 +117,7 @@ export class Model<
 	extends Schema
 	implements ModelInterface<InternalT, ExternalT, StorageT>
 {
-	ctx: ContextInterface;
+	ctx: ModelContextInterface;
 	fields: Record<FieldReference, ModelFieldInterface>;
 	externalPaths: Record<string, string>;
 	storagePaths: Record<string, string>;
@@ -132,7 +132,7 @@ export class Model<
 		to: Mapping;
 	};
 
-	constructor(ctx: ContextInterface, settings: ModelSettings) {
+	constructor(ctx: ModelContextInterface, settings: ModelSettings) {
 		super(ctx, settings);
 
 		if (Object.keys(this.externalPaths).length) {

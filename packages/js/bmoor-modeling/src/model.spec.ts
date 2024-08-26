@@ -2,7 +2,7 @@ import {expect} from 'chai';
 
 import {validations} from '@bmoor/schema';
 
-import {Context} from './context';
+import {ModelContext} from './model/context';
 import {converter} from './converter';
 import {Hooker, hooks} from './hooker';
 import {Model} from './model';
@@ -12,7 +12,7 @@ describe('@bmoor-modeling::Model', function () {
 	let ctx;
 
 	beforeEach(function () {
-		ctx = new Context(types, validations, hooks, converter);
+		ctx = new ModelContext(types, validations, hooks, converter);
 	});
 
 	describe('::inflate', function () {

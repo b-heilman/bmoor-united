@@ -1,6 +1,6 @@
 import {expect} from 'chai';
 
-import {Context} from './context';
+import {SchemaContext} from './schema/context';
 import {Field} from './field';
 import {types} from './typing';
 import {TypingJSON} from './typing.interface';
@@ -10,7 +10,7 @@ describe('@bmoor/schema :: Field', function () {
 	let ctx;
 
 	beforeEach(function () {
-		ctx = new Context<TypingJSON>(types, validations);
+		ctx = new SchemaContext<TypingJSON>(types, validations);
 	});
 
 	describe('validate', function () {
@@ -45,7 +45,7 @@ describe('@bmoor/schema :: Field', function () {
 				reference: 'string',
 			});
 
-			const dictionary = new Context<TypingJSON>(types, validations);
+			const dictionary = new SchemaContext<TypingJSON>(types, validations);
 
 			const res = await field.validate(dictionary, {
 				foo: 123,

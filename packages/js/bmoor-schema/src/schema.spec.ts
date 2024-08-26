@@ -1,7 +1,7 @@
 import {expect} from 'chai';
 
-import {Context} from './context';
 import {Schema} from './schema';
+import {SchemaContext} from './schema/context';
 import {types} from './typing';
 import {TypingJSON} from './typing.interface';
 import {validations} from './validator';
@@ -10,7 +10,7 @@ describe('bmoor-schema :: schema', function () {
 	let ctx;
 
 	beforeEach(function () {
-		ctx = new Context<TypingJSON>(types, validations);
+		ctx = new SchemaContext<TypingJSON>(types, validations);
 	});
 
 	describe('implode', function () {
