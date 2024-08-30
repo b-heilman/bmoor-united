@@ -63,6 +63,9 @@ function createSchemaResolver(
 					getVariable() {
 						return null;
 					},
+					getEnv() {
+						return null;
+					}
 				};
 
 				const res = await other.externalSelect(callCtx, {
@@ -213,6 +216,9 @@ export class Graphql<
 						getVariable() {
 							return null;
 						},
+						getEnv() {
+							return null;
+						}
 					};
 
 					const res = await service.externalSelect(callCtx, {

@@ -49,7 +49,9 @@ describe('@bmoor-modeling::Service', function () {
 			getVariable() {
 				return null;
 			},
-			env: null
+			getEnv() {
+				return null;
+			}
 		};
 		controller = {
 			async canCreate(ctx, datums) {

@@ -11,4 +11,4 @@ npx prettier --write ./src
 
 npx eslint ./src
 
-npx NODE_OPTIONS=\"--import=@bmoor/bootstrap/src/node-typescript.js\" mocha -r ts-node/register --recursive \"./src/*.spec.ts\"
+npx mocha -r ts-node/register --recursive \"./src/*.spec.ts\"

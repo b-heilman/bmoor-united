@@ -5,7 +5,7 @@
   "description": "",
   "main": "loader.js",
   "scripts": {
-    "load": "NODE_OPTIONS=\"--import=@bmoor/bootstrap/src/node-typescript.js\" npx ts-node --esm src/loader.js",
+    "load": "npx ts-node --esm src/loader.js",
     "stats": "npx ts-node --esm src/team/stats.js",
     "frame": "npx ts-node --esm src/team/frame.js",
     "show": "npx ts-node --esm src/team/show.js",
