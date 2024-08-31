@@ -2,7 +2,6 @@ import {Mapping} from '@bmoor/path';
 import {MappingSettings} from '@bmoor/path/src/mapping.interface';
 import {FieldReference, Schema, reduceStructure} from '@bmoor/schema';
 
-import {ModelContextInterface} from './model/context.interface';
 import {
 	ModelExternalGenerics,
 	ModelInterface,
@@ -11,6 +10,7 @@ import {
 	ModelSettings,
 	ModelStorageGenerics,
 } from './model.interface';
+import {ModelContextInterface} from './model/context.interface';
 import {ModelField} from './model/field';
 import {
 	ModelFieldInterface,

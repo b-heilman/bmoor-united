@@ -102,8 +102,8 @@ export class Service<
 			select: {
 				models: [getStorageModel(model)],
 			},
-			params: {
-				ops: fields.map((field) => ({
+			where: {
+				conditions: fields.map((field) => ({
 					series: model.getReference(),
 					path: field.getStoragePath(),
 					operator: 'eq',
@@ -167,8 +167,8 @@ export class Service<
 				select: {
 					models: [getStorageModel(model)],
 				},
-				params: {
-					ops: Object.entries(imploded).map(([path, value]) => ({
+				where: {
+					conditions: Object.entries(imploded).map(([path, value]) => ({
 						series: model.getReference(),
 						path,
 						operator: 'eq',
@@ -249,8 +249,8 @@ export class Service<
 			select: {
 				models: [getStorageModel(model)],
 			},
-			params: {
-				ops: Object.entries(imploded).map(([path, value]) => ({
+			where: {
+				conditions: Object.entries(imploded).map(([path, value]) => ({
 					series: model.getReference(),
 					path,
 					operator: 'eq',
@@ -310,14 +310,12 @@ export class Service<
 					model: getStorageModel(model),
 					params: [model.implodeStorage(this.deflate(ctx, change.delta))],
 					where: {
-						params: {
-							ops: model.getPrimaryFields().map((field) => ({
-								series: model.getReference(),
-								path: field.getStoragePath(),
-								operator: 'eq',
-								value: field.read(change.ref),
-							})),
-						},
+						conditions: model.getPrimaryFields().map((field) => ({
+							series: model.getReference(),
+							path: field.getStoragePath(),
+							operator: 'eq',
+							value: field.read(change.ref),
+						})),
 					},
 				}),
 			),
@@ -356,8 +354,8 @@ export class Service<
 			ctx,
 			{
 				model: getStorageModel(model),
-				params: {
-					ops: fields.map((field) => ({
+				where: {
+					conditions: fields.map((field) => ({
 						series: model.getReference(),
 						path: field.getStoragePath(),
 						operator: 'eq',

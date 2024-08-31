@@ -6,8 +6,8 @@ import {converter} from '../converter';
 import {EnvironmentContext} from '../environment/context';
 import {hooks} from '../hooker';
 import {Model} from '../model';
-import {Service} from '../service';
 import {ModelContext} from '../model/context';
+import {Service} from '../service';
 import {types} from '../typing';
 import {BuilderGraphql} from './graphql';
 

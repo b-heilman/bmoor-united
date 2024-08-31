@@ -1,8 +1,6 @@
-
 import {DynamicObject} from '@bmoor/object';
 import {TypingReference} from '@bmoor/schema';
 
-import {ServiceContextInterface} from './service/context.interface';
 import {
 	ModelExternalGenerics,
 	ModelInterface,
@@ -12,6 +10,7 @@ import {
 	ServiceAdapterGenerics,
 	ServiceAdapterInterface,
 } from './service/adapter.interface';
+import {ServiceContextInterface} from './service/context.interface';
 import {ServiceControllerInterface} from './service/controller.interface';
 import {ServiceSearchType} from './service/search.interface';
 import {

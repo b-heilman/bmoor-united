@@ -2,15 +2,13 @@ import {DynamicObject} from '@bmoor/object';
 import {Path, PathInterface} from '@bmoor/path';
 
 import {
-	SchemaContextInterface
-} from './schema/context.interface';
-import {
 	FieldInfo,
 	FieldInterface,
 	FieldJSON,
 	FieldPathLink,
 	FieldReference,
 } from './field.interface';
+import {SchemaContextInterface} from './schema/context.interface';
 import {ValidationJSON} from './validation.interface';
 
 // eslint-disable-next-line  @typescript-eslint/no-explicit-any

@@ -5,14 +5,13 @@ import {implode} from '@bmoor/path';
 import {BuilderJSONSchema} from './builder/jsonschema';
 import {BuilderJSONSchemaObject} from './builder/jsonschema.interface';
 import {BuilderTypescript} from './builder/typescript';
-import {SchemaContextInterface} from './schema/context.interface';
+import {EnvironmentContext} from './environment/context';
 import {Field} from './field';
 import {
 	FieldInterface,
 	FieldJSON,
 	FieldReference,
 } from './field.interface';
-import {EnvironmentContext} from './environment/context';
 import {RelationshipJSON} from './relationship.interface';
 import {
 	SchemaFieldSet,
@@ -22,6 +21,7 @@ import {
 	SchemaSettings,
 	SchemaStructure,
 } from './schema.interface';
+import {SchemaContextInterface} from './schema/context.interface';
 
 export function reduceStructure(
 	structure: SchemaStructure,

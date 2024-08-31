@@ -1,8 +1,8 @@
 import {
 	BuilderGraphql,
 	EnvironmentContextInterface,
-	ModelInterface,
 	ModelContextInterface,
+	ModelInterface,
 	ServiceInterface,
 	TypingJSON,
 	dictToGraphql,
@@ -65,7 +65,7 @@ function createSchemaResolver(
 					},
 					getEnv() {
 						return null;
-					}
+					},
 				};
 
 				const res = await other.externalSelect(callCtx, {
@@ -218,7 +218,7 @@ export class Graphql<
 						},
 						getEnv() {
 							return null;
-						}
+						},
 					};
 
 					const res = await service.externalSelect(callCtx, {

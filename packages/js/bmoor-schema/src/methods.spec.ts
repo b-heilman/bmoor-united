@@ -1,8 +1,8 @@
 import {expect} from 'chai';
 
-import {SchemaContext} from './schema/context';
 import {toJSONSchema} from './methods';
 import {Schema} from './schema';
+import {SchemaContext} from './schema/context';
 import {types} from './typing';
 import {TypingJSON} from './typing.interface';
 import {validations} from './validator';

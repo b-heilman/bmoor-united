@@ -4,7 +4,6 @@ import {
 	RequestRead,
 	RequestSelect,
 	RequestUpdate,
-	RequestWhere,
 	RequestWhereArrayMethods,
 	RequestWhereExpression,
 	RequestWhereJoin,
@@ -22,9 +21,9 @@ export function translateExpressable(
 	const where = [];
 	const params = [];
 
-	if ('ops' in expression) {
-		expression.ops.forEach((op) => {
-			if ('ops' in op) {
+	if ('conditions' in expression) {
+		expression.conditions.forEach((op) => {
+			if ('conditions' in op) {
 				const sub = translateExpressable(op);
 
 				where.push('(' + sub.where + ')');
@@ -55,29 +54,16 @@ export function translateExpressable(
 	};
 }
 
-export function translateWhere(stmt: RequestWhere): SqlWhereResponse {
+export function translateWhere(stmt: RequestWhereExpression): SqlWhereResponse {
 	let res;
 
-	if (stmt.params) {
-		res = translateExpressable(stmt.params);
+	if (stmt && stmt.conditions.length) {
+		res = translateExpressable(stmt);
 	} else {
-		res = {
+		return {
 			where: null,
 			params: [],
 		};
-	}
-
-	// TODO: what was I doing with filters?
-	if (stmt.filters) {
-		const t = translateExpressable(stmt.filters);
-
-		if (res.where) {
-			res.where += ` AND (${t.where})`;
-		} else {
-			res.where = t.where;
-		}
-
-		res.params.push(...t.params);
 	}
 
 	if (!res.where) {
@@ -170,7 +156,7 @@ export function translateSelect(stmt: RequestSelect): SqlSelectResponse {
 
 export function prepareQuery(stmt: RequestRead): SqlPrepared {
 	const select = translateSelect(stmt.select);
-	const where = translateWhere(stmt);
+	const where = translateWhere(stmt.where);
 
 	let sql = `SELECT ${select.select} \nFROM ${select.from}`;
 
@@ -242,7 +228,7 @@ export function prepareUpdate(stmt: RequestUpdate): SqlPrepared {
 }
 
 export function prepareDelete(stmt: RequestDelete): SqlPrepared {
-	const where = translateWhere(stmt);
+	const where = translateWhere(stmt.where);
 
 	// I assume there will always be a where
 	return {

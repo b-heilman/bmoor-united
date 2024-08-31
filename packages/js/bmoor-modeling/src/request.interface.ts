@@ -1,37 +1,40 @@
 export type RequestParameters = Record<string, unknown>;
 
-export interface RequestCreate {
-	model: {
-		name: string;
-		fields: {
-			path: string;
-		}[];
-	};
-	params: RequestParameters[];
+export interface RequestField {
+	as?: string;
+	path: string;
+}
+
+export interface RequestModel {
+	name: string;
+	fields: RequestField[];
+};
+
+export interface RequestJoinMapping {
+	from: string;
+	to: string;
+}
+
+export interface RequestJoin {
+	optional?: boolean;
+	toSeries: string;
+	mappings: RequestJoinMapping[];
+}
+
+export interface RequestSeries extends RequestModel {
+	series?: string;
+	joins?: RequestJoin[];
+};
+
+export interface RequestSort {
+	series: string;
+	path: string;
+	ascending: boolean;
 }
 
 export interface RequestSelect {
-	models: {
-		name: string;
-		series?: string;
-		fields: {
-			as?: string;
-			path: string;
-		}[];
-		joins?: {
-			optional?: boolean;
-			toSeries: string;
-			mappings: {
-				from: string;
-				to: string;
-			}[];
-		}[];
-	}[];
-	sorts?: {
-		series: string;
-		path: string;
-		ascending: boolean;
-	}[];
+	models: RequestSeries[];
+	sorts?: RequestSort[];
 	offset?: {
 		start: string;
 		limit: number;
@@ -42,6 +45,8 @@ export const RequestWhereJoin = {
 	or: 'OR',
 	and: 'AND',
 };
+
+export type RequestWhereConditionJoin = keyof typeof RequestWhereJoin;
 
 export const RequestWhereArrayMethods = {
 	in: 'IN',
@@ -72,30 +77,32 @@ export interface RequestWhereSingleExpression
 	value: unknown;
 }
 
+export type RequestWhereCondition = 
+	RequestWhereArrayExpression | RequestWhereSingleExpression | RequestWhereExpression;
+
 export interface RequestWhereExpression {
-	ops: (
-		| RequestWhereArrayExpression
-		| RequestWhereSingleExpression
-		| RequestWhereExpression
-	)[];
-	join?: keyof typeof RequestWhereJoin;
+	conditions: RequestWhereCondition[];
+	join?: RequestWhereConditionJoin;
 }
 
-export interface RequestWhere {
-	params?: RequestWhereExpression;
-	filters?: RequestWhereExpression;
+//----- Action Types -----
+export interface RequestCreate {
+	model: RequestModel;
+	params: RequestParameters[];
 }
 
-export interface RequestRead extends RequestWhere {
+export interface RequestRead {
 	select: RequestSelect;
+	where?: RequestWhereExpression
 }
 
 export interface RequestUpdate extends RequestCreate {
-	where: RequestWhere;
+	where: RequestWhereExpression;
 }
 
-export interface RequestDelete extends RequestWhere {
+export interface RequestDelete {
 	model: {
 		name: string;
 	};
+	where?: RequestWhereExpression; 
 }

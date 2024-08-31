@@ -4,9 +4,9 @@ import {expect} from 'chai';
 import {stub} from 'sinon';
 
 import {
-	ModelContext,
-	Model,
 	EnvironmentContext,
+	Model,
+	ModelContext,
 	Service,
 	ServiceAdapterInterface,
 	converter,

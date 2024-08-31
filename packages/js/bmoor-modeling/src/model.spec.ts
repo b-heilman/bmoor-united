@@ -2,10 +2,10 @@ import {expect} from 'chai';
 
 import {validations} from '@bmoor/schema';
 
-import {ModelContext} from './model/context';
 import {converter} from './converter';
 import {Hooker, hooks} from './hooker';
 import {Model} from './model';
+import {ModelContext} from './model/context';
 import {types} from './typing';
 
 describe('@bmoor-modeling::Model', function () {
