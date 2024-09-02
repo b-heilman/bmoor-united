@@ -52,7 +52,7 @@
     "test:workspaces": "npm run test --workspaces",
     "test:file": "mocha",
     "test:simple": "mocha --recursive \"./packages/js/*/src/**.spec.ts\"",
-    "prettier": "npx prettier --write ./packages/js/*/src",
+    "prettier": "npx prettier --fix --write ./packages/js/*/src",
     "validate": "npm run lint &&  npm run test",
     "finalize": "npm run prettier && npm run validate",
     "version:bump": "changeset add",

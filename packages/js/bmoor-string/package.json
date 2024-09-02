@@ -20,7 +20,7 @@
   "homepage": "https://github.com/b-heilman/bmoor-united/blob/main/packages/bmoor-streaming/README.md",
   "scripts": {
     "build": "mkdir -p dist/; cp -r src/ dist/src;  cp package.json dist/package.json",
-    "lint": "eslint ./src",
+    "lint": "eslint --fix ./src",
     "test": "mocha --recursive \"./src/**/*.spec.ts\"",
     "publish": "echo \"streaming publishing...\""
   },

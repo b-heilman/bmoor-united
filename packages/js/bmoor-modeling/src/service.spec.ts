@@ -696,8 +696,8 @@ describe('@bmoor-modeling::Service', function () {
 							},
 						],
 					},
-					params: {
-						ops: [
+					where: {
+						conditions: [
 							{
 								series: 'junk',
 								path: 'field3',
@@ -781,8 +781,8 @@ describe('@bmoor-modeling::Service', function () {
 							},
 						],
 					},
-					params: {
-						ops: [
+					where: {
+						conditions: [
 							{
 								series: 'junk',
 								path: 'store2',
@@ -869,16 +869,14 @@ describe('@bmoor-modeling::Service', function () {
 						},
 					],
 					where: {
-						params: {
-							ops: [
-								{
-									series: 'junk',
-									path: 'field3',
-									operator: 'eq',
-									value: 123,
-								},
-							],
-						},
+						conditions: [
+							{
+								series: 'junk',
+								path: 'field3',
+								operator: 'eq',
+								value: 123,
+							},
+						],
 					},
 				});
 			});
@@ -1020,16 +1018,14 @@ describe('@bmoor-modeling::Service', function () {
 						},
 					],
 					where: {
-						params: {
-							ops: [
-								{
-									series: 'junk',
-									path: 'store1',
-									operator: 'eq',
-									value: 123,
-								},
-							],
-						},
+						conditions: [
+							{
+								series: 'junk',
+								path: 'store1',
+								operator: 'eq',
+								value: 123,
+							},
+						],
 					},
 				});
 			});
@@ -1121,16 +1117,14 @@ describe('@bmoor-modeling::Service', function () {
 						},
 					],
 					where: {
-						params: {
-							ops: [
-								{
-									series: 'junk',
-									path: 'store2',
-									operator: 'eq',
-									value: 123,
-								},
-							],
-						},
+						conditions: [
+							{
+								series: 'junk',
+								path: 'store2',
+								operator: 'eq',
+								value: 123,
+							},
+						],
 					},
 				});
 			});
@@ -1199,8 +1193,8 @@ describe('@bmoor-modeling::Service', function () {
 							},
 						],
 					},
-					params: {
-						ops: [
+					where: {
+						conditions: [
 							{
 								series: 'junk',
 								path: 'field3',
@@ -1286,8 +1280,8 @@ describe('@bmoor-modeling::Service', function () {
 							},
 						],
 					},
-					params: {
-						ops: [
+					where: {
+						conditions: [
 							{
 								series: 'junk',
 								path: 'store2',
@@ -1370,8 +1364,8 @@ describe('@bmoor-modeling::Service', function () {
 							},
 						],
 					},
-					params: {
-						ops: [
+					where: {
+						conditions: [
 							{
 								series: 'junk',
 								path: 'field3',
@@ -1469,8 +1463,8 @@ describe('@bmoor-modeling::Service', function () {
 							},
 						],
 					},
-					params: {
-						ops: [
+					where: {
+						conditions: [
 							{
 								series: 'junk',
 								path: 'field3',
@@ -1566,8 +1560,8 @@ describe('@bmoor-modeling::Service', function () {
 							},
 						],
 					},
-					params: {
-						ops: [
+					where: {
+						conditions: [
 							{
 								series: 'junk',
 								path: 'store2',
@@ -1675,8 +1669,8 @@ describe('@bmoor-modeling::Service', function () {
 							},
 						],
 					},
-					params: {
-						ops: [
+					where: {
+						conditions: [
 							{
 								series: 'junk',
 								path: 'store2',

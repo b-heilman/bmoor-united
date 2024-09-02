@@ -8,7 +8,7 @@ export interface RequestField {
 export interface RequestModel {
 	name: string;
 	fields: RequestField[];
-};
+}
 
 export interface RequestJoinMapping {
 	from: string;
@@ -24,7 +24,7 @@ export interface RequestJoin {
 export interface RequestSeries extends RequestModel {
 	series?: string;
 	joins?: RequestJoin[];
-};
+}
 
 export interface RequestSort {
 	series: string;
@@ -77,8 +77,10 @@ export interface RequestWhereSingleExpression
 	value: unknown;
 }
 
-export type RequestWhereCondition = 
-	RequestWhereArrayExpression | RequestWhereSingleExpression | RequestWhereExpression;
+export type RequestWhereCondition =
+	| RequestWhereArrayExpression
+	| RequestWhereSingleExpression
+	| RequestWhereExpression;
 
 export interface RequestWhereExpression {
 	conditions: RequestWhereCondition[];
@@ -93,7 +95,7 @@ export interface RequestCreate {
 
 export interface RequestRead {
 	select: RequestSelect;
-	where?: RequestWhereExpression
+	where?: RequestWhereExpression;
 }
 
 export interface RequestUpdate extends RequestCreate {
@@ -104,5 +106,5 @@ export interface RequestDelete {
 	model: {
 		name: string;
 	};
-	where?: RequestWhereExpression; 
+	where?: RequestWhereExpression;
 }

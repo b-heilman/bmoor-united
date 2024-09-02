@@ -54,7 +54,9 @@ export function translateExpressable(
 	};
 }
 
-export function translateWhere(stmt: RequestWhereExpression): SqlWhereResponse {
+export function translateWhere(
+	stmt: RequestWhereExpression,
+): SqlWhereResponse {
 	let res;
 
 	if (stmt && stmt.conditions.length) {

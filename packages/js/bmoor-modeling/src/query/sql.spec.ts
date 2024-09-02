@@ -70,16 +70,14 @@ describe('src/connectors/sql.js', function () {
 					},
 				],
 				where: {
-					params: {
-						ops: [
-							{
-								series: 'model-1',
-								path: 'id',
-								operator: 'eq',
-								value: 'foo-bar',
-							},
-						],
-					},
+					conditions: [
+						{
+							series: 'model-1',
+							path: 'id',
+							operator: 'eq',
+							value: 'foo-bar',
+						},
+					],
 				},
 			});
 
@@ -104,8 +102,8 @@ describe('src/connectors/sql.js', function () {
 				model: {
 					name: 'model-1',
 				},
-				params: {
-					ops: [
+				where: {
+					conditions: [
 						{
 							series: 'model-1',
 							path: 'id',
@@ -148,8 +146,8 @@ describe('src/connectors/sql.js', function () {
 						},
 					],
 				},
-				params: {
-					ops: [
+				where: {
+					conditions: [
 						{
 							series: 'model-1',
 							path: 'id',
@@ -298,8 +296,8 @@ describe('src/connectors/sql.js', function () {
 						},
 					],
 				},
-				params: {
-					ops: [
+				where: {
+					conditions: [
 						{
 							series: 'test-item',
 							path: 'id',

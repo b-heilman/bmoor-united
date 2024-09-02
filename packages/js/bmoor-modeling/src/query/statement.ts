@@ -1,75 +1,106 @@
-import { 
-    RequestField, 
-    RequestJoin, 
-    RequestJoinMapping, 
-    RequestSelect, 
-    RequestSeries, 
-    RequestWhereExpression
-} from "../request.interface";
+import {SchemaReference} from '@bmoor/schema';
+
+import {
+	RequestField,
+	RequestJoin,
+	RequestJoinMapping,
+	RequestSelect,
+	RequestSeries,
+	RequestWhereCondition,
+	RequestWhereConditionJoin,
+	RequestWhereExpression,
+} from '../request.interface';
 
 export class Statement {
-    refs: Record<string, RequestSeries>;
-    select: RequestSelect;
-    where: RequestWhereExpression;
+	refs: Record<string, RequestSeries>;
+	select: RequestSelect;
+	where: RequestWhereExpression;
 
-    constructor(base){
-        this.refs = {};
-        this.select = {
-            models: []
-        };
+	constructor(
+		base: SchemaReference,
+		series = null,
+		fields: RequestField[] = [],
+		joins: RequestJoin[] = [],
+	) {
+		this.refs = {};
+		this.select = {
+			models: [],
+		};
 
-        this.where = {
-            conditions: []
-        };
-    }
+		this.where = {
+			conditions: [],
+		};
 
-    addModel(name, series = null, fields: RequestField[], joins: RequestJoin[] = []){
-        if (series === null){
-            series = name;
-        }
+		this.addModel(base, series, fields, joins);
+	}
 
-        if (this.refs[series]){
-            throw new Error('Duplicate series added');
-        }
+	addModel(
+		name: SchemaReference,
+		series = null,
+		fields: RequestField[] = [],
+		joins: RequestJoin[] = [],
+	) {
+		if (series === null) {
+			series = name;
+		}
 
-        const model: RequestSeries = {
-            name,
-            series,
-            fields,
-            joins
-        };
+		if (this.refs[series]) {
+			throw new Error('Duplicate series added');
+		}
 
-        this.refs[series] = model;
+		const model: RequestSeries = {
+			name,
+			series,
+			fields,
+			joins,
+		};
 
-        this.select.models.push(model);
+		this.refs[series] = model;
 
-        return this;
-    }
+		this.select.models.push(model);
 
-    addField(series, path, as?){
-        this.refs[series].fields.push({
-            as,
-            path
-        });
+		return this;
+	}
 
-        return this;
-    }
+	addField(series, path, as?) {
+		this.refs[series].fields.push({
+			as,
+			path,
+		});
 
-    addJoin(fromSeries, toSeries, mappings: RequestJoinMapping[], optional: boolean = false){
-        this.refs[fromSeries].joins.push({
-            optional,
-            toSeries,
-            mappings
-        });
+		return this;
+	}
 
-        return this;
-    }
+	addModelJoin(
+		fromSeries,
+		toSeries,
+		mappings: RequestJoinMapping[],
+		optional: boolean = false,
+	) {
+		this.refs[fromSeries].joins.push({
+			optional,
+			toSeries,
+			mappings,
+		});
 
-    setWhere(){
-        
-    }
+		return this;
+	}
 
-    addCondition(){
+	setWhere(where: RequestWhereExpression) {
+		this.where = where;
 
-    }
+		return this;
+	}
+
+	setWhereJoin(join: RequestWhereConditionJoin) {
+		this.where.join = join;
+
+		return this;
+	}
+
+	addCondition(cond: RequestWhereCondition) {
+		this.where.conditions.push(cond);
+
+		return this;
+	}
 }

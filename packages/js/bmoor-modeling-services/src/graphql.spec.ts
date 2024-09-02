@@ -307,8 +307,8 @@ type Query {
 						},
 					],
 				},
-				params: {
-					ops: [],
+				where: {
+					conditions: [],
 				},
 			});
 			read1.restore();
@@ -348,8 +348,8 @@ type Query {
 						},
 					],
 				},
-				params: {
-					ops: [],
+				where: {
+					conditions: [],
 				},
 			});
 			read2.restore();
@@ -381,8 +381,8 @@ type Query {
 						},
 					],
 				},
-				params: {
-					ops: [],
+				where: {
+					conditions: [],
 				},
 			});
 			read3.restore();
@@ -416,8 +416,8 @@ type Query {
 						},
 					],
 				},
-				params: {
-					ops: [],
+				where: {
+					conditions: [],
 				},
 			});
 		});
@@ -513,8 +513,8 @@ type Query {
 						},
 					],
 				},
-				params: {
-					ops: [
+				where: {
+					conditions: [
 						{
 							series: 's-1',
 							path: 'foo',
@@ -541,8 +541,8 @@ type Query {
 						},
 					],
 				},
-				params: {
-					ops: [
+				where: {
+					conditions: [
 						{
 							series: 's-2',
 							path: 'hello',
@@ -575,8 +575,8 @@ type Query {
 						},
 					],
 				},
-				params: {
-					ops: [
+				where: {
+					conditions: [
 						{
 							series: 's-3',
 							path: 'id',
@@ -630,8 +630,8 @@ type Query {
 						},
 					],
 				},
-				params: {
-					ops: [
+				where: {
+					conditions: [
 						{
 							series: 's-1',
 							path: 'foo',
