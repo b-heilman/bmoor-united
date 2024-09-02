@@ -6,8 +6,9 @@ import {
 	prepareQuery,
 	prepareUpdate,
 } from './sql.js';
+import { QueryStatement } from './statement.js';
 
-describe('src/connectors/sql.js', function () {
+describe('@bmoor-modeling::query/sql', function () {
 	describe('::prepareInsert', function () {
 		it('should work', async function () {
 			const stmt = prepareInsert({
@@ -167,6 +168,41 @@ describe('src/connectors/sql.js', function () {
 			);
 
 			expect(stmt.params).to.deep.equal(['foo-bar']);
+		});
+
+		it('should translate a QueryStatementInterface', async function () {
+			const stmt = new QueryStatement('model-1', {
+				fields: [
+					{
+						path: 'name',
+					},
+					{
+						path: 'title',
+					},
+					{
+						path: 'json',
+					},
+				]
+			});
+			
+			stmt.addCondition({
+				series: 'model-1',
+				path: 'id',
+				operator: 'eq',
+				value: 'foo-bar',
+			});
+
+			const query = prepareQuery(stmt);
+
+			expect(query.sql.replace(/\s+/g, '')).to.deep.equal(
+				`
+				SELECT \`model-1\`.\`name\`,\`model-1\`.\`title\`,\`model-1\`.\`json\`
+				FROM \`model-1\` AS \`model-1\`
+				WHERE \`model-1\`.\`id\`=?
+			`.replace(/\s+/g, ''),
+			);
+
+			expect(query.params).to.deep.equal(['foo-bar']);
 		});
 
 		it('should handle a null query', async function () {
