@@ -1,5 +1,6 @@
-# Expected to be run from script directory
-cd ../src
+# Expected to be run from root directory
+cd src
 
 echo "---importing data---"
-npx ts-node import.ts
+# node --loader ts-node/esm import.ts
+npx tsx import.ts
