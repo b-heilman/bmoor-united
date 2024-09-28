@@ -1,8 +1,14 @@
 import * as fs from 'fs';
 import * as path from 'path';
+import { fileURLToPath } from 'url';
 
 import { PlayerResponseRaw, GameResponseRaw, PlayerResponse, GameResponse } from './access.interface';
-const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
+const fetch = async (url: string) => {
+    return import('node-fetch').then(({default: fetch}) => fetch(url));
+};
+
+const __filename = fileURLToPath(import.meta.url); // get the resolved path to the file
+const __dirname = path.dirname(__filename); // get the name of the directory
 
 export const cacheDir = path.join(__dirname, `../cache`);
 if (!fs.existsSync(cacheDir)){
@@ -60,26 +66,38 @@ export async function readGame(gameId: string, weekDir?: string): Promise<GameRe
 
         const content: GameResponseRaw = await response.json();
 
-        delete content.leaders;
-        delete content.broadcasts;
-        delete content.pickcenter;
-        delete content.againstTheSpread;
-        delete content.odds;
-        delete content.news;
-        delete content.article;
-        delete content.videos;
-        delete content.standings;
-
         if (gamePath){
-            const teams = content.boxscore.teams;
-            const gameName = `${teams[0].team.abbreviation} vs ${teams[1].team.abbreviation} via ${gameId}`;
-            
-            console.log('writing: ', gameName);
-            fs.writeFileSync(
-                gamePath,
-                JSON.stringify(content, null, 2),
-                {encoding: 'utf-8'}
-            );
+            try {
+                const teams = content.boxscore.teams;
+                const gameName = `${teams[0].team.abbreviation} vs ${teams[1].team.abbreviation} via ${gameId}`;
+                
+                delete content.leaders;
+                delete content.broadcasts;
+                delete content.pickcenter;
+                delete content.againstTheSpread;
+                delete content.odds;
+                delete content.news;
+                delete content.article;
+                delete content.videos;
+                delete content.standings;
+
+                console.log('writing: ', gamePath);
+                fs.writeFileSync(
+                    gamePath,
+                    JSON.stringify(content, null, 2),
+                    {encoding: 'utf-8'}
+                );
+            } catch(ex){
+                const errorPath = weekDir ? `${weekDir}/${gameId}.failed.json` : null;
+
+                console.log('failed to load:', gamePath)
+
+                fs.writeFileSync(
+                    errorPath,
+                    JSON.stringify(content, null, 2),
+                    {encoding: 'utf-8'}
+                );
+            }
         }
 
         return content;

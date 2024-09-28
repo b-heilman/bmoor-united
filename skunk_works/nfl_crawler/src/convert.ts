@@ -1,19 +1,20 @@
 import * as fs from 'fs/promises';
 import * as fsSync from 'fs';
-import * as parquet from 'parquetjs-lite';
+import {default as parquet} from 'parquetjs-lite';
+import * as path from 'path';
+import { fileURLToPath } from 'url';
 import {resolve} from 'path';
 
 import { readPlayer, cacheDir } from './access';
 import { GameResponse, BoxscorePlayersInfo } from './access.interface';
 import { 
-    PlayerRow, 
-    GameRow, 
-    InternalTeamStats, 
-    TeamStats, 
-    GameStats, 
-    BaseTeamIdentifiers, 
+    PlayerData, 
     playerSchema, 
-    gameSchema 
+    gameSchema, 
+    TeamPlayersData,
+    InteralPlayersData,
+    StoredPlayerData,
+    StoredGameData
 } from './convert.interface';
 
 export const parquetDir = `${cacheDir}/parquet`;
@@ -77,6 +78,46 @@ function playerLookup(id, display){
     }
 }
 
+const positionNormalization = {
+    'qb': 'qb',
+    'rb': 'rb',
+    'rb/w': 'rb',
+    'hb': 'rb',
+    'fb': 'rb',
+    'fb/d': 'rb',
+    'fb/r': 'rb',
+    'wr': 'wr',
+    'wr/r': 'wr',
+    'te': 'te',
+    // --- don't care about line yet
+    'ot': null,
+    'og': null,
+    'c': null,
+    'c/g': null,
+    'g': null,
+    'g/t': null,
+    't': null,
+    'ol': null,
+    // --- wtf
+    's': null,
+    'ss': null,
+    'fs': null,
+    'cb': null,
+    'db': null,
+    'lb': null,
+    'ls': null,
+    'lb/f': null,
+    'nt': null,
+    'de': null,
+    'dt': null,
+    'dl': null,
+    'k': null,
+    'p': null,
+    'pk': null,
+    'kr': null,
+    '-': 'junk'
+};
+
 const positionGroups = {
     'qb': 'passing',
     'rb': 'running',
@@ -117,7 +158,7 @@ const positionGroups = {
     '-': 'junk'
 };
 
-async function createPlayerRow(playerId: string): Promise<PlayerRow> {
+async function createPlayerData(playerId: string): Promise<PlayerData> {
     const player = await readPlayer(playerId);
 
     let playerDisplay = null;
@@ -127,12 +168,14 @@ async function createPlayerRow(playerId: string): Promise<PlayerRow> {
         playerPosition = player.athlete.position.abbreviation.toLowerCase();
 
         const playerPositionGroup = positionGroups[playerPosition];
+        const playerPositionNorm = positionNormalization[playerPosition];
         if (playerPositionGroup){
             return {
                 playerId,
                 playerDisplay,
                 playerPosition,
                 playerPositionGroup,
+                playerPositionNorm,
                 passCmp: 0,
                 passAtt: 0,
                 passYds: 0,
@@ -166,7 +209,7 @@ async function createPlayerRow(playerId: string): Promise<PlayerRow> {
     return null;
 }
 
-function applyPassing(player: PlayerRow, stats: Record<string, string>){
+function applyPassing(player: PlayerData, stats: Record<string, string>){
     const [comps, atts] = stats['completions/passingAttempts'].split('/');
     const [sacks] = stats['sacks-sackYardsLost'].split('-');
 
@@ -182,7 +225,7 @@ function applyPassing(player: PlayerRow, stats: Record<string, string>){
     // player.passTargetYds = 0;
 }
 
-function applyRushing(player: PlayerRow, stats: Record<string, string>){
+function applyRushing(player: PlayerData, stats: Record<string, string>){
     player.rushAtt = parseInt(stats['rushingAttempts']);
     player.rushYds = parseInt(stats['rushingYards']);
     player.rushTd = parseInt(stats['rushingTouchdowns']);
@@ -192,7 +235,7 @@ function applyRushing(player: PlayerRow, stats: Record<string, string>){
     // player.rushBrokenTackles = 0;
 }
 
-function applyReceiving(player: PlayerRow, stats: Record<string, string>){
+function applyReceiving(player: PlayerData, stats: Record<string, string>){
     player.recAtt = parseInt(stats['receivingTargets']);
     player.recCmp = parseInt(stats['receptions']); 
     player.recYds = parseInt(stats['receivingYards']);
@@ -203,7 +246,7 @@ function applyReceiving(player: PlayerRow, stats: Record<string, string>){
     // player.recYac = 0;
 }
 
-function applyFumbles(player: PlayerRow, stats: Record<string, string>){
+function applyFumbles(player: PlayerData, stats: Record<string, string>){
     player.fumbles = parseInt(stats['fumbles']);
     player.fumblesLost = parseInt(stats['fumblesLost']);
 }
@@ -223,11 +266,13 @@ function teamLookup(id, display){
     }
 }
 
-async function processGameStats(game: GameResponse): Promise<GameRow>{
+async function processGameStats(season: string, week: string, game: GameResponse): Promise<StoredGameData>{
     const gameName = getGameName(game);
     const competion = game.header.competitions[0];
 
-    const rtn: GameRow = {
+    const rtn: StoredGameData = {
+        season,
+        week,
         gameId: game.header.id,
         gameDisplay: gameName,
         gameDate: competion.date,
@@ -257,18 +302,13 @@ async function processGameStats(game: GameResponse): Promise<GameRow>{
     return rtn;
 }
 
-async function processGamePlayers(playersData: BoxscorePlayersInfo[]): Promise<InternalTeamStats[]>{
+async function processGamePlayers(playersData: BoxscorePlayersInfo[]): Promise<TeamPlayersData[]>{
     return Promise.all(playersData.map(async (playersGroup) => {
-        const playersBuilder = new Map<string, PlayerRow>();
+        const playersBuilder = new Map<string, PlayerData>();
         const teamDisplay = teamLookup(
             playersGroup.team.id,
             playersGroup.team.abbreviation
         );
-        const teamInfo: InternalTeamStats = {
-            teamId: playersGroup.team.id,
-            teamDisplay,
-            players: []
-        };
 
         for (const statsGroup of playersGroup.statistics){
             for (const athlete of statsGroup.athletes){
@@ -284,7 +324,7 @@ async function processGamePlayers(playersData: BoxscorePlayersInfo[]): Promise<I
                 if (playersBuilder.has(playerId)){
                     player = playersBuilder.get(playerId);
                 } else {
-                    player = await createPlayerRow(playerId);
+                    player = await createPlayerData(playerId);
 
                     playersBuilder.set(playerId, player);
                 }
@@ -307,9 +347,11 @@ async function processGamePlayers(playersData: BoxscorePlayersInfo[]): Promise<I
             }
         }
 
-        teamInfo.players = Array.from(playersBuilder.values()).filter(player => player);
-
-        return teamInfo;
+        return {
+            teamId: playersGroup.team.id,
+            teamDisplay,
+            players: Array.from(playersBuilder.values()).filter(player => player)
+        };
     }));
 }
 
@@ -320,10 +362,9 @@ function getGameKey(year: number|string, week: number|string){
 async function processGames(paths: string[]){
     const gameParquetPath = `${parquetDir}/games.parquet`;
     const playerParquetPath = `${parquetDir}/players.parquet`;
-    const knownTeams: Record<string, boolean> = {};
     const knownGames: Record<string, boolean> = {};
-    const existingGames: Record<string, GameStats> = {};
-    const existingTeamsGames: TeamStats[] = [];
+    const existingGameData: StoredGameData[] = [];
+    const existingPlayersData: StoredPlayerData[] = [];
 
     try {
         if (fsSync.existsSync(playerParquetPath)){
@@ -331,15 +372,13 @@ async function processGames(paths: string[]){
             const cursor = reader.getCursor();
     
             // read all records from the file and print them
-            let record: TeamStats = null;
+            let record: StoredPlayerData = null;
             while (record = await cursor.next()) {
-                knownTeams[record.gameId] = true;
-                existingTeamsGames.push(record);
+                knownGames[record.gameId] = true;
+                existingPlayersData.push(record);
 
                 teamLookup(record.teamId, record.teamDisplay);
-                for (const player of record.players){
-                    playerLookup(player.playerId, player.playerDisplay);
-                }
+                playerLookup(record.playerId, record.playerDisplay);
             }
 
             await reader.close();
@@ -358,13 +397,13 @@ async function processGames(paths: string[]){
             const cursor = reader.getCursor();
     
             // read all records from the file and print them
-            let record: GameStats = null;
+            let record: StoredGameData = null;
             while (record = await cursor.next()) {
-                for (const game of record.games){
-                    knownGames[game.gameId] = true;
-                }
+                const gameKey = getGameKey(record.season, record.week);
 
-                existingGames[getGameKey(record.season, record.week)] = record;
+                knownGames[record.gameId] = true;
+
+                existingGameData.push(record);
             }
 
             await reader.close();
@@ -381,35 +420,34 @@ async function processGames(paths: string[]){
         async(absPath) => JSON.parse((await fs.readFile(absPath)).toString('utf-8'))
     ));
 
-    const teamResults: TeamStats[][] = [];
-    for (const game of games.filter(game => !knownTeams[game.header.id])) { 
+    const newPlayerGames: InteralPlayersData[] = [];
+    const unknownGames = games.filter(game => {
+        try {
+            return !knownGames[game.header.id];
+        } catch (ex) {
+            console.log('failed to load', game);
+            return false;
+        }
+    });
+
+    for (const game of unknownGames) { 
         const gameName = getGameName(game);
         const season = formatSeason(game.header.season.year);
         const week = formatWeek(game.header.week);
 
-        const base: BaseTeamIdentifiers = {
+        const newPlayersData: InteralPlayersData = {
             season,
-            week, // TODO: this will fail when I start using post season
+            week,
             gameId: game.header.id,
             gameDisplay: gameName,
             gameDate: game.header.competitions[0].date,
+            teams: await processGamePlayers(game.boxscore.players)
         };
 
-        const playersData = await processGamePlayers(game.boxscore.players);
-        const results = playersData.map(
-            teamData => {
-                if (teamData.players && teamData.players.length){
-                    return Object.assign(teamData, base);
-                } else {
-                    return null;
-                }
-            }
-        ).filter(row => row);
-
-        if (results.length){
-            teamResults.push(results);
+        if (newPlayersData.teams.length){
+            newPlayerGames.push(newPlayersData);
         } else {
-            console.log('failed to load player data', base);
+            console.log('failed to load player data', newPlayersData);
         }
         
         // await sleep(500 + 1500 * Math.random());
@@ -418,8 +456,24 @@ async function processGames(paths: string[]){
     try {
         const writer = await parquet.ParquetWriter.openFile(playerSchema, playerParquetPath);
         
-        for(const teamInfo of existingTeamsGames.concat(teamResults.flat())){
-            await writer.appendRow(teamInfo);
+        const newPlayerData: StoredPlayerData[] = newPlayerGames.flatMap(
+            gameInfo => gameInfo.teams.flatMap(
+                teamInfo => teamInfo.players.map(
+                    player => Object.assign({
+                        season: gameInfo.season, 
+                        week: gameInfo.week,
+                        gameId: gameInfo.gameId,
+                        gameDisplay: gameInfo.gameDisplay,
+                        gameDate: gameInfo.gameDate,
+                        teamId: teamInfo.teamId,
+                        teamDisplay: teamInfo.teamDisplay
+                    }, player)
+                )
+            )
+        )
+
+        for(const playerInfo of existingPlayersData.concat(newPlayerData)){
+            await writer.appendRow(playerInfo);
         }
 
         writer.close();
@@ -430,33 +484,17 @@ async function processGames(paths: string[]){
         console.log(ex);
     }
 
-    for (const game of games.filter(game => !knownGames[game.header.id])) {
+    const newGameData = await Promise.all(unknownGames.map(game => {
         const season = formatSeason(game.header.season.year);
         const week = formatWeek(game.header.week);
-        const key = getGameKey(season, week);
 
-        let base: GameStats = null;
-
-        if (existingGames[key]){
-            base = existingGames[key];
-        } else {
-            base = {
-                season,
-                week, // TODO: this will fail when I start using post season
-                games: []
-            };
-
-            existingGames[key] = base;
-        }
-
-        base.games.push(await processGameStats(game));
-        // I don't need to pause here since the game SHOULD be cached already
-    }
+        return processGameStats(season, week, game);
+    }));
 
     try {
         const writer = await parquet.ParquetWriter.openFile(gameSchema, gameParquetPath);
         
-        for(const gameInfo of Object.values(existingGames)){
+        for(const gameInfo of existingGameData.concat(newGameData)){
             await writer.appendRow(gameInfo);
         }
 
@@ -467,6 +505,9 @@ async function processGames(paths: string[]){
         console.log('failed to write');
     }
 }
+
+const __filename = fileURLToPath(import.meta.url); // get the resolved path to the file
+const __dirname = path.dirname(__filename); // get the name of the directory
 
 const gamesDir = resolve(__dirname+'/../cache/games');
 
