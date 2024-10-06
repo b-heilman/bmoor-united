@@ -1,4 +1,12 @@
-roles = ["wr1", "wr2", "wr3", "rb1", "rb2", "qb1"]
+roles = [
+    "wr1", 
+    "wr2", 
+    "wr3", 
+    "rb1", 
+    "rb2", 
+    "qb1",
+    "rest"
+]
 
 fields = [
     "passCmp",

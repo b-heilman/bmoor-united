@@ -111,7 +111,7 @@ def team_usage(
 ) -> pd.DataFrame:
     # reduce only to available players
     df = team_filter_by_usage(selector, gt, lt, ignore_values=ignore_values)
-
+    
     allowed = df[df["week"] == week]["playerDisplay"].unique()
 
     return df[df["playerDisplay"].isin(allowed)]

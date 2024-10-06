@@ -22,7 +22,7 @@ def compare_week(season, week, fn: Callable[[int, int, str, str], pd.DataFrame])
     )
 
 
-def _compare_teamss(team1_df, team2_df):
+def _compare_teams(team1_df, team2_df):
     off_df = team1_df[team1_df["side"] == "off"].reset_index().set_index("role")
     def_df = team2_df[team2_df["side"] == "def"].reset_index().set_index("role")
 
@@ -48,13 +48,13 @@ def compare_teams(season: int, week: int, team1: str, team2: str, show_vs=False)
     if len(team2_df.index) == 0:
         raise Exception(f"Can not find: {team2} > {team2_alias}")
 
-    team1_res = _compare_teamss(team1_df, team2_df)
+    team1_res = _compare_teams(team1_df, team2_df)
     team1_res["rating"] = sum(team1_res.values())
     team1_res["team"] = team1
     if show_vs:
         team1_res["vs"] = team2
 
-    team2_res = _compare_teamss(team2_df, team1_df)
+    team2_res = _compare_teams(team2_df, team1_df)
     team2_res["rating"] = sum(team2_res.values())
     team2_res["team"] = team2
     if show_vs:
@@ -75,14 +75,16 @@ def compare_teams_rating(season: int, week: int, team1: str, team2: str):
     else:
         winner = team2_res
         loser = team1_res
-
-    return {
+    
+    rtn = {
         "winner": winner["team"],
         "loser": loser["team"],
         "home": team1_res["team"],
         "away": team2_res["team"],
         "diff": winner["rating"] - loser["rating"],
     }
+
+    return rtn, res
 
 
 def compute_week(season, week):

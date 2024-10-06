@@ -238,6 +238,11 @@ def rating_compute(selector: TeamSelect):
                 "rating": rating_calculate_def_wr(roles_df.loc["wr3"]),
             },
             {
+                "side": "def",
+                "role": "rest",
+                "rating": rating_calculate_def_wr(roles_df.loc["rest"]),
+            },
+            {
                 "side": "off",
                 "role": "qb1",
                 "rating": rating_calculate_off_qb(
@@ -275,6 +280,11 @@ def rating_compute(selector: TeamSelect):
                 "side": "off",
                 "role": "wr3",
                 "rating": rating_calculate_off_wr(role_history(selector, "wr3")),
+            },
+            {
+                "side": "off",
+                "role": "rest",
+                "rating": rating_calculate_off_wr(role_history(selector, "rest")),
             },
         ]
     )

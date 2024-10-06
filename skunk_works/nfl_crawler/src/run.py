@@ -10,38 +10,39 @@ from modeling.rating import (
 )
 
 from modeling.offense import (
-    offense_get_df,
-    offense_save_df
+    offense_role_get_df,
+    offense_role_save_df,
+    offense_role_compute
 )
 
 from modeling.defense import (
-    defense_get_df,
-    defense_compute,
-    defense_save_df
+    defense_role_get_df,
+    defense_role_compute,
+    defense_role_save_df
 )
 
 from modeling.compare import compare_teams
 
 def build_stats():
-    offense_get_df()
-    defense_get_df()
+    offense_role_get_df()
+    defense_role_get_df()
 
     for index, row in games_all().iterrows():
-        print('processing > ', row['season'], row['week'], row['team'])
-        defense_compute(row)
+        print('defense processing > ', row['season'], row['week'], row['team'])
+        defense_role_compute(row)
 
         if index % 100 == 0:
-            offense_save_df()
-            defense_save_df()
+            offense_role_save_df()
+            defense_role_save_df()
 
-    offense_save_df()
-    defense_save_df()
+    offense_role_save_df()
+    defense_role_save_df()
 
 def build_rating():
     rating_get_df()
 
     for index, row in games_all().iterrows():
-        print('processing > ', row['season'], row['week'], row['team'])
+        print('rating processing > ', row['season'], row['week'], row['team'])
         rating_compute(row)
 
         if index % 100 == 0:
@@ -54,7 +55,6 @@ def process_games():
         't': 0,
         'f': 0,
     }
-
 
     for index, row in games_matchups().iterrows():
         if row['week'] > 2 and row['week'] < 16:
@@ -84,9 +84,20 @@ def process_games():
     acc = results['t'] / (results['t'] + results['f'])
     print('results: ', results, acc)
 
+def run_specific():
+    print(
+        defense_role_compute({
+            'season': 2024,
+            'week': 1,
+            'team': 'WSH'
+        })
+    )
+
 if __name__ == "__main__":
     build_stats()
 
     build_rating()
 
     process_games()
+
+    # run_specific()

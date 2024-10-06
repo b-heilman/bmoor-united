@@ -4,7 +4,7 @@ import pathlib
 
 from .stats import common_fields
 
-from .offense import offense_compute
+from .offense import offense_role_compute
 
 from .team import team_selector_decode
 
@@ -12,7 +12,7 @@ from .selector import TeamSelector
 
 
 def role_week(selector: TeamSelector, role):
-    adv = offense_compute(selector)
+    adv = offense_role_compute(selector)
 
     roles = adv.set_index("role")
     player = roles.loc[role]
@@ -26,7 +26,7 @@ def role_week(selector: TeamSelector, role):
 
 
 def role_history(selector: TeamSelector, role):
-    adv = offense_compute(selector)
+    adv = offense_role_compute(selector)
 
     roles = adv.set_index("role")
     player = roles.loc[role]
