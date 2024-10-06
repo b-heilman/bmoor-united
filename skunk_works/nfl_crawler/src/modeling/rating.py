@@ -6,12 +6,12 @@ from .role import role_history
 
 from .selector import TeamSelect
 
-from .defense import defense_history
+from .defense import defense_selector_decode
 
 base_dir = str(pathlib.Path(__file__).parent.resolve())
 
 
-def rating_calculate_off_qb(player_row):
+def rating_calculate_off_qb(player_row) -> float:
     # Step 1: Calculate completion percentage component (a)
     a = ((player_row["passCmp"] / player_row["passAtt"]) - 0.3) * 5
     a = max(0, min(a, 2.375))
@@ -34,7 +34,7 @@ def rating_calculate_off_qb(player_row):
     return qb_rating
 
 
-def rating_calculate_off_rb(player_row):
+def rating_calculate_off_rb(player_row) -> float:
     # Avoid division by zero
     if player_row["rushAtt"] == 0:
         return 0
@@ -64,7 +64,7 @@ def rating_calculate_off_rb(player_row):
     return max(0, rb_rating)
 
 
-def rating_calculate_off_wr(player_row):
+def rating_calculate_off_wr(player_row) -> float:
     # Avoid division by zero
     if player_row["recAtt"] == 0 or player_row["recCmp"] == 0:
         return 0
@@ -199,7 +199,7 @@ def rating_compute(selector: TeamSelect):
             return res_df
 
     # we want the average rating for that position up to this week
-    season_df = defense_history(selector)
+    season_df = defense_selector_decode(selector)
 
     roles_df = (
         season_df.groupby(["team", "role"]).mean().reset_index().set_index("role")

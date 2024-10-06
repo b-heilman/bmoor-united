@@ -8,7 +8,7 @@ from .stats import (
     stats_sort_recievers,
     stats_sort_rushers,
     stats_sort_quarterback,
-    stats_players,
+    stats_week,
     stats_fake,
 )
 
@@ -51,9 +51,11 @@ def offense_role_save_df():
     offense_df.reset_index(inplace=True, drop=True)
 
     offense_df.to_parquet(offense_parquet_path)
-    
-# stats_offense
-def offense_role_compute(selector: TeamSelector) -> pd.DataFrame:
+
+
+# The stats the offense had for that week for each role.  The roles are computed
+# using the history, but the stats are for that week
+def offense_role_compute(selector: TeamSelect) -> pd.DataFrame:
     """
     For every week, calculate the top players by position by attempt
     """
@@ -68,35 +70,37 @@ def offense_role_compute(selector: TeamSelector) -> pd.DataFrame:
 
         if len(res_df.index) != 0:
             return res_df
-    
-    df = team_selector_decode(selector)
+
+    team_season_df = team_selector_decode(selector)
     week = selector["week"]
-    
+
     # games can get cancelled.  so make sure stats exist for this week.  If they
     # they don't, call one week ago
-    if len(df[df['week'] == week].index) == 0:
+    if len(team_season_df[team_season_df["week"] == week].index) == 0:
         if week > 1:
-            return offense_role_compute({
-                'season': selector["season"],
-                'week': df['week'].max(),
-                'team': selector["team"],
-            })
+            return offense_role_compute(
+                {
+                    "season": selector["season"],
+                    "week": team_season_df["week"].max(),
+                    "team": selector["team"],
+                }
+            )
 
-    top_receivers = stats_sort_recievers(df, week, 3)
-    receivers_df = stats_players(df, top_receivers)
- 
+    top_receivers = stats_sort_recievers(team_season_df, week, 3)
+    receivers_df = stats_week(selector, top_receivers)
+
     if len(top_receivers) < 3:
         receivers_df = pd.concat([receivers_df, stats_fake(3 - len(top_receivers))])
     receivers_df["playerPosition"] = "wr"
 
-    top_rushers = stats_sort_rushers(df, week, 2)
-    rushers_df = stats_players(df, top_rushers)
+    top_rushers = stats_sort_rushers(team_season_df, week, 2)
+    rushers_df = stats_week(selector, top_rushers)
     if len(top_rushers) < 2:
         rushers_df = pd.concat([rushers_df, stats_fake(2 - len(top_rushers))])
     rushers_df["playerPosition"] = "rb"
 
-    top_qb = stats_sort_quarterback(df, week, 1)
-    qb_df = stats_players(df, top_qb)
+    top_qb = stats_sort_quarterback(team_season_df, week, 1)
+    qb_df = stats_week(selector, top_qb)
     if len(top_qb) < 1:
         qb_df = stats_fake(1)
     qb_df["playerPosition"] = "qb"
@@ -104,15 +108,22 @@ def offense_role_compute(selector: TeamSelector) -> pd.DataFrame:
     stats_df = pd.concat([receivers_df, rushers_df, qb_df])
 
     if len(top_receivers + top_rushers + top_qb) == 0:
+        # I'm not sure how this was happening.  I might need to remove it and see what breaks again
+        # theoretically this should never be possible
         rest_df = stats_fake(1)
     else:
-        rest_df = stats_players(
-            df, 
+        rest_df = stats_week(
+            selector,
             top_receivers + top_rushers + top_qb,
             include=False,
-            aggregate=True
+            aggregate=True,
         )
-    rest_df['playerPosition'] = "rest"
+
+        # If the team was so bad that no one helped, we gotta add junk data
+        if (len(res_df.index) == 0):
+            rest_df = stats_fake(1)
+
+    rest_df["playerPosition"] = "rest"
 
     stats_df = pd.concat([stats_df, rest_df])
 
@@ -125,14 +136,13 @@ def offense_role_compute(selector: TeamSelector) -> pd.DataFrame:
 
     return stats_df
 
-def offsense_selector_decode(selector: TeamSelector) -> pd.DataFrame:
-    week = selector[week]
 
-    return pd.concat([
-        offense_role_compute({
-            'season': selector['season'],
-            'week': w,
-            'team': selector['team']
-        }) for w in range(selector['week'], 0, -1)
-    ])
-    
+def offsense_selector_decode(selector: TeamSelect) -> pd.DataFrame:
+    return pd.concat(
+        [
+            offense_role_compute(
+                {"season": selector["season"], "week": w, "team": selector["team"]}
+            )
+            for w in range(selector["week"], 0, -1)
+        ]
+    )

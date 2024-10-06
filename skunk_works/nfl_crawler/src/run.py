@@ -87,17 +87,17 @@ def process_games():
 def run_specific():
     print(
         defense_role_compute({
-            'season': 2024,
-            'week': 1,
-            'team': 'WSH'
+            'season': 2017,
+            'week': 7,
+            'team': 'CAR'
         })
     )
 
 if __name__ == "__main__":
     build_stats()
 
-    build_rating()
+    # build_rating()
 
-    process_games()
+    # process_games()
 
     # run_specific()

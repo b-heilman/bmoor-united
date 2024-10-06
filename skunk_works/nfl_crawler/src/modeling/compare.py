@@ -75,7 +75,7 @@ def compare_teams_rating(season: int, week: int, team1: str, team2: str):
     else:
         winner = team2_res
         loser = team1_res
-    
+
     rtn = {
         "winner": winner["team"],
         "loser": loser["team"],
