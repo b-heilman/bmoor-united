@@ -2,54 +2,60 @@ import os
 import pandas as pd
 import pathlib
 
-from .offense import offense_role_compute
+from .offense import (
+    offense_role_compute,
+    offense_selector_across,
+    offense_selector_decode
+)
 
-from .common import fields as common_fields
-
-from .common import roles as stats_roles
+from .common import (
+    fields as stats_fields,
+    roles as stats_roles
+)
 
 from .stats import stats_week, stats_season
 
 from .team import (
     team_selector_decode,
+    team_alias
 )
 
 from .opponent import opponent_schedule, opponent_history
 
-from .selector import TeamSelect
+from .selector import TeamSelect, WeekSelect
 
 base_dir = str(pathlib.Path(__file__).parent.resolve())
 
-defense_df = None
-def_parquet_path = os.path.abspath(
+defense_role_df = None
+def_role_parquet_path = os.path.abspath(
     base_dir + "/../../cache/parquet/defense_role.parquet"
 )
 
 
 def defense_role_get_df() -> pd.DataFrame:
-    global defense_df
+    global defense_role_df
 
-    if defense_df is None:
-        if os.path.exists(def_parquet_path):
-            defense_df = pd.read_parquet(def_parquet_path)
+    if defense_role_df is None:
+        if os.path.exists(def_role_parquet_path):
+            defense_role_df = pd.read_parquet(def_role_parquet_path)
         else:
-            defense_df = pd.DataFrame()
+            defense_role_df = pd.DataFrame()
 
-    return defense_df
+    return defense_role_df
 
 
 def defense_role_add_df(add_df):
-    global defense_df
+    global defense_role_df
 
-    defense_df = pd.concat([defense_df, add_df])
+    defense_role_df = pd.concat([defense_role_df, add_df])
 
 
 def defense_role_save_df():
-    global defense_df
+    global defense_role_df
 
-    defense_df.reset_index(inplace=True, drop=True)
+    defense_role_df.reset_index(inplace=True, drop=True)
 
-    defense_df.to_parquet(def_parquet_path)
+    defense_role_df.to_parquet(def_role_parquet_path)
 
 
 def _compute_early_def_role(selector: TeamSelect) -> pd.DataFrame:
@@ -81,7 +87,7 @@ def _compute_early_def_role(selector: TeamSelect) -> pd.DataFrame:
     others_df = (
         pd.concat(advanced_aggs)
         .groupby("role")
-        .agg({stat: "mean" for stat in common_fields})
+        .agg({stat: "mean" for stat in stats_fields})
     )
 
     res = []
@@ -90,7 +96,7 @@ def _compute_early_def_role(selector: TeamSelect) -> pd.DataFrame:
         advanced_results = opponent_roles_df.loc[opponent_roles_df["role"] == role]
 
         diff = (
-            pd.concat([others_results[common_fields], advanced_results[common_fields]])
+            pd.concat([others_results[stats_fields], advanced_results[stats_fields]])
             .diff()
             .iloc[1]
         )
@@ -129,7 +135,7 @@ def _defense_role_players(
         others_df = (
             pd.concat(advanced_aggs)
             .groupby("role")
-            .agg({stat: "mean" for stat in common_fields})
+            .agg({stat: "mean" for stat in stats_fields})
         )
 
         # This will be the average for everyone in the same role across the leage
@@ -137,7 +143,7 @@ def _defense_role_players(
         prior_results = pd.DataFrame([others_df.loc[role]])
 
     return (
-        pd.concat([prior_results[common_fields], current_results[common_fields]])
+        pd.concat([prior_results[stats_fields], current_results[stats_fields]])
         .diff()
         .iloc[1]
     )
@@ -212,6 +218,19 @@ def defense_role_compute(selector: TeamSelect) -> pd.DataFrame:
 
     return res_df
 
+def defense_selector_across(selector: WeekSelect) -> pd.DataFrame:
+    return pd.concat(
+        [
+            defense_role_compute(
+                {
+                    "season": selector["season"], 
+                    "week": selector["week"], 
+                    "team": team
+                }
+            )
+            for team in team_alias.values()
+        ]
+    )
 
 def defense_selector_decode(selector: TeamSelect):
     return pd.concat(
@@ -221,4 +240,4 @@ def defense_selector_decode(selector: TeamSelect):
             )
             for w in range(selector["week"], 0, -1)
         ]
-    )
+    )    

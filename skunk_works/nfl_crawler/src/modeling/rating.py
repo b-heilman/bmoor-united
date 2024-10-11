@@ -11,7 +11,10 @@ from .defense import defense_selector_decode
 base_dir = str(pathlib.Path(__file__).parent.resolve())
 
 
-def rating_calculate_off_qb(player_row) -> float:
+def rating_calculate_off_pass(player_row) -> float:
+    if player_row["passAtt"] == 0:
+        return 0
+    
     # Step 1: Calculate completion percentage component (a)
     a = ((player_row["passCmp"] / player_row["passAtt"]) - 0.3) * 5
     a = max(0, min(a, 2.375))
@@ -34,7 +37,7 @@ def rating_calculate_off_qb(player_row) -> float:
     return qb_rating
 
 
-def rating_calculate_off_rb(player_row) -> float:
+def rating_calculate_off_rush(player_row) -> float:
     # Avoid division by zero
     if player_row["rushAtt"] == 0:
         return 0
@@ -48,23 +51,16 @@ def rating_calculate_off_rb(player_row) -> float:
     # Step 3: Calculate Fumbles per Carry (negative impact)
     fpc = player_row["fumblesLost"] / player_row["rushAtt"]
 
-    # Step 4: Add Receiving Performance (if applicable)
-    if player_row["recCmp"] > 0:
-        receiving_effect = (player_row["recYds"] / player_row["recCmp"]) + (
-            player_row["recTd"] / player_row["recCmp"]
-        )
-    else:
-        receiving_effect = 0
 
     # Custom weightings can be adjusted based on preference
     # Step 5: Calculate the RB rating (custom formula combining rush and receiving)
-    rb_rating = (ypc * 5) + (tpc * 20) - (fpc * 15) + (receiving_effect * 2)
+    rb_rating = (ypc * 26) + (tpc * 50) - (fpc * 15)
 
     # Ensure a positive rating
     return max(0, rb_rating)
 
 
-def rating_calculate_off_wr(player_row) -> float:
+def rating_calculate_off_rec(player_row) -> float:
     # Avoid division by zero
     if player_row["recAtt"] == 0 or player_row["recCmp"] == 0:
         return 0
@@ -83,11 +79,35 @@ def rating_calculate_off_wr(player_row) -> float:
 
     # Custom weightings can be adjusted based on preference
     # Step 5: Combine metrics into WR rating
-    wr_rating = (ypr * 3) + (tpr * 25) + (catch_rate * 20) - (fpr * 10)
+    wr_rating = (ypr * 4.8) + (tpr * 25) + (catch_rate * 25) - (fpr * 10)
 
     # Ensure the rating is positive
     return max(0, wr_rating)
 
+def rating_calculate_off(player_row, qb = 0.1, rb=0.2, wr=0.7):
+    if qb > 0:
+        passing = qb * rating_calculate_off_pass(player_row)
+    else:
+        passing = 0
+
+    if rb > 0:
+        rushing = rb * rating_calculate_off_rush(player_row)
+    else:
+        rushing = 0
+
+    if wr > 0:
+        rec = wr * rating_calculate_off_rec(player_row)
+    else:
+        rec = 0
+
+    return passing + rushing + rec
+
+
+# write a rating for def_rush, def_pass, def_qb
+# use a score of 100 as the base
+# qb = {'passAtt': 30, 'passCmp': 20, 'passYds': 220, 'passTd': 2, 'passInt': 0.5}
+# rb = {'rushAtt': 16, 'rushYds': 60, 'rushTd': 1, 'fumblesLost': 0.5}
+# wr = {'recAtt': 9, 'recCmp': 6, 'recYds': 100, 'recTd': 1, 'fumblesLost': 0.5}
 
 def rating_calculate_def(attempts, completions, yards, touchdowns, turnovers):
     # Positive score means the defense is good, negative is bad
@@ -245,46 +265,58 @@ def rating_compute(selector: TeamSelect):
             {
                 "side": "off",
                 "role": "qb1",
-                "rating": rating_calculate_off_qb(
-                    role_history(
-                        {
-                            "season": season,
-                            "week": week,
-                            "team": team,
-                        },
-                        "qb1",
-                    )
+                "rating": rating_calculate_off(
+                    role_history(selector,"qb1"), 
+                    qb=1, rb=2, wr=0.0
                 ),
             },
             {
                 "side": "off",
                 "role": "rb1",
-                "rating": rating_calculate_off_rb(role_history(selector, "rb1")),
+                "rating": rating_calculate_off(
+                    role_history(selector, "rb1"), 
+                    qb=0, rb=1, wr=1.5
+                ),
             },
             {
                 "side": "off",
                 "role": "rb2",
-                "rating": rating_calculate_off_rb(role_history(selector, "rb2")),
+                "rating": rating_calculate_off(
+                    role_history(selector, "rb2"), 
+                    qb=0, rb=1, wr=1.5
+                ),
             },
             {
                 "side": "off",
                 "role": "wr1",
-                "rating": rating_calculate_off_wr(role_history(selector, "wr1")),
+                "rating": rating_calculate_off(
+                    role_history(selector, "wr1"), 
+                    qb=0.0, rb=1.5, wr=1
+                ),
             },
             {
                 "side": "off",
                 "role": "wr2",
-                "rating": rating_calculate_off_wr(role_history(selector, "wr2")),
+                "rating": rating_calculate_off(
+                    role_history(selector, "wr2"), 
+                    qb=0.0, rb=1.5, wr=1
+                ),
             },
             {
                 "side": "off",
                 "role": "wr3",
-                "rating": rating_calculate_off_wr(role_history(selector, "wr3")),
+                "rating": rating_calculate_off(
+                    role_history(selector, "wr3"), 
+                    qb=0.0, rb=1.5, wr=1
+                ),
             },
             {
                 "side": "off",
                 "role": "rest",
-                "rating": rating_calculate_off_wr(role_history(selector, "rest")),
+                "rating": rating_calculate_off(
+                    role_history(selector, "rest"), 
+                    qb=1, rb=1, wr=1
+                ),
             },
         ]
     )

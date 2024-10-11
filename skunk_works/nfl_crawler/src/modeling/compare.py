@@ -13,7 +13,6 @@ from .common import roles as stats_roles
 
 
 def compare_week(season, week, fn: Callable[[int, int, str, str], pd.DataFrame]):
-    # TODO: this is broken, need to fix
     return pd.concat(
         [
             fn(season, week, game["home"], game["away"])
