@@ -96,6 +96,7 @@ def process_games():
                     results['f'] += 1
                 else:
                     results['t'] += 1
+                    
     acc = results['t'] / (results['t'] + results['f'])
     print('results: ', results, acc)
 

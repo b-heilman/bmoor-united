@@ -3,7 +3,7 @@ import pandas as pd
 import pathlib
 
 from .role import role_history
-
+from .opponent import opponent_get
 from .selector import TeamSelect
 
 from .defense import defense_selector_decode
@@ -105,71 +105,43 @@ def rating_calculate_off(player_row, qb = 0.1, rb=0.2, wr=0.7):
 
 # write a rating for def_rush, def_pass, def_qb
 # use a score of 100 as the base
-# qb = {'passAtt': 30, 'passCmp': 20, 'passYds': 220, 'passTd': 2, 'passInt': 0.5}
-# rb = {'rushAtt': 16, 'rushYds': 60, 'rushTd': 1, 'fumblesLost': 0.5}
-# wr = {'recAtt': 9, 'recCmp': 6, 'recYds': 100, 'recTd': 1, 'fumblesLost': 0.5}
+pass_baseline = rating_calculate_off_pass(
+    {'passAtt': 30, 'passCmp': 20, 'passYds': 220, 'passTd': 2, 'passInt': 0.5}
+)
+rush_baseline = rating_calculate_off_rush(
+    {'rushAtt': 16, 'rushYds': 60, 'rushTd': 1, 'fumblesLost': 0.5}
+)
+rec_baseline = rating_calculate_off_rec(
+    {'recAtt': 9, 'recCmp': 6, 'recYds': 100, 'recTd': 1, 'fumblesLost': 0.5}
+)
 
-def rating_calculate_def(attempts, completions, yards, touchdowns, turnovers):
-    # Positive score means the defense is good, negative is bad
+def rating_calculate_def_pass(player_row) -> float:
+    return rating_calculate_off_pass(player_row) - pass_baseline
+    
 
-    # if attempts went down, but completions went up, bad for defense
-    # attempts up, completions down, good for defense
-    score = (attempts - completions) * 3
+def rating_calculate_def_rush(player_row) -> float:
+    return rating_calculate_off_rush(player_row) - rush_baseline
 
-    if completions < 0:
-        score -= completions * 5
+def rating_calculate_def_rec(player_row) -> float:
+    return rating_calculate_off_rec(player_row) - rec_baseline
 
-    if attempts < 0:
-        score -= attempts * 5
+def rating_calculate_def(player_row, qb = 0.1, rb=0.2, wr=0.7):
+    if qb > 0:
+        passing = qb * rating_calculate_def_pass(player_row)
+    else:
+        passing = 0
 
-    return score + -(+(yards) + (touchdowns * 7) - turnovers * 10)
+    if rb > 0:
+        rushing = rb * rating_calculate_def_rush(player_row)
+    else:
+        rushing = 0
 
+    if wr > 0:
+        rec = wr * rating_calculate_def_rec(player_row)
+    else:
+        rec = 0
 
-def rating_calculate_def_team(player_row):
-    return rating_calculate_def(
-        player_row["passAtt"],
-        player_row["passCmp"],
-        player_row["passYds"],
-        player_row["passTd"],
-        player_row["passInt"],
-    ) + rating_calculate_def(
-        player_row["rushAtt"],
-        player_row["rushAtt"],
-        player_row["rushYds"],
-        player_row["rushTd"],
-        player_row["fumblesLost"],
-    )
-
-
-def rating_calculate_def_qb(player_row):
-    return rating_calculate_def(
-        player_row["passAtt"],
-        player_row["passCmp"],
-        player_row["passYds"],
-        player_row["passTd"],
-        player_row["passInt"],
-    )
-
-
-def rating_calculate_def_wr(player_row):
-    return rating_calculate_def(
-        player_row["recAtt"],
-        player_row["recCmp"],
-        player_row["recYds"],
-        player_row["recTd"],
-        player_row["fumblesLost"],
-    )
-
-
-def rating_calculate_def_rb(player_row):
-    return rating_calculate_def(
-        player_row["rushAtt"],
-        player_row["rushAtt"],
-        player_row["rushYds"],
-        player_row["rushTd"],
-        player_row["fumblesLost"],
-    )
-
+    return passing + rushing + rec
 
 rating_df = None
 rating_parquet_path = os.path.abspath(base_dir + "/../../cache/parquet/rating.parquet")
@@ -200,6 +172,53 @@ def rating_save_df():
 
     rating_df.to_parquet(rating_parquet_path)
 
+def rating_calculate_off_qb(selector, role="qb1"):
+    return rating_calculate_off(
+        role_history(selector, role), 
+        qb=1, rb=2, wr=0.0
+    ),
+
+def rating_calculate_off_rb(selector, role="rb1"):
+    return rating_calculate_off(
+        role_history(selector, role), 
+        qb=0, rb=1, wr=1.5
+    ),
+
+def rating_calculate_off_wr(selector, role="wr1"):
+    return rating_calculate_off(
+        role_history(selector, role), 
+        qb=0.0, rb=1.5, wr=1
+    ),
+
+def rating_calculate_off_rest(selector, role="rest"):
+    return rating_calculate_off(
+        role_history(selector, role), 
+        qb=1, rb=1, wr=1
+    ),
+
+def rating_calculate_def_qb(selector, role="qb1"):
+    return rating_calculate_def(
+        role_history(selector, role), 
+        qb=1, rb=2, wr=0.0
+    ),
+
+def rating_calculate_def_rb(selector, role="rb1"):
+    return rating_calculate_def(
+        role_history(selector, role), 
+        qb=0, rb=1, wr=1.5
+    ),
+
+def rating_calculate_def_wr(selector, role="wr1"):
+    return rating_calculate_def(
+        role_history(selector, role), 
+        qb=0.0, rb=1.5, wr=1
+    ),
+
+def rating_calculate_def_rest(selector, role="rest"):
+    return rating_calculate_def(
+        role_history(selector, role), 
+        qb=1, rb=1, wr=1
+    ),
 
 def rating_compute(selector: TeamSelect):
     season = selector["season"]
@@ -219,6 +238,10 @@ def rating_compute(selector: TeamSelect):
             return res_df
 
     # we want the average rating for that position up to this week
+    # TODO
+    # - get this week's data for offense
+    # - get opponent
+    #   - get this week's data for offense, run through defense rating
     season_df = defense_selector_decode(selector)
 
     roles_df = (
@@ -235,32 +258,32 @@ def rating_compute(selector: TeamSelect):
             {
                 "side": "def",
                 "role": "rb1",
-                "rating": rating_calculate_def_rb(roles_df.loc["rb1"]),
+                "rating": rating_calculate_def_rush(roles_df.loc["rb1"]),
             },
             {
                 "side": "def",
                 "role": "rb2",
-                "rating": rating_calculate_def_rb(roles_df.loc["rb2"]),
+                "rating": rating_calculate_def_rush(roles_df.loc["rb2"]),
             },
             {
                 "side": "def",
                 "role": "wr1",
-                "rating": rating_calculate_def_wr(roles_df.loc["wr1"]),
+                "rating": rating_calculate_def_pass(roles_df.loc["wr1"]),
             },
             {
                 "side": "def",
                 "role": "wr2",
-                "rating": rating_calculate_def_wr(roles_df.loc["wr2"]),
+                "rating": rating_calculate_def_pass(roles_df.loc["wr2"]),
             },
             {
                 "side": "def",
                 "role": "wr3",
-                "rating": rating_calculate_def_wr(roles_df.loc["wr3"]),
+                "rating": rating_calculate_def_pass(roles_df.loc["wr3"]),
             },
             {
                 "side": "def",
                 "role": "rest",
-                "rating": rating_calculate_def_wr(roles_df.loc["rest"]),
+                "rating": rating_calculate_def(roles_df.loc["rest"]),
             },
             {
                 "side": "off",
