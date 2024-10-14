@@ -14,7 +14,8 @@ def opponent_history(selector: TeamSelect) -> pd.DataFrame:
 
     return season_df[~(season_df["teamDisplay"] == selector["team"])]
 
-def opponent_get(selector: TeamSelect) -> str:
+
+def opponent_get(selector: TeamSelect) -> str | None:
     games_df = game_get_df()
     season_df = games_df[
         (games_df["season"] == selector["season"])
@@ -23,11 +24,19 @@ def opponent_get(selector: TeamSelect) -> str:
     team_df = season_df[
         (season_df["homeTeamDisplay"] == selector["team"])
         | (season_df["awayTeamDisplay"] == selector["team"])
-    ].iloc[0]
+    ]
 
-    return team_df['homeTeamDisplay'] \
-        if season_df["awayTeamDisplay"] == selector["team"] \
-        else season_df["awayTeamDisplay"]
+    if len(team_df.index) == 0:
+        return None
+    else:
+        team_df = team_df.iloc[0]
+
+    return (
+        team_df["homeTeamDisplay"]
+        if team_df["awayTeamDisplay"] == selector["team"]
+        else team_df["awayTeamDisplay"]
+    )
+
 
 def opponent_schedule(selector: TeamSelect):
     games_df = game_get_df()

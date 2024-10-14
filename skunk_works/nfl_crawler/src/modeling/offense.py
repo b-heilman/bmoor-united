@@ -4,7 +4,6 @@ import pathlib
 
 from .common import (
     roles as stats_roles,
-    fields as stats_fields
 )
 
 from .stats import (
@@ -15,10 +14,7 @@ from .stats import (
     stats_fake,
 )
 
-from .team import (
-    team_alias,
-    team_selector_decode
-)
+from .team import team_alias, team_selector_decode
 
 from .selector import TeamSelector, TeamSelect, WeekSelect
 
@@ -126,7 +122,7 @@ def offense_role_compute(selector: TeamSelect) -> pd.DataFrame:
         )
 
         # If the team was so bad that no one helped, we gotta add junk data
-        if (len(rest_df.index) == 0):
+        if len(rest_df.index) == 0:
             rest_df = stats_fake(1)
 
     rest_df["playerPosition"] = "rest"
@@ -142,19 +138,17 @@ def offense_role_compute(selector: TeamSelect) -> pd.DataFrame:
 
     return roles_df
 
+
 def offense_selector_across(selector: WeekSelect) -> pd.DataFrame:
     return pd.concat(
         [
             offense_role_compute(
-                {
-                    "season": selector["season"], 
-                    "week": selector["week"], 
-                    "team": team
-                }
+                {"season": selector["season"], "week": selector["week"], "team": team}
             )
             for team in team_alias.values()
         ]
     )
+
 
 def offense_selector_decode(selector: TeamSelect) -> pd.DataFrame:
     return pd.concat(
@@ -164,4 +158,4 @@ def offense_selector_decode(selector: TeamSelect) -> pd.DataFrame:
             )
             for w in range(selector["week"], 0, -1)
         ]
-    )    
+    )

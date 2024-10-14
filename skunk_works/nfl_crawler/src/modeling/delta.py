@@ -5,19 +5,16 @@ import pathlib
 from .offense import (
     offense_role_compute,
     offense_selector_across,
-    offense_selector_decode
+    offense_selector_decode,
 )
 
 from .defense import (
     defense_role_compute,
     defense_selector_across,
-    defense_selector_decode
+    defense_selector_decode,
 )
 
-from .common import (
-    fields as stats_fields,
-    roles as stats_roles
-)
+from .common import fields as stats_fields, roles as stats_roles
 
 from .opponent import opponent_schedule
 
@@ -29,6 +26,7 @@ delta_offense_df = None
 delta_offense_parquet_path = os.path.abspath(
     base_dir + "/../../cache/parquet/delta_offense.parquet"
 )
+
 
 # get_offense_df
 def delta_offense_get_df() -> pd.DataFrame:
@@ -58,6 +56,7 @@ def delta_offense_save_df():
 
     delta_offense_df.to_parquet(delta_offense_parquet_path)
 
+
 def delta_offense_compute(selector: TeamSelect) -> pd.DataFrame:
     """
     For every week, calculate the top players by position by attempt
@@ -73,51 +72,58 @@ def delta_offense_compute(selector: TeamSelect) -> pd.DataFrame:
 
         if len(res_df.index) != 0:
             return res_df
-        
+
     # get this week
-    this_week_df = defense_role_compute(selector).set_index('role')[
+    this_week_df = defense_role_compute(selector).set_index("role")[
         [stat for stat in stats_fields]
     ]
 
     # get the historical average
-    if selector['week'] == 1:
+    if selector["week"] == 1:
         # if we're on week one, we will compare to everyone else
         history_df = (
-            defense_selector_across({
-                'season': selector['season'],
-                'week': selector['week'],
-                'team': selector['team']
-            }).groupby("role")
+            defense_selector_across(
+                {
+                    "season": selector["season"],
+                    "week": selector["week"],
+                }
+            )
+            .groupby("role")
             .agg({stat: "mean" for stat in stats_fields})
         )
     else:
         history_df = (
-            defense_selector_decode({
-                'season': selector['season'],
-                'week': selector['week'] - 1,
-                'team': selector['team']
-            }).groupby("role")
+            defense_selector_decode(
+                {
+                    "season": selector["season"],
+                    "week": selector["week"] - 1,
+                    "team": selector["team"],
+                }
+            )
+            .groupby("role")
             .agg({stat: "mean" for stat in stats_fields})
         )
 
     # compute the change off of the average for the role
-    delta_df = pd.DataFrame([
-        this_week_df.loc[role] - history_df.loc[role] for role in stats_roles
-    ])
+    delta_df = pd.DataFrame(
+        [this_week_df.loc[role] - history_df.loc[role] for role in stats_roles]
+    )
 
-    delta_df['role'] = stats_roles
-    delta_df['season'] = selector['season']
-    delta_df['week'] = selector['week']
-    delta_df['team'] = selector['team']
+    delta_df["role"] = stats_roles
+    delta_df["season"] = selector["season"]
+    delta_df["week"] = selector["week"]
+    delta_df["team"] = selector["team"]
 
     delta_offense_add_df(delta_df)
 
     return delta_df
 
+
 delta_defense_df = None
 delta_defense_parquet_path = os.path.abspath(
     base_dir + "/../../cache/parquet/delta_defense.parquet"
 )
+
 
 # get_offense_df
 def delta_defense_get_df() -> pd.DataFrame:
@@ -147,6 +153,7 @@ def delta_defense_save_df():
 
     delta_defense_df.to_parquet(delta_defense_parquet_path)
 
+
 def delta_defense_compute(selector: TeamSelect) -> pd.DataFrame:
     """
     For every week, calculate the top players by position by attempt
@@ -162,48 +169,51 @@ def delta_defense_compute(selector: TeamSelect) -> pd.DataFrame:
 
         if len(res_df.index) != 0:
             return res_df
-    
+
     schedule = opponent_schedule(selector)
     this_week = schedule.pop(0)
     opponent = this_week["opponent"]
 
     # get this week
-    this_week_df = offense_role_compute({
-        'season': selector['season'],
-        'week': selector['week'],
-        'team': opponent
-    }).set_index('role')[[stat for stat in stats_fields]]
+    this_week_df = offense_role_compute(
+        {"season": selector["season"], "week": selector["week"], "team": opponent}
+    ).set_index("role")[[stat for stat in stats_fields]]
 
     # get the historical average
-    if selector['week'] == 1:
+    if selector["week"] == 1:
         # if we're on week one, we will compare to everyone else
         history_df = (
-            offense_selector_across({
-                'season': selector['season'],
-                'week': selector['week'],
-                'team': opponent
-            }).groupby("role")
+            offense_selector_across(
+                {
+                    "season": selector["season"],
+                    "week": selector["week"],
+                }
+            )
+            .groupby("role")
             .agg({stat: "mean" for stat in stats_fields})
         )
     else:
         history_df = (
-            offense_selector_decode({
-                'season': selector['season'],
-                'week': selector['week'] - 1,
-                'team': opponent
-            }).groupby("role")
+            offense_selector_decode(
+                {
+                    "season": selector["season"],
+                    "week": selector["week"] - 1,
+                    "team": opponent,
+                }
+            )
+            .groupby("role")
             .agg({stat: "mean" for stat in stats_fields})
         )
 
     # compute the change off of the average for the role
-    delta_df = pd.DataFrame([
-        this_week_df.loc[role] - history_df.loc[role] for role in stats_roles
-    ])
+    delta_df = pd.DataFrame(
+        [this_week_df.loc[role] - history_df.loc[role] for role in stats_roles]
+    )
 
-    delta_df['role'] = stats_roles
-    delta_df['season'] = selector['season']
-    delta_df['week'] = selector['week']
-    delta_df['team'] = selector['team']
+    delta_df["role"] = stats_roles
+    delta_df["season"] = selector["season"]
+    delta_df["week"] = selector["week"]
+    delta_df["team"] = selector["team"]
 
     delta_defense_add_df(delta_df)
 

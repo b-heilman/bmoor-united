@@ -5,20 +5,14 @@ import pathlib
 from .offense import (
     offense_role_compute,
     offense_selector_across,
-    offense_selector_decode
+    offense_selector_decode,
 )
 
-from .common import (
-    fields as stats_fields,
-    roles as stats_roles
-)
+from .common import fields as stats_fields, roles as stats_roles
 
 from .stats import stats_week, stats_season
 
-from .team import (
-    team_selector_decode,
-    team_alias
-)
+from .team import team_selector_decode, team_alias
 
 from .opponent import opponent_schedule, opponent_history
 
@@ -209,28 +203,26 @@ def defense_role_compute(selector: TeamSelect) -> pd.DataFrame:
         {"season": selector["season"], "week": selector["week"], "team": opponent}
     ).copy()
 
-    res_df['season'] = season
-    res_df['week'] = week
-    res_df['team'] = team
+    res_df["season"] = season
+    res_df["week"] = week
+    res_df["team"] = team
 
     # save data
     defense_role_add_df(res_df)
 
     return res_df
 
+
 def defense_selector_across(selector: WeekSelect) -> pd.DataFrame:
     return pd.concat(
         [
             defense_role_compute(
-                {
-                    "season": selector["season"], 
-                    "week": selector["week"], 
-                    "team": team
-                }
+                {"season": selector["season"], "week": selector["week"], "team": team}
             )
             for team in team_alias.values()
         ]
     )
+
 
 def defense_selector_decode(selector: TeamSelect):
     return pd.concat(
@@ -240,4 +232,4 @@ def defense_selector_decode(selector: TeamSelect):
             )
             for w in range(selector["week"], 0, -1)
         ]
-    )    
+    )

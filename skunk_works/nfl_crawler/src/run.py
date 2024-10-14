@@ -11,7 +11,8 @@ from modeling.rating import (
     rating_get_df,
     rating_save_df,
     rating_compute,
-    rating_calculate_off
+    rating_calculate_off,
+    rating_compute_diff
 )
 
 from modeling.offense import (
@@ -56,12 +57,14 @@ def build_stats():
 def build_rating():
     rating_get_df()
 
-    for index, row in games_all().iterrows():
-        print('rating processing > ', row['season'], row['week'], row['team'])
-        rating_compute(row)
+    print('=====')
+    print(rating_compute(games_all().iloc[0]))
+    #for index, row in games_all().iterrows():
+    #    print('rating processing > ', row['season'], row['week'], row['team'])
+    #    rating_compute(row)
 
-        if index % 100 == 0:
-            rating_save_df()
+    #    if index % 100 == 0:
+    #        rating_save_df()
 
     rating_save_df()
 
@@ -100,7 +103,7 @@ def process_games():
     acc = results['t'] / (results['t'] + results['f'])
     print('results: ', results, acc)
 
-def run_specific():
+def delta_defense():
     roles1 = delta_defense_compute({
         'season': 2024,
         'week': 1,
@@ -143,6 +146,47 @@ def run_specific():
     print('>>>> rating 4 >', rating_calculate_off(r4, qb=0.0, wr=1.0, rb=2.0))
     print(r4)
 
+def delta_rating():
+    diff1 = rating_compute_diff({
+        'season': 2024,
+        'week': 1,
+        'team': 'PHI'
+    })
+    print('--diff1--')
+    print(diff1)
+
+    diff2 = rating_compute_diff({
+        'season': 2024,
+        'week': 2,
+        'team': 'PHI'
+    })
+    print('--diff2--')
+    print(diff2)
+
+    diff3 = rating_compute_diff({
+        'season': 2024,
+        'week': 3,
+        'team': 'PHI'
+    })
+    print('--diff3--')
+    print(diff3)
+
+    diff4 = rating_compute_diff({
+        'season': 2024,
+        'week': 4,
+        'team': 'PHI'
+    })
+    print('--diff4--')
+    print(diff4)
+
+    diff5 = rating_compute_diff({
+        'season': 2024,
+        'week': 5,
+        'team': 'PHI'
+    })
+    print('--diff5--')
+    print(diff5)
+
 def calc_baseline():
     df = offense_role_get_df()
     print(df)
@@ -167,6 +211,6 @@ if __name__ == "__main__":
 
     # process_games()
 
-    # run_specific()
+    delta_rating()
 
-    calc_baseline()
+    # calc_baseline()

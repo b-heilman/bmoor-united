@@ -1,0 +1,1408 @@
+===== rating_compute_diff {'season': 2024, 'week': 1, 'team': 'PHI'}
+===== rating_compute {'season': 2024, 'week': 1, 'team': 'PHI'}
+def ==> 520.8190359477125
+{'playerDisplay': 'Jordan Love', 'passCmp': 17.0, 'passAtt': 34.0, 'passYds': 260.0, 'passTd': 2.0, 'passInt': 1.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 0.0, 'recCmp': 0.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 1.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'qb', 'season': 2024, 'week': 1, 'team': 'PHI'}
+{'passing': 120.50653594771241, 'rushing': 200.15625, 'rec': 0}
+def ==> 266.65625000000006
+{'playerDisplay': 'Josh Jacobs', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 16.0, 'rushYds': 84.0, 'rushTd': 0.0, 'recAtt': 3.0, 'recCmp': 2.0, 'recYds': 20.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 1.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'PHI'}
+{'passing': 0, 'rushing': 63.65625, 'rec': 135.33333333333337}
+def ==> 168.95625000000007
+{'playerDisplay': 'Emanuel Wilson', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 4.0, 'rushYds': 46.0, 'rushTd': 0.0, 'recAtt': 3.0, 'recCmp': 2.0, 'recYds': 2.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'PHI'}
+{'passing': 0, 'rushing': -98.84375, 'rec': 178.53333333333336}
+def ==> 425.9486607142857
+{'playerDisplay': 'Romeo Doubs', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 7.0, 'recCmp': 4.0, 'recYds': 50.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'PHI'}
+{'passing': 0, 'rushing': 200.15625, 'rec': 125.71428571428574}
+def ==> -1050.2822916666667
+{'playerDisplay': 'Jayden Reed', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 1.0, 'rushYds': 33.0, 'rushTd': 1.0, 'recAtt': 6.0, 'recCmp': 4.0, 'recYds': 138.0, 'recTd': 1.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'PHI'}
+{'passing': 0, 'rushing': -707.84375, 'rec': 11.483333333333363}
+def ==> 456.1010416666667
+{'playerDisplay': 'Christian Watson', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 5.0, 'recCmp': 3.0, 'recYds': 13.0, 'recTd': 1.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'PHI'}
+{'passing': 0, 'rushing': 200.15625, 'rec': 155.86666666666667}
+def ==> 153.68670138888888
+{'playerDisplay': 'aggregate', 'passCmp': 0.0, 'passAtt': 1.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 8.0, 'recCmp': 2.0, 'recYds': 37.0, 'recTd': 0.0, 'sacked': 1.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rest', 'season': 2024, 'week': 1, 'team': 'PHI'}
+{'passing': 163.88888888888889, 'rushing': 200.15625, 'rec': 104.95000000000002}
+off ==> 209.96191553544494
+{'playerDisplay': 'Jalen Hurts', 'passCmp': 20.0, 'passAtt': 34.0, 'passYds': 278.0, 'passTd': 2.0, 'passInt': 2.0, 'rushAtt': 13.0, 'rushYds': 33.0, 'rushTd': 0.0, 'recAtt': 0.0, 'recCmp': 0.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 2.0, 'fumbles': 2.0, 'fumblesLost': 1.0, 'playerPosition': 'qb', 'season': 2024, 'week': 1, 'team': 'PHI'}
+{'passing': 80.26960784313727, 'rushing': 64.84615384615384, 'rec': 0}
+off ==> 261.3
+{'playerDisplay': 'Saquon Barkley', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 24.0, 'rushYds': 109.0, 'rushTd': 2.0, 'recAtt': 2.0, 'recCmp': 2.0, 'recYds': 23.0, 'recTd': 1.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'PHI'}
+{'passing': 0, 'rushing': 122.25000000000001, 'rec': 92.69999999999999}
+off ==> 0.0
+{'playerDisplay': '--fake--', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 0.0, 'recCmp': 0.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'PHI'}
+{'passing': 0, 'rushing': 0, 'rec': 0}
+off ==> 131.74
+{'playerDisplay': 'A.J. Brown', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 10.0, 'recCmp': 5.0, 'recYds': 119.0, 'recTd': 1.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'PHI'}
+{'passing': 0, 'rushing': 0, 'rec': 131.74}
+off ==> 79.475
+{'playerDisplay': 'DeVonta Smith', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 8.0, 'recCmp': 7.0, 'recYds': 84.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'PHI'}
+{'passing': 0, 'rushing': 0, 'rec': 79.475}
+off ==> 57.199999999999996
+{'playerDisplay': 'Dallas Goedert', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 5.0, 'recCmp': 4.0, 'recYds': 31.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'PHI'}
+{'passing': 0, 'rushing': 0, 'rec': 57.199999999999996}
+off ==> 51.705
+{'playerDisplay': 'aggregate', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 1.0, 'rushYds': 2.0, 'rushTd': 0.0, 'recAtt': 4.0, 'recCmp': 2.0, 'recYds': 21.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rest', 'season': 2024, 'week': 1, 'team': 'PHI'}
+{'passing': 0, 'rushing': 52.0, 'rec': 62.9}
+===== rating_compute {'season': 2024, 'week': 1, 'team': 'NYG'}
+def ==> 438.59027777777777
+{'playerDisplay': 'Sam Darnold', 'passCmp': 19.0, 'passAtt': 24.0, 'passYds': 208.0, 'passTd': 2.0, 'passInt': 1.0, 'rushAtt': 3.0, 'rushYds': 3.0, 'rushTd': 0.0, 'recAtt': 0.0, 'recCmp': 0.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 1.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'qb', 'season': 2024, 'week': 1, 'team': 'NYG'}
+{'passing': 90.27777777777777, 'rushing': 174.15625, 'rec': 0}
+def ==> 230.51339285714283
+{'playerDisplay': 'Aaron Jones', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 14.0, 'rushYds': 94.0, 'rushTd': 1.0, 'recAtt': 2.0, 'recCmp': 2.0, 'recYds': 15.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'NYG'}
+{'passing': 0, 'rushing': 22.013392857142833, 'rec': 139.0}
+def ==> 347.40625
+{'playerDisplay': 'Ty Chandler', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 8.0, 'rushYds': 17.0, 'rushTd': 0.0, 'recAtt': 3.0, 'recCmp': 3.0, 'recYds': 25.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'NYG'}
+{'passing': 0, 'rushing': 144.90625, 'rec': 135.0}
+def ==> 406.51770833333336
+{'playerDisplay': 'Justin Jefferson', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 6.0, 'recCmp': 4.0, 'recYds': 59.0, 'recTd': 1.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'NYG'}
+{'passing': 0, 'rushing': 200.15625, 'rec': 106.28333333333335}
+def ==> 425.484375
+{'playerDisplay': 'Jordan Addison', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 4.0, 'recCmp': 3.0, 'recYds': 35.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'NYG'}
+{'passing': 0, 'rushing': 200.15625, 'rec': 125.25000000000001}
+def ==> 447.56770833333337
+{'playerDisplay': 'Johnny Mundt', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 3.0, 'recCmp': 2.0, 'recYds': 15.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'NYG'}
+{'passing': 0, 'rushing': 200.15625, 'rec': 147.33333333333334}
+def ==> 162.32953472222223
+{'playerDisplay': 'aggregate', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 1.0, 'rushYds': -3.0, 'rushTd': 0.0, 'recAtt': 5.0, 'recCmp': 5.0, 'recYds': 59.0, 'recTd': 1.0, 'sacked': 0.0, 'fumbles': 1.0, 'fumblesLost': 1.0, 'playerPosition': 'rest', 'season': 2024, 'week': 1, 'team': 'NYG'}
+{'passing': 203.47222222222223, 'rushing': 200.15625, 'rec': 115.36000000000001}
+off ==> 174.3452380952381
+{'playerDisplay': 'Daniel Jones', 'passCmp': 22.0, 'passAtt': 42.0, 'passYds': 186.0, 'passTd': 0.0, 'passInt': 2.0, 'rushAtt': 6.0, 'rushYds': 15.0, 'rushTd': 0.0, 'recAtt': 0.0, 'recCmp': 0.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 5.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'qb', 'season': 2024, 'week': 1, 'team': 'NYG'}
+{'passing': 44.3452380952381, 'rushing': 65.0, 'rec': 0}
+off ==> 153.2
+{'playerDisplay': 'Devin Singletary', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 10.0, 'rushYds': 37.0, 'rushTd': 0.0, 'recAtt': 5.0, 'recCmp': 4.0, 'recYds': 15.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'NYG'}
+{'passing': 0, 'rushing': 96.2, 'rec': 38.0}
+off ==> 180.29999999999998
+{'playerDisplay': 'Eric Gray', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 2.0, 'rushYds': 6.0, 'rushTd': 0.0, 'recAtt': 1.0, 'recCmp': 1.0, 'recYds': 9.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'NYG'}
+{'passing': 0, 'rushing': 78.0, 'rec': 68.19999999999999}
+off ==> 593.7
+{'playerDisplay': "Wan'Dale Robinson", 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 1.0, 'rushYds': 14.0, 'rushTd': 0.0, 'recAtt': 12.0, 'recCmp': 6.0, 'recYds': 44.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'NYG'}
+{'passing': 0, 'rushing': 364.0, 'rec': 47.699999999999996}
+off ==> 81.21714285714285
+{'playerDisplay': 'Malik Nabers', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 7.0, 'recCmp': 5.0, 'recYds': 66.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'NYG'}
+{'passing': 0, 'rushing': 0, 'rec': 81.21714285714285}
+off ==> 60.349999999999994
+{'playerDisplay': 'Darius Slayton', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 4.0, 'recCmp': 3.0, 'recYds': 26.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 1.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'NYG'}
+{'passing': 0, 'rushing': 0, 'rec': 60.349999999999994}
+off ==> 34.169999999999995
+{'playerDisplay': 'aggregate', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 2.0, 'rushYds': 2.0, 'rushTd': 0.0, 'recAtt': 9.0, 'recCmp': 3.0, 'recYds': 26.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rest', 'season': 2024, 'week': 1, 'team': 'NYG'}
+{'passing': 0, 'rushing': 26.0, 'rec': 49.93333333333332}
+===== rating_compute {'season': 2024, 'week': 1, 'team': 'DAL'}
+def ==> 147.11990740740742
+{'playerDisplay': 'Deshaun Watson', 'passCmp': 24.0, 'passAtt': 45.0, 'passYds': 169.0, 'passTd': 1.0, 'passInt': 2.0, 'rushAtt': 5.0, 'rushYds': 39.0, 'rushTd': 0.0, 'recAtt': 0.0, 'recCmp': 0.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 6.0, 'fumbles': 1.0, 'fumblesLost': 0.0, 'playerPosition': 'qb', 'season': 2024, 'week': 1, 'team': 'DAL'}
+{'passing': 152.4074074074074, 'rushing': -2.643749999999983, 'rec': 0}
+def ==> 338.5133928571429
+{'playerDisplay': 'Jerome Ford', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 12.0, 'rushYds': 44.0, 'rushTd': 1.0, 'recAtt': 7.0, 'recCmp': 6.0, 'recYds': 25.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'DAL'}
+{'passing': 0, 'rushing': 100.65625, 'rec': 158.57142857142858}
+def ==> 500.15625
+{'playerDisplay': '--fake--', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 0.0, 'recCmp': 0.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'DAL'}
+{'passing': 0, 'rushing': 200.15625, 'rec': 200.0}
+def ==> 456.2788194444445
+{'playerDisplay': 'Amari Cooper', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 9.0, 'recCmp': 2.0, 'recYds': 16.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'DAL'}
+{'passing': 0, 'rushing': 200.15625, 'rec': 156.04444444444445}
+def ==> 442.5260416666667
+{'playerDisplay': 'Jerry Jeudy', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 8.0, 'recCmp': 3.0, 'recYds': 25.0, 'recTd': 1.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'DAL'}
+{'passing': 0, 'rushing': 200.15625, 'rec': 142.29166666666669}
+def ==> 473.334375
+{'playerDisplay': 'Elijah Moore', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 6.0, 'recCmp': 3.0, 'recYds': 9.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'DAL'}
+{'passing': 0, 'rushing': 200.15625, 'rec': 173.10000000000002}
+def ==> 112.95968856837607
+{'playerDisplay': 'aggregate', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 2.0, 'rushYds': 10.0, 'rushTd': 0.0, 'recAtt': 13.0, 'recCmp': 10.0, 'recYds': 94.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rest', 'season': 2024, 'week': 1, 'team': 'DAL'}
+{'passing': 203.47222222222223, 'rushing': 70.15625, 'rec': 135.64923076923077}
+off ==> 241.28645833333334
+{'playerDisplay': 'Dak Prescott', 'passCmp': 19.0, 'passAtt': 32.0, 'passYds': 179.0, 'passTd': 1.0, 'passInt': 0.0, 'rushAtt': 1.0, 'rushYds': 3.0, 'rushTd': 0.0, 'recAtt': 0.0, 'recCmp': 0.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 3.0, 'fumbles': 1.0, 'fumblesLost': 0.0, 'playerPosition': 'qb', 'season': 2024, 'week': 1, 'team': 'DAL'}
+{'passing': 85.28645833333334, 'rushing': 78.0, 'rec': 0}
+off ==> 178.89999999999998
+{'playerDisplay': 'Ezekiel Elliott', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 10.0, 'rushYds': 40.0, 'rushTd': 1.0, 'recAtt': 2.0, 'recCmp': 2.0, 'recYds': 9.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'DAL'}
+{'passing': 0, 'rushing': 109.0, 'rec': 46.599999999999994}
+off ==> 165.2
+{'playerDisplay': 'Rico Dowdle', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 8.0, 'rushYds': 26.0, 'rushTd': 0.0, 'recAtt': 1.0, 'recCmp': 1.0, 'recYds': 6.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'DAL'}
+{'passing': 0, 'rushing': 84.5, 'rec': 53.8}
+off ==> 396.06
+{'playerDisplay': 'CeeDee Lamb', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 3.0, 'rushYds': 25.0, 'rushTd': 0.0, 'recAtt': 10.0, 'recCmp': 5.0, 'recYds': 61.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'DAL'}
+{'passing': 0, 'rushing': 216.66666666666669, 'rec': 71.06}
+off ==> 263.5357142857143
+{'playerDisplay': 'Brandin Cooks', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 1.0, 'rushYds': 5.0, 'rushTd': 0.0, 'recAtt': 7.0, 'recCmp': 4.0, 'recYds': 40.0, 'recTd': 1.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'DAL'}
+{'passing': 0, 'rushing': 130.0, 'rec': 68.53571428571428}
+off ==> 39.0
+{'playerDisplay': 'Jake Ferguson', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 5.0, 'recCmp': 3.0, 'recYds': 15.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'DAL'}
+{'passing': 0, 'rushing': 0, 'rec': 39.0}
+off ==> 50.97
+{'playerDisplay': 'aggregate', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 2.0, 'rushYds': 3.0, 'rushTd': 0.0, 'recAtt': 6.0, 'recCmp': 4.0, 'recYds': 48.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rest', 'season': 2024, 'week': 1, 'team': 'DAL'}
+{'passing': 0, 'rushing': 39.0, 'rec': 74.26666666666665}
+===== rating_compute {'season': 2024, 'week': 1, 'team': 'NO'}
+def ==> 390.00694444444446
+{'playerDisplay': 'Bryce Young', 'passCmp': 13.0, 'passAtt': 30.0, 'passYds': 161.0, 'passTd': 0.0, 'passInt': 2.0, 'rushAtt': 4.0, 'rushYds': 12.0, 'rushTd': 1.0, 'recAtt': 0.0, 'recCmp': 0.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 4.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'qb', 'season': 2024, 'week': 1, 'team': 'NO'}
+{'passing': 170.69444444444443, 'rushing': 109.65625, 'rec': 0}
+def ==> 439.4895833333333
+{'playerDisplay': 'Chuba Hubbard', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 6.0, 'rushYds': 14.0, 'rushTd': 0.0, 'recAtt': 0.0, 'recCmp': 0.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'NO'}
+{'passing': 0, 'rushing': 139.48958333333331, 'rec': 200.0}
+def ==> 385.75625
+{'playerDisplay': 'Miles Sanders', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 5.0, 'rushYds': 22.0, 'rushTd': 0.0, 'recAtt': 2.0, 'recCmp': 0.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'NO'}
+{'passing': 0, 'rushing': 85.75625, 'rec': 200.0}
+def ==> 443.9486607142857
+{'playerDisplay': 'Xavier Legette', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 7.0, 'recCmp': 4.0, 'recYds': 35.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'NO'}
+{'passing': 0, 'rushing': 200.15625, 'rec': 143.71428571428572}
+def ==> 446.30104166666666
+{'playerDisplay': 'Diontae Johnson', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 6.0, 'recCmp': 2.0, 'recYds': 19.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'NO'}
+{'passing': 0, 'rushing': 200.15625, 'rec': 146.06666666666666}
+def ==> 304.734375
+{'playerDisplay': 'Jonathan Mingo', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 1.0, 'rushYds': 3.0, 'rushTd': 0.0, 'recAtt': 5.0, 'recCmp': 2.0, 'recYds': 40.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 1.0, 'fumblesLost': 1.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'NO'}
+{'passing': 0, 'rushing': 137.15625, 'rec': 99.00000000000001}
+def ==> 140.7902013888889
+{'playerDisplay': 'aggregate', 'passCmp': 0.0, 'passAtt': 1.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 4.0, 'rushYds': 7.0, 'rushTd': 0.0, 'recAtt': 9.0, 'recCmp': 5.0, 'recYds': 67.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rest', 'season': 2024, 'week': 1, 'team': 'NO'}
+{'passing': 163.88888888888889, 'rushing': 154.65625, 'rec': 121.79111111111114}
+off ==> 480.481884057971
+{'playerDisplay': 'Derek Carr', 'passCmp': 19.0, 'passAtt': 23.0, 'passYds': 200.0, 'passTd': 3.0, 'passInt': 0.0, 'rushAtt': 2.0, 'rushYds': 13.0, 'rushTd': 0.0, 'recAtt': 0.0, 'recCmp': 0.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 1.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'qb', 'season': 2024, 'week': 1, 'team': 'NO'}
+{'passing': 142.48188405797103, 'rushing': 169.0, 'rec': 0}
+off ==> 223.58
+{'playerDisplay': 'Alvin Kamara', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 15.0, 'rushYds': 83.0, 'rushTd': 1.0, 'recAtt': 5.0, 'recCmp': 5.0, 'recYds': 27.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'NO'}
+{'passing': 0, 'rushing': 147.20000000000002, 'rec': 50.92}
+off ==> 225.4636363636364
+{'playerDisplay': 'Jamaal Williams', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 11.0, 'rushYds': 38.0, 'rushTd': 1.0, 'recAtt': 1.0, 'recCmp': 1.0, 'recYds': 13.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'NO'}
+{'passing': 0, 'rushing': 94.36363636363636, 'rec': 87.4}
+off ==> 140.13333333333333
+{'playerDisplay': 'Rashid Shaheed', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 5.0, 'recCmp': 3.0, 'recYds': 73.0, 'recTd': 1.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'NO'}
+{'passing': 0, 'rushing': 0, 'rec': 140.13333333333333}
+off ==> 82.85
+{'playerDisplay': 'Foster Moreau', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 4.0, 'recCmp': 4.0, 'recYds': 43.0, 'recTd': 1.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'NO'}
+{'passing': 0, 'rushing': 0, 'rec': 82.85}
+off ==> 91.56666666666666
+{'playerDisplay': 'Juwan Johnson', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 3.0, 'recCmp': 2.0, 'recYds': 26.0, 'recTd': 1.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'NO'}
+{'passing': 0, 'rushing': 0, 'rec': 91.56666666666666}
+off ==> 79.10333333333334
+{'playerDisplay': 'aggregate', 'passCmp': 0.0, 'passAtt': 1.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 9.0, 'rushYds': 46.0, 'rushTd': 0.0, 'recAtt': 6.0, 'recCmp': 4.0, 'recYds': 18.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 1.0, 'fumblesLost': 1.0, 'playerPosition': 'rest', 'season': 2024, 'week': 1, 'team': 'NO'}
+{'passing': 39.58333333333333, 'rushing': 131.22222222222223, 'rec': 35.766666666666666}
+===== rating_compute {'season': 2024, 'week': 1, 'team': 'ATL'}
+def ==> 300.13203071083507
+{'playerDisplay': 'Justin Fields', 'passCmp': 17.0, 'passAtt': 23.0, 'passYds': 156.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 14.0, 'rushYds': 57.0, 'rushTd': 0.0, 'recAtt': 0.0, 'recCmp': 0.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 2.0, 'fumbles': 1.0, 'fumblesLost': 0.0, 'playerPosition': 'qb', 'season': 2024, 'week': 1, 'team': 'ATL'}
+{'passing': 111.53381642512076, 'rushing': 94.29910714285715, 'rec': 0}
+def ==> 325.60625000000005
+{'playerDisplay': 'Najee Harris', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 20.0, 'rushYds': 70.0, 'rushTd': 0.0, 'recAtt': 2.0, 'recCmp': 1.0, 'recYds': 9.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'ATL'}
+{'passing': 0, 'rushing': 109.15625, 'rec': 144.3}
+def ==> 415.65625
+{'playerDisplay': 'Cordarrelle Patterson', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 4.0, 'rushYds': 13.0, 'rushTd': 0.0, 'recAtt': 0.0, 'recCmp': 0.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'ATL'}
+{'passing': 0, 'rushing': 115.65625, 'rec': 200.0}
+def ==> 410.80580357142856
+{'playerDisplay': 'George Pickens', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 1.0, 'rushYds': -10.0, 'rushTd': 0.0, 'recAtt': 7.0, 'recCmp': 6.0, 'recYds': 85.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'ATL'}
+{'passing': 0, 'rushing': 200.15625, 'rec': 110.57142857142858}
+def ==> 442.834375
+{'playerDisplay': 'Pat Freiermuth', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 4.0, 'recCmp': 4.0, 'recYds': 27.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'ATL'}
+{'passing': 0, 'rushing': 200.15625, 'rec': 142.60000000000002}
+def ==> 454.134375
+{'playerDisplay': 'Calvin Austin III', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 2.0, 'recCmp': 1.0, 'recYds': 7.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'ATL'}
+{'passing': 0, 'rushing': 200.15625, 'rec': 153.9}
+def ==> 139.33582043650796
+{'playerDisplay': 'aggregate', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 2.0, 'rushYds': 7.0, 'rushTd': 0.0, 'recAtt': 7.0, 'recCmp': 5.0, 'recYds': 28.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rest', 'season': 2024, 'week': 1, 'team': 'ATL'}
+{'passing': 203.47222222222223, 'rushing': 109.15625, 'rec': 155.26285714285717}
+off ==> 58.97435897435898
+{'playerDisplay': 'Kirk Cousins', 'passCmp': 16.0, 'passAtt': 26.0, 'passYds': 155.0, 'passTd': 1.0, 'passInt': 2.0, 'rushAtt': 1.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 0.0, 'recCmp': 0.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 2.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'qb', 'season': 2024, 'week': 1, 'team': 'ATL'}
+{'passing': 58.97435897435898, 'rushing': 0, 'rec': 0}
+off ==> 197.64222222222222
+{'playerDisplay': 'Bijan Robinson', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 18.0, 'rushYds': 68.0, 'rushTd': 0.0, 'recAtt': 5.0, 'recCmp': 5.0, 'recYds': 43.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'ATL'}
+{'passing': 0, 'rushing': 98.22222222222221, 'rec': 66.28}
+off ==> 182.0
+{'playerDisplay': 'Tyler Allgeier', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 3.0, 'rushYds': 21.0, 'rushTd': 0.0, 'recAtt': 0.0, 'recCmp': 0.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'ATL'}
+{'passing': 0, 'rushing': 182.0, 'rec': 0}
+off ==> 76.68571428571428
+{'playerDisplay': 'Ray-Ray McCloud III', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 7.0, 'recCmp': 4.0, 'recYds': 52.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'ATL'}
+{'passing': 0, 'rushing': 0, 'rec': 76.68571428571428}
+off ==> 80.33333333333333
+{'playerDisplay': 'Darnell Mooney', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 3.0, 'recCmp': 1.0, 'recYds': 15.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'ATL'}
+{'passing': 0, 'rushing': 0, 'rec': 80.33333333333333}
+off ==> 52.666666666666664
+{'playerDisplay': 'Drake London', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 3.0, 'recCmp': 2.0, 'recYds': 15.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'ATL'}
+{'passing': 0, 'rushing': 0, 'rec': 52.666666666666664}
+off ==> 28.0125
+{'playerDisplay': 'aggregate', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 5.0, 'recCmp': 4.0, 'recYds': 30.0, 'recTd': 1.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rest', 'season': 2024, 'week': 1, 'team': 'ATL'}
+{'passing': 0, 'rushing': 0, 'rec': 62.25}
+===== rating_compute {'season': 2024, 'week': 1, 'team': 'STL'}
+def ==> 154.8144841269841
+{'playerDisplay': 'Jared Goff', 'passCmp': 18.0, 'passAtt': 28.0, 'passYds': 217.0, 'passTd': 1.0, 'passInt': 1.0, 'rushAtt': 1.0, 'rushYds': 7.0, 'rushTd': 0.0, 'recAtt': 0.0, 'recCmp': 0.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 2.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'qb', 'season': 2024, 'week': 1, 'team': 'STL'}
+{'passing': 118.50198412698411, 'rushing': 18.15625, 'rec': 0}
+def ==> 306.1386029411765
+{'playerDisplay': 'David Montgomery', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 17.0, 'rushYds': 91.0, 'rushTd': 1.0, 'recAtt': 1.0, 'recCmp': 1.0, 'recYds': 2.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'STL'}
+{'passing': 0, 'rushing': 58.03860294117649, 'rec': 165.4}
+def ==> 314.86534090909095
+{'playerDisplay': 'Jahmyr Gibbs', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 11.0, 'rushYds': 40.0, 'rushTd': 1.0, 'recAtt': 6.0, 'recCmp': 4.0, 'recYds': 34.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'STL'}
+{'passing': 0, 'rushing': 101.0653409090909, 'rec': 142.53333333333336}
+def ==> -141.81451388888888
+{'playerDisplay': 'Jameson Williams', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 1.0, 'rushYds': 13.0, 'rushTd': 0.0, 'recAtt': 9.0, 'recCmp': 5.0, 'recYds': 121.0, 'recTd': 1.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'STL'}
+{'passing': 0, 'rushing': -137.84375, 'rec': 64.95111111111113}
+def ==> 466.93437500000005
+{'playerDisplay': 'Amon-Ra St. Brown', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 6.0, 'recCmp': 3.0, 'recYds': 13.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'STL'}
+{'passing': 0, 'rushing': 200.15625, 'rec': 166.70000000000002}
+def ==> 426.234375
+{'playerDisplay': 'Sam LaPorta', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 5.0, 'recCmp': 4.0, 'recYds': 45.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'STL'}
+{'passing': 0, 'rushing': 200.15625, 'rec': 126.00000000000001}
+def ==> 44.44753472222223
+{'playerDisplay': 'aggregate', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 1.0, 'rushYds': 12.0, 'rushTd': 0.0, 'recAtt': 1.0, 'recCmp': 1.0, 'recYds': 2.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rest', 'season': 2024, 'week': 1, 'team': 'STL'}
+{'passing': 203.47222222222223, 'rushing': -111.84375, 'rec': 165.4}
+off ==> 85.16156462585033
+{'playerDisplay': 'Matthew Stafford', 'passCmp': 34.0, 'passAtt': 49.0, 'passYds': 317.0, 'passTd': 1.0, 'passInt': 1.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 0.0, 'recCmp': 0.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 2.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'qb', 'season': 2024, 'week': 1, 'team': 'STL'}
+{'passing': 85.16156462585033, 'rushing': 0, 'rec': 0}
+off ==> 122.09999999999998
+{'playerDisplay': 'Kyren Williams', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 18.0, 'rushYds': 50.0, 'rushTd': 1.0, 'recAtt': 3.0, 'recCmp': 3.0, 'recYds': 4.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'STL'}
+{'passing': 0, 'rushing': 74.99999999999999, 'rec': 31.4}
+off ==> 208.0
+{'playerDisplay': 'Ronnie Rivers', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 2.0, 'rushYds': 16.0, 'rushTd': 0.0, 'recAtt': 0.0, 'recCmp': 0.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'STL'}
+{'passing': 0, 'rushing': 208.0, 'rec': 0}
+off ==> 251.16666666666666
+{'playerDisplay': 'Cooper Kupp', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 2.0, 'rushYds': 10.0, 'rushTd': 0.0, 'recAtt': 21.0, 'recCmp': 14.0, 'recYds': 110.0, 'recTd': 1.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'STL'}
+{'passing': 0, 'rushing': 130.0, 'rec': 56.16666666666666}
+off ==> 64.68571428571428
+{'playerDisplay': 'Demarcus Robinson', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 7.0, 'recCmp': 4.0, 'recYds': 42.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'STL'}
+{'passing': 0, 'rushing': 0, 'rec': 64.68571428571428}
+off ==> 93.69714285714286
+{'playerDisplay': 'Tyler Johnson', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 7.0, 'recCmp': 5.0, 'recYds': 79.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'STL'}
+{'passing': 0, 'rushing': 0, 'rec': 93.69714285714286}
+off ==> 113.04
+{'playerDisplay': 'aggregate', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 1.0, 'rushYds': 7.0, 'rushTd': 0.0, 'recAtt': 10.0, 'recCmp': 8.0, 'recYds': 82.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rest', 'season': 2024, 'week': 1, 'team': 'STL'}
+{'passing': 0, 'rushing': 182.0, 'rec': 69.19999999999999}
+===== rating_compute {'season': 2024, 'week': 1, 'team': 'CHI'}
+def ==> 90.81076388888889
+{'playerDisplay': 'Will Levis', 'passCmp': 19.0, 'passAtt': 32.0, 'passYds': 127.0, 'passTd': 1.0, 'passInt': 2.0, 'rushAtt': 4.0, 'rushYds': 36.0, 'rushTd': 0.0, 'recAtt': 0.0, 'recCmp': 0.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 3.0, 'fumbles': 1.0, 'fumblesLost': 1.0, 'playerPosition': 'qb', 'season': 2024, 'week': 1, 'team': 'CHI'}
+{'passing': 150.99826388888889, 'rushing': -30.09375, 'rec': 0}
+def ==> 306.85625000000005
+{'playerDisplay': 'Tony Pollard', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 16.0, 'rushYds': 82.0, 'rushTd': 1.0, 'recAtt': 4.0, 'recCmp': 3.0, 'recYds': 12.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'CHI'}
+{'passing': 0, 'rushing': 63.78125, 'rec': 162.05}
+def ==> 500.15625
+{'playerDisplay': '--fake--', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 0.0, 'recCmp': 0.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'CHI'}
+{'passing': 0, 'rushing': 200.15625, 'rec': 200.0}
+def ==> 409.52008928571433
+{'playerDisplay': 'Calvin Ridley', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 7.0, 'recCmp': 3.0, 'recYds': 50.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'CHI'}
+{'passing': 0, 'rushing': 200.15625, 'rec': 109.2857142857143}
+def ==> 456.43437500000005
+{'playerDisplay': 'Tyler Boyd', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 5.0, 'recCmp': 3.0, 'recYds': 18.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'CHI'}
+{'passing': 0, 'rushing': 200.15625, 'rec': 156.20000000000002}
+def ==> 426.734375
+{'playerDisplay': 'Chig Okonkwo', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 2.0, 'recCmp': 2.0, 'recYds': 15.0, 'recTd': 1.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'CHI'}
+{'passing': 0, 'rushing': 200.15625, 'rec': 126.50000000000001}
+def ==> 138.8775347222222
+{'playerDisplay': 'aggregate', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 6.0, 'rushYds': 22.0, 'rushTd': 0.0, 'recAtt': 9.0, 'recCmp': 8.0, 'recYds': 32.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rest', 'season': 2024, 'week': 1, 'team': 'CHI'}
+{'passing': 203.47222222222223, 'rushing': 104.82291666666667, 'rec': 158.57777777777778}
+off ==> 211.67528735632186
+{'playerDisplay': 'Caleb Williams', 'passCmp': 14.0, 'passAtt': 29.0, 'passYds': 93.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 5.0, 'rushYds': 15.0, 'rushTd': 0.0, 'recAtt': 0.0, 'recCmp': 0.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 2.0, 'fumbles': 1.0, 'fumblesLost': 0.0, 'playerPosition': 'qb', 'season': 2024, 'week': 1, 'team': 'CHI'}
+{'passing': 55.675287356321846, 'rushing': 78.0, 'rec': 0}
+off ==> 78.0
+{'playerDisplay': "D'Andre Swift", 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 10.0, 'rushYds': 30.0, 'rushTd': 0.0, 'recAtt': 1.0, 'recCmp': 0.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'CHI'}
+{'passing': 0, 'rushing': 78.0, 'rec': 0}
+off ==> 52.0
+{'playerDisplay': 'Khalil Herbert', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 2.0, 'rushYds': 4.0, 'rushTd': 0.0, 'recAtt': 0.0, 'recCmp': 0.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'CHI'}
+{'passing': 0, 'rushing': 52.0, 'rec': 0}
+off ==> 43.89090909090909
+{'playerDisplay': 'Keenan Allen', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 11.0, 'recCmp': 4.0, 'recYds': 29.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'CHI'}
+{'passing': 0, 'rushing': 0, 'rec': 43.89090909090909}
+off ==> 596.185
+{'playerDisplay': 'DJ Moore', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 1.0, 'rushYds': 14.0, 'rushTd': 0.0, 'recAtt': 8.0, 'recCmp': 5.0, 'recYds': 36.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'CHI'}
+{'passing': 0, 'rushing': 364.0, 'rec': 50.185}
+off ==> 59.05
+{'playerDisplay': 'Rome Odunze', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 4.0, 'recCmp': 1.0, 'recYds': 11.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 1.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'CHI'}
+{'passing': 0, 'rushing': 0, 'rec': 59.05}
+off ==> 76.7925
+{'playerDisplay': 'aggregate', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 4.0, 'rushYds': 21.0, 'rushTd': 0.0, 'recAtt': 5.0, 'recCmp': 4.0, 'recYds': 17.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 1.0, 'fumblesLost': 1.0, 'playerPosition': 'rest', 'season': 2024, 'week': 1, 'team': 'CHI'}
+{'passing': 0, 'rushing': 132.75, 'rec': 37.9}
+===== rating_compute {'season': 2024, 'week': 1, 'team': 'MIN'}
+def ==> 429.4394841269841
+{'playerDisplay': 'Daniel Jones', 'passCmp': 22.0, 'passAtt': 42.0, 'passYds': 186.0, 'passTd': 0.0, 'passInt': 2.0, 'rushAtt': 6.0, 'rushYds': 15.0, 'rushTd': 0.0, 'recAtt': 0.0, 'recCmp': 0.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 5.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'qb', 'season': 2024, 'week': 1, 'team': 'MIN'}
+{'passing': 159.1269841269841, 'rushing': 135.15625, 'rec': 0}
+def ==> 346.95625
+{'playerDisplay': 'Devin Singletary', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 10.0, 'rushYds': 37.0, 'rushTd': 0.0, 'recAtt': 5.0, 'recCmp': 4.0, 'recYds': 15.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'MIN'}
+{'passing': 0, 'rushing': 103.95625, 'rec': 162.0}
+def ==> 319.85625000000005
+{'playerDisplay': 'Eric Gray', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 2.0, 'rushYds': 6.0, 'rushTd': 0.0, 'recAtt': 1.0, 'recCmp': 1.0, 'recYds': 9.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'MIN'}
+{'passing': 0, 'rushing': 122.15625, 'rec': 131.8}
+def ==> -93.46562499999999
+{'playerDisplay': "Wan'Dale Robinson", 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 1.0, 'rushYds': 14.0, 'rushTd': 0.0, 'recAtt': 12.0, 'recCmp': 6.0, 'recYds': 44.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'MIN'}
+{'passing': 0, 'rushing': -163.84375, 'rec': 152.3}
+def ==> 419.01723214285715
+{'playerDisplay': 'Malik Nabers', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 7.0, 'recCmp': 5.0, 'recYds': 66.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'MIN'}
+{'passing': 0, 'rushing': 200.15625, 'rec': 118.78285714285717}
+def ==> 439.88437500000003
+{'playerDisplay': 'Darius Slayton', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 4.0, 'recCmp': 3.0, 'recYds': 26.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 1.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'MIN'}
+{'passing': 0, 'rushing': 200.15625, 'rec': 139.65000000000003}
+def ==> 166.24753472222224
+{'playerDisplay': 'aggregate', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 2.0, 'rushYds': 2.0, 'rushTd': 0.0, 'recAtt': 9.0, 'recCmp': 3.0, 'recYds': 26.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rest', 'season': 2024, 'week': 1, 'team': 'MIN'}
+{'passing': 203.47222222222223, 'rushing': 174.15625, 'rec': 150.0666666666667}
+off ==> 165.19444444444446
+{'playerDisplay': 'Sam Darnold', 'passCmp': 19.0, 'passAtt': 24.0, 'passYds': 208.0, 'passTd': 2.0, 'passInt': 1.0, 'rushAtt': 3.0, 'rushYds': 3.0, 'rushTd': 0.0, 'recAtt': 0.0, 'recCmp': 0.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 1.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'qb', 'season': 2024, 'week': 1, 'team': 'MIN'}
+{'passing': 113.19444444444444, 'rushing': 26.0, 'rec': 0}
+off ==> 269.64285714285717
+{'playerDisplay': 'Aaron Jones', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 14.0, 'rushYds': 94.0, 'rushTd': 1.0, 'recAtt': 2.0, 'recCmp': 2.0, 'recYds': 15.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'MIN'}
+{'passing': 0, 'rushing': 178.14285714285717, 'rec': 61.0}
+off ==> 152.75
+{'playerDisplay': 'Ty Chandler', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 8.0, 'rushYds': 17.0, 'rushTd': 0.0, 'recAtt': 3.0, 'recCmp': 3.0, 'recYds': 25.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'MIN'}
+{'passing': 0, 'rushing': 55.25, 'rec': 65.0}
+off ==> 93.71666666666667
+{'playerDisplay': 'Justin Jefferson', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 6.0, 'recCmp': 4.0, 'recYds': 59.0, 'recTd': 1.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'MIN'}
+{'passing': 0, 'rushing': 0, 'rec': 93.71666666666667}
+off ==> 74.75
+{'playerDisplay': 'Jordan Addison', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 4.0, 'recCmp': 3.0, 'recYds': 35.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'MIN'}
+{'passing': 0, 'rushing': 0, 'rec': 74.75}
+off ==> 52.666666666666664
+{'playerDisplay': 'Johnny Mundt', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 3.0, 'recCmp': 2.0, 'recYds': 15.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'MIN'}
+{'passing': 0, 'rushing': 0, 'rec': 52.666666666666664}
+off ==> 38.088
+{'playerDisplay': 'aggregate', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 1.0, 'rushYds': -3.0, 'rushTd': 0.0, 'recAtt': 5.0, 'recCmp': 5.0, 'recYds': 59.0, 'recTd': 1.0, 'sacked': 0.0, 'fumbles': 1.0, 'fumblesLost': 1.0, 'playerPosition': 'rest', 'season': 2024, 'week': 1, 'team': 'MIN'}
+{'passing': 0, 'rushing': 0, 'rec': 84.64}
+===== rating_compute {'season': 2024, 'week': 1, 'team': 'GB'}
+def ==> 393.82280668677726
+{'playerDisplay': 'Jalen Hurts', 'passCmp': 20.0, 'passAtt': 34.0, 'passYds': 278.0, 'passTd': 2.0, 'passInt': 2.0, 'rushAtt': 13.0, 'rushYds': 33.0, 'rushTd': 0.0, 'recAtt': 0.0, 'recCmp': 0.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 2.0, 'fumbles': 2.0, 'fumblesLost': 1.0, 'playerPosition': 'qb', 'season': 2024, 'week': 1, 'team': 'GB'}
+{'passing': 123.20261437908495, 'rushing': 135.31009615384616, 'rec': 0}
+def ==> 238.85625000000005
+{'playerDisplay': 'Saquon Barkley', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 24.0, 'rushYds': 109.0, 'rushTd': 2.0, 'recAtt': 2.0, 'recCmp': 2.0, 'recYds': 23.0, 'recTd': 1.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'GB'}
+{'passing': 0, 'rushing': 77.90624999999999, 'rec': 107.30000000000003}
+def ==> 500.15625
+{'playerDisplay': '--fake--', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 0.0, 'recCmp': 0.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'GB'}
+{'passing': 0, 'rushing': 200.15625, 'rec': 200.0}
+def ==> 368.494375
+{'playerDisplay': 'A.J. Brown', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 10.0, 'recCmp': 5.0, 'recYds': 119.0, 'recTd': 1.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'GB'}
+{'passing': 0, 'rushing': 200.15625, 'rec': 68.26}
+def ==> 420.75937500000003
+{'playerDisplay': 'DeVonta Smith', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 8.0, 'recCmp': 7.0, 'recYds': 84.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'GB'}
+{'passing': 0, 'rushing': 200.15625, 'rec': 120.52500000000002}
+def ==> 443.034375
+{'playerDisplay': 'Dallas Goedert', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 5.0, 'recCmp': 4.0, 'recYds': 31.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'GB'}
+{'passing': 0, 'rushing': 200.15625, 'rec': 142.8}
+def ==> 148.71253472222224
+{'playerDisplay': 'aggregate', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 1.0, 'rushYds': 2.0, 'rushTd': 0.0, 'recAtt': 4.0, 'recCmp': 2.0, 'recYds': 21.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rest', 'season': 2024, 'week': 1, 'team': 'GB'}
+{'passing': 203.47222222222223, 'rushing': 148.15625, 'rec': 137.10000000000002}
+off ==> 82.9656862745098
+{'playerDisplay': 'Jordan Love', 'passCmp': 17.0, 'passAtt': 34.0, 'passYds': 260.0, 'passTd': 2.0, 'passInt': 1.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 0.0, 'recCmp': 0.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 1.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'qb', 'season': 2024, 'week': 1, 'team': 'GB'}
+{'passing': 82.9656862745098, 'rushing': 0, 'rec': 0}
+off ==> 233.5
+{'playerDisplay': 'Josh Jacobs', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 16.0, 'rushYds': 84.0, 'rushTd': 0.0, 'recAtt': 3.0, 'recCmp': 2.0, 'recYds': 20.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 1.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'GB'}
+{'passing': 0, 'rushing': 136.5, 'rec': 64.66666666666666}
+off ==> 331.2
+{'playerDisplay': 'Emanuel Wilson', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 4.0, 'rushYds': 46.0, 'rushTd': 0.0, 'recAtt': 3.0, 'recCmp': 2.0, 'recYds': 2.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'GB'}
+{'passing': 0, 'rushing': 299.0, 'rec': 21.466666666666665}
+off ==> 74.28571428571428
+{'playerDisplay': 'Romeo Doubs', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 7.0, 'recCmp': 4.0, 'recYds': 50.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'GB'}
+{'passing': 0, 'rushing': 0, 'rec': 74.28571428571428}
+off ==> 1550.5166666666667
+{'playerDisplay': 'Jayden Reed', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 1.0, 'rushYds': 33.0, 'rushTd': 1.0, 'recAtt': 6.0, 'recCmp': 4.0, 'recYds': 138.0, 'recTd': 1.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'GB'}
+{'passing': 0, 'rushing': 908.0, 'rec': 188.51666666666665}
+off ==> 44.133333333333326
+{'playerDisplay': 'Christian Watson', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 5.0, 'recCmp': 3.0, 'recYds': 13.0, 'recTd': 1.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'GB'}
+{'passing': 0, 'rushing': 0, 'rec': 44.133333333333326}
+off ==> 46.73083333333334
+{'playerDisplay': 'aggregate', 'passCmp': 0.0, 'passAtt': 1.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 8.0, 'recCmp': 2.0, 'recYds': 37.0, 'recTd': 0.0, 'sacked': 1.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rest', 'season': 2024, 'week': 1, 'team': 'GB'}
+{'passing': 39.58333333333333, 'rushing': 0, 'rec': 95.05}
+===== rating_compute {'season': 2024, 'week': 1, 'team': 'PIT'}
+def ==> 544.8103632478633
+{'playerDisplay': 'Kirk Cousins', 'passCmp': 16.0, 'passAtt': 26.0, 'passYds': 155.0, 'passTd': 1.0, 'passInt': 2.0, 'rushAtt': 1.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 0.0, 'recCmp': 0.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 2.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'qb', 'season': 2024, 'week': 1, 'team': 'PIT'}
+{'passing': 144.49786324786322, 'rushing': 200.15625, 'rec': 0}
+def ==> 302.5140277777778
+{'playerDisplay': 'Bijan Robinson', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 18.0, 'rushYds': 68.0, 'rushTd': 0.0, 'recAtt': 5.0, 'recCmp': 5.0, 'recYds': 43.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'PIT'}
+{'passing': 0, 'rushing': 101.93402777777779, 'rec': 133.72000000000003}
+def ==> 318.15625
+{'playerDisplay': 'Tyler Allgeier', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 3.0, 'rushYds': 21.0, 'rushTd': 0.0, 'recAtt': 0.0, 'recCmp': 0.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'PIT'}
+{'passing': 0, 'rushing': 18.15625, 'rec': 200.0}
+def ==> 423.54866071428575
+{'playerDisplay': 'Ray-Ray McCloud III', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 7.0, 'recCmp': 4.0, 'recYds': 52.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'PIT'}
+{'passing': 0, 'rushing': 200.15625, 'rec': 123.31428571428573}
+def ==> 419.9010416666667
+{'playerDisplay': 'Darnell Mooney', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 3.0, 'recCmp': 1.0, 'recYds': 15.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'PIT'}
+{'passing': 0, 'rushing': 200.15625, 'rec': 119.66666666666669}
+def ==> 447.56770833333337
+{'playerDisplay': 'Drake London', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 3.0, 'recCmp': 2.0, 'recYds': 15.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'PIT'}
+{'passing': 0, 'rushing': 200.15625, 'rec': 147.33333333333334}
+def ==> 172.40503472222224
+{'playerDisplay': 'aggregate', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 5.0, 'recCmp': 4.0, 'recYds': 30.0, 'recTd': 1.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rest', 'season': 2024, 'week': 1, 'team': 'PIT'}
+{'passing': 203.47222222222223, 'rushing': 200.15625, 'rec': 137.75}
+off ==> 303.65269151138716
+{'playerDisplay': 'Justin Fields', 'passCmp': 17.0, 'passAtt': 23.0, 'passYds': 156.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 14.0, 'rushYds': 57.0, 'rushTd': 0.0, 'recAtt': 0.0, 'recCmp': 0.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 2.0, 'fumbles': 1.0, 'fumblesLost': 0.0, 'playerPosition': 'qb', 'season': 2024, 'week': 1, 'team': 'PIT'}
+{'passing': 91.93840579710145, 'rushing': 105.85714285714285, 'rec': 0}
+off ==> 174.55
+{'playerDisplay': 'Najee Harris', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 20.0, 'rushYds': 70.0, 'rushTd': 0.0, 'recAtt': 2.0, 'recCmp': 1.0, 'recYds': 9.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'PIT'}
+{'passing': 0, 'rushing': 91.0, 'rec': 55.699999999999996}
+off ==> 84.5
+{'playerDisplay': 'Cordarrelle Patterson', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 4.0, 'rushYds': 13.0, 'rushTd': 0.0, 'recAtt': 0.0, 'recCmp': 0.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'PIT'}
+{'passing': 0, 'rushing': 84.5, 'rec': 0}
+off ==> 89.42857142857143
+{'playerDisplay': 'George Pickens', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 1.0, 'rushYds': -10.0, 'rushTd': 0.0, 'recAtt': 7.0, 'recCmp': 6.0, 'recYds': 85.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'PIT'}
+{'passing': 0, 'rushing': 0, 'rec': 89.42857142857143}
+off ==> 57.4
+{'playerDisplay': 'Pat Freiermuth', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 4.0, 'recCmp': 4.0, 'recYds': 27.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'PIT'}
+{'passing': 0, 'rushing': 0, 'rec': 57.4}
+off ==> 46.1
+{'playerDisplay': 'Calvin Austin III', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 2.0, 'recCmp': 1.0, 'recYds': 7.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'PIT'}
+{'passing': 0, 'rushing': 0, 'rec': 46.1}
+off ==> 61.081714285714284
+{'playerDisplay': 'aggregate', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 2.0, 'rushYds': 7.0, 'rushTd': 0.0, 'recAtt': 7.0, 'recCmp': 5.0, 'recYds': 28.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rest', 'season': 2024, 'week': 1, 'team': 'PIT'}
+{'passing': 0, 'rushing': 91.0, 'rec': 44.73714285714286}
+===== rating_compute {'season': 2024, 'week': 1, 'team': 'IND'}
+def ==> 318.89930555555554
+{'playerDisplay': 'C.J. Stroud', 'passCmp': 24.0, 'passAtt': 32.0, 'passYds': 234.0, 'passTd': 2.0, 'passInt': 0.0, 'rushAtt': 4.0, 'rushYds': 13.0, 'rushTd': 0.0, 'recAtt': 0.0, 'recCmp': 0.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 4.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'qb', 'season': 2024, 'week': 1, 'team': 'IND'}
+{'passing': 87.58680555555554, 'rushing': 115.65625, 'rec': 0}
+def ==> 277.5895833333334
+{'playerDisplay': 'Joe Mixon', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 30.0, 'rushYds': 159.0, 'rushTd': 1.0, 'recAtt': 3.0, 'recCmp': 3.0, 'recYds': 19.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'IND'}
+{'passing': 0, 'rushing': 60.68958333333336, 'rec': 144.60000000000002}
+def ==> 361.48958333333337
+{'playerDisplay': 'Dameon Pierce', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 3.0, 'rushYds': 16.0, 'rushTd': 0.0, 'recAtt': 0.0, 'recCmp': 0.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'IND'}
+{'passing': 0, 'rushing': 61.48958333333334, 'rec': 200.0}
+def ==> 387.88437500000003
+{'playerDisplay': 'Nico Collins', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 8.0, 'recCmp': 6.0, 'recYds': 117.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'IND'}
+{'passing': 0, 'rushing': 200.15625, 'rec': 87.65000000000002}
+def ==> 55.020089285714306
+{'playerDisplay': 'Tank Dell', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 2.0, 'rushYds': 19.0, 'rushTd': 0.0, 'recAtt': 7.0, 'recCmp': 3.0, 'recYds': 40.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'IND'}
+{'passing': 0, 'rushing': -46.84375, 'rec': 125.2857142857143}
+def ==> 206.50104166666668
+{'playerDisplay': 'Stefon Diggs', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 1.0, 'rushYds': 6.0, 'rushTd': 0.0, 'recAtt': 6.0, 'recCmp': 6.0, 'recYds': 33.0, 'recTd': 2.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'IND'}
+{'passing': 0, 'rushing': 44.15625, 'rec': 140.26666666666668}
+def ==> 181.7746775793651
+{'playerDisplay': 'aggregate', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 7.0, 'recCmp': 6.0, 'recYds': 25.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rest', 'season': 2024, 'week': 1, 'team': 'IND'}
+{'passing': 203.47222222222223, 'rushing': 200.15625, 'rec': 158.57142857142858}
+off ==> 603.2061403508773
+{'playerDisplay': 'Anthony Richardson', 'passCmp': 9.0, 'passAtt': 19.0, 'passYds': 212.0, 'passTd': 2.0, 'passInt': 1.0, 'rushAtt': 6.0, 'rushYds': 56.0, 'rushTd': 1.0, 'recAtt': 0.0, 'recCmp': 0.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 2.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'qb', 'season': 2024, 'week': 1, 'team': 'IND'}
+{'passing': 101.20614035087718, 'rushing': 251.00000000000003, 'rec': 0}
+off ==> 81.125
+{'playerDisplay': 'Jonathan Taylor', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 16.0, 'rushYds': 48.0, 'rushTd': 1.0, 'recAtt': 0.0, 'recCmp': 0.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'IND'}
+{'passing': 0, 'rushing': 81.125, 'rec': 0}
+off ==> 0.0
+{'playerDisplay': '--fake--', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 0.0, 'recCmp': 0.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'IND'}
+{'passing': 0, 'rushing': 0, 'rec': 0}
+off ==> 49.699999999999996
+{'playerDisplay': 'Michael Pittman Jr.', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 8.0, 'recCmp': 4.0, 'recYds': 31.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'IND'}
+{'passing': 0, 'rushing': 0, 'rec': 49.699999999999996}
+off ==> 14.6
+{'playerDisplay': 'Adonai Mitchell', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 5.0, 'recCmp': 1.0, 'recYds': 2.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'IND'}
+{'passing': 0, 'rushing': 0, 'rec': 14.6}
+off ==> 233.33333333333331
+{'playerDisplay': 'Alec Pierce', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 3.0, 'recCmp': 3.0, 'recYds': 125.0, 'recTd': 1.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'IND'}
+{'passing': 0, 'rushing': 0, 'rec': 233.33333333333331}
+off ==> 131.64
+{'playerDisplay': 'aggregate', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 3.0, 'recCmp': 1.0, 'recYds': 54.0, 'recTd': 1.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rest', 'season': 2024, 'week': 1, 'team': 'IND'}
+{'passing': 0, 'rushing': 0, 'rec': 292.5333333333333}
+===== rating_compute {'season': 2024, 'week': 1, 'team': 'DEN'}
+def ==> 101.53472222222221
+{'playerDisplay': 'Geno Smith', 'passCmp': 18.0, 'passAtt': 25.0, 'passYds': 171.0, 'passTd': 1.0, 'passInt': 1.0, 'rushAtt': 4.0, 'rushYds': 30.0, 'rushTd': 1.0, 'recAtt': 0.0, 'recCmp': 0.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 2.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'qb', 'season': 2024, 'week': 1, 'team': 'DEN'}
+{'passing': 116.22222222222221, 'rushing': -7.34375, 'rec': 0}
+def ==> 317.15625
+{'playerDisplay': 'Kenneth Walker III', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 20.0, 'rushYds': 103.0, 'rushTd': 1.0, 'recAtt': 3.0, 'recCmp': 2.0, 'recYds': 6.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'DEN'}
+{'passing': 0, 'rushing': 63.756249999999994, 'rec': 168.93333333333334}
+def ==> 313.00625
+{'playerDisplay': 'Zach Charbonnet', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 8.0, 'rushYds': 12.0, 'rushTd': 0.0, 'recAtt': 3.0, 'recCmp': 2.0, 'recYds': 29.0, 'recTd': 1.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'DEN'}
+{'passing': 0, 'rushing': 161.15625, 'rec': 101.23333333333336}
+def ==> 417.2058035714286
+{'playerDisplay': 'Tyler Lockett', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 7.0, 'recCmp': 6.0, 'recYds': 77.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'DEN'}
+{'passing': 0, 'rushing': 200.15625, 'rec': 116.97142857142859}
+def ==> 435.084375
+{'playerDisplay': 'DK Metcalf', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 4.0, 'recCmp': 3.0, 'recYds': 29.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'DEN'}
+{'passing': 0, 'rushing': 200.15625, 'rec': 134.85000000000002}
+def ==> 461.334375
+{'playerDisplay': 'Noah Fant', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 4.0, 'recCmp': 2.0, 'recYds': 11.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'DEN'}
+{'passing': 0, 'rushing': 200.15625, 'rec': 161.10000000000002}
+def ==> 166.60003472222223
+{'playerDisplay': 'aggregate', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 1.0, 'rushYds': 1.0, 'rushTd': 0.0, 'recAtt': 4.0, 'recCmp': 3.0, 'recYds': 19.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rest', 'season': 2024, 'week': 1, 'team': 'DEN'}
+{'passing': 203.47222222222223, 'rushing': 174.15625, 'rec': 150.85000000000002}
+off ==> 431.51984126984127
+{'playerDisplay': 'Bo Nix', 'passCmp': 26.0, 'passAtt': 42.0, 'passYds': 138.0, 'passTd': 0.0, 'passInt': 2.0, 'rushAtt': 5.0, 'rushYds': 35.0, 'rushTd': 1.0, 'recAtt': 0.0, 'recCmp': 0.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 2.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'qb', 'season': 2024, 'week': 1, 'team': 'DEN'}
+{'passing': 47.51984126984127, 'rushing': 192.0, 'rec': 0}
+off ==> 104.64
+{'playerDisplay': 'Jaleel McLaughlin', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 10.0, 'rushYds': 27.0, 'rushTd': 0.0, 'recAtt': 5.0, 'recCmp': 5.0, 'recYds': 1.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 1.0, 'fumblesLost': 1.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'DEN'}
+{'passing': 0, 'rushing': 68.7, 'rec': 23.96}
+off ==> 93.5
+{'playerDisplay': 'Javonte Williams', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 8.0, 'rushYds': 23.0, 'rushTd': 0.0, 'recAtt': 2.0, 'recCmp': 1.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'DEN'}
+{'passing': 0, 'rushing': 74.75, 'rec': 12.5}
+off ==> 53.93333333333334
+{'playerDisplay': 'Courtland Sutton', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 12.0, 'recCmp': 4.0, 'recYds': 38.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'DEN'}
+{'passing': 0, 'rushing': 0, 'rec': 53.93333333333334}
+off ==> 48.4
+{'playerDisplay': 'Devaughn Vele', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 8.0, 'recCmp': 8.0, 'recYds': 39.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'DEN'}
+{'passing': 0, 'rushing': 0, 'rec': 48.4}
+off ==> 58.824999999999996
+{'playerDisplay': 'Josh Reynolds', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 8.0, 'recCmp': 5.0, 'recYds': 45.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'DEN'}
+{'passing': 0, 'rushing': 0, 'rec': 58.824999999999996}
+off ==> 97.52142857142857
+{'playerDisplay': 'aggregate', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 2.0, 'rushYds': 14.0, 'rushTd': 0.0, 'recAtt': 7.0, 'recCmp': 3.0, 'recYds': 15.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 1.0, 'fumblesLost': 0.0, 'playerPosition': 'rest', 'season': 2024, 'week': 1, 'team': 'DEN'}
+{'passing': 0, 'rushing': 182.0, 'rec': 34.714285714285715}
+===== rating_compute {'season': 2024, 'week': 1, 'team': 'NYJ'}
+def ==> -58.0859674329502
+{'playerDisplay': 'Brock Purdy', 'passCmp': 19.0, 'passAtt': 29.0, 'passYds': 231.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 1.0, 'rushYds': 11.0, 'rushTd': 0.0, 'recAtt': 0.0, 'recCmp': 0.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 2.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'qb', 'season': 2024, 'week': 1, 'team': 'NYJ'}
+{'passing': 113.6015325670498, 'rushing': -85.84375, 'rec': 0}
+def ==> 288.3705357142857
+{'playerDisplay': 'Jordan Mason', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 28.0, 'rushYds': 147.0, 'rushTd': 1.0, 'recAtt': 1.0, 'recCmp': 1.0, 'recYds': 5.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'NYJ'}
+{'passing': 0, 'rushing': 61.87053571428572, 'rec': 151.0}
+def ==> 500.15625
+{'playerDisplay': '--fake--', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 0.0, 'recCmp': 0.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'NYJ'}
+{'passing': 0, 'rushing': 200.15625, 'rec': 200.0}
+def ==> 313.0054861111111
+{'playerDisplay': 'Deebo Samuel Sr.', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 8.0, 'rushYds': 23.0, 'rushTd': 1.0, 'recAtt': 9.0, 'recCmp': 5.0, 'recYds': 54.0, 'recTd': 0.0, 'sacked': 1.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'NYJ'}
+{'passing': 0, 'rushing': 119.15625, 'rec': 134.2711111111111}
+def ==> 423.034375
+{'playerDisplay': 'Brandon Aiyuk', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 5.0, 'recCmp': 2.0, 'recYds': 28.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'NYJ'}
+{'passing': 0, 'rushing': 200.15625, 'rec': 122.80000000000001}
+def ==> 432.234375
+{'playerDisplay': 'George Kittle', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 5.0, 'recCmp': 4.0, 'recYds': 40.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'NYJ'}
+{'passing': 0, 'rushing': 200.15625, 'rec': 132.0}
+def ==> 159.57610615079366
+{'playerDisplay': 'aggregate', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 1.0, 'rushYds': -1.0, 'rushTd': 0.0, 'recAtt': 9.0, 'recCmp': 7.0, 'recYds': 104.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rest', 'season': 2024, 'week': 1, 'team': 'NYJ'}
+{'passing': 203.47222222222223, 'rushing': 200.15625, 'rec': 109.24126984126985}
+off ==> 82.83730158730158
+{'playerDisplay': 'Aaron Rodgers', 'passCmp': 13.0, 'passAtt': 21.0, 'passYds': 167.0, 'passTd': 1.0, 'passInt': 1.0, 'rushAtt': 1.0, 'rushYds': -1.0, 'rushTd': 0.0, 'recAtt': 0.0, 'recCmp': 0.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 1.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'qb', 'season': 2024, 'week': 1, 'team': 'NYJ'}
+{'passing': 82.83730158730158, 'rushing': 0, 'rec': 0}
+off ==> 174.3475
+{'playerDisplay': 'Breece Hall', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 16.0, 'rushYds': 54.0, 'rushTd': 1.0, 'recAtt': 6.0, 'recCmp': 5.0, 'recYds': 39.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 1.0, 'fumblesLost': 1.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'NYJ'}
+{'passing': 0, 'rushing': 89.9375, 'rec': 56.27333333333333}
+off ==> 0.0
+{'playerDisplay': '--fake--', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 0.0, 'recCmp': 0.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'NYJ'}
+{'passing': 0, 'rushing': 0, 'rec': 0}
+off ==> 61.63636363636363
+{'playerDisplay': 'Garrett Wilson', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 11.0, 'recCmp': 6.0, 'recYds': 60.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'NYJ'}
+{'passing': 0, 'rushing': 0, 'rec': 61.63636363636363}
+off ==> 96.19999999999999
+{'playerDisplay': 'Allen Lazard', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 9.0, 'recCmp': 6.0, 'recYds': 89.0, 'recTd': 2.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'NYJ'}
+{'passing': 0, 'rushing': 0, 'rec': 96.19999999999999}
+off ==> 41.3
+{'playerDisplay': 'Tyler Conklin', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 2.0, 'recCmp': 1.0, 'recYds': 6.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'NYJ'}
+{'passing': 0, 'rushing': 0, 'rec': 41.3}
+off ==> 130.73166666666665
+{'playerDisplay': 'aggregate', 'passCmp': 6.0, 'passAtt': 8.0, 'passYds': 36.0, 'passTd': 1.0, 'passInt': 0.0, 'rushAtt': 2.0, 'rushYds': 15.0, 'rushTd': 0.0, 'recAtt': 1.0, 'recCmp': 1.0, 'recYds': 9.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rest', 'season': 2024, 'week': 1, 'team': 'NYJ'}
+{'passing': 122.91666666666667, 'rushing': 195.0, 'rec': 68.19999999999999}
+===== rating_compute {'season': 2024, 'week': 1, 'team': 'PHI'}
+===== rating_compute {'season': 2024, 'week': 1, 'team': 'TB'}
+def ==> 212.22916666666663
+{'playerDisplay': 'Jayden Daniels', 'passCmp': 17.0, 'passAtt': 24.0, 'passYds': 184.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 16.0, 'rushYds': 88.0, 'rushTd': 2.0, 'recAtt': 0.0, 'recCmp': 0.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 2.0, 'fumbles': 3.0, 'fumblesLost': 0.0, 'playerPosition': 'qb', 'season': 2024, 'week': 1, 'team': 'TB'}
+{'passing': 110.41666666666664, 'rushing': 50.90625, 'rec': 0}
+def ==> 263.5979166666667
+{'playerDisplay': 'Brian Robinson Jr.', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 12.0, 'rushYds': 40.0, 'rushTd': 1.0, 'recAtt': 4.0, 'recCmp': 3.0, 'recYds': 49.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'TB'}
+{'passing': 0, 'rushing': 109.32291666666666, 'rec': 102.85000000000002}
+def ==> 500.15625
+{'playerDisplay': '--fake--', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 0.0, 'recCmp': 0.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'TB'}
+{'passing': 0, 'rushing': 200.15625, 'rec': 200.0}
+def ==> 217.83437500000002
+{'playerDisplay': 'Austin Ekeler', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 2.0, 'rushYds': 10.0, 'rushTd': 0.0, 'recAtt': 4.0, 'recCmp': 4.0, 'recYds': 52.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'TB'}
+{'passing': 0, 'rushing': 70.15625, 'rec': 112.60000000000001}
+def ==> 446.93437500000005
+{'playerDisplay': 'Terry McLaurin', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 4.0, 'recCmp': 2.0, 'recYds': 17.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'TB'}
+{'passing': 0, 'rushing': 200.15625, 'rec': 146.70000000000002}
+def ==> 436.68437500000005
+{'playerDisplay': 'Zach Ertz', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 4.0, 'recCmp': 3.0, 'recYds': 28.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'TB'}
+{'passing': 0, 'rushing': 200.15625, 'rec': 136.45000000000002}
+def ==> 176.97028472222223
+{'playerDisplay': 'aggregate', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 8.0, 'recCmp': 5.0, 'recYds': 38.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rest', 'season': 2024, 'week': 1, 'team': 'TB'}
+{'passing': 203.47222222222223, 'rushing': 200.15625, 'rec': 147.895}
+off ==> 510.3888888888889
+{'playerDisplay': 'Baker Mayfield', 'passCmp': 24.0, 'passAtt': 30.0, 'passYds': 289.0, 'passTd': 4.0, 'passInt': 0.0, 'rushAtt': 3.0, 'rushYds': 21.0, 'rushTd': 0.0, 'recAtt': 0.0, 'recCmp': 0.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 1.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'qb', 'season': 2024, 'week': 1, 'team': 'TB'}
+{'passing': 146.38888888888889, 'rushing': 182.0, 'rec': 0}
+off ==> 181.23333333333335
+{'playerDisplay': 'Rachaad White', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 15.0, 'rushYds': 31.0, 'rushTd': 0.0, 'recAtt': 6.0, 'recCmp': 6.0, 'recYds': 75.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'TB'}
+{'passing': 0, 'rushing': 53.73333333333334, 'rec': 85.0}
+off ==> 254.51111111111112
+{'playerDisplay': 'Bucky Irving', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 9.0, 'rushYds': 62.0, 'rushTd': 0.0, 'recAtt': 3.0, 'recCmp': 2.0, 'recYds': 14.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'TB'}
+{'passing': 0, 'rushing': 179.11111111111111, 'rec': 50.266666666666666}
+off ==> 77.925
+{'playerDisplay': 'Chris Godwin', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 8.0, 'recCmp': 8.0, 'recYds': 83.0, 'recTd': 1.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'TB'}
+{'passing': 0, 'rushing': 0, 'rec': 77.925}
+off ==> 89.39333333333335
+{'playerDisplay': 'Mike Evans', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 6.0, 'recCmp': 5.0, 'recYds': 61.0, 'recTd': 2.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'TB'}
+{'passing': 0, 'rushing': 0, 'rec': 89.39333333333335}
+off ==> 186.93333333333334
+{'playerDisplay': 'Jalen McMillan', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 3.0, 'recCmp': 1.0, 'recYds': 32.0, 'recTd': 1.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'TB'}
+{'passing': 0, 'rushing': 0, 'rec': 186.93333333333334}
+off ==> 31.544999999999998
+{'playerDisplay': 'aggregate', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 3.0, 'rushYds': -2.0, 'rushTd': 0.0, 'recAtt': 4.0, 'recCmp': 2.0, 'recYds': 24.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rest', 'season': 2024, 'week': 1, 'team': 'TB'}
+{'passing': 0, 'rushing': 0, 'rec': 70.1}
+===== rating_compute {'season': 2024, 'week': 1, 'team': 'CIN'}
+def ==> 290.8968253968254
+{'playerDisplay': 'Jacoby Brissett', 'passCmp': 15.0, 'passAtt': 24.0, 'passYds': 121.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 7.0, 'rushYds': 32.0, 'rushTd': 0.0, 'recAtt': 0.0, 'recCmp': 0.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 1.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'qb', 'season': 2024, 'week': 1, 'team': 'CIN'}
+{'passing': 128.2986111111111, 'rushing': 81.29910714285715, 'rec': 0}
+def ==> 321.45625
+{'playerDisplay': 'Rhamondre Stevenson', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 25.0, 'rushYds': 120.0, 'rushTd': 1.0, 'recAtt': 3.0, 'recCmp': 3.0, 'recYds': 6.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 1.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'CIN'}
+{'passing': 0, 'rushing': 73.35625, 'rec': 165.4}
+def ==> 433.2991071428571
+{'playerDisplay': 'Antonio Gibson', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 7.0, 'rushYds': 18.0, 'rushTd': 0.0, 'recAtt': 0.0, 'recCmp': 0.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'CIN'}
+{'passing': 0, 'rushing': 133.29910714285714, 'rec': 200.0}
+def ==> 454.134375
+{'playerDisplay': 'K.J. Osborn', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 6.0, 'recCmp': 3.0, 'recYds': 21.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'CIN'}
+{'passing': 0, 'rushing': 200.15625, 'rec': 153.9}
+def ==> 413.334375
+{'playerDisplay': 'Austin Hooper', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 4.0, 'recCmp': 2.0, 'recYds': 31.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'CIN'}
+{'passing': 0, 'rushing': 200.15625, 'rec': 113.10000000000002}
+def ==> 454.76770833333336
+{'playerDisplay': 'DeMario Douglas', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 3.0, 'recCmp': 2.0, 'recYds': 12.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'CIN'}
+{'passing': 0, 'rushing': 200.15625, 'rec': 154.53333333333336}
+def ==> 170.34982043650797
+{'playerDisplay': 'aggregate', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 7.0, 'recCmp': 5.0, 'recYds': 51.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rest', 'season': 2024, 'week': 1, 'team': 'CIN'}
+{'passing': 203.47222222222223, 'rushing': 200.15625, 'rec': 133.18285714285716}
+off ==> 280.9913793103448
+{'playerDisplay': 'Joe Burrow', 'passCmp': 21.0, 'passAtt': 29.0, 'passYds': 164.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 4.0, 'rushYds': 15.0, 'rushTd': 0.0, 'recAtt': 0.0, 'recCmp': 0.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 3.0, 'fumbles': 1.0, 'fumblesLost': 0.0, 'playerPosition': 'qb', 'season': 2024, 'week': 1, 'team': 'CIN'}
+{'passing': 85.99137931034483, 'rushing': 97.5, 'rec': 0}
+off ==> 212.61666666666665
+{'playerDisplay': 'Zack Moss', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 9.0, 'rushYds': 44.0, 'rushTd': 1.0, 'recAtt': 4.0, 'recCmp': 2.0, 'recYds': 17.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'CIN'}
+{'passing': 0, 'rushing': 132.66666666666666, 'rec': 53.3}
+off ==> 0.0
+{'playerDisplay': '--fake--', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 0.0, 'recCmp': 0.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'CIN'}
+{'passing': 0, 'rushing': 0, 'rec': 0}
+off ==> 54.099999999999994
+{'playerDisplay': 'Andrei Iosivas', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 6.0, 'recCmp': 3.0, 'recYds': 26.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'CIN'}
+{'passing': 0, 'rushing': 0, 'rec': 54.099999999999994}
+off ==> 74.6
+{'playerDisplay': "Ja'Marr Chase", 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 6.0, 'recCmp': 6.0, 'recYds': 62.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'CIN'}
+{'passing': 0, 'rushing': 0, 'rec': 74.6}
+off ==> 47.55
+{'playerDisplay': 'Mike Gesicki', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 4.0, 'recCmp': 3.0, 'recYds': 18.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'CIN'}
+{'passing': 0, 'rushing': 0, 'rec': 47.55}
+off ==> 58.51571428571428
+{'playerDisplay': 'aggregate', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 3.0, 'rushYds': 11.0, 'rushTd': 0.0, 'recAtt': 9.0, 'recCmp': 7.0, 'recYds': 41.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 2.0, 'fumblesLost': 2.0, 'playerPosition': 'rest', 'season': 2024, 'week': 1, 'team': 'CIN'}
+{'passing': 0, 'rushing': 85.33333333333333, 'rec': 44.7015873015873}
+===== rating_compute {'season': 2024, 'week': 1, 'team': 'CAR'}
+def ==> 123.30283816425118
+{'playerDisplay': 'Derek Carr', 'passCmp': 19.0, 'passAtt': 23.0, 'passYds': 200.0, 'passTd': 3.0, 'passInt': 0.0, 'rushAtt': 2.0, 'rushYds': 13.0, 'rushTd': 0.0, 'recAtt': 0.0, 'recCmp': 0.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 1.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'qb', 'season': 2024, 'week': 1, 'team': 'CAR'}
+{'passing': 60.990338164251185, 'rushing': 31.15625, 'rec': 0}
+def ==> 276.57624999999996
+{'playerDisplay': 'Alvin Kamara', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 15.0, 'rushYds': 83.0, 'rushTd': 1.0, 'recAtt': 5.0, 'recCmp': 5.0, 'recYds': 27.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'CAR'}
+{'passing': 0, 'rushing': 52.95624999999998, 'rec': 149.08}
+def ==> 274.69261363636366
+{'playerDisplay': 'Jamaal Williams', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 11.0, 'rushYds': 38.0, 'rushTd': 1.0, 'recAtt': 1.0, 'recCmp': 1.0, 'recYds': 13.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'CAR'}
+{'passing': 0, 'rushing': 105.79261363636364, 'rec': 112.60000000000001}
+def ==> 360.1010416666667
+{'playerDisplay': 'Rashid Shaheed', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 5.0, 'recCmp': 3.0, 'recYds': 73.0, 'recTd': 1.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'CAR'}
+{'passing': 0, 'rushing': 200.15625, 'rec': 59.86666666666669}
+def ==> 417.38437500000003
+{'playerDisplay': 'Foster Moreau', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 4.0, 'recCmp': 4.0, 'recYds': 43.0, 'recTd': 1.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'CAR'}
+{'passing': 0, 'rushing': 200.15625, 'rec': 117.15000000000002}
+def ==> 408.66770833333334
+{'playerDisplay': 'Juwan Johnson', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 3.0, 'recCmp': 2.0, 'recYds': 26.0, 'recTd': 1.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'CAR'}
+{'passing': 0, 'rushing': 200.15625, 'rec': 108.43333333333335}
+def ==> 121.3142013888889
+{'playerDisplay': 'aggregate', 'passCmp': 0.0, 'passAtt': 1.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 9.0, 'rushYds': 46.0, 'rushTd': 0.0, 'recAtt': 6.0, 'recCmp': 4.0, 'recYds': 18.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 1.0, 'fumblesLost': 1.0, 'playerPosition': 'rest', 'season': 2024, 'week': 1, 'team': 'CAR'}
+{'passing': 163.88888888888889, 'rushing': 68.93402777777777, 'rec': 164.23333333333335}
+off ==> 213.77777777777777
+{'playerDisplay': 'Bryce Young', 'passCmp': 13.0, 'passAtt': 30.0, 'passYds': 161.0, 'passTd': 0.0, 'passInt': 2.0, 'rushAtt': 4.0, 'rushYds': 12.0, 'rushTd': 1.0, 'recAtt': 0.0, 'recCmp': 0.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 4.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'qb', 'season': 2024, 'week': 1, 'team': 'CAR'}
+{'passing': 32.77777777777778, 'rushing': 90.5, 'rec': 0}
+off ==> 60.66666666666667
+{'playerDisplay': 'Chuba Hubbard', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 6.0, 'rushYds': 14.0, 'rushTd': 0.0, 'recAtt': 0.0, 'recCmp': 0.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'CAR'}
+{'passing': 0, 'rushing': 60.66666666666667, 'rec': 0}
+off ==> 114.4
+{'playerDisplay': 'Miles Sanders', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 5.0, 'rushYds': 22.0, 'rushTd': 0.0, 'recAtt': 2.0, 'recCmp': 0.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'CAR'}
+{'passing': 0, 'rushing': 114.4, 'rec': 0}
+off ==> 56.285714285714285
+{'playerDisplay': 'Xavier Legette', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 7.0, 'recCmp': 4.0, 'recYds': 35.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'CAR'}
+{'passing': 0, 'rushing': 0, 'rec': 56.285714285714285}
+off ==> 53.93333333333334
+{'playerDisplay': 'Diontae Johnson', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 6.0, 'recCmp': 2.0, 'recYds': 19.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'CAR'}
+{'passing': 0, 'rushing': 0, 'rec': 53.93333333333334}
+off ==> 195.5
+{'playerDisplay': 'Jonathan Mingo', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 1.0, 'rushYds': 3.0, 'rushTd': 0.0, 'recAtt': 5.0, 'recCmp': 2.0, 'recYds': 40.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 1.0, 'fumblesLost': 1.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'CAR'}
+{'passing': 0, 'rushing': 63.0, 'rec': 101.0}
+off ==> 59.627333333333326
+{'playerDisplay': 'aggregate', 'passCmp': 0.0, 'passAtt': 1.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 4.0, 'rushYds': 7.0, 'rushTd': 0.0, 'recAtt': 9.0, 'recCmp': 5.0, 'recYds': 67.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rest', 'season': 2024, 'week': 1, 'team': 'CAR'}
+{'passing': 39.58333333333333, 'rushing': 45.5, 'rec': 78.20888888888888}
+===== rating_compute {'season': 2024, 'week': 1, 'team': 'JAX'}
+def ==> -69.17248498498499
+{'playerDisplay': 'Tua Tagovailoa', 'passCmp': 23.0, 'passAtt': 37.0, 'passYds': 338.0, 'passTd': 1.0, 'passInt': 0.0, 'rushAtt': 1.0, 'rushYds': 11.0, 'rushTd': 0.0, 'recAtt': 0.0, 'recCmp': 0.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 3.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'qb', 'season': 2024, 'week': 1, 'team': 'JAX'}
+{'passing': 102.51501501501501, 'rushing': -85.84375, 'rec': 0}
+def ==> 317.08482142857144
+{'playerDisplay': "De'Von Achane", 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 10.0, 'rushYds': 24.0, 'rushTd': 1.0, 'recAtt': 7.0, 'recCmp': 7.0, 'recYds': 76.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'JAX'}
+{'passing': 0, 'rushing': 132.75625, 'rec': 122.8857142857143}
+def ==> 400.15625
+{'playerDisplay': 'Raheem Mostert', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 6.0, 'rushYds': 9.0, 'rushTd': 0.0, 'recAtt': 3.0, 'recCmp': 2.0, 'recYds': 10.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'JAX'}
+{'passing': 0, 'rushing': 161.15625, 'rec': 159.33333333333334}
+def ==> 392.93675595238096
+{'playerDisplay': 'Tyreek Hill', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 12.0, 'recCmp': 7.0, 'recYds': 130.0, 'recTd': 1.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'JAX'}
+{'passing': 0, 'rushing': 200.15625, 'rec': 92.70238095238096}
+def ==> 253.594375
+{'playerDisplay': 'Jaylen Waddle', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 1.0, 'rushYds': 3.0, 'rushTd': 0.0, 'recAtt': 5.0, 'recCmp': 5.0, 'recYds': 109.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'JAX'}
+{'passing': 0, 'rushing': 122.15625, 'rec': 70.36000000000003}
+def ==> 500.234375
+{'playerDisplay': 'Durham Smythe', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 3.0, 'recCmp': 0.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'JAX'}
+{'passing': 0, 'rushing': 200.15625, 'rec': 200.0}
+def ==> 125.79896329365083
+{'playerDisplay': 'aggregate', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 7.0, 'rushYds': 34.0, 'rushTd': 0.0, 'recAtt': 6.0, 'recCmp': 2.0, 'recYds': 13.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rest', 'season': 2024, 'week': 1, 'team': 'JAX'}
+{'passing': 203.47222222222223, 'rushing': 73.87053571428572, 'rec': 160.4666666666667}
+off ==> 513.718253968254
+{'playerDisplay': 'Trevor Lawrence', 'passCmp': 12.0, 'passAtt': 21.0, 'passYds': 162.0, 'passTd': 1.0, 'passInt': 0.0, 'rushAtt': 1.0, 'rushYds': 8.0, 'rushTd': 0.0, 'recAtt': 0.0, 'recCmp': 0.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 3.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'qb', 'season': 2024, 'week': 1, 'team': 'JAX'}
+{'passing': 97.71825396825396, 'rushing': 208.0, 'rec': 0}
+off ==> 158.16666666666666
+{'playerDisplay': 'Tank Bigsby', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 12.0, 'rushYds': 73.0, 'rushTd': 0.0, 'recAtt': 0.0, 'recCmp': 0.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'JAX'}
+{'passing': 0, 'rushing': 158.16666666666666, 'rec': 0}
+off ==> 169.75
+{'playerDisplay': 'Travis Etienne Jr.', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 12.0, 'rushYds': 44.0, 'rushTd': 1.0, 'recAtt': 3.0, 'recCmp': 2.0, 'recYds': 15.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 1.0, 'fumblesLost': 1.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'JAX'}
+{'passing': 0, 'rushing': 98.25, 'rec': 47.666666666666664}
+off ==> 87.65
+{'playerDisplay': 'Brian Thomas Jr.', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 4.0, 'recCmp': 4.0, 'recYds': 47.0, 'recTd': 1.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'JAX'}
+{'passing': 0, 'rushing': 0, 'rec': 87.65}
+off ==> 150.25
+{'playerDisplay': 'Christian Kirk', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 4.0, 'recCmp': 1.0, 'recYds': 30.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'JAX'}
+{'passing': 0, 'rushing': 0, 'rec': 150.25}
+off ==> 30.25
+{'playerDisplay': 'Evan Engram', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 4.0, 'recCmp': 1.0, 'recYds': 5.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'JAX'}
+{'passing': 0, 'rushing': 0, 'rec': 30.25}
+off ==> 81.45
+{'playerDisplay': 'aggregate', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 1.0, 'rushYds': 3.0, 'rushTd': 0.0, 'recAtt': 4.0, 'recCmp': 4.0, 'recYds': 65.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 1.0, 'fumblesLost': 0.0, 'playerPosition': 'rest', 'season': 2024, 'week': 1, 'team': 'JAX'}
+{'passing': 0, 'rushing': 78.0, 'rec': 103.0}
+===== rating_compute {'season': 2024, 'week': 1, 'team': 'HOU'}
+def ==> 0.57858187134498
+{'playerDisplay': 'Anthony Richardson', 'passCmp': 9.0, 'passAtt': 19.0, 'passYds': 212.0, 'passTd': 2.0, 'passInt': 1.0, 'rushAtt': 6.0, 'rushYds': 56.0, 'rushTd': 1.0, 'recAtt': 0.0, 'recCmp': 0.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 2.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'qb', 'season': 2024, 'week': 1, 'team': 'HOU'}
+{'passing': 102.26608187134504, 'rushing': -50.84375000000003, 'rec': 0}
+def ==> 419.03125
+{'playerDisplay': 'Jonathan Taylor', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 16.0, 'rushYds': 48.0, 'rushTd': 1.0, 'recAtt': 0.0, 'recCmp': 0.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'HOU'}
+{'passing': 0, 'rushing': 119.03125, 'rec': 200.0}
+def ==> 500.15625
+{'playerDisplay': '--fake--', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 0.0, 'recCmp': 0.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'HOU'}
+{'passing': 0, 'rushing': 200.15625, 'rec': 200.0}
+def ==> 450.534375
+{'playerDisplay': 'Michael Pittman Jr.', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 8.0, 'recCmp': 4.0, 'recYds': 31.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'HOU'}
+{'passing': 0, 'rushing': 200.15625, 'rec': 150.3}
+def ==> 485.63437500000003
+{'playerDisplay': 'Adonai Mitchell', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 5.0, 'recCmp': 1.0, 'recYds': 2.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'HOU'}
+{'passing': 0, 'rushing': 200.15625, 'rec': 185.40000000000003}
+def ==> 266.9010416666667
+{'playerDisplay': 'Alec Pierce', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 3.0, 'recCmp': 3.0, 'recYds': 125.0, 'recTd': 1.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'HOU'}
+{'passing': 0, 'rushing': 200.15625, 'rec': -33.333333333333314}
+def ==> 68.77753472222224
+{'playerDisplay': 'aggregate', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 3.0, 'recCmp': 1.0, 'recYds': 54.0, 'recTd': 1.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rest', 'season': 2024, 'week': 1, 'team': 'HOU'}
+{'passing': 203.47222222222223, 'rushing': 200.15625, 'rec': -92.5333333333333}
+off ==> 284.8854166666667
+{'playerDisplay': 'C.J. Stroud', 'passCmp': 24.0, 'passAtt': 32.0, 'passYds': 234.0, 'passTd': 2.0, 'passInt': 0.0, 'rushAtt': 4.0, 'rushYds': 13.0, 'rushTd': 0.0, 'recAtt': 0.0, 'recCmp': 0.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 4.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'qb', 'season': 2024, 'week': 1, 'team': 'HOU'}
+{'passing': 115.88541666666667, 'rushing': 84.5, 'rec': 0}
+off ==> 222.56666666666663
+{'playerDisplay': 'Joe Mixon', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 30.0, 'rushYds': 159.0, 'rushTd': 1.0, 'recAtt': 3.0, 'recCmp': 3.0, 'recYds': 19.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'HOU'}
+{'passing': 0, 'rushing': 139.46666666666664, 'rec': 55.4}
+off ==> 138.66666666666666
+{'playerDisplay': 'Dameon Pierce', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 3.0, 'rushYds': 16.0, 'rushTd': 0.0, 'recAtt': 0.0, 'recCmp': 0.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'HOU'}
+{'passing': 0, 'rushing': 138.66666666666666, 'rec': 0}
+off ==> 112.35
+{'playerDisplay': 'Nico Collins', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 8.0, 'recCmp': 6.0, 'recYds': 117.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'HOU'}
+{'passing': 0, 'rushing': 0, 'rec': 112.35}
+off ==> 445.2142857142857
+{'playerDisplay': 'Tank Dell', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 2.0, 'rushYds': 19.0, 'rushTd': 0.0, 'recAtt': 7.0, 'recCmp': 3.0, 'recYds': 40.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'HOU'}
+{'passing': 0, 'rushing': 247.0, 'rec': 74.71428571428571}
+off ==> 293.73333333333335
+{'playerDisplay': 'Stefon Diggs', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 1.0, 'rushYds': 6.0, 'rushTd': 0.0, 'recAtt': 6.0, 'recCmp': 6.0, 'recYds': 33.0, 'recTd': 2.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'HOU'}
+{'passing': 0, 'rushing': 156.0, 'rec': 59.733333333333334}
+off ==> 18.642857142857146
+{'playerDisplay': 'aggregate', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 7.0, 'recCmp': 6.0, 'recYds': 25.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rest', 'season': 2024, 'week': 1, 'team': 'HOU'}
+{'passing': 0, 'rushing': 0, 'rec': 41.42857142857143}
+===== rating_compute {'season': 2024, 'week': 1, 'team': 'WSH'}
+def ==> 93.39583333333333
+{'playerDisplay': 'Baker Mayfield', 'passCmp': 24.0, 'passAtt': 30.0, 'passYds': 289.0, 'passTd': 4.0, 'passInt': 0.0, 'rushAtt': 3.0, 'rushYds': 21.0, 'rushTd': 0.0, 'recAtt': 0.0, 'recCmp': 0.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 1.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'qb', 'season': 2024, 'week': 1, 'team': 'WSH'}
+{'passing': 57.08333333333333, 'rushing': 18.15625, 'rec': 0}
+def ==> 318.92291666666665
+{'playerDisplay': 'Rachaad White', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 15.0, 'rushYds': 31.0, 'rushTd': 0.0, 'recAtt': 6.0, 'recCmp': 6.0, 'recYds': 75.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'WSH'}
+{'passing': 0, 'rushing': 146.42291666666665, 'rec': 115.00000000000001}
+def ==> 245.6451388888889
+{'playerDisplay': 'Bucky Irving', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 9.0, 'rushYds': 62.0, 'rushTd': 0.0, 'recAtt': 3.0, 'recCmp': 2.0, 'recYds': 14.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'WSH'}
+{'passing': 0, 'rushing': 21.045138888888886, 'rec': 149.73333333333335}
+def ==> 422.30937500000005
+{'playerDisplay': 'Chris Godwin', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 8.0, 'recCmp': 8.0, 'recYds': 83.0, 'recTd': 1.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'WSH'}
+{'passing': 0, 'rushing': 200.15625, 'rec': 122.07500000000002}
+def ==> 410.8410416666667
+{'playerDisplay': 'Mike Evans', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 6.0, 'recCmp': 5.0, 'recYds': 61.0, 'recTd': 2.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'WSH'}
+{'passing': 0, 'rushing': 200.15625, 'rec': 110.60666666666667}
+def ==> 313.30104166666666
+{'playerDisplay': 'Jalen McMillan', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 3.0, 'recCmp': 1.0, 'recYds': 32.0, 'recTd': 1.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'WSH'}
+{'passing': 0, 'rushing': 200.15625, 'rec': 13.066666666666677}
+def ==> 168.87253472222224
+{'playerDisplay': 'aggregate', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 3.0, 'rushYds': -2.0, 'rushTd': 0.0, 'recAtt': 4.0, 'recCmp': 2.0, 'recYds': 24.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rest', 'season': 2024, 'week': 1, 'team': 'WSH'}
+{'passing': 203.47222222222223, 'rushing': 200.15625, 'rec': 129.90000000000003}
+off ==> 391.55555555555554
+{'playerDisplay': 'Jayden Daniels', 'passCmp': 17.0, 'passAtt': 24.0, 'passYds': 184.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 16.0, 'rushYds': 88.0, 'rushTd': 2.0, 'recAtt': 0.0, 'recCmp': 0.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 2.0, 'fumbles': 3.0, 'fumblesLost': 0.0, 'playerPosition': 'qb', 'season': 2024, 'week': 1, 'team': 'WSH'}
+{'passing': 93.05555555555557, 'rushing': 149.25, 'rec': 0}
+off ==> 236.55833333333334
+{'playerDisplay': 'Brian Robinson Jr.', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 12.0, 'rushYds': 40.0, 'rushTd': 1.0, 'recAtt': 4.0, 'recCmp': 3.0, 'recYds': 49.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'WSH'}
+{'passing': 0, 'rushing': 90.83333333333334, 'rec': 97.14999999999999}
+off ==> 0.0
+{'playerDisplay': '--fake--', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 0.0, 'recCmp': 0.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'WSH'}
+{'passing': 0, 'rushing': 0, 'rec': 0}
+off ==> 282.4
+{'playerDisplay': 'Austin Ekeler', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 2.0, 'rushYds': 10.0, 'rushTd': 0.0, 'recAtt': 4.0, 'recCmp': 4.0, 'recYds': 52.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'WSH'}
+{'passing': 0, 'rushing': 130.0, 'rec': 87.4}
+off ==> 53.3
+{'playerDisplay': 'Terry McLaurin', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 4.0, 'recCmp': 2.0, 'recYds': 17.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'WSH'}
+{'passing': 0, 'rushing': 0, 'rec': 53.3}
+off ==> 63.550000000000004
+{'playerDisplay': 'Zach Ertz', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 4.0, 'recCmp': 3.0, 'recYds': 28.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'WSH'}
+{'passing': 0, 'rushing': 0, 'rec': 63.550000000000004}
+off ==> 23.44725
+{'playerDisplay': 'aggregate', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 8.0, 'recCmp': 5.0, 'recYds': 38.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rest', 'season': 2024, 'week': 1, 'team': 'WSH'}
+{'passing': 0, 'rushing': 0, 'rec': 52.105}
+===== rating_compute {'season': 2024, 'week': 1, 'team': 'ARI'}
+def ==> 221.88134057971018
+{'playerDisplay': 'Josh Allen', 'passCmp': 18.0, 'passAtt': 23.0, 'passYds': 232.0, 'passTd': 2.0, 'passInt': 0.0, 'rushAtt': 9.0, 'rushYds': 39.0, 'rushTd': 2.0, 'recAtt': 0.0, 'recCmp': 0.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 2.0, 'fumbles': 1.0, 'fumblesLost': 1.0, 'playerPosition': 'qb', 'season': 2024, 'week': 1, 'team': 'ARI'}
+{'passing': 65.79106280193237, 'rushing': 78.0451388888889, 'rec': 0}
+def ==> 288.69835526315796
+{'playerDisplay': 'James Cook', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 19.0, 'rushYds': 71.0, 'rushTd': 0.0, 'recAtt': 3.0, 'recCmp': 3.0, 'recYds': 32.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'ARI'}
+{'passing': 0, 'rushing': 102.99835526315789, 'rec': 123.80000000000003}
+def ==> 249.18958333333336
+{'playerDisplay': 'Ray Davis', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 3.0, 'rushYds': 13.0, 'rushTd': 0.0, 'recAtt': 1.0, 'recCmp': 1.0, 'recYds': 14.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'ARI'}
+{'passing': 0, 'rushing': 87.48958333333334, 'rec': 107.80000000000001}
+def ==> 419.034375
+{'playerDisplay': 'Keon Coleman', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 5.0, 'recCmp': 4.0, 'recYds': 51.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'ARI'}
+{'passing': 0, 'rushing': 200.15625, 'rec': 118.80000000000003}
+def ==> 399.7010416666667
+{'playerDisplay': 'Khalil Shakir', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 3.0, 'recCmp': 3.0, 'recYds': 42.0, 'recTd': 1.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'ARI'}
+{'passing': 0, 'rushing': 200.15625, 'rec': 99.46666666666668}
+def ==> 439.234375
+{'playerDisplay': 'Curtis Samuel', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 2.0, 'recCmp': 2.0, 'recYds': 15.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'ARI'}
+{'passing': 0, 'rushing': 200.15625, 'rec': 139.0}
+def ==> 117.27153472222224
+{'playerDisplay': 'aggregate', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 2.0, 'rushYds': 7.0, 'rushTd': 0.0, 'recAtt': 9.0, 'recCmp': 5.0, 'recYds': 78.0, 'recTd': 1.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rest', 'season': 2024, 'week': 1, 'team': 'ARI'}
+{'passing': 203.47222222222223, 'rushing': 109.15625, 'rec': 106.23111111111113}
+off ==> 677.8618279569893
+{'playerDisplay': 'Kyler Murray', 'passCmp': 21.0, 'passAtt': 31.0, 'passYds': 162.0, 'passTd': 1.0, 'passInt': 0.0, 'rushAtt': 5.0, 'rushYds': 57.0, 'rushTd': 0.0, 'recAtt': 0.0, 'recCmp': 0.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 4.0, 'fumbles': 1.0, 'fumblesLost': 1.0, 'playerPosition': 'qb', 'season': 2024, 'week': 1, 'team': 'ARI'}
+{'passing': 91.06182795698923, 'rushing': 293.40000000000003, 'rec': 0}
+off ==> 191.7
+{'playerDisplay': 'James Conner', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 16.0, 'rushYds': 50.0, 'rushTd': 1.0, 'recAtt': 4.0, 'recCmp': 3.0, 'recYds': 33.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'ARI'}
+{'passing': 0, 'rushing': 84.375, 'rec': 71.55}
+off ==> 186.16666666666666
+{'playerDisplay': 'Trey Benson', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 3.0, 'rushYds': 13.0, 'rushTd': 0.0, 'recAtt': 1.0, 'recCmp': 1.0, 'recYds': 5.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'ARI'}
+{'passing': 0, 'rushing': 112.66666666666666, 'rec': 49.0}
+off ==> 42.68888888888888
+{'playerDisplay': 'Trey McBride', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 9.0, 'recCmp': 5.0, 'recYds': 30.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'ARI'}
+{'passing': 0, 'rushing': 0, 'rec': 42.68888888888888}
+off ==> 212.35
+{'playerDisplay': 'Greg Dortch', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 1.0, 'rushYds': 4.0, 'rushTd': 0.0, 'recAtt': 8.0, 'recCmp': 6.0, 'recYds': 47.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'ARI'}
+{'passing': 0, 'rushing': 104.0, 'rec': 56.349999999999994}
+off ==> 27.53333333333333
+{'playerDisplay': 'Marvin Harrison Jr.', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 3.0, 'recCmp': 1.0, 'recYds': 4.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'ARI'}
+{'passing': 0, 'rushing': 0, 'rec': 27.53333333333333}
+off ==> 30.201
+{'playerDisplay': 'aggregate', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 6.0, 'recCmp': 5.0, 'recYds': 43.0, 'recTd': 1.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rest', 'season': 2024, 'week': 1, 'team': 'ARI'}
+{'passing': 0, 'rushing': 0, 'rec': 67.11333333333333}
+===== rating_compute {'season': 2024, 'week': 1, 'team': 'NE'}
+def ==> 322.7933429118774
+{'playerDisplay': 'Joe Burrow', 'passCmp': 21.0, 'passAtt': 29.0, 'passYds': 164.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 4.0, 'rushYds': 15.0, 'rushTd': 0.0, 'recAtt': 0.0, 'recCmp': 0.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 3.0, 'fumbles': 1.0, 'fumblesLost': 0.0, 'playerPosition': 'qb', 'season': 2024, 'week': 1, 'team': 'NE'}
+{'passing': 117.48084291187739, 'rushing': 102.65625, 'rec': 0}
+def ==> 287.5395833333333
+{'playerDisplay': 'Zack Moss', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 9.0, 'rushYds': 44.0, 'rushTd': 1.0, 'recAtt': 4.0, 'recCmp': 2.0, 'recYds': 17.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'NE'}
+{'passing': 0, 'rushing': 67.48958333333334, 'rec': 146.70000000000002}
+def ==> 500.15625
+{'playerDisplay': '--fake--', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 0.0, 'recCmp': 0.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'NE'}
+{'passing': 0, 'rushing': 200.15625, 'rec': 200.0}
+def ==> 446.13437500000003
+{'playerDisplay': 'Andrei Iosivas', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 6.0, 'recCmp': 3.0, 'recYds': 26.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'NE'}
+{'passing': 0, 'rushing': 200.15625, 'rec': 145.90000000000003}
+def ==> 425.63437500000003
+{'playerDisplay': "Ja'Marr Chase", 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 6.0, 'recCmp': 6.0, 'recYds': 62.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'NE'}
+{'passing': 0, 'rushing': 200.15625, 'rec': 125.40000000000002}
+def ==> 452.68437500000005
+{'playerDisplay': 'Mike Gesicki', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 4.0, 'recCmp': 3.0, 'recYds': 18.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'NE'}
+{'passing': 0, 'rushing': 200.15625, 'rec': 152.45000000000002}
+def ==> 141.90182043650793
+{'playerDisplay': 'aggregate', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 3.0, 'rushYds': 11.0, 'rushTd': 0.0, 'recAtt': 9.0, 'recCmp': 7.0, 'recYds': 41.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 2.0, 'fumblesLost': 2.0, 'playerPosition': 'rest', 'season': 2024, 'week': 1, 'team': 'NE'}
+{'passing': 203.47222222222223, 'rushing': 114.82291666666667, 'rec': 155.2984126984127}
+off ==> 312.8878968253968
+{'playerDisplay': 'Jacoby Brissett', 'passCmp': 15.0, 'passAtt': 24.0, 'passYds': 121.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 7.0, 'rushYds': 32.0, 'rushTd': 0.0, 'recAtt': 0.0, 'recCmp': 0.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 1.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'qb', 'season': 2024, 'week': 1, 'team': 'NE'}
+{'passing': 75.17361111111111, 'rushing': 118.85714285714285, 'rec': 0}
+off ==> 178.7
+{'playerDisplay': 'Rhamondre Stevenson', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 25.0, 'rushYds': 120.0, 'rushTd': 1.0, 'recAtt': 3.0, 'recCmp': 3.0, 'recYds': 6.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 1.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'NE'}
+{'passing': 0, 'rushing': 126.8, 'rec': 34.6}
+off ==> 66.85714285714286
+{'playerDisplay': 'Antonio Gibson', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 7.0, 'rushYds': 18.0, 'rushTd': 0.0, 'recAtt': 0.0, 'recCmp': 0.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'NE'}
+{'passing': 0, 'rushing': 66.85714285714286, 'rec': 0}
+off ==> 46.1
+{'playerDisplay': 'K.J. Osborn', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 6.0, 'recCmp': 3.0, 'recYds': 21.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'NE'}
+{'passing': 0, 'rushing': 0, 'rec': 46.1}
+off ==> 86.89999999999999
+{'playerDisplay': 'Austin Hooper', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 4.0, 'recCmp': 2.0, 'recYds': 31.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'NE'}
+{'passing': 0, 'rushing': 0, 'rec': 86.89999999999999}
+off ==> 45.46666666666666
+{'playerDisplay': 'DeMario Douglas', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 3.0, 'recCmp': 2.0, 'recYds': 12.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'NE'}
+{'passing': 0, 'rushing': 0, 'rec': 45.46666666666666}
+off ==> 30.067714285714285
+{'playerDisplay': 'aggregate', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 7.0, 'recCmp': 5.0, 'recYds': 51.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rest', 'season': 2024, 'week': 1, 'team': 'NE'}
+{'passing': 0, 'rushing': 0, 'rec': 66.81714285714285}
+===== rating_compute {'season': 2024, 'week': 1, 'team': 'SF'}
+def ==> 520.9474206349206
+{'playerDisplay': 'Aaron Rodgers', 'passCmp': 13.0, 'passAtt': 21.0, 'passYds': 167.0, 'passTd': 1.0, 'passInt': 1.0, 'rushAtt': 1.0, 'rushYds': -1.0, 'rushTd': 0.0, 'recAtt': 0.0, 'recCmp': 0.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 1.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'qb', 'season': 2024, 'week': 1, 'team': 'SF'}
+{'passing': 120.63492063492063, 'rushing': 200.15625, 'rec': 0}
+def ==> 325.80875000000003
+{'playerDisplay': 'Breece Hall', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 16.0, 'rushYds': 54.0, 'rushTd': 1.0, 'recAtt': 6.0, 'recCmp': 5.0, 'recYds': 39.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 1.0, 'fumblesLost': 1.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'SF'}
+{'passing': 0, 'rushing': 110.21875, 'rec': 143.7266666666667}
+def ==> 500.15625
+{'playerDisplay': '--fake--', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 0.0, 'recCmp': 0.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'SF'}
+{'passing': 0, 'rushing': 200.15625, 'rec': 200.0}
+def ==> 438.5980113636364
+{'playerDisplay': 'Garrett Wilson', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 11.0, 'recCmp': 6.0, 'recYds': 60.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'SF'}
+{'passing': 0, 'rushing': 200.15625, 'rec': 138.36363636363637}
+def ==> 404.034375
+{'playerDisplay': 'Allen Lazard', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 9.0, 'recCmp': 6.0, 'recYds': 89.0, 'recTd': 2.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'SF'}
+{'passing': 0, 'rushing': 200.15625, 'rec': 103.80000000000003}
+def ==> 458.93437500000005
+{'playerDisplay': 'Tyler Conklin', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 2.0, 'recCmp': 1.0, 'recYds': 6.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'SF'}
+{'passing': 0, 'rushing': 200.15625, 'rec': 158.70000000000002}
+def ==> 69.68586805555556
+{'playerDisplay': 'aggregate', 'passCmp': 6.0, 'passAtt': 8.0, 'passYds': 36.0, 'passTd': 1.0, 'passInt': 0.0, 'rushAtt': 2.0, 'rushYds': 15.0, 'rushTd': 0.0, 'recAtt': 1.0, 'recCmp': 1.0, 'recYds': 9.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rest', 'season': 2024, 'week': 1, 'team': 'SF'}
+{'passing': 80.55555555555554, 'rushing': 5.15625, 'rec': 131.8}
+off ==> 661.8706896551724
+{'playerDisplay': 'Brock Purdy', 'passCmp': 19.0, 'passAtt': 29.0, 'passYds': 231.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 1.0, 'rushYds': 11.0, 'rushTd': 0.0, 'recAtt': 0.0, 'recCmp': 0.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 2.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'qb', 'season': 2024, 'week': 1, 'team': 'SF'}
+{'passing': 89.87068965517241, 'rushing': 286.0, 'rec': 0}
+off ==> 211.78571428571428
+{'playerDisplay': 'Jordan Mason', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 28.0, 'rushYds': 147.0, 'rushTd': 1.0, 'recAtt': 1.0, 'recCmp': 1.0, 'recYds': 5.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'SF'}
+{'passing': 0, 'rushing': 138.28571428571428, 'rec': 49.0}
+off ==> 0.0
+{'playerDisplay': '--fake--', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 0.0, 'recCmp': 0.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'SF'}
+{'passing': 0, 'rushing': 0, 'rec': 0}
+off ==> 187.2288888888889
+{'playerDisplay': 'Deebo Samuel Sr.', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 8.0, 'rushYds': 23.0, 'rushTd': 1.0, 'recAtt': 9.0, 'recCmp': 5.0, 'recYds': 54.0, 'recTd': 0.0, 'sacked': 1.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'SF'}
+{'passing': 0, 'rushing': 81.0, 'rec': 65.72888888888889}
+off ==> 77.2
+{'playerDisplay': 'Brandon Aiyuk', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 5.0, 'recCmp': 2.0, 'recYds': 28.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'SF'}
+{'passing': 0, 'rushing': 0, 'rec': 77.2}
+off ==> 68.0
+{'playerDisplay': 'George Kittle', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 5.0, 'recCmp': 4.0, 'recYds': 40.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'SF'}
+{'passing': 0, 'rushing': 0, 'rec': 68.0}
+off ==> 40.84142857142857
+{'playerDisplay': 'aggregate', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 1.0, 'rushYds': -1.0, 'rushTd': 0.0, 'recAtt': 9.0, 'recCmp': 7.0, 'recYds': 104.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rest', 'season': 2024, 'week': 1, 'team': 'SF'}
+{'passing': 0, 'rushing': 0, 'rec': 90.75873015873016}
+===== rating_compute {'season': 2024, 'week': 1, 'team': 'CLE'}
+def ==> 362.49826388888886
+{'playerDisplay': 'Dak Prescott', 'passCmp': 19.0, 'passAtt': 32.0, 'passYds': 179.0, 'passTd': 1.0, 'passInt': 0.0, 'rushAtt': 1.0, 'rushYds': 3.0, 'rushTd': 0.0, 'recAtt': 0.0, 'recCmp': 0.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 3.0, 'fumbles': 1.0, 'fumblesLost': 0.0, 'playerPosition': 'qb', 'season': 2024, 'week': 1, 'team': 'CLE'}
+{'passing': 118.18576388888887, 'rushing': 122.15625, 'rec': 0}
+def ==> 321.25625
+{'playerDisplay': 'Ezekiel Elliott', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 10.0, 'rushYds': 40.0, 'rushTd': 1.0, 'recAtt': 2.0, 'recCmp': 2.0, 'recYds': 9.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'CLE'}
+{'passing': 0, 'rushing': 91.15625, 'rec': 153.40000000000003}
+def ==> 334.95625
+{'playerDisplay': 'Rico Dowdle', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 8.0, 'rushYds': 26.0, 'rushTd': 0.0, 'recAtt': 1.0, 'recCmp': 1.0, 'recYds': 6.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'CLE'}
+{'passing': 0, 'rushing': 115.65625, 'rec': 146.20000000000002}
+def ==> 104.17437499999997
+{'playerDisplay': 'CeeDee Lamb', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 3.0, 'rushYds': 25.0, 'rushTd': 0.0, 'recAtt': 10.0, 'recCmp': 5.0, 'recYds': 61.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'CLE'}
+{'passing': 0, 'rushing': -16.510416666666686, 'rec': 128.94}
+def ==> 236.69866071428572
+{'playerDisplay': 'Brandin Cooks', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 1.0, 'rushYds': 5.0, 'rushTd': 0.0, 'recAtt': 7.0, 'recCmp': 4.0, 'recYds': 40.0, 'recTd': 1.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'CLE'}
+{'passing': 0, 'rushing': 70.15625, 'rec': 131.46428571428572}
+def ==> 461.234375
+{'playerDisplay': 'Jake Ferguson', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 5.0, 'recCmp': 3.0, 'recYds': 15.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'CLE'}
+{'passing': 0, 'rushing': 200.15625, 'rec': 161.0}
+def ==> 149.44753472222226
+{'playerDisplay': 'aggregate', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 2.0, 'rushYds': 3.0, 'rushTd': 0.0, 'recAtt': 6.0, 'recCmp': 4.0, 'recYds': 48.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rest', 'season': 2024, 'week': 1, 'team': 'CLE'}
+{'passing': 203.47222222222223, 'rushing': 161.15625, 'rec': 125.73333333333336}
+off ==> 456.6648148148148
+{'playerDisplay': 'Deshaun Watson', 'passCmp': 24.0, 'passAtt': 45.0, 'passYds': 169.0, 'passTd': 1.0, 'passInt': 2.0, 'rushAtt': 5.0, 'rushYds': 39.0, 'rushTd': 0.0, 'recAtt': 0.0, 'recCmp': 0.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 6.0, 'fumbles': 1.0, 'fumblesLost': 0.0, 'playerPosition': 'qb', 'season': 2024, 'week': 1, 'team': 'CLE'}
+{'passing': 51.06481481481482, 'rushing': 202.79999999999998, 'rec': 0}
+off ==> 161.64285714285714
+{'playerDisplay': 'Jerome Ford', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 12.0, 'rushYds': 44.0, 'rushTd': 1.0, 'recAtt': 7.0, 'recCmp': 6.0, 'recYds': 25.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'CLE'}
+{'passing': 0, 'rushing': 99.5, 'rec': 41.42857142857143}
+off ==> 0.0
+{'playerDisplay': '--fake--', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 0.0, 'recCmp': 0.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'CLE'}
+{'passing': 0, 'rushing': 0, 'rec': 0}
+off ==> 43.955555555555556
+{'playerDisplay': 'Amari Cooper', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 9.0, 'recCmp': 2.0, 'recYds': 16.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'CLE'}
+{'passing': 0, 'rushing': 0, 'rec': 43.955555555555556}
+off ==> 57.70833333333333
+{'playerDisplay': 'Jerry Jeudy', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 8.0, 'recCmp': 3.0, 'recYds': 25.0, 'recTd': 1.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'CLE'}
+{'passing': 0, 'rushing': 0, 'rec': 57.70833333333333}
+off ==> 26.9
+{'playerDisplay': 'Elijah Moore', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 6.0, 'recCmp': 3.0, 'recYds': 9.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'CLE'}
+{'passing': 0, 'rushing': 0, 'rec': 26.9}
+off ==> 87.45784615384616
+{'playerDisplay': 'aggregate', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 2.0, 'rushYds': 10.0, 'rushTd': 0.0, 'recAtt': 13.0, 'recCmp': 10.0, 'recYds': 94.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rest', 'season': 2024, 'week': 1, 'team': 'CLE'}
+{'passing': 0, 'rushing': 130.0, 'rec': 64.35076923076923}
+===== rating_compute {'season': 2024, 'week': 1, 'team': 'OAK'}
+def ==> 433.3167735042735
+{'playerDisplay': 'Justin Herbert', 'passCmp': 17.0, 'passAtt': 26.0, 'passYds': 144.0, 'passTd': 1.0, 'passInt': 0.0, 'rushAtt': 4.0, 'rushYds': 6.0, 'rushTd': 0.0, 'recAtt': 0.0, 'recCmp': 0.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 1.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'qb', 'season': 2024, 'week': 1, 'team': 'OAK'}
+{'passing': 111.00427350427348, 'rushing': 161.15625, 'rec': 0}
+def ==> 386.8017045454545
+{'playerDisplay': 'Gus Edwards', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 11.0, 'rushYds': 26.0, 'rushTd': 0.0, 'recAtt': 1.0, 'recCmp': 1.0, 'recYds': 2.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'OAK'}
+{'passing': 0, 'rushing': 138.70170454545453, 'rec': 165.4}
+def ==> 97.05625000000003
+{'playerDisplay': 'J.K. Dobbins', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 10.0, 'rushYds': 135.0, 'rushTd': 1.0, 'recAtt': 3.0, 'recCmp': 3.0, 'recYds': 4.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'OAK'}
+{'passing': 0, 'rushing': -155.84375, 'rec': 168.60000000000002}
+def ==> 439.93723214285717
+{'playerDisplay': 'Ladd McConkey', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 7.0, 'recCmp': 5.0, 'recYds': 39.0, 'recTd': 1.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'OAK'}
+{'passing': 0, 'rushing': 200.15625, 'rec': 139.70285714285717}
+def ==> 424.43437500000005
+{'playerDisplay': 'Quentin Johnston', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 5.0, 'recCmp': 3.0, 'recYds': 38.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'OAK'}
+{'passing': 0, 'rushing': 200.15625, 'rec': 124.20000000000002}
+def ==> 451.734375
+{'playerDisplay': 'Joshua Palmer', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 4.0, 'recCmp': 2.0, 'recYds': 15.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'OAK'}
+{'passing': 0, 'rushing': 200.15625, 'rec': 151.5}
+def ==> 106.21003472222223
+{'playerDisplay': 'aggregate', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 2.0, 'rushYds': 9.0, 'rushTd': 0.0, 'recAtt': 4.0, 'recCmp': 3.0, 'recYds': 46.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rest', 'season': 2024, 'week': 1, 'team': 'OAK'}
+{'passing': 203.47222222222223, 'rushing': 83.15625, 'rec': 107.65000000000002}
+off ==> 171.80555555555557
+{'playerDisplay': 'Gardner Minshew', 'passCmp': 25.0, 'passAtt': 33.0, 'passYds': 257.0, 'passTd': 1.0, 'passInt': 1.0, 'rushAtt': 3.0, 'rushYds': 5.0, 'rushTd': 0.0, 'recAtt': 0.0, 'recCmp': 0.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 4.0, 'fumbles': 1.0, 'fumblesLost': 1.0, 'playerPosition': 'qb', 'season': 2024, 'week': 1, 'team': 'OAK'}
+{'passing': 95.1388888888889, 'rushing': 38.333333333333336, 'rec': 0}
+off ==> 124.04615384615384
+{'playerDisplay': 'Zamir White', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 13.0, 'rushYds': 44.0, 'rushTd': 0.0, 'recAtt': 2.0, 'recCmp': 2.0, 'recYds': 2.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 1.0, 'fumblesLost': 1.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'OAK'}
+{'passing': 0, 'rushing': 86.84615384615384, 'rec': 24.8}
+off ==> 0.0
+{'playerDisplay': '--fake--', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 0.0, 'recCmp': 0.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'OAK'}
+{'passing': 0, 'rushing': 0, 'rec': 0}
+off ==> 65.15
+{'playerDisplay': 'Brock Bowers', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 8.0, 'recCmp': 6.0, 'recYds': 58.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'OAK'}
+{'passing': 0, 'rushing': 0, 'rec': 65.15}
+off ==> 222.71666666666664
+{'playerDisplay': 'Alexander Mattison', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 5.0, 'rushYds': 19.0, 'rushTd': 0.0, 'recAtt': 6.0, 'recCmp': 4.0, 'recYds': 43.0, 'recTd': 1.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'OAK'}
+{'passing': 0, 'rushing': 98.8, 'rec': 74.51666666666667}
+off ==> 77.47333333333333
+{'playerDisplay': 'Davante Adams', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 6.0, 'recCmp': 5.0, 'recYds': 59.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'OAK'}
+{'passing': 0, 'rushing': 0, 'rec': 77.47333333333333}
+off ==> 69.75
+{'playerDisplay': 'aggregate', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 1.0, 'rushYds': 3.0, 'rushTd': 0.0, 'recAtt': 10.0, 'recCmp': 8.0, 'recYds': 95.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rest', 'season': 2024, 'week': 1, 'team': 'OAK'}
+{'passing': 0, 'rushing': 78.0, 'rec': 77.0}
+===== rating_compute {'season': 2024, 'week': 1, 'team': 'KC'}
+def ==> 118.35687669376692
+{'playerDisplay': 'Lamar Jackson', 'passCmp': 26.0, 'passAtt': 41.0, 'passYds': 273.0, 'passTd': 1.0, 'passInt': 0.0, 'rushAtt': 16.0, 'rushYds': 122.0, 'rushTd': 0.0, 'recAtt': 0.0, 'recCmp': 0.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 1.0, 'fumbles': 1.0, 'fumblesLost': 1.0, 'playerPosition': 'qb', 'season': 2024, 'week': 1, 'team': 'KC'}
+{'passing': 112.66937669376692, 'rushing': 2.84375, 'rec': 0}
+def ==> 404.3100961538462
+{'playerDisplay': 'Derrick Henry', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 13.0, 'rushYds': 46.0, 'rushTd': 1.0, 'recAtt': 2.0, 'recCmp': 0.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'KC'}
+{'passing': 0, 'rushing': 104.31009615384616, 'rec': 200.0}
+def ==> 500.15625
+{'playerDisplay': '--fake--', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 0.0, 'recCmp': 0.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'KC'}
+{'passing': 0, 'rushing': 200.15625, 'rec': 200.0}
+def ==> 419.50659722222224
+{'playerDisplay': 'Isaiah Likely', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 12.0, 'recCmp': 9.0, 'recYds': 111.0, 'recTd': 1.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'KC'}
+{'passing': 0, 'rushing': 200.15625, 'rec': 119.27222222222223}
+def ==> 182.634375
+{'playerDisplay': 'Zay Flowers', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 2.0, 'rushYds': 14.0, 'rushTd': 0.0, 'recAtt': 10.0, 'recCmp': 6.0, 'recYds': 37.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'KC'}
+{'passing': 0, 'rushing': 18.15625, 'rec': 155.4}
+def ==> 322.88437500000003
+{'playerDisplay': 'Justice Hill', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 1.0, 'rushYds': 3.0, 'rushTd': 0.0, 'recAtt': 8.0, 'recCmp': 6.0, 'recYds': 52.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'KC'}
+{'passing': 0, 'rushing': 122.15625, 'rec': 139.65000000000003}
+def ==> 161.85028472222223
+{'playerDisplay': 'aggregate', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 8.0, 'recCmp': 5.0, 'recYds': 73.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rest', 'season': 2024, 'week': 1, 'team': 'KC'}
+{'passing': 203.47222222222223, 'rushing': 200.15625, 'rec': 114.29500000000002}
+off ==> 179.9345238095238
+{'playerDisplay': 'Patrick Mahomes', 'passCmp': 20.0, 'passAtt': 28.0, 'passYds': 291.0, 'passTd': 1.0, 'passInt': 1.0, 'rushAtt': 2.0, 'rushYds': 3.0, 'rushTd': 0.0, 'recAtt': 1.0, 'recCmp': 1.0, 'recYds': 2.0, 'recTd': 0.0, 'sacked': 2.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'qb', 'season': 2024, 'week': 1, 'team': 'KC'}
+{'passing': 101.93452380952381, 'rushing': 39.0, 'rec': 0}
+off ==> 225.13333333333333
+{'playerDisplay': 'Isiah Pacheco', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 15.0, 'rushYds': 45.0, 'rushTd': 1.0, 'recAtt': 3.0, 'recCmp': 2.0, 'recYds': 33.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'KC'}
+{'passing': 0, 'rushing': 81.33333333333333, 'rec': 95.86666666666667}
+off ==> 39.0
+{'playerDisplay': 'Carson Steele', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 2.0, 'rushYds': 3.0, 'rushTd': 0.0, 'recAtt': 0.0, 'recCmp': 0.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'KC'}
+{'passing': 0, 'rushing': 39.0, 'rec': 0}
+off ==> 90.07301587301586
+{'playerDisplay': 'Rashee Rice', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 9.0, 'recCmp': 7.0, 'recYds': 103.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'KC'}
+{'passing': 0, 'rushing': 0, 'rec': 90.07301587301586}
+off ==> 73.15
+{'playerDisplay': 'Travis Kelce', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 4.0, 'recCmp': 3.0, 'recYds': 34.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'KC'}
+{'passing': 0, 'rushing': 0, 'rec': 73.15}
+off ==> 84.2
+{'playerDisplay': 'Noah Gray', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 3.0, 'recCmp': 3.0, 'recYds': 37.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'KC'}
+{'passing': 0, 'rushing': 0, 'rec': 84.2}
+off ==> 321.7210714285714
+{'playerDisplay': 'aggregate', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 1.0, 'rushYds': 21.0, 'rushTd': 1.0, 'recAtt': 7.0, 'recCmp': 4.0, 'recYds': 82.0, 'recTd': 1.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rest', 'season': 2024, 'week': 1, 'team': 'KC'}
+{'passing': 0, 'rushing': 596.0, 'rec': 118.93571428571428}
+===== rating_compute {'season': 2024, 'week': 1, 'team': 'SD'}
+def ==> 431.97916666666663
+{'playerDisplay': 'Gardner Minshew', 'passCmp': 25.0, 'passAtt': 33.0, 'passYds': 257.0, 'passTd': 1.0, 'passInt': 1.0, 'rushAtt': 3.0, 'rushYds': 5.0, 'rushTd': 0.0, 'recAtt': 0.0, 'recCmp': 0.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 4.0, 'fumbles': 1.0, 'fumblesLost': 1.0, 'playerPosition': 'qb', 'season': 2024, 'week': 1, 'team': 'SD'}
+{'passing': 108.33333333333331, 'rushing': 161.82291666666666, 'rec': 0}
+def ==> 376.11009615384614
+{'playerDisplay': 'Zamir White', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 13.0, 'rushYds': 44.0, 'rushTd': 0.0, 'recAtt': 2.0, 'recCmp': 2.0, 'recYds': 2.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 1.0, 'fumblesLost': 1.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'SD'}
+{'passing': 0, 'rushing': 113.31009615384616, 'rec': 175.20000000000002}
+def ==> 500.15625
+{'playerDisplay': '--fake--', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 0.0, 'recCmp': 0.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'SD'}
+{'passing': 0, 'rushing': 200.15625, 'rec': 200.0}
+def ==> 435.084375
+{'playerDisplay': 'Brock Bowers', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 8.0, 'recCmp': 6.0, 'recYds': 58.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'SD'}
+{'passing': 0, 'rushing': 200.15625, 'rec': 134.85000000000002}
+def ==> 277.51770833333336
+{'playerDisplay': 'Alexander Mattison', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 5.0, 'rushYds': 19.0, 'rushTd': 0.0, 'recAtt': 6.0, 'recCmp': 4.0, 'recYds': 43.0, 'recTd': 1.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'SD'}
+{'passing': 0, 'rushing': 101.35625, 'rec': 125.48333333333335}
+def ==> 422.7610416666667
+{'playerDisplay': 'Davante Adams', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 6.0, 'recCmp': 5.0, 'recYds': 59.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'SD'}
+{'passing': 0, 'rushing': 200.15625, 'rec': 122.52666666666669}
+def ==> 130.66753472222223
+{'playerDisplay': 'aggregate', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 1.0, 'rushYds': 3.0, 'rushTd': 0.0, 'recAtt': 10.0, 'recCmp': 8.0, 'recYds': 95.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rest', 'season': 2024, 'week': 1, 'team': 'SD'}
+{'passing': 203.47222222222223, 'rushing': 122.15625, 'rec': 123.00000000000001}
+off ==> 170.46794871794873
+{'playerDisplay': 'Justin Herbert', 'passCmp': 17.0, 'passAtt': 26.0, 'passYds': 144.0, 'passTd': 1.0, 'passInt': 0.0, 'rushAtt': 4.0, 'rushYds': 6.0, 'rushTd': 0.0, 'recAtt': 0.0, 'recCmp': 0.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 1.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'qb', 'season': 2024, 'week': 1, 'team': 'SD'}
+{'passing': 92.46794871794873, 'rushing': 39.0, 'rec': 0}
+off ==> 113.35454545454547
+{'playerDisplay': 'Gus Edwards', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 11.0, 'rushYds': 26.0, 'rushTd': 0.0, 'recAtt': 1.0, 'recCmp': 1.0, 'recYds': 2.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'SD'}
+{'passing': 0, 'rushing': 61.45454545454546, 'rec': 34.6}
+off ==> 403.1
+{'playerDisplay': 'J.K. Dobbins', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 10.0, 'rushYds': 135.0, 'rushTd': 1.0, 'recAtt': 3.0, 'recCmp': 3.0, 'recYds': 4.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'SD'}
+{'passing': 0, 'rushing': 356.0, 'rec': 31.4}
+off ==> 60.29714285714286
+{'playerDisplay': 'Ladd McConkey', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 7.0, 'recCmp': 5.0, 'recYds': 39.0, 'recTd': 1.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'SD'}
+{'passing': 0, 'rushing': 0, 'rec': 60.29714285714286}
+off ==> 75.8
+{'playerDisplay': 'Quentin Johnston', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 5.0, 'recCmp': 3.0, 'recYds': 38.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'SD'}
+{'passing': 0, 'rushing': 0, 'rec': 75.8}
+off ==> 48.5
+{'playerDisplay': 'Joshua Palmer', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 4.0, 'recCmp': 2.0, 'recYds': 15.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'SD'}
+{'passing': 0, 'rushing': 0, 'rec': 48.5}
+off ==> 94.2075
+{'playerDisplay': 'aggregate', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 2.0, 'rushYds': 9.0, 'rushTd': 0.0, 'recAtt': 4.0, 'recCmp': 3.0, 'recYds': 46.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rest', 'season': 2024, 'week': 1, 'team': 'SD'}
+{'passing': 0, 'rushing': 117.0, 'rec': 92.35}
+===== rating_compute {'season': 2024, 'week': 1, 'team': 'BUF'}
+def ==> -74.07710573476709
+{'playerDisplay': 'Kyler Murray', 'passCmp': 21.0, 'passAtt': 31.0, 'passYds': 162.0, 'passTd': 1.0, 'passInt': 0.0, 'rushAtt': 5.0, 'rushYds': 57.0, 'rushTd': 0.0, 'recAtt': 0.0, 'recCmp': 0.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 4.0, 'fumbles': 1.0, 'fumblesLost': 1.0, 'playerPosition': 'qb', 'season': 2024, 'week': 1, 'team': 'BUF'}
+{'passing': 112.41039426523298, 'rushing': -93.24375000000003, 'rec': 0}
+def ==> 308.45625
+{'playerDisplay': 'James Conner', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 16.0, 'rushYds': 50.0, 'rushTd': 1.0, 'recAtt': 4.0, 'recCmp': 3.0, 'recYds': 33.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'BUF'}
+{'passing': 0, 'rushing': 115.78125, 'rec': 128.45000000000002}
+def ==> 313.98958333333337
+{'playerDisplay': 'Trey Benson', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 3.0, 'rushYds': 13.0, 'rushTd': 0.0, 'recAtt': 1.0, 'recCmp': 1.0, 'recYds': 5.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'BUF'}
+{'passing': 0, 'rushing': 87.48958333333334, 'rec': 151.0}
+def ==> 457.54548611111113
+{'playerDisplay': 'Trey McBride', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 9.0, 'recCmp': 5.0, 'recYds': 30.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'BUF'}
+{'passing': 0, 'rushing': 200.15625, 'rec': 157.31111111111113}
+def ==> 287.88437500000003
+{'playerDisplay': 'Greg Dortch', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 1.0, 'rushYds': 4.0, 'rushTd': 0.0, 'recAtt': 8.0, 'recCmp': 6.0, 'recYds': 47.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'BUF'}
+{'passing': 0, 'rushing': 96.15625, 'rec': 143.65000000000003}
+def ==> 472.7010416666667
+{'playerDisplay': 'Marvin Harrison Jr.', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 3.0, 'recCmp': 1.0, 'recYds': 4.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'BUF'}
+{'passing': 0, 'rushing': 200.15625, 'rec': 172.4666666666667}
+def ==> 170.21653472222224
+{'playerDisplay': 'aggregate', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 6.0, 'recCmp': 5.0, 'recYds': 43.0, 'recTd': 1.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rest', 'season': 2024, 'week': 1, 'team': 'BUF'}
+{'passing': 203.47222222222223, 'rushing': 200.15625, 'rec': 132.88666666666668}
+off ==> 381.90338164251204
+{'playerDisplay': 'Josh Allen', 'passCmp': 18.0, 'passAtt': 23.0, 'passYds': 232.0, 'passTd': 2.0, 'passInt': 0.0, 'rushAtt': 9.0, 'rushYds': 39.0, 'rushTd': 2.0, 'recAtt': 0.0, 'recCmp': 0.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 2.0, 'fumbles': 1.0, 'fumblesLost': 1.0, 'playerPosition': 'qb', 'season': 2024, 'week': 1, 'team': 'BUF'}
+{'passing': 137.68115942028984, 'rushing': 122.1111111111111, 'rec': 0}
+off ==> 211.4578947368421
+{'playerDisplay': 'James Cook', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 19.0, 'rushYds': 71.0, 'rushTd': 0.0, 'recAtt': 3.0, 'recCmp': 3.0, 'recYds': 32.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'BUF'}
+{'passing': 0, 'rushing': 97.15789473684211, 'rec': 76.19999999999999}
+off ==> 250.96666666666667
+{'playerDisplay': 'Ray Davis', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 3.0, 'rushYds': 13.0, 'rushTd': 0.0, 'recAtt': 1.0, 'recCmp': 1.0, 'recYds': 14.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'BUF'}
+{'passing': 0, 'rushing': 112.66666666666666, 'rec': 92.2}
+off ==> 81.19999999999999
+{'playerDisplay': 'Keon Coleman', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 5.0, 'recCmp': 4.0, 'recYds': 51.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'BUF'}
+{'passing': 0, 'rushing': 0, 'rec': 81.19999999999999}
+off ==> 100.53333333333333
+{'playerDisplay': 'Khalil Shakir', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 3.0, 'recCmp': 3.0, 'recYds': 42.0, 'recTd': 1.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'BUF'}
+{'passing': 0, 'rushing': 0, 'rec': 100.53333333333333}
+off ==> 61.0
+{'playerDisplay': 'Curtis Samuel', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 2.0, 'recCmp': 2.0, 'recYds': 15.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'BUF'}
+{'passing': 0, 'rushing': 0, 'rec': 61.0}
+off ==> 83.146
+{'playerDisplay': 'aggregate', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 2.0, 'rushYds': 7.0, 'rushTd': 0.0, 'recAtt': 9.0, 'recCmp': 5.0, 'recYds': 78.0, 'recTd': 1.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rest', 'season': 2024, 'week': 1, 'team': 'BUF'}
+{'passing': 0, 'rushing': 91.0, 'rec': 93.76888888888888}
+===== rating_compute {'season': 2024, 'week': 1, 'team': 'BAL'}
+def ==> 423.85019841269843
+{'playerDisplay': 'Patrick Mahomes', 'passCmp': 20.0, 'passAtt': 28.0, 'passYds': 291.0, 'passTd': 1.0, 'passInt': 1.0, 'rushAtt': 2.0, 'rushYds': 3.0, 'rushTd': 0.0, 'recAtt': 1.0, 'recCmp': 1.0, 'recYds': 2.0, 'recTd': 0.0, 'sacked': 2.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'qb', 'season': 2024, 'week': 1, 'team': 'BAL'}
+{'passing': 101.5376984126984, 'rushing': 161.15625, 'rec': 0}
+def ==> 275.0229166666667
+{'playerDisplay': 'Isiah Pacheco', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 15.0, 'rushYds': 45.0, 'rushTd': 1.0, 'recAtt': 3.0, 'recCmp': 2.0, 'recYds': 33.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'BAL'}
+{'passing': 0, 'rushing': 118.82291666666667, 'rec': 104.13333333333334}
+def ==> 461.15625
+{'playerDisplay': 'Carson Steele', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 2.0, 'rushYds': 3.0, 'rushTd': 0.0, 'recAtt': 0.0, 'recCmp': 0.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'BAL'}
+{'passing': 0, 'rushing': 161.15625, 'rec': 200.0}
+def ==> 410.16135912698417
+{'playerDisplay': 'Rashee Rice', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 9.0, 'recCmp': 7.0, 'recYds': 103.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'BAL'}
+{'passing': 0, 'rushing': 200.15625, 'rec': 109.92698412698415}
+def ==> 427.084375
+{'playerDisplay': 'Travis Kelce', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 4.0, 'recCmp': 3.0, 'recYds': 34.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'BAL'}
+{'passing': 0, 'rushing': 200.15625, 'rec': 126.85000000000001}
+def ==> 416.034375
+{'playerDisplay': 'Noah Gray', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 3.0, 'recCmp': 3.0, 'recYds': 37.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'BAL'}
+{'passing': 0, 'rushing': 200.15625, 'rec': 115.80000000000001}
+def ==> -121.3035367063492
+{'playerDisplay': 'aggregate', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 1.0, 'rushYds': 21.0, 'rushTd': 1.0, 'recAtt': 7.0, 'recCmp': 4.0, 'recYds': 82.0, 'recTd': 1.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rest', 'season': 2024, 'week': 1, 'team': 'BAL'}
+{'passing': 203.47222222222223, 'rushing': -395.84375, 'rec': 81.06428571428573}
+off ==> 485.4278455284553
+{'playerDisplay': 'Lamar Jackson', 'passCmp': 26.0, 'passAtt': 41.0, 'passYds': 273.0, 'passTd': 1.0, 'passInt': 0.0, 'rushAtt': 16.0, 'rushYds': 122.0, 'rushTd': 0.0, 'recAtt': 0.0, 'recCmp': 0.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 1.0, 'fumbles': 1.0, 'fumblesLost': 1.0, 'playerPosition': 'qb', 'season': 2024, 'week': 1, 'team': 'BAL'}
+{'passing': 90.8028455284553, 'rushing': 197.3125, 'rec': 0}
+off ==> 95.84615384615384
+{'playerDisplay': 'Derrick Henry', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 13.0, 'rushYds': 46.0, 'rushTd': 1.0, 'recAtt': 2.0, 'recCmp': 0.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'BAL'}
+{'passing': 0, 'rushing': 95.84615384615384, 'rec': 0}
+off ==> 0.0
+{'playerDisplay': '--fake--', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 0.0, 'recCmp': 0.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'BAL'}
+{'passing': 0, 'rushing': 0, 'rec': 0}
+off ==> 80.72777777777779
+{'playerDisplay': 'Isaiah Likely', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 12.0, 'recCmp': 9.0, 'recYds': 111.0, 'recTd': 1.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'BAL'}
+{'passing': 0, 'rushing': 0, 'rec': 80.72777777777779}
+off ==> 317.6
+{'playerDisplay': 'Zay Flowers', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 2.0, 'rushYds': 14.0, 'rushTd': 0.0, 'recAtt': 10.0, 'recCmp': 6.0, 'recYds': 37.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'BAL'}
+{'passing': 0, 'rushing': 182.0, 'rec': 44.6}
+off ==> 177.35
+{'playerDisplay': 'Justice Hill', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 1.0, 'rushYds': 3.0, 'rushTd': 0.0, 'recAtt': 8.0, 'recCmp': 6.0, 'recYds': 52.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'BAL'}
+{'passing': 0, 'rushing': 78.0, 'rec': 60.349999999999994}
+off ==> 38.56725
+{'playerDisplay': 'aggregate', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 8.0, 'recCmp': 5.0, 'recYds': 73.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rest', 'season': 2024, 'week': 1, 'team': 'BAL'}
+{'passing': 0, 'rushing': 0, 'rec': 85.705}
+===== rating_compute {'season': 2024, 'week': 1, 'team': 'TEN'}
+def ==> 392.10943486590037
+{'playerDisplay': 'Caleb Williams', 'passCmp': 14.0, 'passAtt': 29.0, 'passYds': 93.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 5.0, 'rushYds': 15.0, 'rushTd': 0.0, 'recAtt': 0.0, 'recCmp': 0.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 2.0, 'fumbles': 1.0, 'fumblesLost': 0.0, 'playerPosition': 'qb', 'season': 2024, 'week': 1, 'team': 'TEN'}
+{'passing': 147.79693486590037, 'rushing': 122.15625, 'rec': 0}
+def ==> 422.15625
+{'playerDisplay': "D'Andre Swift", 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 10.0, 'rushYds': 30.0, 'rushTd': 0.0, 'recAtt': 1.0, 'recCmp': 0.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'TEN'}
+{'passing': 0, 'rushing': 122.15625, 'rec': 200.0}
+def ==> 448.15625
+{'playerDisplay': 'Khalil Herbert', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 2.0, 'rushYds': 4.0, 'rushTd': 0.0, 'recAtt': 0.0, 'recCmp': 0.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'TEN'}
+{'passing': 0, 'rushing': 148.15625, 'rec': 200.0}
+def ==> 456.3434659090909
+{'playerDisplay': 'Keenan Allen', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 11.0, 'recCmp': 4.0, 'recYds': 29.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'TEN'}
+{'passing': 0, 'rushing': 200.15625, 'rec': 156.10909090909092}
+def ==> -95.950625
+{'playerDisplay': 'DJ Moore', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 1.0, 'rushYds': 14.0, 'rushTd': 0.0, 'recAtt': 8.0, 'recCmp': 5.0, 'recYds': 36.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'TEN'}
+{'passing': 0, 'rushing': -163.84375, 'rec': 149.815}
+def ==> 441.18437500000005
+{'playerDisplay': 'Rome Odunze', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 4.0, 'recCmp': 1.0, 'recYds': 11.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 1.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'TEN'}
+{'passing': 0, 'rushing': 200.15625, 'rec': 140.95000000000002}
+def ==> 123.62503472222224
+{'playerDisplay': 'aggregate', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 4.0, 'rushYds': 21.0, 'rushTd': 0.0, 'recAtt': 5.0, 'recCmp': 4.0, 'recYds': 17.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 1.0, 'fumblesLost': 1.0, 'playerPosition': 'rest', 'season': 2024, 'week': 1, 'team': 'TEN'}
+{'passing': 203.47222222222223, 'rushing': 67.40625, 'rec': 162.10000000000002}
+off ==> 512.9739583333334
+{'playerDisplay': 'Will Levis', 'passCmp': 19.0, 'passAtt': 32.0, 'passYds': 127.0, 'passTd': 1.0, 'passInt': 2.0, 'rushAtt': 4.0, 'rushYds': 36.0, 'rushTd': 0.0, 'recAtt': 0.0, 'recCmp': 0.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 3.0, 'fumbles': 1.0, 'fumblesLost': 1.0, 'playerPosition': 'qb', 'season': 2024, 'week': 1, 'team': 'TEN'}
+{'passing': 52.473958333333336, 'rushing': 230.25, 'rec': 0}
+off ==> 193.3
+{'playerDisplay': 'Tony Pollard', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 16.0, 'rushYds': 82.0, 'rushTd': 1.0, 'recAtt': 4.0, 'recCmp': 3.0, 'recYds': 12.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'TEN'}
+{'passing': 0, 'rushing': 136.375, 'rec': 37.95}
+off ==> 0.0
+{'playerDisplay': '--fake--', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 0.0, 'recCmp': 0.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'TEN'}
+{'passing': 0, 'rushing': 0, 'rec': 0}
+off ==> 90.71428571428571
+{'playerDisplay': 'Calvin Ridley', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 7.0, 'recCmp': 3.0, 'recYds': 50.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'TEN'}
+{'passing': 0, 'rushing': 0, 'rec': 90.71428571428571}
+off ==> 43.8
+{'playerDisplay': 'Tyler Boyd', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 5.0, 'recCmp': 3.0, 'recYds': 18.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'TEN'}
+{'passing': 0, 'rushing': 0, 'rec': 43.8}
+off ==> 73.5
+{'playerDisplay': 'Chig Okonkwo', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 2.0, 'recCmp': 2.0, 'recYds': 15.0, 'recTd': 1.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'TEN'}
+{'passing': 0, 'rushing': 0, 'rec': 73.5}
+off ==> 61.53999999999999
+{'playerDisplay': 'aggregate', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 6.0, 'rushYds': 22.0, 'rushTd': 0.0, 'recAtt': 9.0, 'recCmp': 8.0, 'recYds': 32.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rest', 'season': 2024, 'week': 1, 'team': 'TEN'}
+{'passing': 0, 'rushing': 95.33333333333333, 'rec': 41.42222222222222}
+===== rating_compute {'season': 2024, 'week': 1, 'team': 'MIA'}
+def ==> 90.06646825396825
+{'playerDisplay': 'Trevor Lawrence', 'passCmp': 12.0, 'passAtt': 21.0, 'passYds': 162.0, 'passTd': 1.0, 'passInt': 0.0, 'rushAtt': 1.0, 'rushYds': 8.0, 'rushTd': 0.0, 'recAtt': 0.0, 'recCmp': 0.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 3.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'qb', 'season': 2024, 'week': 1, 'team': 'MIA'}
+{'passing': 105.75396825396825, 'rushing': -7.84375, 'rec': 0}
+def ==> 341.98958333333337
+{'playerDisplay': 'Tank Bigsby', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 12.0, 'rushYds': 73.0, 'rushTd': 0.0, 'recAtt': 0.0, 'recCmp': 0.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'MIA'}
+{'passing': 0, 'rushing': 41.98958333333334, 'rec': 200.0}
+def ==> 330.40625
+{'playerDisplay': 'Travis Etienne Jr.', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 12.0, 'rushYds': 44.0, 'rushTd': 1.0, 'recAtt': 3.0, 'recCmp': 2.0, 'recYds': 15.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 1.0, 'fumblesLost': 1.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'MIA'}
+{'passing': 0, 'rushing': 101.90625, 'rec': 152.33333333333334}
+def ==> 412.584375
+{'playerDisplay': 'Brian Thomas Jr.', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 4.0, 'recCmp': 4.0, 'recYds': 47.0, 'recTd': 1.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'MIA'}
+{'passing': 0, 'rushing': 200.15625, 'rec': 112.35000000000001}
+def ==> 349.984375
+{'playerDisplay': 'Christian Kirk', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 4.0, 'recCmp': 1.0, 'recYds': 30.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'MIA'}
+{'passing': 0, 'rushing': 200.15625, 'rec': 49.750000000000014}
+def ==> 469.984375
+{'playerDisplay': 'Evan Engram', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 4.0, 'recCmp': 1.0, 'recYds': 5.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'MIA'}
+{'passing': 0, 'rushing': 200.15625, 'rec': 169.75}
+def ==> 118.96753472222223
+{'playerDisplay': 'aggregate', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 1.0, 'rushYds': 3.0, 'rushTd': 0.0, 'recAtt': 4.0, 'recCmp': 4.0, 'recYds': 65.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 1.0, 'fumblesLost': 0.0, 'playerPosition': 'rest', 'season': 2024, 'week': 1, 'team': 'MIA'}
+{'passing': 203.47222222222223, 'rushing': 122.15625, 'rec': 97.00000000000001}
+off ==> 672.9572072072071
+{'playerDisplay': 'Tua Tagovailoa', 'passCmp': 23.0, 'passAtt': 37.0, 'passYds': 338.0, 'passTd': 1.0, 'passInt': 0.0, 'rushAtt': 1.0, 'rushYds': 11.0, 'rushTd': 0.0, 'recAtt': 0.0, 'recCmp': 0.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 3.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'qb', 'season': 2024, 'week': 1, 'team': 'MIA'}
+{'passing': 100.9572072072072, 'rushing': 286.0, 'rec': 0}
+off ==> 183.07142857142858
+{'playerDisplay': "De'Von Achane", 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 10.0, 'rushYds': 24.0, 'rushTd': 1.0, 'recAtt': 7.0, 'recCmp': 7.0, 'recYds': 76.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'MIA'}
+{'passing': 0, 'rushing': 67.4, 'rec': 77.11428571428571}
+off ==> 100.0
+{'playerDisplay': 'Raheem Mostert', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 6.0, 'rushYds': 9.0, 'rushTd': 0.0, 'recAtt': 3.0, 'recCmp': 2.0, 'recYds': 10.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'MIA'}
+{'passing': 0, 'rushing': 39.0, 'rec': 40.666666666666664}
+off ==> 107.29761904761905
+{'playerDisplay': 'Tyreek Hill', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 12.0, 'recCmp': 7.0, 'recYds': 130.0, 'recTd': 1.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'MIA'}
+{'passing': 0, 'rushing': 0, 'rec': 107.29761904761905}
+off ==> 246.64
+{'playerDisplay': 'Jaylen Waddle', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 1.0, 'rushYds': 3.0, 'rushTd': 0.0, 'recAtt': 5.0, 'recCmp': 5.0, 'recYds': 109.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'MIA'}
+{'passing': 0, 'rushing': 78.0, 'rec': 129.64}
+off ==> 0.0
+{'playerDisplay': 'Durham Smythe', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 3.0, 'recCmp': 0.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'MIA'}
+{'passing': 0, 'rushing': 0, 'rec': 0}
+off ==> 74.61857142857143
+{'playerDisplay': 'aggregate', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 7.0, 'rushYds': 34.0, 'rushTd': 0.0, 'recAtt': 6.0, 'recCmp': 2.0, 'recYds': 13.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rest', 'season': 2024, 'week': 1, 'team': 'MIA'}
+{'passing': 0, 'rushing': 126.28571428571428, 'rec': 39.53333333333333}
+===== rating_compute {'season': 2024, 'week': 1, 'team': 'SEA'}
+def ==> 172.26488095238093
+{'playerDisplay': 'Bo Nix', 'passCmp': 26.0, 'passAtt': 42.0, 'passYds': 138.0, 'passTd': 0.0, 'passInt': 2.0, 'rushAtt': 5.0, 'rushYds': 35.0, 'rushTd': 1.0, 'recAtt': 0.0, 'recCmp': 0.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 2.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'qb', 'season': 2024, 'week': 1, 'team': 'SEA'}
+{'passing': 155.95238095238093, 'rushing': 8.15625, 'rec': 0}
+def ==> 395.51625000000007
+{'playerDisplay': 'Jaleel McLaughlin', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 10.0, 'rushYds': 27.0, 'rushTd': 0.0, 'recAtt': 5.0, 'recCmp': 5.0, 'recYds': 1.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 1.0, 'fumblesLost': 1.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'SEA'}
+{'passing': 0, 'rushing': 131.45625, 'rec': 176.04000000000002}
+def ==> 406.65625
+{'playerDisplay': 'Javonte Williams', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 8.0, 'rushYds': 23.0, 'rushTd': 0.0, 'recAtt': 2.0, 'recCmp': 1.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'SEA'}
+{'passing': 0, 'rushing': 125.40625, 'rec': 187.5}
+def ==> 446.30104166666666
+{'playerDisplay': 'Courtland Sutton', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 12.0, 'recCmp': 4.0, 'recYds': 38.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'SEA'}
+{'passing': 0, 'rushing': 200.15625, 'rec': 146.06666666666666}
+def ==> 451.834375
+{'playerDisplay': 'Devaughn Vele', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 8.0, 'recCmp': 8.0, 'recYds': 39.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'SEA'}
+{'passing': 0, 'rushing': 200.15625, 'rec': 151.60000000000002}
+def ==> 441.409375
+{'playerDisplay': 'Josh Reynolds', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 8.0, 'recCmp': 5.0, 'recYds': 45.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'SEA'}
+{'passing': 0, 'rushing': 200.15625, 'rec': 141.175}
+def ==> 102.89610615079366
+{'playerDisplay': 'aggregate', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 2.0, 'rushYds': 14.0, 'rushTd': 0.0, 'recAtt': 7.0, 'recCmp': 3.0, 'recYds': 15.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 1.0, 'fumblesLost': 0.0, 'playerPosition': 'rest', 'season': 2024, 'week': 1, 'team': 'SEA'}
+{'passing': 203.47222222222223, 'rushing': 18.15625, 'rec': 165.2857142857143}
+off ==> 502.25
+{'playerDisplay': 'Geno Smith', 'passCmp': 18.0, 'passAtt': 25.0, 'passYds': 171.0, 'passTd': 1.0, 'passInt': 1.0, 'rushAtt': 4.0, 'rushYds': 30.0, 'rushTd': 1.0, 'recAtt': 0.0, 'recCmp': 0.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 2.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'qb', 'season': 2024, 'week': 1, 'team': 'SEA'}
+{'passing': 87.25, 'rushing': 207.5, 'rec': 0}
+off ==> 183.0
+{'playerDisplay': 'Kenneth Walker III', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 20.0, 'rushYds': 103.0, 'rushTd': 1.0, 'recAtt': 3.0, 'recCmp': 2.0, 'recYds': 6.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'SEA'}
+{'passing': 0, 'rushing': 136.4, 'rec': 31.066666666666663}
+off ==> 187.14999999999998
+{'playerDisplay': 'Zach Charbonnet', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 8.0, 'rushYds': 12.0, 'rushTd': 0.0, 'recAtt': 3.0, 'recCmp': 2.0, 'recYds': 29.0, 'recTd': 1.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'SEA'}
+{'passing': 0, 'rushing': 39.0, 'rec': 98.76666666666665}
+off ==> 83.02857142857142
+{'playerDisplay': 'Tyler Lockett', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 7.0, 'recCmp': 6.0, 'recYds': 77.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'SEA'}
+{'passing': 0, 'rushing': 0, 'rec': 83.02857142857142}
+off ==> 65.15
+{'playerDisplay': 'DK Metcalf', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 4.0, 'recCmp': 3.0, 'recYds': 29.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'SEA'}
+{'passing': 0, 'rushing': 0, 'rec': 65.15}
+off ==> 38.9
+{'playerDisplay': 'Noah Fant', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 4.0, 'recCmp': 2.0, 'recYds': 11.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'SEA'}
+{'passing': 0, 'rushing': 0, 'rec': 38.9}
+off ==> 33.8175
+{'playerDisplay': 'aggregate', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 1.0, 'rushYds': 1.0, 'rushTd': 0.0, 'recAtt': 4.0, 'recCmp': 3.0, 'recYds': 19.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rest', 'season': 2024, 'week': 1, 'team': 'SEA'}
+{'passing': 0, 'rushing': 26.0, 'rec': 49.15}
+===== rating_compute {'season': 2024, 'week': 1, 'team': 'DET'}
+def ==> 518.6231575963719
+{'playerDisplay': 'Matthew Stafford', 'passCmp': 34.0, 'passAtt': 49.0, 'passYds': 317.0, 'passTd': 1.0, 'passInt': 1.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 0.0, 'recCmp': 0.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 2.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'qb', 'season': 2024, 'week': 1, 'team': 'DET'}
+{'passing': 118.31065759637188, 'rushing': 200.15625, 'rec': 0}
+def ==> 378.05625000000003
+{'playerDisplay': 'Kyren Williams', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 18.0, 'rushYds': 50.0, 'rushTd': 1.0, 'recAtt': 3.0, 'recCmp': 3.0, 'recYds': 4.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'DET'}
+{'passing': 0, 'rushing': 125.15625000000001, 'rec': 168.60000000000002}
+def ==> 292.15625
+{'playerDisplay': 'Ronnie Rivers', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 2.0, 'rushYds': 16.0, 'rushTd': 0.0, 'recAtt': 0.0, 'recCmp': 0.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'DET'}
+{'passing': 0, 'rushing': -7.84375, 'rec': 200.0}
+def ==> 249.06770833333337
+{'playerDisplay': 'Cooper Kupp', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 2.0, 'rushYds': 10.0, 'rushTd': 0.0, 'recAtt': 21.0, 'recCmp': 14.0, 'recYds': 110.0, 'recTd': 1.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'DET'}
+{'passing': 0, 'rushing': 70.15625, 'rec': 143.83333333333337}
+def ==> 435.54866071428575
+{'playerDisplay': 'Demarcus Robinson', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 7.0, 'recCmp': 4.0, 'recYds': 42.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'DET'}
+{'passing': 0, 'rushing': 200.15625, 'rec': 135.31428571428575}
+def ==> 406.53723214285714
+{'playerDisplay': 'Tyler Johnson', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 7.0, 'recCmp': 5.0, 'recYds': 79.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'DET'}
+{'passing': 0, 'rushing': 200.15625, 'rec': 106.30285714285715}
+def ==> 87.37753472222224
+{'playerDisplay': 'aggregate', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 1.0, 'rushYds': 7.0, 'rushTd': 0.0, 'recAtt': 10.0, 'recCmp': 8.0, 'recYds': 82.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rest', 'season': 2024, 'week': 1, 'team': 'DET'}
+{'passing': 203.47222222222223, 'rushing': 18.15625, 'rec': 130.8}
+off ==> 448.9702380952381
+{'playerDisplay': 'Jared Goff', 'passCmp': 18.0, 'passAtt': 28.0, 'passYds': 217.0, 'passTd': 1.0, 'passInt': 1.0, 'rushAtt': 1.0, 'rushYds': 7.0, 'rushTd': 0.0, 'recAtt': 0.0, 'recCmp': 0.0, 'recYds': 0.0, 'recTd': 0.0, 'sacked': 2.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'qb', 'season': 2024, 'week': 1, 'team': 'DET'}
+{'passing': 84.9702380952381, 'rushing': 182.0, 'rec': 0}
+off ==> 194.0176470588235
+{'playerDisplay': 'David Montgomery', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 17.0, 'rushYds': 91.0, 'rushTd': 1.0, 'recAtt': 1.0, 'recCmp': 1.0, 'recYds': 2.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'DET'}
+{'passing': 0, 'rushing': 142.1176470588235, 'rec': 34.6}
+off ==> 185.29090909090908
+{'playerDisplay': 'Jahmyr Gibbs', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 11.0, 'rushYds': 40.0, 'rushTd': 1.0, 'recAtt': 6.0, 'recCmp': 4.0, 'recYds': 34.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rb', 'season': 2024, 'week': 1, 'team': 'DET'}
+{'passing': 0, 'rushing': 99.0909090909091, 'rec': 57.46666666666666}
+off ==> 642.0488888888889
+{'playerDisplay': 'Jameson Williams', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 1.0, 'rushYds': 13.0, 'rushTd': 0.0, 'recAtt': 9.0, 'recCmp': 5.0, 'recYds': 121.0, 'recTd': 1.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'DET'}
+{'passing': 0, 'rushing': 338.0, 'rec': 135.04888888888888}
+off ==> 33.3
+{'playerDisplay': 'Amon-Ra St. Brown', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 6.0, 'recCmp': 3.0, 'recYds': 13.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'DET'}
+{'passing': 0, 'rushing': 0, 'rec': 33.3}
+off ==> 74.0
+{'playerDisplay': 'Sam LaPorta', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 0.0, 'rushYds': 0.0, 'rushTd': 0.0, 'recAtt': 5.0, 'recCmp': 4.0, 'recYds': 45.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'wr', 'season': 2024, 'week': 1, 'team': 'DET'}
+{'passing': 0, 'rushing': 0, 'rec': 74.0}
+off ==> 155.97
+{'playerDisplay': 'aggregate', 'passCmp': 0.0, 'passAtt': 0.0, 'passYds': 0.0, 'passTd': 0.0, 'passInt': 0.0, 'rushAtt': 1.0, 'rushYds': 12.0, 'rushTd': 0.0, 'recAtt': 1.0, 'recCmp': 1.0, 'recYds': 2.0, 'recTd': 0.0, 'sacked': 0.0, 'fumbles': 0.0, 'fumblesLost': 0.0, 'playerPosition': 'rest', 'season': 2024, 'week': 1, 'team': 'DET'}
+{'passing': 0, 'rushing': 312.0, 'rec': 34.6}
+debug > off wr1 {'side': 'off', 'rating': 131.74, 'season': 2024, 'week': 1, 'team': 'PHI'} {'rating': 135.85308193542568, 'season': 2024.0, 'week': 1.0} {'rating': -4.113081935425669, 'season': 0.0, 'side': nan, 'team': nan, 'week': 0.0}
+debug > off wr2 {'side': 'off', 'rating': 79.475, 'season': 2024, 'week': 1, 'team': 'PHI'} {'rating': 174.05274553571428, 'season': 2024.0, 'week': 1.0} {'rating': -94.57774553571429, 'season': 0.0, 'side': nan, 'team': nan, 'week': 0.0}
+debug > off wr3 {'side': 'off', 'rating': 57.199999999999996, 'season': 2024, 'week': 1, 'team': 'PHI'} {'rating': 79.69465029761905, 'season': 2024.0, 'week': 1.0} {'rating': -22.494650297619053, 'season': 0.0, 'side': nan, 'team': nan, 'week': 0.0}
+debug > off rb1 {'side': 'off', 'rating': 261.3, 'season': 2024, 'week': 1, 'team': 'PHI'} {'rating': 174.73098878044578, 'season': 2024.0, 'week': 1.0} {'rating': 86.56901121955423, 'season': 0.0, 'side': nan, 'team': nan, 'week': 0.0}
+debug > off rb2 {'side': 'off', 'rating': 0.0, 'season': 2024, 'week': 1, 'team': 'PHI'} {'rating': 117.83664998196248, 'season': 2024.0, 'week': 1.0} {'rating': -117.83664998196248, 'season': 0.0, 'side': nan, 'team': nan, 'week': 0.0}
+debug > off qb1 {'side': 'off', 'rating': 209.96191553544494, 'season': 2024, 'week': 1, 'team': 'PHI'} {'rating': 342.5798741477036, 'season': 2024.0, 'week': 1.0} {'rating': -132.61795861225866, 'season': 0.0, 'side': nan, 'team': nan, 'week': 0.0}
+debug > off rest {'side': 'off', 'rating': 51.705, 'season': 2024, 'week': 1, 'team': 'PHI'} {'rating': 72.96003165064103, 'season': 2024.0, 'week': 1.0} {'rating': -21.25503165064103, 'season': 0.0, 'side': nan, 'team': nan, 'week': 0.0}
+debug > def wr1 {'side': 'def', 'rating': 425.9486607142857, 'season': 2024, 'week': 1, 'team': 'PHI'} {'rating': 135.85308193542568, 'season': 2024.0, 'week': 1.0} {'rating': 290.09557877886004, 'season': 0.0, 'side': nan, 'team': nan, 'week': 0.0}
+debug > def wr2 {'side': 'def', 'rating': -1050.2822916666667, 'season': 2024, 'week': 1, 'team': 'PHI'} {'rating': 174.05274553571428, 'season': 2024.0, 'week': 1.0} {'rating': -1224.335037202381, 'season': 0.0, 'side': nan, 'team': nan, 'week': 0.0}
+debug > def wr3 {'side': 'def', 'rating': 456.1010416666667, 'season': 2024, 'week': 1, 'team': 'PHI'} {'rating': 79.69465029761905, 'season': 2024.0, 'week': 1.0} {'rating': 376.40639136904764, 'season': 0.0, 'side': nan, 'team': nan, 'week': 0.0}
+debug > def rb1 {'side': 'def', 'rating': 266.65625000000006, 'season': 2024, 'week': 1, 'team': 'PHI'} {'rating': 174.73098878044578, 'season': 2024.0, 'week': 1.0} {'rating': 91.92526121955427, 'season': 0.0, 'side': nan, 'team': nan, 'week': 0.0}
+debug > def rb2 {'side': 'def', 'rating': 168.95625000000007, 'season': 2024, 'week': 1, 'team': 'PHI'} {'rating': 117.83664998196248, 'season': 2024.0, 'week': 1.0} {'rating': 51.11960001803759, 'season': 0.0, 'side': nan, 'team': nan, 'week': 0.0}
+debug > def qb1 {'side': 'def', 'rating': 520.8190359477125, 'season': 2024, 'week': 1, 'team': 'PHI'} {'rating': 342.5798741477036, 'season': 2024.0, 'week': 1.0} {'rating': 178.23916180000884, 'season': 0.0, 'side': nan, 'team': nan, 'week': 0.0}
+debug > def rest {'side': 'def', 'rating': 153.68670138888888, 'season': 2024, 'week': 1, 'team': 'PHI'} {'rating': 72.96003165064103, 'season': 2024.0, 'week': 1.0} {'rating': 80.72666973824785, 'season': 0.0, 'side': nan, 'team': nan, 'week': 0.0}
+--diff1--
+           rating  season side team  week  role
+wr1     -4.113082    2024  off  PHI     1   wr1
+wr2    -94.577746    2024  off  PHI     1   wr2
+wr3    -22.494650    2024  off  PHI     1   wr3
+rb1     86.569011    2024  off  PHI     1   rb1
+rb2   -117.836650    2024  off  PHI     1   rb2
+qb1   -132.617959    2024  off  PHI     1   qb1
+rest   -21.255032    2024  off  PHI     1  rest
+wr1    290.095579    2024  def  PHI     1   wr1
+wr2  -1224.335037    2024  def  PHI     1   wr2
+wr3    376.406391    2024  def  PHI     1   wr3
+rb1     91.925261    2024  def  PHI     1   rb1
+rb2     51.119600    2024  def  PHI     1   rb2
+qb1    178.239162    2024  def  PHI     1   qb1
+rest    80.726670    2024  def  PHI     1  rest
