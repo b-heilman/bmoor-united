@@ -393,8 +393,6 @@ def rating_diff_save_df():
 This calculation should be how above or below the player's average for
 that week's average.
 """
-
-
 def rating_compute_diff(selector: TeamSelect):
     rating_df = rating_diff_get_df()
 
@@ -414,7 +412,13 @@ def rating_compute_diff(selector: TeamSelect):
 
     week_df = rating_compute(selector).set_index("role")
     self_week_df = week_df[week_df["side"] == "off"]
-    opp_week_df = week_df[week_df["side"] == "def"]
+
+    week_df = rating_compute({
+        'season': selector['season'],
+        'week': selector['season'],
+        'team': opponent,
+    }).set_index("role")
+    opp_week_df = week_df[week_df["side"] == "off"]
 
     if selector["week"] == 1:
         history = rating_selector_across(
@@ -460,6 +464,12 @@ def rating_compute_diff(selector: TeamSelect):
             .reset_index()
             .set_index("role")
         )
+
+    print('opp_history')
+    print(opp_history_df)
+
+    print('opp_week')
+    print(opp_week_df)
     # compute offense
     # get average for rating per role
     # compare to rating of this week

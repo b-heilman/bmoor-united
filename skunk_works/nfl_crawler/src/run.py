@@ -209,8 +209,8 @@ if __name__ == "__main__":
 
     # build_rating()
 
-    # process_games()
+    process_games()
 
-    delta_rating()
+    # delta_rating()
 
     # calc_baseline()

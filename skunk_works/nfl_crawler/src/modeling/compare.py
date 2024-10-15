@@ -26,7 +26,7 @@ def _compare_teams(team1_df, team2_df):
     def_df = team2_df[team2_df["side"] == "def"].reset_index().set_index("role")
 
     return {
-        role: off_df.loc[role]["rating"] - def_df.loc[role]["rating"]
+        role: off_df.loc[role]["rating"] + def_df.loc[role]["rating"]
         for role in stats_roles
     }
 
@@ -38,6 +38,8 @@ def compare_teams(season: int, week: int, team1: str, team2: str, show_vs=False)
     team2_alias = team_alias[team2] if team2 in team_alias else team2
 
     week_df = rating_df[(rating_df["season"] == season) & (rating_df["week"] == week)]
+
+    print('|-->week<--|', week_df)
 
     team1_df = week_df[week_df["team"] == team1_alias]
     if len(team1_df.index) == 0:
