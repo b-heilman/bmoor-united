@@ -225,6 +225,82 @@ def rating_save_df():
     rating_df.to_parquet(rating_parquet_path)
 
 
+def rating_def_compute(indexed_defense_df) -> list[dict]:
+    return [
+        {
+            "side": "def",
+            "role": "qb1",
+            "rating": rating_calculate_def_qb(indexed_defense_df.loc["qb1"]),
+        },
+        {
+            "side": "def",
+            "role": "rb1",
+            "rating": rating_calculate_def_rb(indexed_defense_df.loc["rb1"]),
+        },
+        {
+            "side": "def",
+            "role": "rb2",
+            "rating": rating_calculate_def_rb(indexed_defense_df.loc["rb2"]),
+        },
+        {
+            "side": "def",
+            "role": "wr1",
+            "rating": rating_calculate_def_wr(indexed_defense_df.loc["wr1"]),
+        },
+        {
+            "side": "def",
+            "role": "wr2",
+            "rating": rating_calculate_def_wr(indexed_defense_df.loc["wr2"]),
+        },
+        {
+            "side": "def",
+            "role": "wr3",
+            "rating": rating_calculate_def_wr(indexed_defense_df.loc["wr3"]),
+        },
+        {
+            "side": "def",
+            "role": "rest",
+            "rating": rating_calculate_def_rest(indexed_defense_df.loc["rest"]),
+        },
+    ]
+
+def rating_off_compute(indexed_offense_df) -> list[dict]:
+    return [{
+        "side": "off",
+        "role": "qb1",
+        "rating": rating_calculate_off_qb(indexed_offense_df.loc["qb1"]),
+    },
+    {
+        "side": "off",
+        "role": "rb1",
+        "rating": rating_calculate_off_rb(indexed_offense_df.loc["rb1"]),
+    },
+    {
+        "side": "off",
+        "role": "rb2",
+        "rating": rating_calculate_off_rb(indexed_offense_df.loc["rb2"]),
+    },
+    {
+        "side": "off",
+        "role": "wr1",
+        "rating": rating_calculate_off_wr(indexed_offense_df.loc["wr1"]),
+    },
+    {
+        "side": "off",
+        "role": "wr2",
+        "rating": rating_calculate_off_wr(indexed_offense_df.loc["wr2"]),
+    },
+    {
+        "side": "off",
+        "role": "wr3",
+        "rating": rating_calculate_off_wr(indexed_offense_df.loc["wr3"]),
+    },
+    {
+        "side": "off",
+        "role": "rest",
+        "rating": rating_calculate_off_rest(indexed_offense_df.loc["rest"]),
+    }]
+
 def rating_compute(selector: TeamSelect):
     season = selector["season"]
     week = selector["week"]
@@ -242,82 +318,9 @@ def rating_compute(selector: TeamSelect):
         if len(res_df.index) != 0:
             return res_df
 
-    defense_df = defense_role_compute(selector).set_index("role")
-    offense_df = offense_role_compute(selector).set_index("role")
-
     res = pd.DataFrame(
-        [
-            {
-                "side": "def",
-                "role": "qb1",
-                "rating": rating_calculate_def_qb(defense_df.loc["qb1"]),
-            },
-            {
-                "side": "def",
-                "role": "rb1",
-                "rating": rating_calculate_def_rb(defense_df.loc["rb1"]),
-            },
-            {
-                "side": "def",
-                "role": "rb2",
-                "rating": rating_calculate_def_rb(defense_df.loc["rb2"]),
-            },
-            {
-                "side": "def",
-                "role": "wr1",
-                "rating": rating_calculate_def_wr(defense_df.loc["wr1"]),
-            },
-            {
-                "side": "def",
-                "role": "wr2",
-                "rating": rating_calculate_def_wr(defense_df.loc["wr2"]),
-            },
-            {
-                "side": "def",
-                "role": "wr3",
-                "rating": rating_calculate_def_wr(defense_df.loc["wr3"]),
-            },
-            {
-                "side": "def",
-                "role": "rest",
-                "rating": rating_calculate_def_rest(defense_df.loc["rest"]),
-            },
-            {
-                "side": "off",
-                "role": "qb1",
-                "rating": rating_calculate_off_qb(offense_df.loc["qb1"]),
-            },
-            {
-                "side": "off",
-                "role": "rb1",
-                "rating": rating_calculate_off_rb(offense_df.loc["rb1"]),
-            },
-            {
-                "side": "off",
-                "role": "rb2",
-                "rating": rating_calculate_off_rb(offense_df.loc["rb2"]),
-            },
-            {
-                "side": "off",
-                "role": "wr1",
-                "rating": rating_calculate_off_wr(offense_df.loc["wr1"]),
-            },
-            {
-                "side": "off",
-                "role": "wr2",
-                "rating": rating_calculate_off_wr(offense_df.loc["wr2"]),
-            },
-            {
-                "side": "off",
-                "role": "wr3",
-                "rating": rating_calculate_off_wr(offense_df.loc["wr3"]),
-            },
-            {
-                "side": "off",
-                "role": "rest",
-                "rating": rating_calculate_off_rest(offense_df.loc["rest"]),
-            },
-        ]
+        rating_def_compute(defense_role_compute(selector).set_index("role")) +
+        rating_off_compute(offense_role_compute(selector).set_index("role"))
     )
 
     res["season"] = season
@@ -465,11 +468,6 @@ def rating_compute_diff(selector: TeamSelect):
             .set_index("role")
         )
 
-    print('opp_history')
-    print(opp_history_df)
-
-    print('opp_week')
-    print(opp_week_df)
     # compute offense
     # get average for rating per role
     # compare to rating of this week

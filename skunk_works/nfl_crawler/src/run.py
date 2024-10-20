@@ -1,3 +1,7 @@
+import os
+import pathlib
+import pandas as pd
+
 from modeling.common import (
     fields as stats_fields
 )
@@ -12,6 +16,7 @@ from modeling.rating import (
     rating_save_df,
     rating_compute,
     rating_calculate_off,
+    rating_calculate_def,
     rating_compute_diff
 )
 
@@ -32,7 +37,16 @@ from modeling.delta import (
     delta_offense_save_df
 )
 
-from modeling.compare import compare_teams
+from modeling.compare import (
+    compare_teams,
+    compare_teams_rating, 
+    compare_teams_stats
+)
+
+base_dir = str(pathlib.Path(__file__).parent.resolve())
+run_parquet_path = os.path.abspath(
+    base_dir + "/../cache/parquet/run_results.parquet"
+)
 
 def build_stats():
     offense_role_get_df()
@@ -57,51 +71,38 @@ def build_stats():
 def build_rating():
     rating_get_df()
 
-    print('=====')
-    print(rating_compute(games_all().iloc[0]))
-    #for index, row in games_all().iterrows():
-    #    print('rating processing > ', row['season'], row['week'], row['team'])
-    #    rating_compute(row)
+    for index, row in games_all().iterrows():
+        print('rating processing > ', row['season'], row['week'], row['team'])
+        rating_compute(row)
 
-    #    if index % 100 == 0:
-    #        rating_save_df()
+        if index % 100 == 0:
+            rating_save_df()
 
     rating_save_df()
 
+
+
 def process_games():
-    results = {
-        't': 0,
-        'f': 0,
-    }
+    results = []
 
     for index, row in games_matchups().iterrows():
         if row['week'] > 2 and row['week'] < 16:
             print('analyzing > ', row['season'], row['week'], row['homeTeamDisplay'], row['awayTeamDisplay'])
-            compare = compare_teams(row['season'], row['week'], row['homeTeamDisplay'], row['awayTeamDisplay'])
-            home_stats = compare.iloc[0]
-            away_stats = compare.iloc[1]
+            compare, ratings, stats = compare_teams(row['season'], row['week']-1, row['homeTeamDisplay'], row['awayTeamDisplay'])
 
-            home_expected = home_stats['rating'] > away_stats['rating']
-            home_won = row['homeScore'] > row['awayScore']
-            diff = abs(home_stats['rating'] - away_stats['rating'])
+            t = row.to_dict()
+            t.update({
+                'grade': compare['grade'],
+                'expected': row['homeScore'] > row['awayScore'],
+                'rating': compare['rating'],
+                'stats': compare['stats']
+            })
 
-            if diff < 150:
-                continue
-
-            print(f"results >> {home_stats['rating']} > {away_stats['rating']} >> {row['homeScore']} > {row['awayScore']}")
-            if home_won:
-                if home_expected:
-                    results['t'] += 1
-                else:
-                    results['f'] += 1
-            else:
-                if home_expected:
-                    results['f'] += 1
-                else:
-                    results['t'] += 1
+            results.append(t)
                     
-    acc = results['t'] / (results['t'] + results['f'])
-    print('results: ', results, acc)
+    df = pd.DataFrame(results)
+
+    df.to_parquet(run_parquet_path)
 
 def delta_defense():
     roles1 = delta_defense_compute({
@@ -196,21 +197,26 @@ def calc_baseline():
     print(mean)
 
     qb = {'passAtt': 30, 'passCmp': 20, 'passYds': 220, 'passTd': 2, 'passInt': 0.5}
-    print('>>>> qb >', rating_calculate_off(qb, qb=1, wr=0, rb=0))
+    print('>>>> qb > off', rating_calculate_off(qb, qb=1, wr=0, rb=0))
+    print('>>>> qb > def', rating_calculate_def(qb, qb=1, wr=0, rb=0))
 
-    rb = {'rushAtt': 16, 'rushYds': 60, 'rushTd': 1, 'fumblesLost': 0.5}
-    print('>>>> rb >', rating_calculate_off(rb, qb=0, wr=0, rb=1))
+    rb = {'rushAtt': 16, 'rushYds': 80, 'rushTd': 1, 'fumblesLost': 0.5}
+    print('>>>> rb > off', rating_calculate_off(rb, qb=0, wr=0, rb=1))
+    print('>>>> rb > def', rating_calculate_def(rb, qb=0, wr=0, rb=1))
 
     wr = {'recAtt': 9, 'recCmp': 6, 'recYds': 100, 'recTd': 1, 'fumblesLost': 0.5}
-    print('>>>> wr >', rating_calculate_off(wr, qb=0, wr=1, rb=0))
+    print('>>>> wr > off', rating_calculate_off(wr, qb=0, wr=1, rb=0))
+    print('>>>> wr > def', rating_calculate_def(wr, qb=0, wr=1, rb=0))
 
 if __name__ == "__main__":
     # build_stats()
 
     # build_rating()
 
-    process_games()
-
     # delta_rating()
 
     # calc_baseline()
+
+    # print(compare_teams(2024, 3, 'BAL', 'BUF'))
+
+    process_games()

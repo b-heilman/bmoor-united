@@ -2,7 +2,7 @@ import os
 import pandas as pd
 import pathlib
 
-from .stats import common_fields
+from .common import fields as common_fields
 
 from .offense import offense_role_compute
 
