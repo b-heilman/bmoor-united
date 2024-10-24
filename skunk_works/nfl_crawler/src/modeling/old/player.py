@@ -11,30 +11,13 @@ from .selector import (
 base_dir = str(pathlib.Path(__file__).parent.resolve())
 
 
-def players_prepare_df(df):
-    df["week"] = pd.to_numeric(df["week"])
-    df["played"] = 1
 
-    return df
 
 
 player_df = None
 
 
-# NOTE: This is sorted by season:week in ascending, so pop(0) is recent
-def players_get_df() -> pd.DataFrame:
-    global player_df
 
-    if player_df is None:
-        parquet_path = os.path.abspath(
-            base_dir + "/../../cache/parquet/players.parquet"
-        )
-
-        player_df = players_prepare_df(pd.read_parquet(parquet_path)).sort_values(
-            by=["season", "week"], ascending=False
-        )
-
-    return player_df
 
 
 def player_get_history(season, week, player) -> pd.DataFrame:
