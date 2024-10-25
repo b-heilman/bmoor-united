@@ -153,7 +153,7 @@ def stats_offense(
         else:
             return rtn.reindex(index=base["playerDisplay"].unique()).reset_index()
 
-def player_role_compute(selector: SelectSide):
+def compute_player_usage(selector: SelectSide):
     if selector['side'] == 'def':
         opp = get_opponent(selector)
 
@@ -217,12 +217,12 @@ def player_role_compute(selector: SelectSide):
         return roles_df
 
 player_usage = ComputeAccess(
-    base_dir + "/../../cache/parquet/role_off.parquet",
-    base_dir + "/../../cache/parquet/role_def.parquet",
-    player_role_compute
+    base_dir + "/../../cache/parquet/off_usage.parquet",
+    base_dir + "/../../cache/parquet/def_usage.parquet",
+    compute_player_usage
 )
 
-def player_role_delta_compute(selector: SelectSide):
+def compute_player_usage_delta(selector: SelectSide):
     """
     For every week, calculate the top players by position by attempt
     """
@@ -267,8 +267,8 @@ def player_role_delta_compute(selector: SelectSide):
 
     return delta_df
 
-player_deltas = ComputeAccess(
-    base_dir + "/../../cache/parquet/role_off_delta.parquet",
-    base_dir + "/../../cache/parquet/role_def_delta.parquet",
-    player_role_delta_compute
+player_usage_deltas = ComputeAccess(
+    base_dir + "/../../cache/parquet/off_usage_delta.parquet",
+    base_dir + "/../../cache/parquet/def_usage_delta.parquet",
+    compute_player_usage_delta
 )
