@@ -25,7 +25,7 @@ raw_players = SimpleAccess(
 )
 
 def get_opponent(selector: Select):
-    game = raw_games.access_week(selector)
+    game = raw_games.access_week(selector).iloc[0]
 
     return (game["homeTeamDisplay"]
         if game["homeTeamDisplay"] != selector["team"]

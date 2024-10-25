@@ -2,7 +2,7 @@ import pandas as pd
 import pathlib
 
 from .games import get_opponent, raw_players
-from .common import player_roles, stat_fields, SelectSide, ComputeAccess, Side
+from .common import player_roles, stat_fields, SelectSide, ComputeAccess
 
 base_dir = str(pathlib.Path(__file__).parent.resolve())
 
@@ -32,7 +32,8 @@ def team_sort_by_usage(
     rtn_field: str = "playerDisplay",
     blank_on_fail: bool = False,
 ) -> dict:
-    search = team_df[(team_df["week"] > start)]
+    search = team_df[(team_df["week"] > start)].copy()
+    search['played'] = 1
 
     info = search.groupby(rtn_field).agg({"played": "count", sort_field: "sum"})
 
@@ -153,14 +154,14 @@ def stats_offense(
             return rtn.reindex(index=base["playerDisplay"].unique()).reset_index()
 
 def player_role_compute(selector: SelectSide):
-    if selector['side'] == Side.Def:
+    if selector['side'] == 'def':
         opp = get_opponent(selector)
 
-        return player_roles.access_week({
+        return player_usage.access_week({
             'season': selector['season'],
             'week': selector['week'],
             'team': opp,
-            'side': Side.Off
+            'side': 'off'
         })
     else:
         team_season_df = raw_players.access_history(selector)
@@ -194,7 +195,7 @@ def player_role_compute(selector: SelectSide):
             rest_df = stats_fake(1)
         else:
             rest_df = stats_offense(
-                selector,
+                team_week,
                 top_receivers + top_rushers + top_qbs,
                 include=False,
                 aggregate=True,
@@ -215,8 +216,59 @@ def player_role_compute(selector: SelectSide):
 
         return roles_df
 
-player_roles = ComputeAccess(
+player_usage = ComputeAccess(
     base_dir + "/../../cache/parquet/role_off.parquet",
     base_dir + "/../../cache/parquet/role_def.parquet",
     player_role_compute
+)
+
+def player_role_delta_compute(selector: SelectSide):
+    """
+    For every week, calculate the top players by position by attempt
+    """
+    # get this week
+    this_week_df = player_usage.access_week(selector).set_index("role")[
+        [stat for stat in stat_fields]
+    ]
+    print('????', selector, 'def' if selector['side'] == 'off' else 'off')
+    # get the historical average
+    if selector["week"] == 1:
+        # if we're on week one, we will compare to everyone else
+        history_df = (
+            player_usage.access_across(selector)
+            .groupby("role")
+            .agg({stat: "mean" for stat in stat_fields})
+        )
+    else:
+        opponent = get_opponent(selector)
+
+        history_df = (
+            player_usage.access_history(
+                {
+                    "season": selector["season"],
+                    "week": selector["week"] - 1,
+                    "team": opponent,
+                    "side": 'def' if selector['side'] == 'off' else 'off'
+                }
+            )
+            .groupby("role")
+            .agg({stat: "mean" for stat in stat_fields})
+        )
+
+    # compute the change off of the average for the role
+    delta_df = pd.DataFrame(
+        [this_week_df.loc[role] - history_df.loc[role] for role in player_roles]
+    )
+
+    delta_df["role"] = player_roles
+    delta_df["season"] = selector["season"]
+    delta_df["week"] = selector["week"]
+    delta_df["team"] = selector["team"]
+
+    return delta_df
+
+player_deltas = ComputeAccess(
+    base_dir + "/../../cache/parquet/role_off_delta.parquet",
+    base_dir + "/../../cache/parquet/role_def_delta.parquet",
+    player_role_delta_compute
 )

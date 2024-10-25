@@ -78,12 +78,8 @@ class Select(TypedDict):
     week: int
     team: str
 
-class Side(Enum):
-    Off = 'off'
-    Def = 'def'
-
 class SelectSide(Select):
-    side: Side
+    side: str
 
 def sanitize_selector(selector: Select):
     if selector['team'] in team_alias:
@@ -137,13 +133,21 @@ class ComputeAccess():
         registry.append(self)
 
         self.access = access
-        self.off_df = pd.read_parquet(off_storage_path)
+        try:
+            self.off_df = pd.read_parquet(off_storage_path)
+        except:
+            self.off_df = pd.DataFrame()
+        
+        try:
+            self.def_df = pd.read_parquet(def_storage_path)
+        except:
+            self.def_df = pd.DataFrame()
+
         self.off_storage_path = off_storage_path
-        self.def_df = pd.read_parquet(def_storage_path)
         self.def_storage_path = def_storage_path
 
     def get_frame(self, selector: SelectSide) -> pd.DataFrame:
-        if selector['side'] == Side.Def:
+        if selector['side'] == 'def':
             return self.def_df
         else:
             return self.off_df
@@ -165,7 +169,6 @@ class ComputeAccess():
                 (df["season"] == selector["season"])
                 & (df["week"] == selector["week"])
                 & (df["team"] == selector["team"])
-                & (df["side"] == selector['side'])
             ]
 
             if len(res_df.index) != 0:
@@ -173,7 +176,7 @@ class ComputeAccess():
         
         rtn = self.access(selector)
 
-        if selector['side'] == Side.Def:
+        if selector['side'] == 'def':
             self.def_df = pd.concat([self.def_df, rtn])
         else:
             self.off_df = pd.concat([self.off_df, rtn])

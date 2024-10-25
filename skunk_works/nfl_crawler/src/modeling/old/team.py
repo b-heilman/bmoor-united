@@ -79,77 +79,12 @@ def players_team_history(selector: TeamSelector):
 
 # reduce_by_pos
 # players_filter_by_usage
-def team_filter_by_usage(
-    selector: TeamSelector,
-    gt: str = "recAtt",
-    lt: str = "rushAtt",
-    unique_field: str = "playerDisplay",
-    ignore_field: str = "playerPositionNorm",
-    ignore_values: list[str] = ["qb"],
-) -> pd.DataFrame:
-    df = team_selector_decode(selector)
 
-    usage = df.groupby(unique_field).agg({gt: "sum", lt: "sum", ignore_field: "last"})
-
-    group_df = usage[
-        (usage[gt] > usage[lt]) & ~(usage[ignore_field].isin(ignore_values))
-    ]
-
-    targets = list(group_df.index)
-
-    return df[df[unique_field].isin(targets)]
-
-
-# smart_reduce
-# players_usage
-def team_usage(
-    selector: TeamSelector,
-    week: int,
-    gt: str,
-    lt: str,
-    ignore_values: list[str] = ["qb"],
-) -> pd.DataFrame:
-    # reduce only to available players
-    df = team_filter_by_usage(selector, gt, lt, ignore_values=ignore_values)
-
-    allowed = df[df["week"] == week]["playerDisplay"].unique()
-
-    return df[df["playerDisplay"].isin(allowed)]
 
 
 # get_rank
 # players_sort_by_usage
-def team_sort_by_usage(
-    selector: TeamSelector,
-    start: int = 0,
-    count: int = 3,
-    sort_field: str = "recAtt",
-    rtn_field: str = "playerDisplay",
-    blank_on_fail: bool = False,
-) -> dict:
-    df = team_selector_decode(selector)
 
-    search = df[(df["week"] > start)]
-
-    info = search.groupby(rtn_field).agg({"played": "count", sort_field: "sum"})
-
-    info["att/g"] = info[sort_field] / info["played"]
-
-    info = info.sort_values(by=["att/g"], ascending=False).head(count)
-
-    if len(info.index) == 0:
-        if blank_on_fail or start <= 0:
-            return {}
-        else:
-            return team_sort_by_usage(
-                df, start - 1, count, sort_field, rtn_field, blank_on_fail=True
-            )
-    else:
-        rtn = {}
-        for i in range(min(count, len(info.index))):
-            rtn[info.index[i]] = count - i
-
-        return rtn
 
 
 def _join_rank(base_dict: dict, add_dict: dict) -> dict:
