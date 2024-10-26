@@ -1,6 +1,7 @@
 from modeling.games import raw_games, raw_players
 from modeling.usage import player_usage_deltas
 from modeling.rating import player_rating_deltas
+from modeling.compare import compare_teams
 
 print(raw_games.access_week({'season': 2024, 'week': 4, 'team': 'PHI'}))
 print(raw_players.access_week({'season': 2024, 'week': 4, 'team': 'PHI'}))
@@ -10,3 +11,6 @@ print('def > \n', player_usage_deltas.access_week({'season': 2024, 'week': 4, 't
 
 print('off > \n', player_rating_deltas.access_week({'season': 2024, 'week': 4, 'team': 'PHI', 'side': 'off'}).reset_index())
 print('def > \n', player_rating_deltas.access_week({'season': 2024, 'week': 4, 'team': 'PHI', 'side': 'def'}).reset_index())
+
+# print('>>>>\n', compare_teams(2024, 5, 'PHI', 'WSH'))
+print('>>>>\n', compare_teams(2024, 4, 'PHI', 'WSH'))

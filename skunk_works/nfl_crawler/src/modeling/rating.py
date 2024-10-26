@@ -187,36 +187,6 @@ def calculate_def_rest_rating(player_row) -> float:
     return calculate_def_rating(player_row, qb=0.1, rb=0.45, wr=0.45)
 
 
-rating_df = None
-rating_parquet_path = os.path.abspath(base_dir + "/../../cache/parquet/rating.parquet")
-
-
-def rating_get_df() -> pd.DataFrame:
-    global rating_df
-
-    if rating_df is None:
-        if os.path.exists(rating_parquet_path):
-            rating_df = pd.read_parquet(rating_parquet_path)
-        else:
-            rating_df = pd.DataFrame()
-
-    return rating_df
-
-
-def rating_add_df(add_df):
-    global rating_df
-
-    rating_df = pd.concat([rating_df, add_df])
-
-
-def rating_save_df():
-    global rating_df
-
-    rating_df.reset_index(inplace=True, drop=True)
-
-    rating_df.to_parquet(rating_parquet_path)
-
-
 def rating_def_compute(indexed_defense_df) -> list[dict]:
     return [
         {
@@ -311,7 +281,7 @@ def compute_rating(selector: SelectSide):
 
     return df
 
-player_rating = ComputeAccess(
+player_ratings = ComputeAccess(
     base_dir + "/../../cache/parquet/off_rating.parquet",
     base_dir + "/../../cache/parquet/def_rating.parquet",
     compute_rating
@@ -330,7 +300,7 @@ def compute_rating_diff(selector: SelectSide):
 
     if selector["week"] == 1:
         self_history_df = (
-            player_rating.access_across(selector)
+            player_ratings.access_across(selector)
             .groupby(["role"])
             .mean()
             .reset_index()
@@ -338,7 +308,7 @@ def compute_rating_diff(selector: SelectSide):
         )
 
         opp_history_df = (
-            player_rating.access_across({
+            player_ratings.access_across({
                 'season': selector['season'],
                 'week': selector['week'],
                 'team': opponent,
@@ -351,7 +321,7 @@ def compute_rating_diff(selector: SelectSide):
         )
     else:
         self_history_df = (
-            player_rating.access_history(
+            player_ratings.access_history(
                 {
                     "season": selector["season"],
                     "week": selector["week"],
@@ -366,7 +336,7 @@ def compute_rating_diff(selector: SelectSide):
         )
 
         opp_history_df = (
-            player_rating.access_across({
+            player_ratings.access_across({
                 'season': selector['season'],
                 'week': selector['week'],
                 'team': opponent,
