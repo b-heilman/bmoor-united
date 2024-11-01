@@ -6,6 +6,7 @@ from .common import player_roles, stat_fields, SelectSide, ComputeAccess
 
 base_dir = str(pathlib.Path(__file__).parent.resolve())
 
+
 def team_filter_by_usage(
     team_df: pd.DataFrame,
     gt: str = "recAtt",
@@ -14,7 +15,9 @@ def team_filter_by_usage(
     ignore_field: str = "playerPositionNorm",
     ignore_values: list[str] = ["qb"],
 ) -> pd.DataFrame:
-    usage = team_df.groupby(unique_field).agg({gt: "sum", lt: "sum", ignore_field: "last"})
+    usage = team_df.groupby(unique_field).agg(
+        {gt: "sum", lt: "sum", ignore_field: "last"}
+    )
 
     group_df = usage[
         (usage[gt] > usage[lt]) & ~(usage[ignore_field].isin(ignore_values))
@@ -23,6 +26,7 @@ def team_filter_by_usage(
     targets = list(group_df.index)
 
     return team_df[team_df[unique_field].isin(targets)]
+
 
 def team_sort_by_usage(
     team_df: pd.DataFrame,
@@ -33,7 +37,7 @@ def team_sort_by_usage(
     blank_on_fail: bool = False,
 ) -> dict:
     search = team_df[(team_df["week"] > start)].copy()
-    search['played'] = 1
+    search["played"] = 1
 
     info = search.groupby(rtn_field).agg({"played": "count", sort_field: "sum"})
 
@@ -54,7 +58,8 @@ def team_sort_by_usage(
             rtn[info.index[i]] = count - i
 
         return rtn
-    
+
+
 def team_usage(
     team_df: pd.DataFrame,
     week: int,
@@ -69,6 +74,7 @@ def team_usage(
 
     return usage_df[usage_df["playerDisplay"].isin(allowed)]
 
+
 def stats_sort_recievers(team_df: pd.DataFrame, week: int, count=3) -> list[str]:
     """
     Return back embeddings representing receivers
@@ -81,6 +87,7 @@ def stats_sort_recievers(team_df: pd.DataFrame, week: int, count=3) -> list[str]
             reduced_df, week, count, sort_field="recAtt", rtn_field="playerDisplay"
         ).keys()
     )
+
 
 def stats_sort_rushers(team_df: pd.DataFrame, week: int, count=2) -> list[str]:
     """
@@ -109,8 +116,10 @@ def stats_sort_quarterback(team_df: pd.DataFrame, week: int, count=1) -> list[st
         ).keys()
     )
 
+
 stats_fake_display = "--fake--"
 stats_rest_display = "aggregate"
+
 
 # get_blank_stats
 def stats_fake(count: int) -> pd.DataFrame:
@@ -144,28 +153,29 @@ def stats_offense(
 
         return rtn.set_index("playerDisplay").reset_index()
     else:
-        rtn = base.groupby("playerDisplay").agg(
-            {stat: "mean" for stat in stat_fields}
-        )
+        rtn = base.groupby("playerDisplay").agg({stat: "mean" for stat in stat_fields})
 
         if include:
             return rtn.reindex(index=players).reset_index()
         else:
             return rtn.reindex(index=base["playerDisplay"].unique()).reset_index()
 
+
 def compute_player_usage(selector: SelectSide):
-    if selector['side'] == 'def':
+    if selector["side"] == "def":
         opp = get_opponent(selector)
 
-        return player_usage.access_week({
-            'season': selector['season'],
-            'week': selector['week'],
-            'team': opp,
-            'side': 'off'
-        })
+        return player_usage.access_week(
+            {
+                "season": selector["season"],
+                "week": selector["week"],
+                "team": opp,
+                "side": "off",
+            }
+        ).copy()
     else:
         team_season_df = raw_players.access_history(selector)
-        team_week = team_season_df[team_season_df['week'] == selector['week']]
+        team_week = team_season_df[team_season_df["week"] == selector["week"]]
         week = selector["week"]
 
         top_receivers = stats_sort_recievers(team_season_df, week, 3)
@@ -210,27 +220,40 @@ def compute_player_usage(selector: SelectSide):
         roles_df = pd.concat([stats_df, rest_df])
 
         roles_df["role"] = player_roles
-        roles_df["season"] = selector["season"]
-        roles_df["week"] = week
-        roles_df["team"] = selector["team"]
 
         return roles_df
+
 
 player_usage = ComputeAccess(
     base_dir + "/../../cache/parquet/off_usage.parquet",
     base_dir + "/../../cache/parquet/def_usage.parquet",
-    compute_player_usage
+    compute_player_usage,
 )
+
 
 def compute_player_usage_delta(selector: SelectSide):
     """
     For every week, calculate the top players by position by attempt
     """
     # get this week
-    this_week_df = player_usage.access_week(selector).set_index("role")[
+    this_week_df = player_usage.access_week(selector)
+    
+    if len(this_week_df.index) == 0:
+        # We are asking for a week that isn't needed
+        return pd.DataFrame()
+    
+    indexed_week_df = this_week_df.set_index("role")[
         [stat for stat in stat_fields]
     ]
-    print('????', selector, 'def' if selector['side'] == 'off' else 'off')
+    
+    if len(player_roles) != len(indexed_week_df.index):
+        player_usage.save()
+        print('>>>> usage - debug', selector)
+        print(indexed_week_df)
+        print('? sanity')
+        print(player_usage.access_week(selector))
+        raise Exception('>>>> usage - access_week - conflict of roles -> '+str(selector))
+    
     # get the historical average
     if selector["week"] == 1:
         # if we're on week one, we will compare to everyone else
@@ -248,7 +271,7 @@ def compute_player_usage_delta(selector: SelectSide):
                     "season": selector["season"],
                     "week": selector["week"] - 1,
                     "team": opponent,
-                    "side": 'def' if selector['side'] == 'off' else 'off'
+                    "side": "def" if selector["side"] == "off" else "off",
                 }
             )
             .groupby("role")
@@ -256,19 +279,23 @@ def compute_player_usage_delta(selector: SelectSide):
         )
 
     # compute the change off of the average for the role
-    delta_df = pd.DataFrame(
-        [this_week_df.loc[role] - history_df.loc[role] for role in player_roles]
-    )
+    try:
+        delta_df = pd.DataFrame(
+            [indexed_week_df.loc[role] - history_df.loc[role] for role in player_roles]
+        )
+    except Exception as ex:
+        print('>>>> usage - frames -> failed on: '+str(selector))
+        print(indexed_week_df)
+        print(history_df)
+        raise ex
 
     delta_df["role"] = player_roles
-    delta_df["season"] = selector["season"]
-    delta_df["week"] = selector["week"]
-    delta_df["team"] = selector["team"]
 
     return delta_df
+
 
 player_usage_deltas = ComputeAccess(
     base_dir + "/../../cache/parquet/off_usage_delta.parquet",
     base_dir + "/../../cache/parquet/def_usage_delta.parquet",
-    compute_player_usage_delta
+    compute_player_usage_delta,
 )

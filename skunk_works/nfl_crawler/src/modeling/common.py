@@ -1,6 +1,7 @@
+import os
 import pandas as pd
+import traceback
 
-from enum import Enum 
 from typing import Callable, TypedDict, Any
 
 team_alias = {
@@ -73,23 +74,29 @@ stat_fields = [
     "fumblesLost",
 ]
 
+
 class Select(TypedDict):
     season: int
     week: int
     team: str
 
+
 class SelectSide(Select):
     side: str
 
-def sanitize_selector(selector: Select):
-    if selector['team'] in team_alias:
-        selector['team'] = team_alias[selector['team']]
 
-class SimpleAccess():
-    def __init__(self, 
-        storage_path: str, 
-        clean_up = None, 
-        team_filter: Callable[[pd.DataFrame, str], Any] = lambda df, s: df['team'] == s['team']
+def sanitize_selector(selector: Select):
+    if selector["team"] in team_alias:
+        selector["team"] = team_alias[selector["team"]]
+
+
+class SimpleAccess:
+    def __init__(
+        self,
+        storage_path: str,
+        clean_up=None,
+        team_filter: Callable[[pd.DataFrame, Select], Any] = lambda df, s: df["team"]
+        == s["team"],
     ):
         self.df = pd.read_parquet(storage_path).sort_values(
             by=["season", "week"], ascending=False
@@ -99,7 +106,10 @@ class SimpleAccess():
         if clean_up is not None:
             clean_up(self.df)
 
-    def access_week(self, selector: Select) -> pd.Series:
+    def get_frame(self) -> pd.DataFrame:
+        return self.df
+    
+    def access_week(self, selector: Select) -> pd.DataFrame:
         sanitize_selector(selector)
 
         return self.df[
@@ -107,7 +117,7 @@ class SimpleAccess():
             & (self.df["week"] == selector["week"])
             & self.team_filter(self.df, selector)
         ]
-    
+
     def access_history(self, selector: Select) -> pd.DataFrame:
         sanitize_selector(selector)
 
@@ -117,19 +127,33 @@ class SimpleAccess():
             & self.team_filter(self.df, selector)
         ]
 
-registry = []
+
+registry: list = []
+
 
 def save_state():
     for reg in registry:
         reg.save()
 
-class ComputeAccess():
+class NoOpponent(Exception):
+    pass
+
+import io
+def capture_traceback():
+    f = io.StringIO()
+    traceback.print_stack(file=f)
+    return f.getvalue()
+
+class ComputeAccess:
     def __init__(
         self,
         off_storage_path: str,
         def_storage_path: str,
-        access: Callable[[SelectSide], pd.DataFrame]
+        access: Callable[[SelectSide], pd.DataFrame],
     ):
+        off_storage_path = os.path.abspath(off_storage_path)
+        def_storage_path = os.path.abspath(def_storage_path)
+
         registry.append(self)
 
         self.access = access
@@ -137,21 +161,21 @@ class ComputeAccess():
             self.off_df = pd.read_parquet(off_storage_path)
         except:
             self.off_df = pd.DataFrame()
-        
+
         try:
             self.def_df = pd.read_parquet(def_storage_path)
         except:
             self.def_df = pd.DataFrame()
 
-        self.off_storage_path = off_storage_path
-        self.def_storage_path = def_storage_path
+        self.off_storage_path = os.path.abspath(off_storage_path)
+        self.def_storage_path = os.path.abspath(def_storage_path)
 
     def get_frame(self, selector: SelectSide) -> pd.DataFrame:
-        if selector['side'] == 'def':
+        if selector["side"] == "def":
             return self.def_df
         else:
             return self.off_df
-        
+
     def save(self):
         self.off_df.reset_index(inplace=True, drop=True)
         self.off_df.to_parquet(self.off_storage_path)
@@ -165,6 +189,7 @@ class ComputeAccess():
         df = self.get_frame(selector)
 
         if len(df.index) > 0:
+
             res_df = df[
                 (df["season"] == selector["season"])
                 & (df["week"] == selector["week"])
@@ -173,46 +198,56 @@ class ComputeAccess():
 
             if len(res_df.index) != 0:
                 return res_df
-        
-        rtn = self.access(selector)
 
-        if selector['side'] == 'def':
-            self.def_df = pd.concat([self.def_df, rtn])
-        else:
-            self.off_df = pd.concat([self.off_df, rtn])
+        try:
+            rtn = self.access(selector)
+
+            rtn['season'] = selector['season']
+            rtn['week'] = selector['week']
+            rtn['team'] = selector['team']
+                
+            if selector["side"] == "def":
+                self.def_df = pd.concat([self.def_df, rtn])
+            else:
+                self.off_df = pd.concat([self.off_df, rtn])
+        except NoOpponent as ex:
+            rtn = pd.DataFrame()
 
         return rtn
-    
+
     def access_history(self, selector: SelectSide) -> pd.DataFrame:
         sanitize_selector(selector)
-        
+
         return pd.concat(
             [
-                self.access_week({
-                    "season": selector["season"], 
-                    "week": w, 
-                    "team": selector["team"], 
-                    "side": selector['side']
-                })
+                self.access_week(
+                    {
+                        "season": selector["season"],
+                        "week": w,
+                        "team": selector["team"],
+                        "side": selector["side"],
+                    }
+                )
                 for w in range(selector["week"], 0, -1)
             ]
         )
-    
+
     def access_across(self, selector: SelectSide) -> pd.DataFrame:
         sanitize_selector(selector)
-        
+
         todo = list(set(team_alias.values()))
-        todo.remove(selector['team'])
+        todo.remove(selector["team"])
 
         return pd.concat(
             [
-                self.access_week({
-                    "season": selector["season"], 
-                    "week": selector["week"], 
-                    "team": t, 
-                    "side": selector['side']
-                })
+                self.access_week(
+                    {
+                        "season": selector["season"],
+                        "week": selector["week"],
+                        "team": t,
+                        "side": selector["side"],
+                    }
+                )
                 for t in todo
             ]
         )
-        
