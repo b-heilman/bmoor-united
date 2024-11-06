@@ -5,32 +5,32 @@ import {QueryExpressionTokenOperation} from '../token/operation';
 const isOperator = /\+|-|\*|\/|\^|\||&|=|~|<|>|!/;
 
 export class QueryExpressionPatternOperation extends Pattern {
-    // +
-    open(str, pos) {
-        const ch = str[pos];
+	// +
+	open(str, pos) {
+		const ch = str[pos];
 
-        if (isOperator.test(ch)) {
-            return new TokenizerState(pos);
-        }
+		if (isOperator.test(ch)) {
+			return new TokenizerState(pos);
+		}
 
-        return null;
-    }
+		return null;
+	}
 
-    close(str, pos, state: TokenizerState) {
-        const ch = str[pos];
+	close(str, pos) {
+		const ch = str[pos];
 
-        if (!isOperator.test(ch)) {
-            return pos;
-        }
+		if (!isOperator.test(ch)) {
+			return pos;
+		}
 
-        return null;
-    }
+		return null;
+	}
 
-    toToken(content: string, state: TokenizerState) {
-        return new QueryExpressionTokenOperation(
-            content,
-            state
-            /*, {series}*/
-        );
-    }
+	toToken(content: string, state: TokenizerState) {
+		return new QueryExpressionTokenOperation(
+			content,
+			state,
+			/*, {series}*/
+		);
+	}
 }

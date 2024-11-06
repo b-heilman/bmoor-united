@@ -1,36 +1,49 @@
-import { SchemaReference } from "@bmoor/schema";
-import { RequestField, RequestJoin, RequestJoinMapping, RequestSelect, RequestWhereCondition, RequestWhereConditionJoin, RequestWhereExpression } from "../request.interface";
+import {SchemaReference} from '@bmoor/schema';
+
+import {
+	RequestField,
+	RequestJoin,
+	RequestJoinMapping,
+	RequestSelect,
+	RequestWhereCondition,
+	RequestWhereConditionJoin,
+	RequestWhereExpression,
+} from '../request.interface';
 
 export type QueryStatementSeriesReference = string;
 
 export interface QueryStatementInterface {
-    addModel(
-        name: SchemaReference,
+	addModel(
+		name: SchemaReference,
 		settings?: {
-			series?: QueryStatementSeriesReference,
-			fields?: RequestField[],
-			joins?: RequestJoin[],
-		}
+			series?: QueryStatementSeriesReference;
+			fields?: RequestField[];
+			joins?: RequestJoin[];
+		},
 	): QueryStatementInterface;
 
-    addField(series: QueryStatementSeriesReference, path: string, as?: string): QueryStatementInterface;
+	addField(
+		series: QueryStatementSeriesReference,
+		path: string,
+		as?: string,
+	): QueryStatementInterface;
 
-    addModelJoin(
+	addModelJoin(
 		fromSeries: QueryStatementSeriesReference,
 		toSeries: QueryStatementSeriesReference,
 		mappings: RequestJoinMapping[],
 		optional?: boolean,
 	): QueryStatementInterface;
 
-    setWhere(where: RequestWhereExpression): QueryStatementInterface;
+	setWhere(where: RequestWhereExpression): QueryStatementInterface;
 
 	setWhereJoin(join: RequestWhereConditionJoin): QueryStatementInterface;
 
 	addCondition(cond: RequestWhereCondition): QueryStatementInterface;
 
-    getSelect(): RequestSelect;
+	getSelect(): RequestSelect;
 
-    getWhere(): RequestWhereExpression;
+	getWhere(): RequestWhereExpression;
 
-    validate(): string[];
+	validate(): string[];
 }

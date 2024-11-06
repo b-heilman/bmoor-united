@@ -16,16 +16,16 @@ describe('schema/statement/compiler', function () {
 					path: 'foo',
 					operation: '=',
 					value: true,
-					settings: {}
+					settings: {},
 				},
 				{
 					series: 'drei_fier',
 					path: 'bar',
 					operation: '!=',
 					value: false,
-					settings: {}
-				}
-			]
+					settings: {},
+				},
+			],
 		});
 	});
 
@@ -42,16 +42,16 @@ describe('schema/statement/compiler', function () {
 					path: 'foo',
 					operation: '=',
 					value: 123,
-					settings: {}
+					settings: {},
 				},
 				{
 					series: 'drei_fier',
 					path: 'bar',
 					operation: '<',
 					value: 123.4,
-					settings: {}
-				}
-			]
+					settings: {},
+				},
+			],
 		});
 	});
 
@@ -71,25 +71,25 @@ describe('schema/statement/compiler', function () {
 							path: 'bar',
 							operation: '=',
 							value: 'abc',
-							settings: {}
+							settings: {},
 						},
 						{
 							series: 'foo',
 							path: 'bar2',
 							operation: '=',
 							value: 123,
-							settings: {}
-						}
-					]
+							settings: {},
+						},
+					],
 				},
 				{
 					series: 'hello',
 					path: 'world',
 					operation: '<',
 					value: 2.3,
-					settings: {}
-				}
-			]
+					settings: {},
+				},
+			],
 		});
 	});
 
@@ -109,16 +109,16 @@ describe('schema/statement/compiler', function () {
 							path: 'bar',
 							operation: '=',
 							value: 'abc',
-							settings: {}
+							settings: {},
 						},
 						{
 							series: 'foo',
 							path: 'bar2',
 							operation: '=',
 							value: 123,
-							settings: {}
-						}
-					]
+							settings: {},
+						},
+					],
 				},
 				{
 					join: 'and',
@@ -128,18 +128,18 @@ describe('schema/statement/compiler', function () {
 							path: 'world',
 							operation: '<',
 							value: 2.3,
-							settings: {}
+							settings: {},
 						},
 						{
 							series: 'foo',
 							path: 'dur',
 							operation: '=',
 							value: 'ok',
-							settings: {}
-						}
-					]
-				}
-			]
+							settings: {},
+						},
+					],
+				},
+			],
 		});
 	});
 
@@ -156,7 +156,7 @@ describe('schema/statement/compiler', function () {
 					path: 'bar',
 					operation: '=',
 					value: 'abc',
-					settings: {}
+					settings: {},
 				},
 				{
 					join: 'or',
@@ -166,32 +166,32 @@ describe('schema/statement/compiler', function () {
 							path: 'bar2',
 							operation: '=',
 							value: 123,
-							settings: {}
+							settings: {},
 						},
 						{
 							series: 'hell',
 							path: 'world',
 							operation: '<',
 							value: 2.3,
-							settings: {}
-						}
-					]
+							settings: {},
+						},
+					],
 				},
 				{
 					series: 'foo',
 					path: 'dur',
 					operation: '=',
 					value: 'ok',
-					settings: {}
-				}
-			]
+					settings: {},
+				},
+			],
 		});
 	});
 
 	it('should work with an array', function () {
 		//TODO: is someone puts a ] in the search, it goes boom...
 		const exp = sut.buildExpression(
-			'$foo.bar = ["abc", 123 ]' // abc[] goes boom
+			'$foo.bar = ["abc", 123 ]', // abc[] goes boom
 		);
 
 		expect(exp.toJSON()).to.deep.equal({
@@ -202,9 +202,9 @@ describe('schema/statement/compiler', function () {
 					path: 'bar',
 					operation: '=',
 					value: ['abc', 123],
-					settings: {}
-				}
-			]
+					settings: {},
+				},
+			],
 		});
 	});
 });

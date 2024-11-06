@@ -6,7 +6,7 @@ import {
 	prepareQuery,
 	prepareUpdate,
 } from './sql.js';
-import { QueryStatement } from './statement.js';
+import {QueryStatement} from './statement.js';
 
 describe('@bmoor-modeling::query/sql', function () {
 	describe('::prepareInsert', function () {
@@ -182,9 +182,9 @@ describe('@bmoor-modeling::query/sql', function () {
 					{
 						path: 'json',
 					},
-				]
+				],
 			});
-			
+
 			stmt.addCondition({
 				series: 'model-1',
 				path: 'id',

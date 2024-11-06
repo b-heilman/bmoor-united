@@ -6,47 +6,47 @@ const isQuote = /"|'|`/;
 const escapeChar = '\\';
 
 export class QueryExpressionPatternString extends Pattern {
-    // (...)
-    open(str, pos) {
-        const ch = str[pos];
-        const last = str[pos-1];
+	// (...)
+	open(str, pos) {
+		const ch = str[pos];
+		const last = str[pos - 1];
 
-        if (last !== escapeChar && isQuote.test(ch)) {
-            const state = new TokenizerState(pos);
+		if (last !== escapeChar && isQuote.test(ch)) {
+			const state = new TokenizerState(pos);
 
-            state.setVariable('quote', ch);
-            
-            return state;
-        }
+			state.setVariable('quote', ch);
 
-        return null;
-    }
+			return state;
+		}
 
-    close(str, pos, state: TokenizerState) {
-        const ch = str[pos];
-        const last = str[pos-1];
-        const quote = state.getVariable('quote');
+		return null;
+	}
 
-        if (ch === quote && last !== escapeChar) {
-            return pos;
-        }
+	close(str, pos, state: TokenizerState) {
+		const ch = str[pos];
+		const last = str[pos - 1];
+		const quote = state.getVariable('quote');
 
-        return null;
-    }
+		if (ch === quote && last !== escapeChar) {
+			return pos;
+		}
 
-    toToken(content: string, state: TokenizerState) {
-        content = content.substring(1, content.length - 1);
-        const quote = <string>state.getVariable('quote');
+		return null;
+	}
 
-        const escape =
-				escapeChar === '\\' ? '\\\\' + quote : escapeChar + quote;
+	toToken(content: string, state: TokenizerState) {
+		content = content.substring(1, content.length - 1);
+		const quote = <string>state.getVariable('quote');
 
-        const value = content.replace(new RegExp(escape, 'g'), quote);
+		const escape =
+			escapeChar === '\\' ? '\\\\' + quote : escapeChar + quote;
 
-        return new QueryExpressionTokenConstant(
-            value, 
-            state
-            /*, {series}*/
-        );
-    }
+		const value = content.replace(new RegExp(escape, 'g'), quote);
+
+		return new QueryExpressionTokenConstant(
+			value,
+			state,
+			/*, {series}*/
+		);
+	}
 }

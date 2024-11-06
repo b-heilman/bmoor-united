@@ -10,9 +10,12 @@ import {
 	RequestWhereConditionJoin,
 	RequestWhereExpression,
 } from '../request.interface';
-import { QueryStatementInterface, QueryStatementSeriesReference } from './statement.interface';
+import {
+	QueryStatementInterface,
+	QueryStatementSeriesReference,
+} from './statement.interface';
 
-export class QueryStatement implements QueryStatementInterface{
+export class QueryStatement implements QueryStatementInterface {
 	refs: Record<string, RequestSeries>;
 	select: RequestSelect;
 	where: RequestWhereExpression;
@@ -20,10 +23,10 @@ export class QueryStatement implements QueryStatementInterface{
 	constructor(
 		base: SchemaReference,
 		settings?: {
-            series?: QueryStatementSeriesReference,
-            fields?: RequestField[],
-            joins?: RequestJoin[],
-        }
+			series?: QueryStatementSeriesReference;
+			fields?: RequestField[];
+			joins?: RequestJoin[];
+		},
 	) {
 		this.refs = {};
 		this.select = {
@@ -39,31 +42,31 @@ export class QueryStatement implements QueryStatementInterface{
 
 	addModel(
 		name: SchemaReference,
-        settings?: {
-            series?: QueryStatementSeriesReference,
-            fields?: RequestField[],
-            joins?: RequestJoin[],
-        }
+		settings?: {
+			series?: QueryStatementSeriesReference;
+			fields?: RequestField[];
+			joins?: RequestJoin[];
+		},
 	) {
-        let series = name;
-        let fields = [];
-        let joins = [];
+		let series = name;
+		let fields = [];
+		let joins = [];
 
-        if (!settings){
-            settings = {series: name, fields: [], joins: []}
-        }
+		if (!settings) {
+			settings = {series: name, fields: [], joins: []};
+		}
 
-		if (settings.series){
-            series = settings.series;
-        }
+		if (settings.series) {
+			series = settings.series;
+		}
 
-        if (settings.fields){
-            fields = settings.fields;
-        }
+		if (settings.fields) {
+			fields = settings.fields;
+		}
 
-        if (settings.joins){
-            joins = settings.joins;
-        }
+		if (settings.joins) {
+			joins = settings.joins;
+		}
 
 		if (this.refs[series]) {
 			throw new Error('Duplicate series added');
@@ -83,7 +86,11 @@ export class QueryStatement implements QueryStatementInterface{
 		return this;
 	}
 
-	addField(series: QueryStatementSeriesReference, path: string, as?: string) {
+	addField(
+		series: QueryStatementSeriesReference,
+		path: string,
+		as?: string,
+	) {
 		this.refs[series].fields.push({
 			as,
 			path,
@@ -125,40 +132,41 @@ export class QueryStatement implements QueryStatementInterface{
 		return this;
 	}
 
-    getSelect(): RequestSelect {
-        return this.select;
-    }
+	getSelect(): RequestSelect {
+		return this.select;
+	}
 
-    getWhere(): RequestWhereExpression {
-        return this.where;
-    }
+	getWhere(): RequestWhereExpression {
+		return this.where;
+	}
 
-    validate(): string[] {
-        const keys = Object.keys(this.refs);
+	validate(): string[] {
+		const keys = Object.keys(this.refs);
 
-        if (keys.length === 1){
-            return [];
-        }
+		if (keys.length === 1) {
+			return [];
+		}
 
-        const joined = keys.reduce((agg, ref) => {
-            const seriesInfo = this.refs[ref];
+		const joined = keys.reduce((agg, ref) => {
+			const seriesInfo = this.refs[ref];
 
-            if (seriesInfo.joins.length){
-                agg[ref] = true;
+			if (seriesInfo.joins.length) {
+				agg[ref] = true;
 
-                seriesInfo.joins.forEach(rJoin => {
-                    agg[rJoin.toSeries] = true;
-                });
-            } else if (!(ref in agg)){
-                agg[ref] = false;
-            }
-            
-            return agg;
-        }, {});
+				seriesInfo.joins.forEach((rJoin) => {
+					agg[rJoin.toSeries] = true;
+				});
+			} else if (!(ref in agg)) {
+				agg[ref] = false;
+			}
 
-        console.log(joined);
+			return agg;
+		}, {});
 
-        return Object.keys(joined).filter(ref => !joined[ref])
-            .map(ref => `Series ${ref} is detached`);
-    }
+		console.log(joined);
+
+		return Object.keys(joined)
+			.filter((ref) => !joined[ref])
+			.map((ref) => `Series ${ref} is detached`);
+	}
 }

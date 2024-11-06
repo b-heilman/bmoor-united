@@ -4,68 +4,68 @@ import {QueryExpressionTokenBlock} from '../token/block';
 import {QueryExpressionTokenConstant} from '../token/constant';
 
 export class QueryExpressionPatternBlock extends Pattern {
-    // (...)
-    open(str, pos) {
-        const ch = str[pos];
+	// (...)
+	open(str, pos) {
+		const ch = str[pos];
 
-        if ( ch === '(') {
-            const state = new TokenizerState(pos + 1);
+		if (ch === '(') {
+			const state = new TokenizerState(pos + 1);
 
-            state.setVariable('count', 1);
-            state.setVariable('char', '(');
-            state.setVariable('end', ')');
+			state.setVariable('count', 1);
+			state.setVariable('char', '(');
+			state.setVariable('end', ')');
 
-            return state;
-        } else if (ch === '[') {
-            const state = new TokenizerState(pos + 1);
+			return state;
+		} else if (ch === '[') {
+			const state = new TokenizerState(pos + 1);
 
-            state.setVariable('count', 1);
-            state.setVariable('char', '[');
-            state.setVariable('end', ']');
+			state.setVariable('count', 1);
+			state.setVariable('char', '[');
+			state.setVariable('end', ']');
 
-            return state;
-        }
+			return state;
+		}
 
-        return null;
-    }
+		return null;
+	}
 
-    close(str, pos, state: TokenizerState) {
-        const ch = str[pos];
-        const char = state.getVariable('char');
-        const end = state.getVariable('end');
+	close(str, pos, state: TokenizerState) {
+		const ch = str[pos];
+		const char = state.getVariable('char');
+		const end = state.getVariable('end');
 
-        let count = <number>state.getVariable('count');
+		let count = <number>state.getVariable('count');
 
-        if (ch === char) {
-            state.setVariable('count', count+1);
-        } else if (ch === end) {
-            count--;
+		if (ch === char) {
+			state.setVariable('count', count + 1);
+		} else if (ch === end) {
+			count--;
 
-            if (count === 0) {
-                return pos - 1;
-            } else {
-                state.setVariable('count', count);
-            }
-        }
+			if (count === 0) {
+				return pos - 1;
+			} else {
+				state.setVariable('count', count);
+			}
+		}
 
-        return null;
-    }
+		return null;
+	}
 
-    toToken(content: string, state: TokenizerState) {
-        if (state.getVariable('char') === '('){
-            return new QueryExpressionTokenBlock(
-                content, 
-                state
-                /*, {series}*/
-            );
-        } else {
-            const value = JSON.parse(content);
+	toToken(content: string, state: TokenizerState) {
+		if (state.getVariable('char') === '(') {
+			return new QueryExpressionTokenBlock(
+				content,
+				state,
+				/*, {series}*/
+			);
+		} else {
+			const value = JSON.parse(content);
 
-            return new QueryExpressionTokenConstant(
-                value, 
-                state
-                /*, {series}*/
-            );
-        }
-    }
+			return new QueryExpressionTokenConstant(
+				value,
+				state,
+				/*, {series}*/
+			);
+		}
+	}
 }

@@ -1,25 +1,25 @@
-import { Compiler } from '@bmoor/compiler';
+import {Compiler} from '@bmoor/compiler';
 
-import { QueryExpressionPatternReference } from './expression/pattern/reference';
-import { QueryExpressionPatternAccessor } from './expression/pattern/accessor';
-import { QueryExpressionPatternBlock } from './expression/pattern/block';
-import { QueryExpressionPatternNumber } from './expression/pattern/number';
-import { QueryExpressionPatternString } from './expression/pattern/string';
-import { QueryExpressionPatternOperation } from './expression/pattern/operation';
-import { QueryExpressionPatternVariable } from './expression/pattern/variable';
+import {QueryExpressionPatternAccessor} from './expression/pattern/accessor';
+import {QueryExpressionPatternBlock} from './expression/pattern/block';
+import {QueryExpressionPatternNumber} from './expression/pattern/number';
+import {QueryExpressionPatternOperation} from './expression/pattern/operation';
+import {QueryExpressionPatternReference} from './expression/pattern/reference';
+import {QueryExpressionPatternString} from './expression/pattern/string';
+import {QueryExpressionPatternVariable} from './expression/pattern/variable';
 
 // REFERENCE: @bmoor/path.parser
 export class Parser extends Compiler {
 	constructor() {
 		super({
 			tokenizer: [
-				new QueryExpressionPatternReference(), 
+				new QueryExpressionPatternReference(),
 				new QueryExpressionPatternAccessor(),
-				new QueryExpressionPatternBlock(), 
+				new QueryExpressionPatternBlock(),
 				new QueryExpressionPatternNumber(),
-				new QueryExpressionPatternString(), 
+				new QueryExpressionPatternString(),
 				new QueryExpressionPatternOperation(),
-				new QueryExpressionPatternVariable()
+				new QueryExpressionPatternVariable(),
 			],
 			reducer: [],
 		});

@@ -14,8 +14,7 @@ import {
 	SqlSelectResponse,
 	SqlWhereResponse,
 } from './sql.interface';
-import { QueryStatement } from './statement';
-import { QueryStatementInterface } from './statement.interface';
+import {QueryStatementInterface} from './statement.interface';
 
 export function translateExpressable(
 	expression: RequestWhereExpression,
@@ -158,11 +157,13 @@ export function translateSelect(stmt: RequestSelect): SqlSelectResponse {
 	};
 }
 
-export function prepareQuery(stmt: RequestRead | QueryStatementInterface): SqlPrepared {
-	if ('getSelect' in stmt){
+export function prepareQuery(
+	stmt: RequestRead | QueryStatementInterface,
+): SqlPrepared {
+	if ('getSelect' in stmt) {
 		stmt = {
 			select: stmt.getSelect(),
-			where: stmt.getWhere()
+			where: stmt.getWhere(),
 		};
 	}
 
