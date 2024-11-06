@@ -254,8 +254,10 @@ def compute_player_usage_delta(selector: SelectSide):
         print(player_usage.access_week(selector))
         raise Exception('>>>> usage - access_week - conflict of roles -> '+str(selector))
     
+    
     # get the historical average
     if selector["week"] == 1:
+        print('using across')
         # if we're on week one, we will compare to everyone else
         history_df = (
             player_usage.access_across(selector)
@@ -264,7 +266,6 @@ def compute_player_usage_delta(selector: SelectSide):
         )
     else:
         opponent = get_opponent(selector)
-
         history_df = (
             player_usage.access_history(
                 {
@@ -290,6 +291,14 @@ def compute_player_usage_delta(selector: SelectSide):
         raise ex
 
     delta_df["role"] = player_roles
+    delta_df.set_index("role", inplace=True)
+
+    full_index = this_week_df.set_index("role")
+    delta_df["playerDisplay"] = [
+        full_index.loc[role]['playerDisplay'] for role in player_roles
+    ]
+
+    delta_df.reset_index(inplace=True)
 
     return delta_df
 

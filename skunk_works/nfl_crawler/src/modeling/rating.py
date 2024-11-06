@@ -162,9 +162,19 @@ def compute_rating(selector: SelectSide) -> pd.DataFrame:
             }
         ).copy()
     else:
-        return pd.DataFrame(
-            rating_off_compute(player_usage.access_week(selector).set_index("role"))
-        )
+        this_week_df = player_usage.access_week(selector).set_index("role")
+
+        rtn = pd.DataFrame(
+            rating_off_compute(this_week_df)
+        ).set_index('role')
+
+        rtn["playerDisplay"] = [
+            this_week_df.loc[role]['playerDisplay'] for role in rtn.index
+        ]
+
+        rtn.reset_index(inplace=True)
+
+        return rtn
 
 
 player_ratings = ComputeAccess(
@@ -223,6 +233,13 @@ def compute_rating_diff(selector: SelectSide) -> pd.DataFrame:
         raise ex
 
     delta_df["role"] = player_roles
+    delta_df.set_index("role", inplace=True)
+
+    delta_df["playerDisplay"] = [
+        allowed_df.loc[role]['playerDisplay'] for role in player_roles
+    ]
+
+    delta_df.reset_index(inplace=True)
 
     return delta_df
 
