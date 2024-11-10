@@ -1,6 +1,5 @@
-console.log('--cp1--');
-import { readSeason, readWeek } from "./access";
-console.log('--cp2--');
+import { readSeason/*, readWeek*/ } from "./access";
+
 async function main(){
     // https://www.pro-football-reference.com/boxscores/202101090buf.htm
     // https://github.com/nntrn/nfl-nerd
@@ -12,7 +11,7 @@ async function main(){
     // await readWeek(2023, 13);
     // await readWeek(2023, 14);
 
-    await readSeason(2024, 1, 6);
+    await readSeason(2024, 1, 9);
     await readSeason(2023, 1, 18);
     await readSeason(2022, 1, 18);
     await readSeason(2021, 1, 18);
@@ -25,10 +24,10 @@ async function main(){
    
     //await readPlayer('4040715');
 }
-console.log('--cp3--');
+
 main().then(() => {
     console.log('content loaded');
 }).catch(ex => {
-    console.log('---boom---');
+    console.log('content load failed');
     console.log(ex);
 });

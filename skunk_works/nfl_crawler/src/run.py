@@ -5,7 +5,7 @@ import pandas as pd
 from modeling.common import save_state
 from modeling.games import raw_games, raw_players
 from modeling.usage import player_usage_deltas
-from modeling.rating import player_rating_deltas
+from modeling.rating import player_rating_deltas, calculate_off_rating
 from modeling.compare import compare_teams
 
 base_dir = str(pathlib.Path(__file__).parent.resolve())
@@ -47,6 +47,18 @@ def process_games():
                 row["awayTeamDisplay"],
             )
 
+            raw_home = raw_players.access_week({
+                'season': row["season"], 
+                'week': row["week"], 
+                'team': row["homeTeamDisplay"]
+            }).sum()
+
+            raw_away =  raw_players.access_week({
+                'season': row["season"], 
+                'week': row["week"], 
+                'team': row["awayTeamDisplay"]
+            }).sum()
+
             t = row.to_dict()
             t.update(
                 {
@@ -54,6 +66,8 @@ def process_games():
                     "expected": row["homeScore"] > row["awayScore"],
                     "rating": compare["rating"],
                     "stats": compare["stats"],
+                    "homeRating": calculate_off_rating(raw_home, 1, 1, 1),
+                    "awayRating": calculate_off_rating(raw_away, 1, 1, 1),
                 }
             )
 

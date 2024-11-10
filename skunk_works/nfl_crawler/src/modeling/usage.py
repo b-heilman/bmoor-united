@@ -257,7 +257,6 @@ def compute_player_usage_delta(selector: SelectSide):
     
     # get the historical average
     if selector["week"] == 1:
-        print('using across')
         # if we're on week one, we will compare to everyone else
         history_df = (
             player_usage.access_across(selector)
