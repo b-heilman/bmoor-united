@@ -217,7 +217,11 @@ def compute_player_usage(selector: SelectSide):
 
         rest_df["playerPosition"] = "rest"
 
-        roles_df = pd.concat([stats_df, rest_df])
+        agg_df = pd.DataFrame([team_week[stat_fields].sum()])
+        agg_df["playerPosition"] = "agg"
+        agg_df['playerDisplay'] = "team"
+
+        roles_df = pd.concat([stats_df, rest_df, agg_df])
 
         roles_df["role"] = player_roles
 

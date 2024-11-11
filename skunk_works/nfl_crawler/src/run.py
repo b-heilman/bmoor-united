@@ -60,14 +60,18 @@ def process_games():
             }).sum()
 
             t = row.to_dict()
+            home_rating = calculate_off_rating(raw_home, 1, 1, 1)
+            away_rating = calculate_off_rating(raw_away, 1, 1, 1)
             t.update(
                 {
                     "grade": compare["grade"],
                     "expected": row["homeScore"] > row["awayScore"],
-                    "rating": compare["rating"],
-                    "stats": compare["stats"],
-                    "homeRating": calculate_off_rating(raw_home, 1, 1, 1),
-                    "awayRating": calculate_off_rating(raw_away, 1, 1, 1),
+                    "playerRating": compare["playerRating"],
+                    "teamRating": compare["teamRating"],
+                    "statsRating": compare["statsRating"],
+                    "homeRating": home_rating,
+                    "awayRating": away_rating,
+                    "gameRating": home_rating - away_rating
                 }
             )
 

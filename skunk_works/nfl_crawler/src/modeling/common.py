@@ -39,7 +39,7 @@ team_alias = {
     "DET": "DET",
 }
 
-player_roles = ["wr1", "wr2", "wr3", "rb1", "rb2", "qb1", "rest"]
+player_roles = ["wr1", "wr2", "wr3", "rb1", "rb2", "qb1", "rest", "agg"]
 
 stat_fields = [
     "passCmp",

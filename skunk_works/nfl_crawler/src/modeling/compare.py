@@ -7,6 +7,12 @@ from .usage import player_usage, player_usage_deltas
 
 from .common import player_roles, stat_fields
 
+def compute_rating(role, off_df, def_df, off_delta_df, def_delta_df):
+    return (
+        (off_df.loc[role]["rating"]+def_df.loc[role]["rating"])/2
+        + off_delta_df.loc[role]["rating"]
+        + def_delta_df.loc[role]["rating"]
+    )
 
 def _compare_teams_by_rating(
     season: int, week: int, offense: str, defense: str
@@ -47,13 +53,14 @@ def _compare_teams_by_rating(
         .agg({"rating": "mean"})
     )
 
+    _player_roles = player_roles.copy()
+    _player_roles.remove('agg')
     rtn = {
-        role: (off_df.loc[role]["rating"]+def_df.loc[role]["rating"])/2
-        + off_delta_df.loc[role]["rating"]
-        + def_delta_df.loc[role]["rating"]
-        for role in player_roles
+        role: compute_rating(role, off_df, def_df, off_delta_df, def_delta_df)
+        for role in _player_roles
     }
-    rtn["rating"] = sum(rtn.values())
+    rtn["playerRating"] = sum(rtn.values())
+    rtn["teamRating"] = compute_rating('agg', off_df, def_df, off_delta_df, def_delta_df)
     rtn["team"] = offense
 
     return pd.Series(rtn)
@@ -133,9 +140,7 @@ def _compare_teams_by_usage(
 
 
 def _reduce_team_usage(team_usage_df) -> pd.Series:
-    df = team_usage_df.set_index("role")
-
-    ratings = pd.DataFrame(rating_off_compute(df)).set_index("role")
+    ratings = pd.DataFrame(rating_off_compute(team_usage_df)).set_index("role")
     rtn = {role: ratings.loc[role]["rating"] for role in player_roles}
     rtn["rating"] = sum(rtn.values())
 
@@ -172,7 +177,12 @@ def compare_teams(
     team1_points = 0
     team2_points = 0
 
-    if team1_ratings["rating"] > team2_ratings["rating"]:
+    if team1_ratings["playerRating"] > team2_ratings["playerRating"]:
+        team1_points += 1
+    else:
+        team2_points += 1
+
+    if team1_ratings["teamRating"] > team2_ratings["teamRating"]:
         team1_points += 1
     else:
         team2_points += 1
@@ -189,25 +199,33 @@ def compare_teams(
         winner = team2_ratings
         loser = team1_ratings
 
-    rating_value = team1_ratings["rating"] - team2_ratings["rating"]
+    player_rating_value = team1_ratings["playerRating"] - team2_ratings["playerRating"]
+    team_rating_value = team1_ratings["teamRating"] - team2_ratings["teamRating"]
     stat_value = team1_stats["rating"] - team2_stats["rating"]
 
-    if abs(rating_value) > 10000:
+    if abs(player_rating_value) > 10000:
         print("--debug--", season, week, team1, team2)
         print(team1_ratings)
         print(team2_ratings)
-        raise Exception("impossible rating")
+        raise Exception("impossible players rating")
+    
+    if abs(team_rating_value) > 10000:
+        print("--debug--", season, week, team1, team2)
+        print(team1_ratings)
+        print(team2_ratings)
+        raise Exception("impossible team rating")
 
     if abs(stat_value) > 10000:
         print("--debug--", season, week, team1, team2)
         print(team1_stats)
         print(team2_stats)
-        raise Exception("impossible stat")
+        raise Exception("impossible stat rating")
 
     rtn = {
         "grade": team1_points - team2_points,
-        "rating": rating_value,
-        "stats": stat_value,
+        "playerRating": player_rating_value,
+        "teamRating": team_rating_value,
+        "statsRating": stat_value,
         "results": {"winner": winner["team"], "loser": loser["team"]},
     }
 

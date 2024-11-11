@@ -116,7 +116,9 @@ def calculate_off_rest_rating(player_row) -> float:
     return calculate_off_rating(player_row, qb=0.1, rb=0.45, wr=0.45)
 
 
-def rating_off_compute(indexed_offense_df) -> list[dict]:
+def rating_off_compute(offense_df) -> list[dict]:
+    indexed_offense_df = offense_df.set_index("role")
+
     return [
         {
             "role": "qb1",
@@ -146,6 +148,10 @@ def rating_off_compute(indexed_offense_df) -> list[dict]:
             "role": "rest",
             "rating": calculate_off_rest_rating(indexed_offense_df.loc["rest"]),
         },
+        {
+            "role": "agg",
+            "rating": calculate_off_rating(offense_df.sum(), 1, 1, 1),
+        },
     ]
 
 
@@ -162,14 +168,15 @@ def compute_rating(selector: SelectSide) -> pd.DataFrame:
             }
         ).copy()
     else:
-        this_week_df = player_usage.access_week(selector).set_index("role")
+        this_week_df = player_usage.access_week(selector)
 
+        this_index_df = this_week_df.set_index('role')
         rtn = pd.DataFrame(
             rating_off_compute(this_week_df)
         ).set_index('role')
 
         rtn["playerDisplay"] = [
-            this_week_df.loc[role]['playerDisplay'] for role in rtn.index
+            this_index_df.loc[role]['playerDisplay'] for role in rtn.index
         ]
 
         rtn.reset_index(inplace=True)
