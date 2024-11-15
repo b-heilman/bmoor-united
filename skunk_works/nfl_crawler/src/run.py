@@ -30,8 +30,19 @@ def dump():
 
 def process_games():
     results = []
+    week_stats = None
 
     for index, row in raw_games.get_frame().iterrows():
+        if week_stats is None or row['week'] != week_stats['week']:
+            if week_stats is not None and week_stats['count'] != 0:
+                print(week_stats, week_stats['correct'] / week_stats['count'])
+
+            week_stats = {
+                'season': row["season"],
+                'week': row["week"],
+                'correct': 0,
+                'count': 0
+            }
         if row["week"] > 2 and row["week"] < 16:
             print(
                 "analyzing > ",
