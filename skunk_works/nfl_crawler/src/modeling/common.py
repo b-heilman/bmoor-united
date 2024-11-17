@@ -2,7 +2,7 @@ import os
 import pandas as pd
 import traceback
 
-from typing import Callable, TypedDict, Any
+from typing import Callable, TypedDict, Any, Union
 
 team_alias = {
     "NYG": "NYG",
@@ -39,7 +39,79 @@ team_alias = {
     "DET": "DET",
 }
 
-player_roles = ["wr1", "wr2", "wr3", "rb1", "rb2", "qb1", "rest", "agg"]
+class StatGroupUsage(TypedDict):
+    groupby: Union[str, None]
+    maximize: str
+    minimize: str
+    look_back: Union[int, None]
+    limit: Union[int, None]
+
+class StatGroup(TypedDict):
+    usage: Union[StatGroupUsage, None]
+
+stat_groups: dict[str, StatGroup] = {
+    "qb": {
+        "usage": {
+            "groupby": "playerDisplay",
+            "maximize": "passAtt",
+            "minimize": "rushAtt",
+            "limit": 1
+        }
+    },
+    "wr": {
+        "usage": {
+            "groupby": "playerDisplay",
+            "maximize": "recAtt",
+            "minimize": "rushAtt",
+            "limit": 3
+        }
+    },
+    "rb": {
+        "usage": {
+            "groupby": "playerDisplay",
+            "maximize": "rushAtt",
+            "minimize": "recAtt",
+            "limit": 2
+        }
+    },
+    "passing": {
+        "usage": {
+            "groupby": "playerDisplay",
+            "maximize": "passAtt",
+            "minimize": "rushAtt"
+        }
+    },
+    "receiving": {
+        "usage": {
+            "groupby": "playerDisplay",
+            "maximize": "recAtt",
+            "minimize": "rushAtt"
+        }
+    },
+    "rushing": {
+        "usage": {
+            "groupby": "playerDisplay",
+            "maximize": "rushAtt",
+            "minimize": "recAtt"
+        }
+    }
+}
+
+def each_role(cb):
+    rtn = []
+
+    for group, stat_info in stat_groups.items():
+        usage = stat_info['usage']
+
+        if 'limit' in usage and usage['limit'] is not None:
+            for i in range(usage['limit']):
+                rtn.append(cb(group+str(i+1)))
+        else:
+            rtn.append(cb(group))
+    
+    return rtn
+
+player_roles = each_role(lambda role: role)
 
 stat_fields = [
     "passCmp",
