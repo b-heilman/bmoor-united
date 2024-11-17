@@ -1,120 +1,58 @@
+import numpy as np
 import pandas as pd
 import pathlib
 
 from .games import get_opponent, raw_players
-from .common import player_roles, stat_fields, SelectSide, ComputeAccess
+from .common import (
+    stat_fields, 
+    stat_groups,
+    each_role,
+    player_roles,
+    SelectSide, 
+    ComputeAccess,
+    StatGroupUsage
+)
 
 base_dir = str(pathlib.Path(__file__).parent.resolve())
 
-
-def team_filter_by_usage(
+def top_usage(
     team_df: pd.DataFrame,
-    gt: str = "recAtt",
-    lt: str = "rushAtt",
-    unique_field: str = "playerDisplay",
-    ignore_field: str = "playerPositionNorm",
-    ignore_values: list[str] = ["qb"],
-) -> pd.DataFrame:
-    usage = team_df.groupby(unique_field).agg(
-        {gt: "sum", lt: "sum", ignore_field: "last"}
-    )
-
-    group_df = usage[
-        (usage[gt] > usage[lt]) & ~(usage[ignore_field].isin(ignore_values))
+    usage: StatGroupUsage,
+) -> list[str]:
+    filtered_df = team_df[
+        (team_df[usage['maximize']] > team_df[usage['minimize']])
     ]
 
-    targets = list(group_df.index)
-
-    return team_df[team_df[unique_field].isin(targets)]
-
-
-def team_sort_by_usage(
-    team_df: pd.DataFrame,
-    start: int = 0,
-    count: int = 3,
-    sort_field: str = "recAtt",
-    rtn_field: str = "playerDisplay",
-    blank_on_fail: bool = False,
-) -> dict:
-    search = team_df[(team_df["week"] > start)].copy()
-    search["played"] = 1
-
-    info = search.groupby(rtn_field).agg({"played": "count", sort_field: "sum"})
-
-    info["att/g"] = info[sort_field] / info["played"]
-
-    info = info.sort_values(by=["att/g"], ascending=False).head(count)
-
-    if len(info.index) == 0:
-        if blank_on_fail or start <= 0:
-            return {}
-        else:
-            return team_sort_by_usage(
-                team_df, start - 1, count, sort_field, rtn_field, blank_on_fail=True
+    if "look_back" in usage and usage["look_back"] is not None:
+        search = filtered_df[
+            filtered_df["week"].isin(
+                np.sort(filtered_df["week"].unique())[0, usage["look_back"]]
             )
+        ].copy()
     else:
-        rtn = {}
-        for i in range(min(count, len(info.index))):
-            rtn[info.index[i]] = count - i
+        search = filtered_df.copy()
 
-        return rtn
+    if 'limit' in usage and usage['limit'] is not None:
+        search["played"] = 1
+    
+        info = search.groupby(usage["groupby"]).agg({
+            "played": "sum", 
+            usage['maximize']: "sum"
+        })
 
+        info["maxed/g"] = info[usage['maximize']] / info["played"]
 
-def team_usage(
-    team_df: pd.DataFrame,
-    week: int,
-    gt: str,
-    lt: str,
-    ignore_values: list[str] = ["qb"],
-) -> pd.DataFrame:
-    # reduce only to available players
-    usage_df = team_filter_by_usage(team_df, gt, lt, ignore_values=ignore_values)
+        info = info.sort_values(by=["maxed/g"], ascending=False).head(usage['limit'])
+        
+        info.reset_index(inplace=True)
 
-    allowed = usage_df[usage_df["week"] == week]["playerDisplay"].unique()
+        rtn = []
+        for i in range(min(usage['limit'], len(info.index))):
+            rtn.append(info.iloc[i][usage['groupby']])
+    else:
+        rtn = list(search[usage['groupby']].unique())
 
-    return usage_df[usage_df["playerDisplay"].isin(allowed)]
-
-
-def stats_sort_recievers(team_df: pd.DataFrame, week: int, count=3) -> list[str]:
-    """
-    Return back embeddings representing receivers
-    """
-    # reduce only to available players
-    reduced_df = team_usage(team_df, week, gt="recAtt", lt="rushAtt")
-
-    return list(
-        team_sort_by_usage(
-            reduced_df, week, count, sort_field="recAtt", rtn_field="playerDisplay"
-        ).keys()
-    )
-
-
-def stats_sort_rushers(team_df: pd.DataFrame, week: int, count=2) -> list[str]:
-    """
-    Return back embeddings representing rushers
-    """
-    reduced_df = team_usage(team_df, week, gt="rushAtt", lt="recAtt")
-
-    return list(
-        team_sort_by_usage(
-            reduced_df, week, count, sort_field="rushAtt", rtn_field="playerDisplay"
-        ).keys()
-    )
-
-
-def stats_sort_quarterback(team_df: pd.DataFrame, week: int, count=1) -> list[str]:
-    """
-    Return back embeddings representing starting qb
-    """
-    reduced_df = team_usage(
-        team_df, week, gt="passAtt", lt="rushAtt", ignore_values=["wr", "rb"]
-    )
-
-    return list(
-        team_sort_by_usage(
-            reduced_df, week, count, sort_field="passAtt", rtn_field="playerDisplay"
-        ).keys()
-    )
+    return rtn
 
 
 stats_fake_display = "--fake--"
@@ -133,7 +71,6 @@ def stats_offense(
     search_df: pd.DataFrame,
     players: list[str],
     include: bool = True,
-    aggregate: bool = False,
 ) -> pd.DataFrame:
     if include:
         base = search_df[search_df["playerDisplay"].isin(players)]
@@ -143,22 +80,12 @@ def stats_offense(
     if len(base.index) == 0:
         return pd.DataFrame()
 
-    if aggregate:
-        rtn_series = (
-            base.groupby("week").agg({stat: "sum" for stat in stat_fields}).mean()
-        )
+    rtn = base.groupby("playerDisplay").agg({stat: "mean" for stat in stat_fields})
 
-        rtn = pd.DataFrame([rtn_series])
-        rtn["playerDisplay"] = stats_rest_display
-
-        return rtn.set_index("playerDisplay").reset_index()
+    if include:
+        return rtn.reindex(index=players).reset_index()
     else:
-        rtn = base.groupby("playerDisplay").agg({stat: "mean" for stat in stat_fields})
-
-        if include:
-            return rtn.reindex(index=players).reset_index()
-        else:
-            return rtn.reindex(index=base["playerDisplay"].unique()).reset_index()
+        return rtn.reindex(index=base["playerDisplay"].unique()).reset_index()
 
 
 def compute_player_usage(selector: SelectSide):
@@ -174,58 +101,39 @@ def compute_player_usage(selector: SelectSide):
             }
         ).copy()
     else:
+        agg = []
         team_season_df = raw_players.access_history(selector)
         team_week = team_season_df[team_season_df["week"] == selector["week"]]
-        week = selector["week"]
 
-        top_receivers = stats_sort_recievers(team_season_df, week, 3)
-        receivers_df = stats_offense(team_week, top_receivers)
+        team_season_df = team_season_df[
+            team_season_df['playerDisplay'].isin(team_week['playerDisplay'].unique())
+        ]
 
-        if len(top_receivers) < 3:
-            receivers_df = pd.concat([receivers_df, stats_fake(3 - len(top_receivers))])
-        receivers_df["playerPosition"] = "wr"
+        for group, stat_info in stat_groups.items():
+            usage = stat_info['usage']
+            if usage is None:
+                top_df = pd.DataFrame([team_week[stat_fields].sum()])
+                top_df['role'] = group
+                top_df['playerDisplay'] = 'team'
+            else:
+                tops = top_usage(team_season_df, usage)
+                top_df = stats_offense(team_week, tops)
 
-        top_rushers = stats_sort_rushers(team_season_df, week, 2)
-        rushers_df = stats_offense(team_week, top_rushers)
-        if len(top_rushers) < 2:
-            rushers_df = pd.concat([rushers_df, stats_fake(2 - len(top_rushers))])
-        rushers_df["playerPosition"] = "rb"
+                if 'limit' in usage and usage['limit'] is not None:
+                    if len(top_df) < usage['limit']:
+                        top_df = pd.concat([top_df, stats_fake(usage['limit'] - len(tops))])
 
-        top_qbs = stats_sort_quarterback(team_season_df, week, 1)
-        qb_df = stats_offense(team_week, top_qbs)
-        if len(top_qbs) < 1:
-            qb_df = stats_fake(1)
-        qb_df["playerPosition"] = "qb"
+                    top_df = top_df[stat_fields+['playerDisplay']]
+                    top_df['role'] = [group+str(i+1) for i in range(usage['limit'])]
+                else:
+                    top_df = pd.DataFrame([top_df[stat_fields].sum()])
+                    top_df['playerDisplay'] = 'aggregate_'+group
+                    top_df['role'] = group
+                
+            top_df['group'] = group
+            agg.append(top_df)
 
-        stats_df = pd.concat([receivers_df, rushers_df, qb_df])
-
-        if len(top_receivers + top_rushers + top_qbs) == 0:
-            # I'm not sure how this was happening.  I might need to remove it and see what breaks again
-            # theoretically this should never be possible
-            rest_df = stats_fake(1)
-        else:
-            rest_df = stats_offense(
-                team_week,
-                top_receivers + top_rushers + top_qbs,
-                include=False,
-                aggregate=True,
-            )
-
-            # If the team was so bad that no one helped, we gotta add junk data
-            if len(rest_df.index) == 0:
-                rest_df = stats_fake(1)
-
-        rest_df["playerPosition"] = "rest"
-
-        agg_df = pd.DataFrame([team_week[stat_fields].sum()])
-        agg_df["playerPosition"] = "agg"
-        agg_df['playerDisplay'] = "team"
-
-        roles_df = pd.concat([stats_df, rest_df, agg_df])
-
-        roles_df["role"] = player_roles
-
-        return roles_df
+        return pd.concat(agg)
 
 
 player_usage = ComputeAccess(
@@ -249,15 +157,6 @@ def compute_player_usage_delta(selector: SelectSide):
     indexed_week_df = this_week_df.set_index("role")[
         [stat for stat in stat_fields]
     ]
-    
-    if len(player_roles) != len(indexed_week_df.index):
-        player_usage.save()
-        print('>>>> usage - debug', selector)
-        print(indexed_week_df)
-        print('? sanity')
-        print(player_usage.access_week(selector))
-        raise Exception('>>>> usage - access_week - conflict of roles -> '+str(selector))
-    
     
     # get the historical average
     if selector["week"] == 1:
@@ -285,7 +184,7 @@ def compute_player_usage_delta(selector: SelectSide):
     # compute the change off of the average for the role
     try:
         delta_df = pd.DataFrame(
-            [indexed_week_df.loc[role] - history_df.loc[role] for role in player_roles]
+            each_role(lambda role: indexed_week_df.loc[role] - history_df.loc[role])
         )
     except Exception as ex:
         print('>>>> usage - frames -> failed on: '+str(selector))
