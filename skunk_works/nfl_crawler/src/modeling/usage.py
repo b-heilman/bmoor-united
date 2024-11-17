@@ -89,6 +89,10 @@ def stats_offense(
 
 
 def compute_player_usage(selector: SelectSide):
+    if selector['week'] == 0:
+        print('punting', selector)
+        raise Exception('Searching for week 0: '+str(selector))
+    
     if selector["side"] == "def":
         opp = get_opponent(selector)
 
@@ -104,6 +108,14 @@ def compute_player_usage(selector: SelectSide):
         agg = []
         team_season_df = raw_players.access_history(selector)
         team_week = team_season_df[team_season_df["week"] == selector["week"]]
+
+        if len(team_week.index) == 0: # this is a bye week, so go backwards and don't save
+            return compute_player_usage({
+                "season": selector["season"],
+                "week": int(selector["week"]) - 1,
+                "team": selector["team"],
+                "side": selector["side"],
+            })
 
         team_season_df = team_season_df[
             team_season_df['playerDisplay'].isin(team_week['playerDisplay'].unique())
@@ -126,6 +138,7 @@ def compute_player_usage(selector: SelectSide):
                     top_df = top_df[stat_fields+['playerDisplay']]
                     top_df['role'] = [group+str(i+1) for i in range(usage['limit'])]
                 else:
+
                     top_df = pd.DataFrame([top_df[stat_fields].sum()])
                     top_df['playerDisplay'] = 'aggregate_'+group
                     top_df['role'] = group
@@ -184,7 +197,7 @@ def compute_player_usage_delta(selector: SelectSide):
     # compute the change off of the average for the role
     try:
         delta_df = pd.DataFrame(
-            each_role(lambda role: indexed_week_df.loc[role] - history_df.loc[role])
+            indexed_week_df.loc[role] - history_df.loc[role] for role in player_roles
         )
     except Exception as ex:
         print('>>>> usage - frames -> failed on: '+str(selector))

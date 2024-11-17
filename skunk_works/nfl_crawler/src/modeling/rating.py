@@ -2,7 +2,13 @@ import os
 import pandas as pd
 import pathlib
 
-from .common import player_roles, SelectSide, ComputeAccess
+from .common import (
+    each_role,
+    StatGroupRating,
+    player_roles, 
+    SelectSide, 
+    ComputeAccess
+)
 from .usage import player_usage
 from .games import get_opponent
 
@@ -79,7 +85,11 @@ def calculate_off_rec_rating(player_row) -> float:
     return max(0, wr_rating)
 
 
-def calculate_off_rating(player_row, qb=0.1, rb=0.2, wr=0.7) -> float:
+def calculate_off_rating(player_row, rating: StatGroupRating) -> float:
+    qb = rating["qb"]
+    wr = rating["wr"]
+    rb = rating["rb"]
+
     if qb > 0:
         passing = calculate_off_pass_rating(player_row)
     else:
@@ -100,59 +110,14 @@ def calculate_off_rating(player_row, qb=0.1, rb=0.2, wr=0.7) -> float:
     return rtn
 
 
-def calculate_off_qb_rating(player_row) -> float:
-    return calculate_off_rating(player_row, qb=1, rb=0.25, wr=0.0)
-
-
-def calculate_off_rb_rating(player_row) -> float:
-    return calculate_off_rating(player_row, qb=0, rb=1, wr=0.25)
-
-
-def calculate_off_wr_rating(player_row) -> float:
-    return calculate_off_rating(player_row, qb=0.0, rb=0.25, wr=1)
-
-
-def calculate_off_rest_rating(player_row) -> float:
-    return calculate_off_rating(player_row, qb=0.1, rb=0.45, wr=0.45)
-
-
 def rating_off_compute(offense_df) -> list[dict]:
     indexed_offense_df = offense_df.set_index("role")
 
-    return [
-        {
-            "role": "qb1",
-            "rating": calculate_off_qb_rating(indexed_offense_df.loc["qb1"]),
-        },
-        {
-            "role": "rb1",
-            "rating": calculate_off_rb_rating(indexed_offense_df.loc["rb1"]),
-        },
-        {
-            "role": "rb2",
-            "rating": calculate_off_rb_rating(indexed_offense_df.loc["rb2"]),
-        },
-        {
-            "role": "wr1",
-            "rating": calculate_off_wr_rating(indexed_offense_df.loc["wr1"]),
-        },
-        {
-            "role": "wr2",
-            "rating": calculate_off_wr_rating(indexed_offense_df.loc["wr2"]),
-        },
-        {
-            "role": "wr3",
-            "rating": calculate_off_wr_rating(indexed_offense_df.loc["wr3"]),
-        },
-        {
-            "role": "rest",
-            "rating": calculate_off_rest_rating(indexed_offense_df.loc["rest"]),
-        },
-        {
-            "role": "agg",
-            "rating": calculate_off_rating(offense_df.sum(), 1, 1, 1),
-        },
-    ]
+    return each_role(lambda role, group, group_info: {
+        "role": role,
+        'group': group,
+        "rating": calculate_off_rating(indexed_offense_df.loc[role], group_info['rating'])
+    })
 
 
 def compute_rating(selector: SelectSide) -> pd.DataFrame:
@@ -204,7 +169,7 @@ def compute_rating_diff(selector: SelectSide) -> pd.DataFrame:
                 "side": other_side,
             })
             .groupby(["role"])
-            .mean()
+            .agg({'group': 'first', 'rating': "mean"})
             .reset_index()
             .set_index("role")
         )
@@ -219,7 +184,7 @@ def compute_rating_diff(selector: SelectSide) -> pd.DataFrame:
                 }
             )
             .groupby(["role"])
-            .mean()
+            .agg({'group': 'first', 'rating': "mean"})
             .reset_index()
             .set_index("role")
         )
@@ -230,9 +195,12 @@ def compute_rating_diff(selector: SelectSide) -> pd.DataFrame:
     )
     
     try:
-        delta_df = pd.DataFrame(
-            [allowed_df.loc[role] - history_df.loc[role] for role in player_roles]
-        )
+        delta_df = pd.DataFrame()
+        delta_df['role'] = [role for role in player_roles]
+        delta_df['group'] = [allowed_df.loc[role]['group'] for role in player_roles]
+        delta_df['rating'] = [
+            allowed_df.loc[role]['rating'] - history_df.loc[role]['rating'] for role in player_roles
+        ]
     except Exception as ex:
         print('>>>> usage -> failed on: '+str(selector))
         print(allowed_df)

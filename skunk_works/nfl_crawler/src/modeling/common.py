@@ -46,8 +46,14 @@ class StatGroupUsage(TypedDict):
     look_back: Union[int, None]
     limit: Union[int, None]
 
+class StatGroupRating(TypedDict):
+    qb: float
+    wr: float
+    rb: float
+
 class StatGroup(TypedDict):
     usage: Union[StatGroupUsage, None]
+    rating: StatGroupRating
 
 stat_groups: dict[str, StatGroup] = {
     "qb": {
@@ -56,6 +62,11 @@ stat_groups: dict[str, StatGroup] = {
             "maximize": "passAtt",
             "minimize": "rushAtt",
             "limit": 1
+        },
+        "rating": {
+            'qb': 1.0,
+            'rb': 0.25,
+            'wr': 0.0 
         }
     },
     "wr": {
@@ -64,6 +75,11 @@ stat_groups: dict[str, StatGroup] = {
             "maximize": "recAtt",
             "minimize": "rushAtt",
             "limit": 3
+        },
+        "rating": {
+            'qb': 0.0,
+            'rb': 0.25,
+            'wr': 1.0 
         }
     },
     "rb": {
@@ -72,6 +88,11 @@ stat_groups: dict[str, StatGroup] = {
             "maximize": "rushAtt",
             "minimize": "recAtt",
             "limit": 2
+        },
+        "rating": {
+            'qb': 0.0,
+            'rb': 1.0,
+            'wr': 0.25 
         }
     },
     "passing": {
@@ -79,6 +100,11 @@ stat_groups: dict[str, StatGroup] = {
             "groupby": "playerDisplay",
             "maximize": "passAtt",
             "minimize": "rushAtt"
+        },
+        "rating": {
+            'qb': 1.0,
+            'rb': 0.0,
+            'wr': 0.0 
         }
     },
     "receiving": {
@@ -86,6 +112,11 @@ stat_groups: dict[str, StatGroup] = {
             "groupby": "playerDisplay",
             "maximize": "recAtt",
             "minimize": "rushAtt"
+        },
+        "rating": {
+            'qb': 0.0,
+            'rb': 0.0,
+            'wr': 1.0 
         }
     },
     "rushing": {
@@ -93,6 +124,19 @@ stat_groups: dict[str, StatGroup] = {
             "groupby": "playerDisplay",
             "maximize": "rushAtt",
             "minimize": "recAtt"
+        },
+        "rating": {
+            'qb': 0.0,
+            'rb': 1.0,
+            'wr': 0.0 
+        }
+    },
+    "team": {
+        "usage": None,
+        "rating": {
+            'qb': 1.0,
+            'rb': 1.0,
+            'wr': 1.0 
         }
     }
 }
@@ -103,15 +147,45 @@ def each_role(cb):
     for group, stat_info in stat_groups.items():
         usage = stat_info['usage']
 
-        if 'limit' in usage and usage['limit'] is not None:
+        if usage is not None and 'limit' in usage and usage['limit'] is not None:
             for i in range(usage['limit']):
-                rtn.append(cb(group+str(i+1)))
+                rtn.append(cb(group+str(i+1), group, stat_info))
         else:
-            rtn.append(cb(group))
+            rtn.append(cb(group, group, stat_info))
     
     return rtn
 
-player_roles = each_role(lambda role: role)
+player_roles = each_role(lambda role, _, __: role)
+
+stat_aggregates: dict[str, list[str]] = {
+    'playerRating': ['qb', 'wr', 'rb'],
+    'usageRating': ['passing', 'receiving', 'rushing'],
+    'teamRating': ['team']
+}
+
+def each_aggregate_role(agg, cb):
+    groups = stat_aggregates[agg]
+
+    rtn = []
+    for group in groups:
+        stat_info = stat_groups[group]
+        usage = stat_groups[group]['usage']
+
+        if usage is not None and 'limit' in usage and usage['limit'] is not None:
+            for i in range(usage['limit']):
+                rtn.append(cb(group+str(i+1), group, stat_info))
+        else:
+            rtn.append(cb(group, group, stat_info))
+
+    return rtn
+
+def each_aggregate(agg_cb, group_cb):
+    return {
+        agg: agg_cb(each_aggregate_role(agg, group_cb))
+        for agg in stat_aggregates.keys()
+    }
+
+
 
 stat_fields = [
     "passCmp",

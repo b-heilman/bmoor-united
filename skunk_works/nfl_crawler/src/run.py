@@ -22,7 +22,7 @@ def dump():
     print('def > \n', player_rating_deltas.access_week({'season': 2024, 'week': 2, 'team': 'PHI', 'side': 'def'}).reset_index())
 
     # print('>>>>\n', compare_teams(2024, 5, 'PHI', 'WSH'))
-    results, ratings, usage = compare_teams(2024, 2, 'PHI', 'WSH')
+    results, ratings, usage = compare_teams(2024, 11, 'PHI', 'WSH')
     print('>>>> results\n', results)
     print('>>>> ratings\n', ratings)
     print('>>>> usage\n', usage)
@@ -33,60 +33,64 @@ def process_games():
     week_stats = None
 
     for index, row in raw_games.get_frame().iterrows():
-        if week_stats is None or row['week'] != week_stats['week']:
-            if week_stats is not None and week_stats['count'] != 0:
-                print(week_stats, week_stats['correct'] / week_stats['count'])
+        try:
+            if week_stats is None or row['week'] != week_stats['week']:
+                if week_stats is not None and week_stats['count'] != 0:
+                    print(week_stats, week_stats['correct'] / week_stats['count'])
 
-            week_stats = {
-                'season': row["season"],
-                'week': row["week"],
-                'correct': 0,
-                'count': 0
-            }
-        if row["week"] > 2 and row["week"] < 16:
-            print(
-                "analyzing > ",
-                row["season"],
-                row["week"],
-                row["homeTeamDisplay"],
-                row["awayTeamDisplay"],
-            )
-            compare, ratings, stats = compare_teams(
-                row["season"],
-                row["week"] - 1,
-                row["homeTeamDisplay"],
-                row["awayTeamDisplay"],
-            )
-
-            raw_home = raw_players.access_week({
-                'season': row["season"], 
-                'week': row["week"], 
-                'team': row["homeTeamDisplay"]
-            }).sum()
-
-            raw_away =  raw_players.access_week({
-                'season': row["season"], 
-                'week': row["week"], 
-                'team': row["awayTeamDisplay"]
-            }).sum()
-
-            t = row.to_dict()
-            home_rating = calculate_off_rating(raw_home, 1, 1, 1)
-            away_rating = calculate_off_rating(raw_away, 1, 1, 1)
-            t.update(
-                {
-                    "grade": compare["grade"],
-                    "expected": row["homeScore"] > row["awayScore"],
-                    "playerRating": compare["playerRating"],
-                    "teamRating": compare["teamRating"],
-                    "statsRating": compare["statsRating"],
-                    "homeRating": home_rating,
-                    "awayRating": away_rating,
-                    "gameRating": home_rating - away_rating
+                week_stats = {
+                    'season': row["season"],
+                    'week': row["week"],
+                    'correct': 0,
+                    'count': 0
                 }
-            )
 
-            results.append(t)
+            if row["week"] > 2 and row["week"] < 16:
+                print(
+                    "analyzing > ",
+                    row["season"],
+                    row["week"],
+                    row["homeTeamDisplay"],
+                    row["awayTeamDisplay"],
+                )
+                compare, ratings, stats = compare_teams(
+                    row["season"],
+                    row["week"] - 1,
+                    row["homeTeamDisplay"],
+                    row["awayTeamDisplay"],
+                )
+
+                raw_home = raw_players.access_week({
+                    'season': row["season"], 
+                    'week': row["week"], 
+                    'team': row["homeTeamDisplay"]
+                }).sum()
+
+                raw_away =  raw_players.access_week({
+                    'season': row["season"], 
+                    'week': row["week"], 
+                    'team': row["awayTeamDisplay"]
+                }).sum()
+
+                t = row.to_dict()
+                home_rating = calculate_off_rating(raw_home, {'qb':1, 'rb':1, 'wr':1})
+                away_rating = calculate_off_rating(raw_away, {'qb':1, 'rb':1, 'wr':1})
+                t.update(
+                    {
+                        "grade": compare["grade"],
+                        "expected": row["homeScore"] > row["awayScore"],
+                        "playerRating": compare["playerRating"],
+                        "teamRating": compare["teamRating"],
+                        "statsRating": compare["statsRating"],
+                        "homeRating": home_rating,
+                        "awayRating": away_rating,
+                        "gameRating": home_rating - away_rating
+                    }
+                )
+
+                results.append(t)
+        except:
+            pass
 
     df = pd.DataFrame(results)
 
@@ -94,8 +98,8 @@ def process_games():
 
 
 if __name__ == "__main__":
-    process_games()
+    # process_games()
 
-    # dump()
+    dump()
 
     save_state()

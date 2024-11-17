@@ -1,11 +1,12 @@
 import pandas as pd
+import statistics
 
 from typing import Callable, Any
 
 from .rating import player_ratings, player_rating_deltas, rating_off_compute
 from .usage import player_usage, player_usage_deltas
 
-from .common import player_roles, stat_fields
+from .common import each_aggregate, player_roles, stat_fields
 
 def compute_rating(role, off_df, def_df, off_delta_df, def_delta_df):
     return (
@@ -54,13 +55,11 @@ def _compare_teams_by_rating(
     )
 
     _player_roles = player_roles.copy()
-    _player_roles.remove('agg')
-    rtn = {
-        role: compute_rating(role, off_df, def_df, off_delta_df, def_delta_df)
-        for role in _player_roles
-    }
-    rtn["playerRating"] = sum(rtn.values())
-    rtn["teamRating"] = compute_rating('agg', off_df, def_df, off_delta_df, def_delta_df)
+    _player_roles.remove('team')
+    rtn = each_aggregate(
+        lambda agg: statistics.fmean(agg),
+        lambda role, group, info: compute_rating(role, off_df, def_df, off_delta_df, def_delta_df)
+    )
     rtn["team"] = offense
 
     return pd.Series(rtn)
