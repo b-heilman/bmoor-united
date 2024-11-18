@@ -163,19 +163,29 @@ stat_aggregates: dict[str, list[str]] = {
     'teamRating': ['team']
 }
 
+def each_group_role(group, cb) -> dict:
+    rtn = {}
+
+    stat_info = stat_groups[group]
+    usage = stat_groups[group]['usage']
+
+    if usage is not None and 'limit' in usage and usage['limit'] is not None:
+        for i in range(usage['limit']):
+            role = group+str(i+1)
+            rtn[role] = cb(role, group, stat_info)
+    else:
+        rtn[group] = cb(group, group, stat_info)
+
+    return rtn
+
 def each_aggregate_role(agg, cb):
     groups = stat_aggregates[agg]
 
     rtn = []
     for group in groups:
-        stat_info = stat_groups[group]
-        usage = stat_groups[group]['usage']
-
-        if usage is not None and 'limit' in usage and usage['limit'] is not None:
-            for i in range(usage['limit']):
-                rtn.append(cb(group+str(i+1), group, stat_info))
-        else:
-            rtn.append(cb(group, group, stat_info))
+        res = each_group_role(group, cb)
+        
+        rtn = rtn + list(res.values())
 
     return rtn
 
@@ -185,6 +195,17 @@ def each_aggregate(agg_cb, group_cb):
         for agg in stat_aggregates.keys()
     }
 
+def each_comparison(agg_cb, group_cb):
+    rtn = {}
+
+    for group in stat_groups.keys():
+        rtn.update(each_group_role(group, group_cb))
+
+    rtn.update(each_aggregate(agg_cb, group_cb))
+
+    return rtn
+
+comparisons = list(each_comparison(lambda x: x, lambda role, group, info: role).keys())
 
 
 stat_fields = [
