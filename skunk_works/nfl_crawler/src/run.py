@@ -2,11 +2,11 @@ import os
 import pathlib
 import pandas as pd
 
-from modeling.common import save_state
-from modeling.games import raw_games, raw_players
-from modeling.usage import player_usage_deltas
-from modeling.rating import player_rating_deltas, calculate_off_rating
-from modeling.compare import compare_teams
+from stats.common import save_state
+from stats.games import raw_games, raw_players
+from stats.usage import player_usage_deltas
+from stats.rating import player_rating_deltas, calculate_off_rating
+from stats.compare import compare_teams
 
 base_dir = str(pathlib.Path(__file__).parent.resolve())
 run_parquet_path = os.path.abspath(base_dir + "/../cache/parquet/analysis.parquet")
