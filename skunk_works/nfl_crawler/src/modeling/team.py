@@ -1,61 +1,46 @@
 import torch
 
+from typing import TypedDict
 from .player import Player, PlayerSettings
+from .processor import ProcessorSettings, Processor
 
-class TeamSettings(PlayerSettings):
-    pass
+class TeamSettings(TypedDict):
+    team: ProcessorSettings
+    player: PlayerSettings
 
-class Team(torch.nn.Module):
+class Team(Processor):
     def __init__(self, settings: TeamSettings):
-        super().__init__()
+        super().__init__(settings['team'])
 
-        self.settings = settings
-
-        self.qb1 = Player(settings)
-        self.rb1 = Player(settings)
-        self.rb2 = Player(settings)
-        self.wr1 = Player(settings)
-        self.wr2 = Player(settings)
-        self.wr3 = Player(settings)
-        self.passing = Player(settings)
-        self.receiving = Player(settings)
-        self.rushing = Player(settings)
-        self.team = Player(settings)
-        self.prime = Player(settings)
-        self.usage = Player(settings)
-
-        n_input = settings['embeddings'] * 12
-        n_hidden = n_input # * 2
-        n_out = settings['embeddings']
-
-        self.process = torch.nn.Sequential(
-            torch.nn.Linear(n_input, n_hidden),
-            torch.nn.Sigmoid(),
-            #torch.nn.Linear(n_hidden, n_hidden),
-            #torch.nn.ReLU(inplace=True),
-            #torch.nn.Linear(n_hidden, n_hidden),
-            #torch.nn.ReLU(inplace=True),
-            torch.nn.Linear(n_hidden, n_out),
-        )
-
-        self.finalize = torch.nn.Sigmoid()
+        self.qb1 = Player(settings['player'])
+        self.rb1 = Player(settings['player'])
+        self.rb2 = Player(settings['player'])
+        self.wr1 = Player(settings['player'])
+        self.wr2 = Player(settings['player'])
+        self.wr3 = Player(settings['player'])
+        self.passing = Player(settings['player'])
+        self.receiving = Player(settings['player'])
+        self.rushing = Player(settings['player'])
+        self.team = Player(settings['player'])
+        self.prime = Player(settings['player'])
+        self.usage = Player(settings['player'])
 
     def forward(self, input):
-        # print('---> features', self.settings['features'])
-        # print(input.size())
+        player_features = self.qb1.settings['input']
+
         embeddings = torch.cat((
-            self.qb1(input[:,0:self.settings['features']]),
-            self.rb1(input[:,self.settings['features']:self.settings['features']*2]),
-            self.rb2(input[:,self.settings['features']*2:self.settings['features']*3]),
-            self.wr1(input[:,self.settings['features']*3:self.settings['features']*4]),
-            self.wr2(input[:,self.settings['features']*4:self.settings['features']*5]),
-            self.wr3(input[:,self.settings['features']*5:self.settings['features']*6]),
-            self.passing(input[:,self.settings['features']*6:self.settings['features']*7]),
-            self.receiving(input[:,self.settings['features']*7:self.settings['features']*8]),
-            self.rushing(input[:,self.settings['features']*8:self.settings['features']*9]),
-            self.team(input[:,self.settings['features']*9:self.settings['features']*10]),
-            self.prime(input[:,self.settings['features']*10:self.settings['features']*11]),
-            self.usage(input[:,self.settings['features']*11:self.settings['features']*12]) 
+            self.qb1(input[:,0:player_features]),
+            self.rb1(input[:,player_features:player_features*2]),
+            self.rb2(input[:,player_features*2:player_features*3]),
+            self.wr1(input[:,player_features*3:player_features*4]),
+            self.wr2(input[:,player_features*4:player_features*5]),
+            self.wr3(input[:,player_features*5:player_features*6]),
+            self.passing(input[:,player_features*6:player_features*7]),
+            self.receiving(input[:,player_features*7:player_features*8]),
+            self.rushing(input[:,player_features*8:player_features*9]),
+            self.team(input[:,player_features*9:player_features*10]),
+            self.prime(input[:,player_features*10:player_features*11]),
+            self.usage(input[:,player_features*11:player_features*12]) 
         ), 1)
 
-        return self.finalize(self.process(embeddings))
+        return self.process(embeddings)

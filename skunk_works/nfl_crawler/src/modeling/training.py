@@ -6,7 +6,7 @@ import pathlib
 from torch.utils.data import DataLoader
 from sklearn.metrics import accuracy_score
 
-from .model import Model
+from .compare import Compare
 from .stats import dataset
 
 base_dir = str(pathlib.Path(__file__).parent.resolve())
@@ -14,9 +14,36 @@ temp_parquet_path = os.path.abspath(base_dir + "/../../cache/parquet/{}_analytic
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-model = Model({
-    'embeddings': 5,
-    'features': len(dataset.info['fields']) + len(dataset.info['ratings'])
+features = len(dataset.info['fields']) + len(dataset.info['ratings'])
+player_embeddings = int(features / 2)
+team_embeddings = features
+
+num_epochs = 100
+model = Compare({
+    'player': {
+        'layers': 3,
+        'input': features,
+        'hidden': features * 2,
+        'output': player_embeddings,
+        'activate': 'relu',
+        'finalize': 'passthrough'
+    },
+    'team': {
+        'layers': 3,
+        'input': player_embeddings * 12,
+        'hidden': player_embeddings * 12 * 2,
+        'output': team_embeddings,
+        'activate': 'relu',
+        'finalize': 'passthrough'
+    },
+    'compare': {
+        'layers': 1,
+        'input': team_embeddings,
+        'hidden': team_embeddings * 2,
+        'output': 1,
+        'activate': 'sigmoid',
+        'finalize': 'sigmoid'
+    },
 }).to(device)
 
 generator = torch.Generator().manual_seed(42)
@@ -28,7 +55,7 @@ traing_set, val_set = torch.utils.data.random_split(
 )
 
 print('sanity ->', len(traing_set), len(val_set))
-num_epochs = 30
+
 training_loader = DataLoader(traing_set, batch_size=10, shuffle=True)
 validation_loader = DataLoader(val_set, batch_size=10, shuffle=True)
 # criterion = torch.nn.BCELoss()  # Binary Cross-Entropy Loss
