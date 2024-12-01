@@ -31,7 +31,9 @@ def get_opponent(selector: Select):
     current_week = raw_games.access_week(selector)
 
     if len(current_week.index) == 0:
+        # print('unable to find opponent: '+str(selector))
         raise NoOpponent('unable to find opponent: '+str(selector))
+    
     game = current_week.iloc[0]
 
     return (

@@ -123,7 +123,7 @@ def rating_off_compute(offense_df) -> list[dict]:
 def compute_rating(selector: SelectSide) -> pd.DataFrame:
     if selector["side"] == "def":
         opp = get_opponent(selector)
-
+        
         return player_ratings.access_week(
             {
                 "season": selector["season"],

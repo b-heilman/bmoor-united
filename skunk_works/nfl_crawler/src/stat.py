@@ -1,4 +1,5 @@
 import os
+import json
 import pathlib
 import pandas as pd
 
@@ -6,10 +7,12 @@ from stats.common import save_state
 from stats.games import raw_games, raw_players
 from stats.usage import player_usage_deltas
 from stats.rating import player_rating_deltas, calculate_off_rating
-from stats.compare import compare_teams
+from stats.compare import compare_teams, build_training
 
 base_dir = str(pathlib.Path(__file__).parent.resolve())
-run_parquet_path = os.path.abspath(base_dir + "/../cache/parquet/analysis.parquet")
+analysis_parquet_path = os.path.abspath(base_dir + "/../cache/parquet/analysis.parquet")
+training_parquet_path = os.path.abspath(base_dir + "/../cache/parquet/training.parquet")
+training_info_path = os.path.abspath(base_dir + "/../cache/parquet/training.json")
 
 def dump():
     print(raw_games.access_week({'season': 2024, 'week': 4, 'team': 'PHI'}))
@@ -66,13 +69,20 @@ def process_games():
             pass
 
     df = pd.DataFrame(results)
+    df.to_parquet(analysis_parquet_path)
 
-    df.to_parquet(run_parquet_path)
+def process_training():
+    training = build_training()
+    training['df'].to_parquet(training_parquet_path)
 
+    with open(training_info_path, 'w', encoding='utf-8') as f:
+        json.dump(training['info'], f, ensure_ascii=False, indent=4)
 
 if __name__ == "__main__":
     # dump()
 
-    process_games()
+    # process_games()
+
+    process_training()
 
     save_state()

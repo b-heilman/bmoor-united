@@ -24,6 +24,7 @@ team_alias = {
     "JAX": "JAX",
     "HOU": "HOU",
     "WSH": "WSH",
+    "WAS": "WSH",
     "ARI": "ARI",
     "NE": "NE",
     "SF": "SF",
@@ -158,9 +159,8 @@ def each_role(cb):
 player_roles = each_role(lambda role, _, __: role)
 
 stat_aggregates: dict[str, list[str]] = {
-    'playerRating': ['qb', 'wr', 'rb'],
-    'usageRating': ['passing', 'receiving', 'rushing'],
-    'teamRating': ['team']
+    'prime': ['qb', 'wr', 'rb'],
+    'usage': ['passing', 'receiving', 'rushing'],
 }
 
 def each_group_role(group, cb) -> dict:
