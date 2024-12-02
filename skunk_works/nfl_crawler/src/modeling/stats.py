@@ -62,7 +62,7 @@ class LoaderSource(Dataset):
         home = normalized[normalized['home'] == True].reset_index()
         away = normalized[normalized['home'] == False].reset_index()
 
-        label_column = '1-diff'
+        label_column = 'diff_norm'
 
         self.home = home
         self.away = away

@@ -18,31 +18,31 @@ features = len(dataset.info['fields']) + len(dataset.info['ratings'])
 player_embeddings = int(features / 2)
 team_embeddings = features
 
-num_epochs = 100
+num_epochs = 300
 model = Compare({
     'player': {
-        'layers': 3,
+        'layers': 2,
         'input': features,
         'hidden': features * 2,
         'output': player_embeddings,
-        'activate': 'relu',
-        'finalize': 'passthrough'
+        'activate': 'selu',
+        'finalize': 'selu'
     },
     'team': {
-        'layers': 3,
+        'layers': 2,
         'input': player_embeddings * 12,
         'hidden': player_embeddings * 12 * 2,
         'output': team_embeddings,
-        'activate': 'relu',
-        'finalize': 'passthrough'
+        'activate': 'selu',
+        'finalize': 'selu'
     },
     'compare': {
-        'layers': 1,
+        'layers': 5,
         'input': team_embeddings,
         'hidden': team_embeddings * 2,
         'output': 1,
-        'activate': 'sigmoid',
-        'finalize': 'sigmoid'
+        'activate': 'selu',
+        'finalize': 'selu'
     },
 }).to(device)
 
@@ -58,11 +58,13 @@ print('sanity ->', len(traing_set), len(val_set))
 
 training_loader = DataLoader(traing_set, batch_size=10, shuffle=True)
 validation_loader = DataLoader(val_set, batch_size=10, shuffle=True)
-# criterion = torch.nn.BCELoss()  # Binary Cross-Entropy Loss
-criterion = torch.nn.MSELoss() # for cosine similarity
-optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
+# criterion = torch.nn.BCELoss()  # for 0 to 1
+criterion = torch.nn.MSELoss() # for -1 to 1
+optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 
 def train():
+    best_state = None
+    best_loss = 100
     for epoch in range(num_epochs):
         model.train()
         running_loss = 0.0
@@ -80,8 +82,21 @@ def train():
 
             running_loss += loss.item()
 
-        print(f"Epoch [{epoch+1}/{num_epochs}], Loss: {running_loss/len(training_loader):.4f}")
-   
+        agg_loss = running_loss/len(training_loader)
+        if best_loss > agg_loss:
+            best_loss = agg_loss
+            best_state = model.state_dict()
+
+        print(f"Epoch [{epoch+1}/{num_epochs}], Loss: {agg_loss:.6f}")
+
+    # print('======')
+    # print(model.state_dict())
+    # print(best_state)
+
+    model.load_state_dict(best_state)
+
+
+
 def accuracy(label: str):
     all_probs = []
     all_preds = []

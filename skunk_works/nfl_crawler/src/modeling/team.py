@@ -43,4 +43,4 @@ class Team(Processor):
             self.usage(input[:,player_features*11:player_features*12]) 
         ), 1)
 
-        return self.process(embeddings)
+        return super().forward(embeddings)
