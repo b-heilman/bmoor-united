@@ -44,7 +44,6 @@ class StatGroupUsage(TypedDict):
     groupby: Union[str, None]
     maximize: str
     minimize: str
-    look_back: Union[int, None]
     limit: Union[int, None]
 
 class StatGroupRating(TypedDict):
@@ -100,7 +99,8 @@ stat_groups: dict[str, StatGroup] = {
         "usage": {
             "groupby": "playerDisplay",
             "maximize": "passAtt",
-            "minimize": "rushAtt"
+            "minimize": "rushAtt",
+            "limit": None
         },
         "rating": {
             'qb': 1.0,
@@ -112,7 +112,8 @@ stat_groups: dict[str, StatGroup] = {
         "usage": {
             "groupby": "playerDisplay",
             "maximize": "recAtt",
-            "minimize": "rushAtt"
+            "minimize": "rushAtt",
+            "limit": None
         },
         "rating": {
             'qb': 0.0,
@@ -124,7 +125,8 @@ stat_groups: dict[str, StatGroup] = {
         "usage": {
             "groupby": "playerDisplay",
             "maximize": "rushAtt",
-            "minimize": "recAtt"
+            "minimize": "recAtt",
+            "limit": None
         },
         "rating": {
             'qb': 0.0,
@@ -159,7 +161,7 @@ def each_role(cb):
 player_roles = each_role(lambda role, _, __: role)
 
 stat_aggregates: dict[str, list[str]] = {
-    'prime': ['qb', 'wr', 'rb'],
+    'starters': ['qb', 'wr', 'rb'],
     'usage': ['passing', 'receiving', 'rushing'],
 }
 
@@ -247,12 +249,15 @@ class Select(TypedDict):
     week: int
     team: str
 
-
-class SelectSide(Select):
+class SelectRange(Select):
     side: str
+    range: int
+
+class SelectWeeks(SelectRange):
+    weeks: list[int]
 
 
-def sanitize_selector(selector: Select):
+def sanitize_selector(selector: Union[SelectRange, SelectWeeks]):
     if selector["team"] in team_alias:
         selector["team"] = team_alias[selector["team"]]
 
@@ -262,8 +267,9 @@ class SimpleAccess:
         self,
         storage_path: str,
         clean_up=None,
-        team_filter: Callable[[pd.DataFrame, Select], Any] = lambda df, s: df["team"]
-        == s["team"],
+        team_filter: Callable[
+            [pd.DataFrame, Select], Any
+        ] = lambda df, s: df["team"] == s["team"],
     ):
         self.df = pd.read_parquet(storage_path).sort_values(
             by=["season", "week"], ascending=False
@@ -276,7 +282,7 @@ class SimpleAccess:
     def get_frame(self) -> pd.DataFrame:
         return self.df
     
-    def access_week(self, selector: Select) -> pd.DataFrame:
+    def access_week(self, selector: SelectRange) -> pd.DataFrame:
         sanitize_selector(selector)
 
         return self.df[
@@ -285,14 +291,21 @@ class SimpleAccess:
             & self.team_filter(self.df, selector)
         ]
 
-    def access_history(self, selector: Select) -> pd.DataFrame:
+    def access_history(self, selector: SelectWeeks) -> pd.DataFrame:
         sanitize_selector(selector)
 
-        return self.df[
-            (self.df["season"] == selector["season"])
-            & (self.df["week"] <= selector["week"])
-            & self.team_filter(self.df, selector)
-        ]
+        query = (self.df["season"] == selector["season"]) & self.team_filter(self.df, selector)
+        weeks = None
+        for w in selector['weeks']:
+            filter = (self.df["week"] == w)
+            if weeks is None:
+                weeks = filter
+            else:
+                weeks =  weeks | filter
+
+        query = query & weeks
+
+        return self.df[query]
 
 
 registry: list = []
@@ -312,51 +325,50 @@ def capture_traceback():
     return f.getvalue()
 
 class ComputeAccess:
+    frames: dict[str, pd.DataFrame]
     def __init__(
         self,
-        off_storage_path: str,
-        def_storage_path: str,
-        access: Callable[[SelectSide], pd.DataFrame],
+        path_template: str,
+        access: Callable[[SelectRange], pd.DataFrame],
     ):
-        off_storage_path = os.path.abspath(off_storage_path)
-        def_storage_path = os.path.abspath(def_storage_path)
-
         registry.append(self)
 
         self.access = access
-        try:
-            self.off_df = pd.read_parquet(off_storage_path)
-        except:
-            self.off_df = pd.DataFrame()
+        self.frames = {}
+        self.path_template = path_template
 
-        try:
-            self.def_df = pd.read_parquet(def_storage_path)
-        except:
-            self.def_df = pd.DataFrame()
+    def get_frame(self, selector: SelectRange) -> pd.DataFrame:
+        path = os.path.abspath(self.path_template.format(**selector))
 
-        self.off_storage_path = os.path.abspath(off_storage_path)
-        self.def_storage_path = os.path.abspath(def_storage_path)
-
-    def get_frame(self, selector: SelectSide) -> pd.DataFrame:
-        if selector["side"] == "def":
-            return self.def_df
+        if path in self.frames:
+            return self.frames[path]
         else:
-            return self.off_df
+            try:
+                df = pd.read_parquet(path)
+            except:
+                df = pd.DataFrame()
+
+            self.frames[path] = df
+
+            return df
+
+    def update(self, selector: SelectRange, input: pd.DataFrame) -> None:
+        path = os.path.abspath(self.path_template.format(**selector))
+
+        self.frames[path] = pd.concat([self.frames[path], input])
+
 
     def save(self):
-        self.off_df.reset_index(inplace=True, drop=True)
-        self.off_df.to_parquet(self.off_storage_path)
+        for path, frame in self.frames.items():
+            frame.reset_index(inplace=True, drop=True)
+            frame.to_parquet(path)
 
-        self.def_df.reset_index(inplace=True, drop=True)
-        self.def_df.to_parquet(self.def_storage_path)
-
-    def access_week(self, selector: SelectSide) -> pd.DataFrame:
+    def access_week(self, selector: SelectRange) -> pd.DataFrame:
         sanitize_selector(selector)
 
         df = self.get_frame(selector)
 
         if len(df.index) > 0:
-
             res_df = df[
                 (df["season"] == selector["season"])
                 & (df["week"] == selector["week"])
@@ -369,52 +381,57 @@ class ComputeAccess:
         try:
             rtn = self.access(selector)
 
+            if rtn is None:
+                return None
+
             rtn['season'] = selector['season']
             rtn['week'] = selector['week']
             rtn['team'] = selector['team']
                 
-            if selector["side"] == "def":
-                self.def_df = pd.concat([self.def_df, rtn])
-            else:
-                self.off_df = pd.concat([self.off_df, rtn])
+            self.update(selector, rtn)
         except NoOpponent as ex:
             rtn = pd.DataFrame()
 
         return rtn
 
-    def access_history(self, selector: SelectSide) -> pd.DataFrame:
+    def access_history(self, selector: SelectWeeks) -> pd.DataFrame:
         sanitize_selector(selector)
 
+        if len(selector['weeks']) == 0:
+            raise Exception('no weeks passed: '+str(selector))
+        
         return pd.concat(
-            [
+            list(filter(lambda row: row is not None, [
                 self.access_week(
                     {
                         "season": selector["season"],
                         "week": w,
+                        "range": selector["range"],
                         "team": selector["team"],
                         "side": selector["side"],
                     }
                 )
-                for w in range(selector["week"], 0, -1)
-            ]
+                for w in selector['weeks']
+            ]))
         )
 
-    def access_across(self, selector: SelectSide) -> pd.DataFrame:
+    def access_across(self, selector: SelectRange) -> pd.DataFrame:
         sanitize_selector(selector)
 
-        todo = list(set(team_alias.values()))
-        todo.remove(selector["team"])
-
+        others = list(set(team_alias.values()))
+        others.remove(selector["team"])
+        
         return pd.concat(
-            [
+            list(filter(lambda row: row is not None, [
                 self.access_week(
                     {
                         "season": selector["season"],
                         "week": selector["week"],
-                        "team": t,
+                        "range": selector["range"],
+                        "team": team,
                         "side": selector["side"],
                     }
                 )
-                for t in todo
-            ]
+                for team in others
+            ]))
         )

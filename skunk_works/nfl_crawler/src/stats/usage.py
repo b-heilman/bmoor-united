@@ -2,13 +2,14 @@ import numpy as np
 import pandas as pd
 import pathlib
 
-from .games import get_opponent, raw_players
+# from typing import Callable, TypedDict, Any, Union
+
+from .games import get_opponent, raw_players, get_schedule
 from .common import (
     stat_fields, 
     stat_groups,
-    each_role,
     player_roles,
-    SelectSide, 
+    SelectRange,
     ComputeAccess,
     StatGroupUsage
 )
@@ -23,14 +24,7 @@ def top_usage(
         (team_df[usage['maximize']] > team_df[usage['minimize']])
     ]
 
-    if "look_back" in usage and usage["look_back"] is not None:
-        search = filtered_df[
-            filtered_df["week"].isin(
-                np.sort(filtered_df["week"].unique())[0, usage["look_back"]]
-            )
-        ].copy()
-    else:
-        search = filtered_df.copy()
+    search = filtered_df.copy()
 
     if 'limit' in usage and usage['limit'] is not None:
         search["played"] = 1
@@ -88,7 +82,7 @@ def stats_offense(
         return rtn.reindex(index=base["playerDisplay"].unique()).reset_index()
 
 
-def compute_player_usage(selector: SelectSide):
+def compute_player_usage(selector: SelectRange):
     if selector['week'] == 0:
         print('punting', selector)
         raise Exception('Searching for week 0: '+str(selector))
@@ -100,22 +94,34 @@ def compute_player_usage(selector: SelectSide):
             {
                 "season": selector["season"],
                 "week": selector["week"],
+                "range": selector["range"],
                 "team": opp,
                 "side": "off",
             }
         ).copy()
     else:
         agg = []
-        team_season_df = raw_players.access_history(selector)
-        team_week = team_season_df[team_season_df["week"] == selector["week"]]
+        weeks = get_schedule({
+            "season": selector["season"],
+            "week": selector["week"],
+            "range": selector["range"],
+            "team": selector["team"],
+            "side": selector["side"],
+        })
 
-        if len(team_week.index) == 0: # this is a bye week, so go backwards and don't save
-            return compute_player_usage({
-                "season": selector["season"],
-                "week": int(selector["week"]) - 1,
-                "team": selector["team"],
-                "side": selector["side"],
-            })
+        # If a team missed a game in the first week, this may be needed
+        if len(weeks) == 0:
+            return None
+        
+        team_season_df = raw_players.access_history({
+            "season": selector["season"],
+            "week": selector["week"],
+            "range": selector["range"],
+            "team": selector["team"],
+            "side": selector["side"],
+            "weeks": weeks
+        })
+        team_week = team_season_df[team_season_df["week"] == selector["week"]]
 
         team_season_df = team_season_df[
             team_season_df['playerDisplay'].isin(team_week['playerDisplay'].unique())
@@ -138,7 +144,6 @@ def compute_player_usage(selector: SelectSide):
                     top_df = top_df[stat_fields+['playerDisplay']]
                     top_df['role'] = [group+str(i+1) for i in range(usage['limit'])]
                 else:
-
                     top_df = pd.DataFrame([top_df[stat_fields].sum()])
                     top_df['playerDisplay'] = 'aggregate_'+group
                     top_df['role'] = group
@@ -150,13 +155,12 @@ def compute_player_usage(selector: SelectSide):
 
 
 player_usage = ComputeAccess(
-    base_dir + "/../../cache/parquet/off_usage.parquet",
-    base_dir + "/../../cache/parquet/def_usage.parquet",
+    base_dir + "/../../cache/parquet/{side}_{range}_usage.parquet",
     compute_player_usage,
 )
 
 
-def compute_player_usage_delta(selector: SelectSide):
+def compute_player_usage_delta(selector: SelectRange):
     """
     For every week, calculate the top players by position by attempt
     """
@@ -175,21 +179,35 @@ def compute_player_usage_delta(selector: SelectSide):
     if selector["week"] == 1:
         # if we're on week one, we will compare to everyone else
         history_df = (
-            player_usage.access_across(selector)
+            player_usage.access_across({
+                "season": selector['season'],
+                "range": selector['range'],
+                "week": selector["week"],
+                "team": selector['team'],
+                "side": selector["side"]
+            })
             .groupby("role")
             .agg({stat: "mean" for stat in stat_fields})
         )
     else:
         opponent = get_opponent(selector)
+        weeks = get_schedule({
+            "season": selector["season"],
+            "week": selector["week"],
+            "range": selector["range"],
+            "team": opponent,
+            "side": "def" if selector["side"] == "off" else "off",
+        })
+
         history_df = (
-            player_usage.access_history(
-                {
-                    "season": selector["season"],
-                    "week": selector["week"] - 1,
-                    "team": opponent,
-                    "side": "def" if selector["side"] == "off" else "off",
-                }
-            )
+            player_usage.access_history({
+                "season": selector["season"],
+                "week": selector["week"],
+                "range": selector["range"],
+                "team": opponent,
+                "side": "def" if selector["side"] == "off" else "off",
+                "weeks": weeks
+            })
             .groupby("role")
             .agg({stat: "mean" for stat in stat_fields})
         )
@@ -219,7 +237,6 @@ def compute_player_usage_delta(selector: SelectSide):
 
 
 player_usage_deltas = ComputeAccess(
-    base_dir + "/../../cache/parquet/off_usage_delta.parquet",
-    base_dir + "/../../cache/parquet/def_usage_delta.parquet",
+    base_dir + "/../../cache/parquet/{side}_{range}_usage_delta.parquet",
     compute_player_usage_delta,
 )

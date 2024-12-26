@@ -5,12 +5,12 @@ import pathlib
 from .common import (
     each_role,
     StatGroupRating,
-    player_roles, 
-    SelectSide, 
+    player_roles,
+    SelectRange,
     ComputeAccess
 )
 from .usage import player_usage
-from .games import get_opponent
+from .games import get_opponent, get_schedule
 
 base_dir = str(pathlib.Path(__file__).parent.resolve())
 
@@ -120,13 +120,15 @@ def rating_off_compute(offense_df) -> list[dict]:
     })
 
 
-def compute_rating(selector: SelectSide) -> pd.DataFrame:
+def compute_rating(selector: SelectRange) -> pd.DataFrame:
     if selector["side"] == "def":
         opp = get_opponent(selector)
         
+        # The defensive rating is just what the offensive rating was they played against
         return player_ratings.access_week(
             {
                 "season": selector["season"],
+                "range": selector["range"],
                 "week": selector["week"],
                 "team": opp,
                 "side": "off",
@@ -135,7 +137,11 @@ def compute_rating(selector: SelectSide) -> pd.DataFrame:
     else:
         this_week_df = player_usage.access_week(selector)
 
+        if this_week_df is None:
+            return None
+
         this_index_df = this_week_df.set_index('role')
+
         rtn = pd.DataFrame(
             rating_off_compute(this_week_df)
         ).set_index('role')
@@ -150,13 +156,12 @@ def compute_rating(selector: SelectSide) -> pd.DataFrame:
 
 
 player_ratings = ComputeAccess(
-    base_dir + "/../../cache/parquet/off_rating.parquet",
-    base_dir + "/../../cache/parquet/def_rating.parquet",
+    base_dir + "/../../cache/parquet/{side}_{range}_rating.parquet",
     compute_rating,
 )
 
 
-def compute_rating_diff(selector: SelectSide) -> pd.DataFrame:
+def compute_rating_diff(selector: SelectRange) -> pd.DataFrame:
     other_side = "def" if selector["side"] == "off" else "off"
     opponent = get_opponent(selector)
 
@@ -164,6 +169,7 @@ def compute_rating_diff(selector: SelectSide) -> pd.DataFrame:
         history_df = (
             player_ratings.access_across({
                 "season": selector["season"],
+                "range": selector["range"],
                 "week": selector["week"],
                 "team": opponent,
                 "side": other_side,
@@ -174,13 +180,22 @@ def compute_rating_diff(selector: SelectSide) -> pd.DataFrame:
             .set_index("role")
         )
     else:
+        weeks = get_schedule({
+            "season": selector["season"],
+            "range": selector["range"],
+            "week": selector["week"],
+            "team": opponent,
+            "side": other_side,
+        })
         history_df = (
             player_ratings.access_history(
                 {
                     "season": selector["season"],
-                    "week": selector["week"] - 1,
+                    "range": selector["range"],
+                    "week": selector["week"],
                     "team": opponent,
                     "side": other_side,
+                    "weeks": weeks,
                 }
             )
             .groupby(["role"])
@@ -220,7 +235,6 @@ def compute_rating_diff(selector: SelectSide) -> pd.DataFrame:
 
 
 player_rating_deltas = ComputeAccess(
-    base_dir + "/../../cache/parquet/off_rating_delta.parquet",
-    base_dir + "/../../cache/parquet/def_rating_delta.parquet",
+    base_dir + "/../../cache/parquet/{side}_{range}_rating_delta.parquet",
     compute_rating_diff,
 )

@@ -56,8 +56,11 @@ export interface PlayerData {
     passTd: number,
     passInt: number,
     passLong: number,
-    passRating: number,
     passTargetYds: number,
+    sacked: number,
+    sackYds: number,
+    qbr: number,
+    aqbr: number,
     // passPoor_throws": number,
     // passBlitzed: number,
     // passHurried: number,
@@ -77,7 +80,6 @@ export interface PlayerData {
     recLong: number,
     recDepth: number,
     recYac: number,
-    sacked: number,
     fumbles: number,
     fumblesLost: number
 };

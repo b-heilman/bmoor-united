@@ -182,8 +182,11 @@ async function createPlayerData(playerId: string): Promise<PlayerData> {
                 passTd: 0,
                 passInt: 0,
                 passLong: 0,
-                passRating: 0,
                 passTargetYds: 0,
+                sacked: 0,
+                sackYds: 0,
+                qbr: 0,
+                aqbr: 0,
                 rushAtt: 0,
                 rushYds: 0,
                 rushTd: 0,
@@ -199,7 +202,6 @@ async function createPlayerData(playerId: string): Promise<PlayerData> {
                 recLong: 0,
                 recDepth: 0,
                 recYac: 0,
-                sacked: 0,
                 fumbles: 0,
                 fumblesLost: 0
             };
@@ -211,7 +213,7 @@ async function createPlayerData(playerId: string): Promise<PlayerData> {
 
 function applyPassing(player: PlayerData, stats: Record<string, string>){
     const [comps, atts] = stats['completions/passingAttempts'].split('/');
-    const [sacks] = stats['sacks-sackYardsLost'].split('-');
+    const [sacks, sackYds] = stats['sacks-sackYardsLost'].split('-');
 
     player.passCmp = parseInt(comps);
     player.passAtt = parseInt(atts);
@@ -220,6 +222,9 @@ function applyPassing(player: PlayerData, stats: Record<string, string>){
     player.passTd = parseInt(stats['passingTouchdowns']);
     player.passInt = parseInt(stats['interceptions']);
     player.sacked = parseInt(sacks);
+    player.sackYds = parseInt(sackYds);
+    player.qbr = parseInt(stats['QBRating'])
+    player.aqbr = parseInt(stats['adjQBR'])
     // player.passLong = 0;
     // player.passRating = 0;
     // player.passTargetYds = 0;
@@ -229,7 +234,7 @@ function applyRushing(player: PlayerData, stats: Record<string, string>){
     player.rushAtt = parseInt(stats['rushingAttempts']);
     player.rushYds = parseInt(stats['rushingYards']);
     player.rushTd = parseInt(stats['rushingTouchdowns']);
-    // player.rushLong = 0;
+    player.rushLong = parseInt(stats['longRushing']);
     // player.rushYdsBc = 0;
     // player.rushYdsAc = 0;
     // player.rushBrokenTackles = 0;
@@ -240,8 +245,8 @@ function applyReceiving(player: PlayerData, stats: Record<string, string>){
     player.recCmp = parseInt(stats['receptions']); 
     player.recYds = parseInt(stats['receivingYards']);
     player.recTd = parseInt(stats['receivingTouchdowns']);
+    player.recLong = parseInt(stats['longReception']);
     // player.recDrops = 0;
-    // player.recLong = 0;
     // player.recDepth = 0;
     // player.recYac = 0;
 }
@@ -484,12 +489,12 @@ async function processGames(paths: string[]){
         console.log(ex);
     }
 
-    const newGameData = await Promise.all(unknownGames.map(game => {
+    const newGameData = (await Promise.all(unknownGames.map(game => {
         const season = formatSeason(game.header.season.year);
         const week = formatWeek(game.header.week);
 
         return processGameStats(season, week, game);
-    }));
+    }))).filter(game => game.awayScore != 0 || game.homeScore != 0);
 
     try {
         const writer = await parquet.ParquetWriter.openFile(gameSchema, gameParquetPath);

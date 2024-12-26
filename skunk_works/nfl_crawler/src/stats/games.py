@@ -2,7 +2,7 @@ import os
 import pandas as pd
 import pathlib
 
-from .common import NoOpponent, SimpleAccess, Select
+from .common import NoOpponent, SimpleAccess, SelectRange, sanitize_selector
 
 base_dir = str(pathlib.Path(__file__).parent.resolve())
 
@@ -27,7 +27,26 @@ raw_players = SimpleAccess(
     lambda df, s: df["teamDisplay"] == s["team"],
 )
 
-def get_opponent(selector: Select):
+def get_schedule(selector: SelectRange) -> list[int]:
+    sanitize_selector(selector)
+    
+    limit = selector['range']
+    rtn = list(raw_games.df[
+        (raw_games.df['season'] == selector['season']) & 
+        ((raw_games.df['homeTeamDisplay'] == selector['team']) | (raw_games.df['awayTeamDisplay'] == selector['team'])) &
+        (raw_games.df['week'] <= selector['week'])
+    ]['week'])
+    
+    rtn.sort(reverse=True)
+
+    if limit == 0:
+        return rtn
+    elif len(rtn) < limit:
+        return rtn
+    else:
+        return rtn[0:limit]
+
+def get_opponent(selector: SelectRange):
     current_week = raw_games.access_week(selector)
 
     if len(current_week.index) == 0:

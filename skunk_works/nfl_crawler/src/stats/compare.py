@@ -3,11 +3,13 @@ import statistics
 
 from typing import Callable, Any
 
-from .games import raw_games
+from .games import raw_games, get_schedule
 from .rating import player_ratings, player_rating_deltas
-from .usage import player_usage, player_usage_deltas
+from .usage import player_usage, player_usage_deltas, SelectRange
 
 from .common import each_comparison, comparisons, stat_fields
+
+view_range = 0
 
 def compute_usage(role, off_df, def_df, off_delta_df, def_delta_df):
     return (
@@ -17,14 +19,34 @@ def compute_usage(role, off_df, def_df, off_delta_df, def_delta_df):
     )
 
 def _compare_teams_by_usage(
-    season: int, week: int, offense: str, defense: str
+    season: int, week: int, offense: str, defense: str, range: int
 ) -> pd.Series:
     means = {stat: "mean" for stat in stat_fields}
 
+    off_weeks = get_schedule({
+        "season": season, 
+        "week": week,
+        "range": range,
+        "team": offense, 
+        "side": "off"
+    })
+    def_weeks = get_schedule({
+        "season": season, 
+        "week": week,
+        "range": range,
+        "team": defense, 
+        "side": "def"
+    })
+
     off_df = (
-        player_usage.access_history(
-            {"season": season, "week": week, "team": offense, "side": "off"}
-        )
+        player_usage.access_history({
+            "season": season, 
+            "week": week,
+            "range": range,
+            "weeks": off_weeks, 
+            "team": offense, 
+            "side": "off"
+        })
         .groupby(["role"])
         .agg(means)
     )
@@ -32,17 +54,27 @@ def _compare_teams_by_usage(
         raise Exception(f"Can not find: {offense}")
 
     off_delta_df = (
-        player_usage_deltas.access_history(
-            {"season": season, "week": week, "team": offense, "side": "off"}
-        )
+        player_usage_deltas.access_history({
+            "season": season,
+            "week": week,
+            "range": range, 
+            "weeks": off_weeks, 
+            "team": offense, 
+            "side": "off"
+        })
         .groupby(["role"])
         .agg(means)
     )
 
     def_df = (
-        player_usage.access_history(
-            {"season": season, "week": week, "team": defense, "side": "def"}
-        )
+        player_usage.access_history({
+            "season": season, 
+            "week": week,
+            "range": range, 
+            "weeks": def_weeks, 
+            "team": defense, 
+            "side": "def"
+        })
         .groupby(["role"])
         .agg(means)
     )
@@ -50,9 +82,14 @@ def _compare_teams_by_usage(
         raise Exception(f"Can not find: {defense}")
 
     def_delta_df = (
-        player_usage_deltas.access_history(
-            {"season": season, "week": week, "team": defense, "side": "def"}
-        )
+        player_usage_deltas.access_history({
+            "season": season, 
+            "week": week,
+            "range": range, 
+            "weeks": def_weeks, 
+            "team": defense, 
+            "side": "def"
+        })
         .groupby(["role"])
         .agg(means)
     )
@@ -72,30 +109,61 @@ def compute_rating(role, off_df, def_df, off_delta_df, def_delta_df):
     )
 
 def _compare_teams_by_rating(
-    season: int, week: int, offense: str, defense: str
+    season: int, week: int, offense: str, defense: str, range: int
 ) -> pd.Series:
+    off_weeks = get_schedule({
+        "season": season, 
+        "week": week,
+        "range": range,
+        "team": offense, 
+        "side": "off"
+    })
+    def_weeks = get_schedule({
+        "season": season, 
+        "week": week,
+        "range": range,
+        "team": defense, 
+        "side": "def"
+    })
+
     off_df = (
-        player_ratings.access_history(
-            {"season": season, "week": week, "team": offense, "side": "off"}
-        )
+        player_ratings.access_history({
+            "season": season,
+            "week": week,
+            "range": range, 
+            "weeks": off_weeks, 
+            "team": offense, 
+            "side": "off"
+        })
         .groupby(["role"])
         .agg({"rating": "mean"})
     )
+
     if len(off_df.index) == 0:
         raise Exception(f"Can not find: {offense}")
 
     off_delta_df = (
-        player_rating_deltas.access_history(
-            {"season": season, "week": week, "team": offense, "side": "off"}
-        )
+        player_rating_deltas.access_history({
+            "season": season,
+            "week": week,
+            "range": range, 
+            "weeks": off_weeks, 
+            "team": offense, 
+            "side": "off"
+        })
         .groupby(["role"])
         .agg({"rating": "mean"})
     )
 
     def_df = (
-        player_ratings.access_history(
-            {"season": season, "week": week, "team": defense, "side": "def"}
-        )
+        player_ratings.access_history({
+            "season": season,
+            "week": week,
+            "range": range, 
+            "weeks": def_weeks, 
+            "team": defense, 
+            "side": "def"
+        })
         .groupby(["role"])
         .agg({"rating": "mean"})
     )
@@ -103,9 +171,14 @@ def _compare_teams_by_rating(
         raise Exception(f"Can not find: {defense}")
 
     def_delta_df = (
-        player_rating_deltas.access_history(
-            {"season": season, "week": week, "team": defense, "side": "def"}
-        )
+        player_rating_deltas.access_history({
+            "season": season,
+            "week": week,
+            "range": range, 
+            "weeks": def_weeks, 
+            "team": defense, 
+            "side": "def"
+        })
         .groupby(["role"])
         .agg({"rating": "mean"})
     )
@@ -118,19 +191,19 @@ def _compare_teams_by_rating(
     )
 
 
-def compare_teams_ratings(season: int, week: int, team1: str, team2: str) -> pd.DataFrame:
+def compare_teams_ratings(season: int, week: int, team1: str, team2: str, range: int) -> pd.DataFrame:
     return pd.DataFrame(
         [
-            _compare_teams_by_rating(season, week, team1, team2),
-            _compare_teams_by_rating(season, week, team2, team1),
+            _compare_teams_by_rating(season, week, team1, team2, range),
+            _compare_teams_by_rating(season, week, team2, team1, range),
         ]
     )
 
 
 def compare_teams(
-    season: int, week: int, team1: str, team2: str
+    season: int, week: int, team1: str, team2: str, range: int
 ) -> dict:
-    ratings_df = compare_teams_ratings(season, week, team1, team2)
+    ratings_df = compare_teams_ratings(season, week, team1, team2, range)
 
     ratings = ratings_df.iloc[0] - ratings_df.iloc[1]
 
@@ -172,38 +245,42 @@ def compare_teams(
 
     return rtn
 
-def _build_training(season, week, home, away):
+def _build_training(season, week, home, away, range) -> dict:
     return {
         'home_ratings': _compare_teams_by_rating(
             season, 
-            week, 
+            week,
             home, 
-            away
+            away,
+            range
         ),
         'away_ratings': _compare_teams_by_rating(
             season, 
             week, 
             away, 
-            home
+            home,
+            range
         ),
         'home_usages': _compare_teams_by_usage(
             season, 
-            week, 
+            week,
             home, 
-            away
+            away,
+            range
         ),
         'away_usages': _compare_teams_by_usage(
             season, 
-            week, 
+            week,
             away, 
-            home
+            home,
+            range
         )
     }
 
 def build_training() -> dict:
     training = []
     for index, row in raw_games.get_frame().iterrows():
-        try:
+        # try:
             if row["week"] > 2 and row["week"] < 16:
                 season = row["season"]
                 week = row["week"]
@@ -217,7 +294,8 @@ def build_training() -> dict:
                     season, 
                     search_week, 
                     home_team, 
-                    away_team
+                    away_team,
+                    view_range
                 )
 
                 diff = row["homeScore"] - row["awayScore"]
@@ -258,8 +336,8 @@ def build_training() -> dict:
 
                 training.append(home)
                 training.append(away)
-        except:
-            pass
+        # except:
+        #    pass
 
     return {
         'df': pd.DataFrame(training),
