@@ -15,14 +15,14 @@ def cleanup_players(df):
 
 
 raw_games = SimpleAccess(
-    os.path.abspath(base_dir + "/../../cache/parquet/games.parquet"),
+    os.path.abspath(base_dir + "/../../cache/parquet/base/games.parquet"),
     cleanup_players,
     lambda df, s: (df["homeTeamDisplay"] == s["team"])
     | (df["awayTeamDisplay"] == s["team"]),
 )
 
 raw_players = SimpleAccess(
-    os.path.abspath(base_dir + "/../../cache/parquet/players.parquet"),
+    os.path.abspath(base_dir + "/../../cache/parquet/base/players.parquet"),
     None,
     lambda df, s: df["teamDisplay"] == s["team"],
 )

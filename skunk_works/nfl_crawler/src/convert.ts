@@ -6,15 +6,17 @@ import { fileURLToPath } from 'url';
 import {resolve} from 'path';
 
 import { readPlayer, cacheDir } from './access';
-import { GameResponse, BoxscorePlayersInfo } from './access.interface';
+import { GameResponse, BoxscorePlayersInfo, DriveInfo } from './access.interface';
 import { 
     PlayerData, 
     playerSchema, 
-    gameSchema, 
+    gameSchema,
+    driveSchema,
     TeamPlayersData,
     InteralPlayersData,
-    StoredPlayerData,
-    StoredGameData
+    PlayerStorageData,
+    GameStorageData,
+    DriveStorageData
 } from './convert.interface';
 
 export const parquetDir = `${cacheDir}/parquet`;
@@ -176,6 +178,7 @@ async function createPlayerData(playerId: string): Promise<PlayerData> {
                 playerPosition,
                 playerPositionGroup,
                 playerPositionNorm,
+
                 passCmp: 0,
                 passAtt: 0,
                 passYds: 0,
@@ -183,10 +186,9 @@ async function createPlayerData(playerId: string): Promise<PlayerData> {
                 passInt: 0,
                 passLong: 0,
                 passTargetYds: 0,
-                sacked: 0,
-                sackYds: 0,
                 qbr: 0,
                 aqbr: 0,
+
                 rushAtt: 0,
                 rushYds: 0,
                 rushTd: 0,
@@ -194,6 +196,7 @@ async function createPlayerData(playerId: string): Promise<PlayerData> {
                 rushYdsBc: 0,
                 rushYdsAc: 0,
                 rushBrokenTackles: 0,
+
                 recAtt: 0,
                 recCmp: 0, 
                 recYds: 0,
@@ -202,6 +205,9 @@ async function createPlayerData(playerId: string): Promise<PlayerData> {
                 recLong: 0,
                 recDepth: 0,
                 recYac: 0,
+
+                sacked: 0,
+                sackYds: 0,
                 fumbles: 0,
                 fumblesLost: 0
             };
@@ -271,11 +277,13 @@ function teamLookup(id, display){
     }
 }
 
-async function processGameStats(season: string, week: string, game: GameResponse): Promise<StoredGameData>{
+async function processGameStats(
+    season: string, week: string, game: GameResponse
+): Promise<{game: GameStorageData, drives: DriveStorageData[]}>{
     const gameName = getGameName(game);
     const competion = game.header.competitions[0];
 
-    const rtn: StoredGameData = {
+    const rtnGame: GameStorageData = {
         season,
         week,
         gameId: game.header.id,
@@ -290,21 +298,118 @@ async function processGameStats(season: string, week: string, game: GameResponse
         neutralField: competion.neutralSite
     };
 
+    const teamAbbreviations = {};
     for (const competitor of competion.competitors){
         const display = teamLookup(competitor.team.id, competitor.team.abbreviation);
 
+        teamAbbreviations[display] = competitor.team.id
         if (competitor.homeAway === 'home'){
-            rtn.homeTeamId = competitor.team.id;
-            rtn.homeTeamDisplay = display;
-            rtn.homeScore = parseInt(competitor.score);
+            rtnGame.homeTeamId = competitor.team.id;
+            rtnGame.homeTeamDisplay = display;
+            rtnGame.homeScore = parseInt(competitor.score);
         } else {
-            rtn.awayTeamId = competitor.team.id;
-            rtn.awayTeamDisplay = display;
-            rtn.awayScore = parseInt(competitor.score);
+            rtnGame.awayTeamId = competitor.team.id;
+            rtnGame.awayTeamDisplay = display;
+            rtnGame.awayScore = parseInt(competitor.score);
         }
     }
 
-    return rtn;
+    const rtnDrives: DriveStorageData[] = [];
+    if (game.drives){
+        for (const drive of game.drives.previous){
+            let startTime = 0;
+            if (drive.start) {
+                if (drive.start.clock){
+                    const [startMin, startSec] = drive.start.clock.displayValue.split(':');
+                    startTime = parseInt(startMin) * 60 + parseInt(startSec);
+                } 
+                
+                startTime += (drive.start.period.number - 1) * (15 * 60)
+            }
+
+            let stopTime;
+            if (drive.end) {
+                if (drive.end.clock){
+                    const [endMin, endSec] = drive.end.clock.displayValue.split(':');
+                    stopTime = parseInt(endMin) * 60 + parseInt(endSec);
+                } else {
+                    stopTime = 14 * 60 + 59
+                }
+                
+                stopTime += (drive.end.period.number - 1) * (15 * 60);
+            } else {
+                stopTime = 4 * 15 * 60;
+            }
+
+            const reduced = drive.plays.reduce(
+                (agg, play) => {
+                    let type = play.type ? (
+                        play.type.abbreviation || play.type.text
+                    ).toLowerCase() : 'weird'
+                    
+                    if (type === 'rush'){
+                        agg.runs++;
+                    } else if (type === 'rec' || type === 'sack'){
+                        agg.pass++;
+                    } else if (type === 'td'){
+                        if (play.type.text.indexOf('Rushing') === -1){
+                            type = 'rush';
+
+                            agg.runs++;
+                            agg.score += 6;
+                        } else {
+                            type = 'rec';
+
+                            agg.pass++;
+                            agg.score += 6;
+                        }
+
+                        // TODO: what about 2 point scores?
+                        if (play.text.indexOf('extra point is GOOD') !== -1){
+                            agg.score += 1;
+                        }
+                    }
+
+                    agg.plays.push({
+                        type,
+                        distance: play.end.yardLine - play.start.yardLine,
+                        result: play.text
+                    })
+
+                    return agg;
+                },
+                {
+                    runs: 0,
+                    pass: 0,
+                    score: 0,
+                    turnover: false,
+                    plays: []
+                }
+            );
+
+            rtnDrives.push({
+                season,
+                week,
+                gameId: game.header.id,
+                teamId: teamAbbreviations[drive.team.abbreviation],
+                teamDisplay: drive.team.abbreviation,
+                startTime,
+                stopTime,
+                startYards: drive.start.yardLine,
+                stopYards: drive.end ? drive.end.yardLine : 0,
+                rushes: reduced.runs,
+                passes: reduced.pass,
+                points: reduced.score,
+                turnover: reduced.turnover,
+                plays: reduced.plays
+            });
+        } 
+    }
+
+    return {
+        game: rtnGame,
+        drives: rtnDrives
+    };
 }
 
 async function processGamePlayers(playersData: BoxscorePlayersInfo[]): Promise<TeamPlayersData[]>{
@@ -365,11 +470,13 @@ function getGameKey(year: number|string, week: number|string){
 }
 
 async function processGames(paths: string[]){
-    const gameParquetPath = `${parquetDir}/games.parquet`;
-    const playerParquetPath = `${parquetDir}/players.parquet`;
+    const gameParquetPath = `${parquetDir}/base/games.parquet`;
+    const driveParquetPath = `${parquetDir}/base/drives.parquet`;
+    const playerParquetPath = `${parquetDir}/base/players.parquet`;
     const knownGames: Record<string, boolean> = {};
-    const existingGameData: StoredGameData[] = [];
-    const existingPlayersData: StoredPlayerData[] = [];
+    const existingGameData: GameStorageData[] = [];
+    const existingDriveData: DriveStorageData[] = [];
+    const existingPlayersData: PlayerStorageData[] = [];
 
     try {
         if (fsSync.existsSync(playerParquetPath)){
@@ -377,7 +484,7 @@ async function processGames(paths: string[]){
             const cursor = reader.getCursor();
     
             // read all records from the file and print them
-            let record: StoredPlayerData = null;
+            let record: PlayerStorageData = null;
             while (record = await cursor.next()) {
                 knownGames[record.gameId] = true;
                 existingPlayersData.push(record);
@@ -402,7 +509,7 @@ async function processGames(paths: string[]){
             const cursor = reader.getCursor();
     
             // read all records from the file and print them
-            let record: StoredGameData = null;
+            let record: GameStorageData = null;
             while (record = await cursor.next()) {
                 const gameKey = getGameKey(record.season, record.week);
 
@@ -419,6 +526,27 @@ async function processGames(paths: string[]){
         }
     } catch(ex){
         console.log('failed to load game cache parquet');
+    }
+
+    try {
+        if (fsSync.existsSync(driveParquetPath)){
+            const reader = await parquet.ParquetReader.openFile(driveParquetPath);
+            const cursor = reader.getCursor();
+    
+            // read all records from the file and print them
+            let record: DriveStorageData = null;
+            while (record = await cursor.next()) {
+                existingDriveData.push(record);
+            }
+
+            await reader.close();
+
+            console.log('drives loaded from cache');
+        } else {
+            console.log('no drive cache found');
+        }
+    } catch(ex){
+        console.log('failed to load drive cache parquet');
     }
 
     const games: GameResponse[] = await Promise.all(paths.map(
@@ -461,7 +589,7 @@ async function processGames(paths: string[]){
     try {
         const writer = await parquet.ParquetWriter.openFile(playerSchema, playerParquetPath);
         
-        const newPlayerData: StoredPlayerData[] = newPlayerGames.flatMap(
+        const newPlayerData: PlayerStorageData[] = newPlayerGames.flatMap(
             gameInfo => gameInfo.teams.flatMap(
                 teamInfo => teamInfo.players.map(
                     player => Object.assign({
@@ -494,13 +622,27 @@ async function processGames(paths: string[]){
         const week = formatWeek(game.header.week);
 
         return processGameStats(season, week, game);
-    }))).filter(game => game.awayScore != 0 || game.homeScore != 0);
+    }))).filter(({game}) => game.awayScore != 0 || game.homeScore != 0);
 
     try {
         const writer = await parquet.ParquetWriter.openFile(gameSchema, gameParquetPath);
         
-        for(const gameInfo of existingGameData.concat(newGameData)){
+        for(const gameInfo of existingGameData.concat(newGameData.map((gd) => gd.game))){
             await writer.appendRow(gameInfo);
+        }
+
+        writer.close();
+
+        console.log('saved games parquet');
+    } catch(ex){
+        console.log('failed to write');
+    }
+
+    try {
+        const writer = await parquet.ParquetWriter.openFile(driveSchema, driveParquetPath);
+        
+        for(const driveInfo of existingDriveData.concat(newGameData.flatMap((gd) => gd.drives))){
+            await writer.appendRow(driveInfo);
         }
 
         writer.close();

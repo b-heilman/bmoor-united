@@ -5,6 +5,7 @@ https://www.pro-football-reference.com/years/2020/games.htm
 - [ ] Use Holt-Winters Forecasting
 
 Features to add
+- [ ] Time when team started winning the game
 - [ ] Defensive players to computer dl, lb, db 
 - [ ] Special teams
 - - [ ] kickReturns
@@ -20,4 +21,5 @@ Features to add
 - [ ] Parse drive 'plays'
 - - [ ] tackle for loss
 - - [ ] drops vs bad throws
-- - [ ] 
+- - [ ] yards after catch
+- - [ ] yards after contact

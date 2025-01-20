@@ -132,9 +132,56 @@ export type HeaderInfo = {
     week: number
 };
 
+export interface PlayInfo {
+    type: {
+        text: string,
+        abbreviation: string
+    },
+    text: string,
+    start: {
+        yardLine: number
+    },
+    end: {
+        yardLine: number
+    },
+    awayScore: number,
+    homeScore: number,
+}
+
+export type DriveInfo = {
+    team: {
+        abbreviation: string
+    },
+    start: {
+        period: {
+            number: number
+        },
+        clock: {
+            displayValue: string
+        },
+        yardLine: number,
+    },
+    end: {
+        period: {
+            number: number
+        },
+        clock: {
+            displayValue: string
+        },
+        yardLine: number,
+    },
+    offensivePlays: number,
+    isScore: number,
+    result: string,
+    plays: PlayInfo[]
+}
+
 export interface GameResponse {
-    header: HeaderInfo
-    boxscore: BoxscoreInfo
+    header: HeaderInfo,
+    boxscore: BoxscoreInfo,
+    drives: {
+        previous: DriveInfo[]
+    }
 };
 
 export interface GameResponseRaw extends GameResponse {
