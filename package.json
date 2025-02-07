@@ -6,8 +6,8 @@
   ],
   "type": "module",
   "engines": {
-    "node": ">=14",
-    "npm": ">=8"
+    "node": ">=20",
+    "npm": ">=10"
   },
   "private": true,
   "author": "Brian Heilman <das.ist.junk@gmail.com>",
