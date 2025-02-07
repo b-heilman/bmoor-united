@@ -11,6 +11,7 @@ import {
 	WARN,
 } from './logging.interface';
 
+// I'm just adding a comment for no reason
 const levels = {
 	[SILENT]: {
 		name: 'silent',

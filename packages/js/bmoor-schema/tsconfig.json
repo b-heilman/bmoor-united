@@ -5,5 +5,5 @@
   },
   "include": [
     "src"
-, "../bmoor-modeling/src/builder/graphql.spec.ts", "../bmoor-modeling/src/builder/graphql.ts"  ]
+  ]
 }
