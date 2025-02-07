@@ -230,7 +230,7 @@ function applyPassing(player: PlayerData, stats: Record<string, string>){
     player.sacked = parseInt(sacks);
     player.sackYds = parseInt(sackYds);
     player.qbr = parseInt(stats['QBRating'])
-    player.aqbr = parseInt(stats['adjQBR'])
+    player.aqbr = parseInt(stats['adjQBR']) || player.qbr;
     // player.passLong = 0;
     // player.passRating = 0;
     // player.passTargetYds = 0;
@@ -317,6 +317,11 @@ async function processGameStats(
     const rtnDrives: DriveStorageData[] = [];
     if (game.drives){
         for (const drive of game.drives.previous){
+            if (!drive.team){
+                console.log('dropped', drive)
+                continue;
+            }
+
             let startTime = 0;
             if (drive.start) {
                 if (drive.start.clock){
@@ -368,6 +373,11 @@ async function processGameStats(
                         if (play.text.indexOf('extra point is GOOD') !== -1){
                             agg.score += 1;
                         }
+                    }
+
+                    if (!play.text){
+                        console.log('missing play', play);
+                        play.text = '--bad--'
                     }
 
                     agg.plays.push({
@@ -454,6 +464,20 @@ async function processGamePlayers(playersData: BoxscorePlayersInfo[]): Promise<T
                 } /* else if (statGroup.name === 'defensive'){
 
                 }*/
+
+                for (const field of Object.keys(player)){
+                    const value = player[field];
+
+                    if (value === null){
+                        console.log('null', player);
+                        throw new Error('null found: '+field)
+                    } 
+
+                    if (typeof(value) === 'number' && isNaN(value)){
+                        console.log('nan', player);
+                        throw new Error('nan found: '+field)
+                    }
+                }
             }
         }
 
@@ -613,7 +637,7 @@ async function processGames(paths: string[]){
 
         console.log('saved players parquet');
     } catch(ex){
-        console.log('failed to write');
+        console.log('failed to write players');
         console.log(ex);
     }
 
@@ -635,7 +659,8 @@ async function processGames(paths: string[]){
 
         console.log('saved games parquet');
     } catch(ex){
-        console.log('failed to write');
+        console.log('failed to write games');
+        console.log(ex);
     }
 
     try {
@@ -647,9 +672,10 @@ async function processGames(paths: string[]){
 
         writer.close();
 
-        console.log('saved games parquet');
+        console.log('saved drive parquet');
     } catch(ex){
-        console.log('failed to write');
+        console.log('failed to write drive');
+        console.log(ex);
     }
 }
 
