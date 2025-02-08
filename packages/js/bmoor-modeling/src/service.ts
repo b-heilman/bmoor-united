@@ -263,7 +263,6 @@ export class Service<
 			this.onRead(ctx, this.model.fromDeflated(datum)),
 		);
 
-		this.settings.controller;
 		return this.settings.controller
 			? this.settings.controller.canRead(ctx, rtn, this)
 			: rtn;

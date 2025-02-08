@@ -1,6 +1,6 @@
 {
   "name": "@bmoor/compare",
-  "version": "0.2.1",
+  "version": "1.0.0",
   "type": "module",
   "description": "Comparison functions",
   "main": "src/index.ts",

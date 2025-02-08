@@ -1,6 +1,6 @@
 {
   "name": "@bmoor/modeling",
-  "version": "0.1.1",
+  "version": "1.0.0",
   "type": "module",
   "description": "Better ways to work with objects",
   "main": "src/index.ts",
@@ -19,7 +19,7 @@
   },
   "homepage": "https://github.com/b-heilman/bmoor-united/blob/main/packages/bmoor-modeling/README.md",
   "dependencies": {
-    "@bmoor/context": "^0.1.1"
+    "@bmoor/context": "^1.0.0"
   },
   "scripts": {
     "build": "mkdir -p dist/; cp -r src/ dist/src;  cp package.json dist/package.json",

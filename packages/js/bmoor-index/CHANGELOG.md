@@ -1,5 +1,11 @@
 # @bmoor/streaming
 
+## 1.0.0
+
+### Major Changes
+
+- General data management framework ready
+
 ## 0.2.1
 
 ### Patch Changes

@@ -20,3 +20,6 @@ https://turborepo.org/docs/ci/github-actions
 https://dnlytras.com/blog/using-changesets/
 https://blog.bitsrc.io/how-to-easily-manage-dependencies-in-a-js-monorepo-6216bd6621ea
 https://bit.dev/docs/quick-start
+
+-- Updating --
+npx npm-check-updates -u

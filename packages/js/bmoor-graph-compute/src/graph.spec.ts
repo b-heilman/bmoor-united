@@ -602,6 +602,7 @@ describe('@bmoor/graph-compute::graph', function () {
 
 			try {
 				iGraph.range(datum, 3, true);
+				// eslint-disable-next-line
 			} catch (ex) {
 				failed = true;
 			}
@@ -615,6 +616,7 @@ describe('@bmoor/graph-compute::graph', function () {
 
 			try {
 				iGraph.range(datum, 3, false);
+				// eslint-disable-next-line
 			} catch (ex) {
 				failed = true;
 			}

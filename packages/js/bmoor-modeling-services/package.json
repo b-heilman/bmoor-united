@@ -1,6 +1,6 @@
 {
   "name": "@bmoor/modeling-services",
-  "version": "0.2.1",
+  "version": "1.0.0",
   "type": "module",
   "description": "Describing a data's structure in a way that is friendlier for databases",
   "main": "src/index.ts",

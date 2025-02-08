@@ -1,6 +1,6 @@
 {
   "name": "@bmoor/timing",
-  "version": "0.2.1",
+  "version": "1.0.0",
   "type": "module",
   "description": "Better ways to work with objects",
   "main": "src/index.ts",

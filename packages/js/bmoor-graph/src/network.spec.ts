@@ -68,6 +68,7 @@ describe('@bmoor/graph - network', function () {
 
 			try {
 				network.search(['table-1', 'table-2', 'table-4'], 1);
+				// eslint-disable-next-line
 			} catch (ex) {
 				failed = true;
 			}

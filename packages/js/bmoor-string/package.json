@@ -1,6 +1,6 @@
 {
   "name": "@bmoor/string",
-  "version": "0.4.0",
+  "version": "1.0.0",
   "type": "module",
   "description": "Better ways to work with objects",
   "main": "src/index.ts",
@@ -25,6 +25,5 @@
     "publish": "echo \"streaming publishing...\""
   },
   "keywords": [],
-  "devDependencies": {
-  }
+  "devDependencies": {}
 }

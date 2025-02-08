@@ -1,4 +1,3 @@
-// eslint-disable-next-line  @typescript-eslint/no-explicit-any
 import {Expressable} from '../expressor/expressable';
 import {Token, TokenConstructor} from '../tokenizer/token';
 import {ExpressableToken} from '../tokenizer/token.interface';

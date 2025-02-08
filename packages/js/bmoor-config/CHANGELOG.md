@@ -1,5 +1,17 @@
 # @bmoor/config
 
+## 1.0.0
+
+### Major Changes
+
+- General data management framework ready
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @bmoor/object@1.0.0
+  - @bmoor/error@1.0.0
+
 ## 0.3.1
 
 ### Patch Changes

@@ -197,6 +197,7 @@ function _makeGetter<T>(property: string, next: GetterFn<T>): GetterFn<T> {
 		return function getter(obj: DynamicObject<T>): T {
 			try {
 				return next(<DynamicObject<T>>obj[property]);
+				// eslint-disable-next-line
 			} catch (ex) {
 				return undefined;
 			}
@@ -205,6 +206,7 @@ function _makeGetter<T>(property: string, next: GetterFn<T>): GetterFn<T> {
 		return function getter(obj: DynamicObject<T>): T {
 			try {
 				return <T>obj[property];
+				// eslint-disable-next-line
 			} catch (ex) {
 				return undefined;
 			}

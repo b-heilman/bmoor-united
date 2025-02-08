@@ -1,6 +1,6 @@
 {
   "name": "@bmoor/graph-compute",
-  "version": "0.4.0",
+  "version": "1.0.0",
   "type": "module",
   "description": "A way to work with linear data of events and intervals",
   "main": "src/index.ts",

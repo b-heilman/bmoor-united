@@ -24,8 +24,10 @@ export interface FieldJSON {
 	info: FieldInfo;
 }
 
+// eslint-disable-next-line
 export interface FieldPathObject extends PathObject {}
 
+// eslint-disable-next-line
 export interface FieldPathArray extends PathArray {}
 
 export interface FieldPathLeaf extends PathLeaf {

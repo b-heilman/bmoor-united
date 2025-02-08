@@ -32,6 +32,7 @@ export interface ServiceExternalGenerics extends ModelExternalGenerics {
 	search?: ServiceSearchType;
 }
 
+// eslint-disable-next-line
 export interface ServiceStorageGenerics extends ServiceAdapterGenerics {}
 
 export interface ServiceUpdateDelta<

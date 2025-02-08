@@ -48,7 +48,7 @@ export class Executor<
 	}
 
 	// run a definition and pull back the value
-	// eslint-disable-line  @typescript-eslint/no-explicit-any
+
 	async calculate<ResponseT extends FeatureValue>(
 		datums: DatumT[],
 		action: DatumReaderInterface<ResponseT, DatumT, EnvT>,

@@ -1,6 +1,6 @@
 {
   "name": "@bmoor/object",
-  "version": "0.2.1",
+  "version": "1.0.0",
   "type": "module",
   "description": "Better ways to work with objects",
   "main": "src/index.ts",
@@ -19,8 +19,8 @@
   },
   "homepage": "https://github.com/b-heilman/bmoor-united/blob/main/packages/bmoor-object/README.md",
   "dependencies": {
-    "@bmoor/compare": "^0.2.1",
-    "@bmoor/error": "^0.2.1"
+    "@bmoor/compare": "^1.0.0",
+    "@bmoor/error": "^1.0.0"
   },
   "scripts": {
     "build": "mkdir -p dist/; cp -r src/ dist/src;  cp package.json dist/package.json",

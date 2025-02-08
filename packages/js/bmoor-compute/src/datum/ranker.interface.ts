@@ -3,7 +3,9 @@ import {DatumAcrossContext} from './across.interface';
 import {DatumOffsetSettings} from './offset.interface';
 
 export interface DatumRankerContext<DatumT extends DatumInterface, SelectT>
-	extends DatumAcrossContext<DatumT, SelectT> {}
+	extends DatumAcrossContext<DatumT, SelectT> {
+	metadata?: boolean;
+}
 
 export interface DatumRankerSettings<RequirementT, SelectT>
 	extends DatumOffsetSettings<SelectT> {

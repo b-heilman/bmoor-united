@@ -26,7 +26,9 @@ export interface SchemaJSON {
 	relationships?: RelationshipJSON[];
 }
 
-export interface SchemaSettings extends SchemaJSON {}
+export interface SchemaSettings extends SchemaJSON {
+	metadata?: boolean;
+}
 
 export interface SchemaInterface {
 	setSpace(know: EnvironmentContextInterface);

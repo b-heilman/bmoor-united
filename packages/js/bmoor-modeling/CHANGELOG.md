@@ -1,5 +1,16 @@
 # @bmoor/modeling
 
+## 1.0.0
+
+### Major Changes
+
+- General data management framework ready
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @bmoor/context@1.0.0
+
 ## 0.1.1
 
 ### Patch Changes

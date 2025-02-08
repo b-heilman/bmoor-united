@@ -87,6 +87,7 @@ describe('@bmoor/object', function () {
 
 			try {
 				makeSetter('__proto__.polluted');
+				// eslint-disable-next-line
 			} catch (ex) {
 				failed = true;
 			}
@@ -146,6 +147,7 @@ describe('@bmoor/object', function () {
 
 			try {
 				makeGetter('__proto__.polluted');
+				// eslint-disable-next-line
 			} catch (ex) {
 				failed = true;
 			}
@@ -194,9 +196,9 @@ describe('@bmoor/object', function () {
 
 			expect(del(t, 'eins')).to.equal(1);
 			expect(del(t, 'zwei.drei')).to.equal(3);
-			expect(t.eins).to.not.exist;
-			expect(t.zwei).to.exist;
-			expect(t.zwei.drei).to.not.exist;
+			expect(t.eins).to.not.exist; // eslint-disable-line
+			expect(t.zwei).to.exist; // eslint-disable-line
+			expect(t.zwei.drei).to.not.exist; // eslint-disable-line
 		});
 	});
 

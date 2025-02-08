@@ -30,6 +30,7 @@ export interface ModelJSON extends SchemaSettings {
 	hooks?: Record<FieldReference, HookRegister>;
 }
 
+// eslint-disable-next-line
 export interface ModelSettings extends ModelJSON {}
 
 export interface ModelInternalGenerics {

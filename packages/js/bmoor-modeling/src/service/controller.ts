@@ -1,7 +1,8 @@
 import {ContextSecurityInterface} from '@bmoor/context';
 
 import {
-	ServiceExternalGenerics, // ServiceInterface,
+	ServiceExternalGenerics,
+	// ServiceInterface,
 	ServiceInternalGenerics,
 	ServiceStorageGenerics,
 	ServiceUpdateDelta,

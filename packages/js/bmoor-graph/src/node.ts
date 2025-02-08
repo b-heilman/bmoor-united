@@ -360,11 +360,13 @@ export class Node implements NodeInterface {
 		selector: NodeValueSelector,
 		value: FeatureValue,
 	): Promise<boolean> {
-		selector === NodeValueSelector.node
-			? this.setWeight(mount, value)
-			: Array.from(this.events.values()).map((event) =>
-					event.getNodeFeatures(this.ref).set(mount, value),
-				);
+		if (selector === NodeValueSelector.node) {
+			this.setWeight(mount, value);
+		} else {
+			Array.from(this.events.values()).map((event) =>
+				event.getNodeFeatures(this.ref).set(mount, value),
+			);
+		}
 
 		return true;
 	}
