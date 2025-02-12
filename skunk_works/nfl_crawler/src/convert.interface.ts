@@ -21,8 +21,11 @@ export interface PlayData {
 }
 
 export interface DriveData extends GameReference {
+    position: number,
     teamId: string,
     teamDisplay: string,
+    homeScore: number,
+    awayScore: number,
     startTime: number,
     stopTime: number,
     startYards: number,
@@ -31,6 +34,8 @@ export interface DriveData extends GameReference {
     passes: number,
     points: number,
     turnover: boolean,
+    winning: string,
+    winningChange: boolean,
     plays: PlayData[]
 }
 
@@ -42,6 +47,12 @@ export const driveSchema = new parquet.ParquetSchema({
     season: { type: 'INT32' }, 
     week: { type: 'INT32' }, 
     gameId: { type: 'UTF8' },
+    position: { type: 'INT32' },
+    teamDisplay: { type: 'UTF8'},
+    homeScore: { type: 'INT32' },
+    awayScore: { type: 'INT32' },
+    winning: { type: 'UTF8', optional: true },
+    winningChange: { type: 'BOOLEAN' },
     startTime: { type: 'INT32' },
     stopTime: { type: 'INT32' },
     startYards: { type: 'INT32' },
@@ -80,7 +91,9 @@ export interface InternalGameData extends SeasonWeekIdentifiers {
 }
 
 export interface GameStorageData extends SeasonWeekIdentifiers, GameData {
-
+    winner: string,
+    winningSince: number,
+    winning2Since: number
 }
 
 export const gameSchema = new parquet.ParquetSchema({
@@ -88,7 +101,10 @@ export const gameSchema = new parquet.ParquetSchema({
     week: { type: 'INT32' }, 
     gameId: { type: 'UTF8' },
     gameDisplay: { type: 'UTF8' },
-    gameDate: { type: 'UTF8' }, 
+    gameDate: { type: 'UTF8' },
+    winner: { type: 'UTF8', optional: true  },
+    winningSince: { type: 'INT32', optional: true  }, 
+    winning2Since: { type: 'INT32', optional: true  }, 
     homeTeamId: { type: 'UTF8' },
     homeTeamDisplay: { type: 'UTF8' },
     homeScore: { type: 'INT32' },

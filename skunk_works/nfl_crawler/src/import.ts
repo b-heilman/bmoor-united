@@ -11,7 +11,7 @@ async function main(){
     // await readWeek(2023, 13);
     // await readWeek(2023, 14);
 
-    await readSeason(2024, 1, 15);
+    await readSeason(2024, 1, 18);
     await readSeason(2023, 1, 18);
     await readSeason(2022, 1, 18);
     await readSeason(2021, 1, 18);

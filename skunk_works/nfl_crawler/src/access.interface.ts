@@ -171,7 +171,7 @@ export type DriveInfo = {
         yardLine: number,
     },
     offensivePlays: number,
-    isScore: number,
+    isScore: boolean,
     result: string,
     plays: PlayInfo[]
 }

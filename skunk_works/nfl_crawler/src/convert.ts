@@ -277,6 +277,8 @@ function teamLookup(id, display){
     }
 }
 
+const QUARTER_SECONDS = 15 * 60;
+
 async function processGameStats(
     season: string, week: string, game: GameResponse
 ): Promise<{game: GameStorageData, drives: DriveStorageData[]}>{
@@ -295,7 +297,10 @@ async function processGameStats(
         awayTeamId: 'string',
         awayTeamDisplay: 'string',
         awayScore: 0,
-        neutralField: competion.neutralSite
+        neutralField: competion.neutralSite,
+        winner: null,
+        winningSince: null,
+        winning2Since: null
     };
 
     const teamAbbreviations = {};
@@ -316,6 +321,16 @@ async function processGameStats(
 
     const rtnDrives: DriveStorageData[] = [];
     if (game.drives){
+        const gameInfo = {
+            home: rtnGame.homeTeamDisplay,
+            homeScore: 0,
+            away: rtnGame.awayTeamDisplay,
+            awayScore: 0,
+            winning: null,
+            since: null,
+            winning2Since: null
+        };
+
         for (const drive of game.drives.previous){
             if (!drive.team){
                 console.log('dropped', drive)
@@ -326,26 +341,26 @@ async function processGameStats(
             if (drive.start) {
                 if (drive.start.clock){
                     const [startMin, startSec] = drive.start.clock.displayValue.split(':');
-                    startTime = parseInt(startMin) * 60 + parseInt(startSec);
+                    startTime = QUARTER_SECONDS - (parseInt(startMin) * 60 + parseInt(startSec));
                 } 
                 
                 startTime += (drive.start.period.number - 1) * (15 * 60)
             }
 
-            let stopTime;
+            let stopTime = 0;
             if (drive.end) {
                 if (drive.end.clock){
                     const [endMin, endSec] = drive.end.clock.displayValue.split(':');
-                    stopTime = parseInt(endMin) * 60 + parseInt(endSec);
+                    stopTime = QUARTER_SECONDS - (parseInt(endMin) * 60 + parseInt(endSec));
                 } else {
-                    stopTime = 14 * 60 + 59
+                    stopTime = QUARTER_SECONDS
                 }
                 
                 stopTime += (drive.end.period.number - 1) * (15 * 60);
             } else {
-                stopTime = 4 * 15 * 60;
+                stopTime = QUARTER_SECONDS;
             }
-
+            
             const reduced = drive.plays.reduce(
                 (agg, play) => {
                     let type = play.type ? (
@@ -361,19 +376,15 @@ async function processGameStats(
                             type = 'rush';
 
                             agg.runs++;
-                            agg.score += 6;
                         } else {
                             type = 'rec';
 
                             agg.pass++;
-                            agg.score += 6;
-                        }
-
-                        // TODO: what about 2 point scores?
-                        if (play.text.indexOf('extra point is GOOD') !== -1){
-                            agg.score += 1;
                         }
                     }
+
+                    agg.score.home = play.homeScore;
+                    agg.score.away = play.awayScore;
 
                     if (!play.text){
                         console.log('missing play', play);
@@ -391,29 +402,88 @@ async function processGameStats(
                 {
                     runs: 0,
                     pass: 0,
-                    score: 0,
-                    turnover: false,
+                    score: {
+                        away: 0,
+                        home: 0
+                    },
                     plays: []
                 }
             );
+
+            let winningChange = false;
+            let pointChange = 0;
+            let difference = 0;
+
+            /**
+             * I have a problem where if there's a score during a punt, or other play, the score for one team is on
+             * the series of the other team's.  This means if a team scores a td and the other team returns the extra point
+             * both teams could score on that drive.
+             */
+            if (reduced.score.home !== gameInfo.homeScore){
+                pointChange = reduced.score.home - gameInfo.homeScore;
+
+                gameInfo.homeScore = reduced.score.home;
+            } 
+            
+            if (reduced.score.away !== gameInfo.awayScore){
+                pointChange = reduced.score.away - gameInfo.awayScore;
+
+                gameInfo.awayScore = reduced.score.away;
+            }
+
+            if (pointChange){
+                if (gameInfo.homeScore === gameInfo.awayScore){
+                    gameInfo.winning = null;
+                } else if (gameInfo.homeScore > gameInfo.awayScore){
+                    if (gameInfo.winning !== gameInfo.home){
+                        winningChange = true;
+                    }
+
+                    gameInfo.winning = gameInfo.home;
+                } else {
+                    if (gameInfo.winning !== gameInfo.away){
+                        winningChange = true;
+                    }
+
+                    gameInfo.winning = gameInfo.away;
+                }
+
+                difference = Math.abs(gameInfo.homeScore - gameInfo.awayScore)
+            }
+
+            if (winningChange){
+                gameInfo.since = stopTime;
+                gameInfo.winning2Since = null;
+            } else if (!gameInfo.winning2Since && difference > 8){
+                gameInfo.winning2Since = stopTime;
+            }
 
             rtnDrives.push({
                 season,
                 week,
                 gameId: game.header.id,
+                position: rtnDrives.length + 1,
                 teamId: teamAbbreviations[drive.team.abbreviation],
                 teamDisplay: drive.team.abbreviation,
+                homeScore: gameInfo.homeScore,
+                awayScore: gameInfo.awayScore,
                 startTime,
                 stopTime,
                 startYards: drive.start.yardLine,
                 stopYards: drive.end ? drive.end.yardLine : 0,
                 rushes: reduced.runs,
                 passes: reduced.pass,
-                points: reduced.score,
-                turnover: reduced.turnover,
+                points: pointChange,
+                turnover: drive.result === 'FUMBLE' || drive.result === 'INT',
+                winning: gameInfo.winning,
+                winningChange,
                 plays: reduced.plays
             });
-        } 
+        }
+
+        rtnGame.winner = gameInfo.winning;
+        rtnGame.winningSince = gameInfo.since;
+        rtnGame.winning2Since = gameInfo.winning2Since;
     }
 
     return {
