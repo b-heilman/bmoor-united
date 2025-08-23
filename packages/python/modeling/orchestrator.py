@@ -89,7 +89,7 @@ class Orchestrator(Generic[Raw, Parsed, Encoded]):
 
     def save(self, dir:Union[str, None] = None) -> None:
         if dir is None:
-            dir = self.cfg.source_dir
+            dir = str(self.cfg.source_dir)
 
         self.parser.save(dir)
         self.encoder.save(dir)
@@ -131,19 +131,19 @@ class Orchestrator(Generic[Raw, Parsed, Encoded]):
     def encode(self, ctx: Context, parsed: Parsed, **kwargs) -> Encoded:
         self.load("encoder")
 
-        return self.encoder.encode(parsed, **kwargs)
+        return self.encoder.encode(ctx, parsed, **kwargs)
 
-    def embed(self, ctx: Context, encoded: Encoded, **kwargs) -> Embedded:
+    def embed(self, ctx: Context, encoded: Encoded, **kwargs) -> Embedding:
         self.load("embedder")
 
-        return self.embedder.embed(encoded, **kwargs)
+        return self.embedder.embed(ctx, encoded, **kwargs)
 
     def classify(
         self, ctx: Context, embedding1: Embedding, embedding2: Embedding, **kwargs
     ) -> list[float]:
         self.load("evaluator")
 
-        return _process(  # type: ignore
+        return _process( 
             ctx,
             embedding1,
             embedding2,
@@ -155,7 +155,7 @@ class Orchestrator(Generic[Raw, Parsed, Encoded]):
     ) -> list[float]:
         self.load("evaluator")
 
-        return _process( # type: ignore
+        return _process(
             ctx,
             encoded1,
             encoded2,
@@ -167,7 +167,7 @@ class Orchestrator(Generic[Raw, Parsed, Encoded]):
     ) -> list[float]:
         self.load("evaluator")
 
-        return _process(  # type: ignore
+        return _process(  
             ctx,
             embedding1,
             embedding2,
@@ -179,7 +179,7 @@ class Orchestrator(Generic[Raw, Parsed, Encoded]):
     ) -> list[float]:
         self.load("evaluator")
 
-        return _process( # type: ignore
+        return _process(
             ctx,
             encoded1,
             encoded2,
