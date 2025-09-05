@@ -15,7 +15,7 @@ import {
 } from '@bmoor/modeling';
 import {validations} from '@bmoor/schema';
 
-import {Graphql} from './graphql';
+import {Graphql} from './graphql.ts';
 
 describe('@bmoor/modeling-services : graphql', function () {
 	const modelCtx = new ModelContext(types, validations, hooks, converter);

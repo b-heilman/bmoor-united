@@ -1,6 +1,6 @@
-import {DatumInterface} from '../datum.interface';
-import {DatumAcrossContext} from './across.interface';
-import {DatumOffsetSettings} from './offset.interface';
+import {DatumInterface} from '../datum.interface.ts';
+import {DatumAcrossContext} from './across.interface.ts';
+import {DatumOffsetSettings} from './offset.interface.ts';
 
 export interface DatumRankerContext<DatumT extends DatumInterface, SelectT>
 	extends DatumAcrossContext<DatumT, SelectT> {

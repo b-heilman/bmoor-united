@@ -1,3 +1,3 @@
-import {NodeReference} from '../node.interface';
+import {NodeReference} from '../node.interface.ts';
 
 export type NodePath = NodeReference[];

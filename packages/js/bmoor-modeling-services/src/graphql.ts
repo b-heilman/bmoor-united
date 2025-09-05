@@ -13,7 +13,7 @@ import {
 	GraphqlJSON,
 	GraphqlSchemaResolvers,
 	GraphqlSchemaSynthetics,
-} from './graphql.interface';
+} from './graphql.interface.ts';
 
 function createSchemaResolver(
 	nexus: EnvironmentContextInterface,

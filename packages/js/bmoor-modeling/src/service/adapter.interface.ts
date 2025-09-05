@@ -1,17 +1,17 @@
 import {ContextSecurityInterface} from '@bmoor/context';
 import {DynamicObject} from '@bmoor/object';
 
-import {ModelInternalGenerics} from '../model.interface';
+import {ModelInternalGenerics} from '../model.interface.ts';
 import {
 	RequestCreate,
 	RequestDelete,
 	RequestRead,
 	RequestUpdate,
-} from '../request.interface';
+} from '../request.interface.ts';
 import {
 	ServiceSelectActionsType,
 	ServiceSelectType,
-} from './select.interface';
+} from './select.interface.ts';
 
 export interface ServiceAdapterGenerics extends ModelInternalGenerics {
 	reference?: DynamicObject;

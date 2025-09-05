@@ -5,8 +5,8 @@ import * as path from 'path';
 import { fileURLToPath } from 'url';
 import {resolve} from 'path';
 
-import { readPlayer, cacheDir } from './access';
-import { GameResponse, BoxscorePlayersInfo, DriveInfo } from './access.interface';
+import { readPlayer, cacheDir } from './access.ts';
+import { GameResponse, BoxscorePlayersInfo, DriveInfo } from './access.interface.ts';
 import { 
     PlayerData, 
     playerSchema, 
@@ -17,7 +17,7 @@ import {
     PlayerStorageData,
     GameStorageData,
     DriveStorageData
-} from './convert.interface';
+} from './convert.interface.ts';
 
 export const parquetDir = `${cacheDir}/parquet`;
 if (!fsSync.existsSync(parquetDir)){

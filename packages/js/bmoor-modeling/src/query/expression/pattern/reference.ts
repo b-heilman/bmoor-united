@@ -1,6 +1,6 @@
 import {Pattern, TokenizerState} from '@bmoor/compiler';
 
-import {QueryExpressionTokenReference} from '../token/reference';
+import {QueryExpressionTokenReference} from '../token/reference.ts';
 
 export const isVariable = /[A-Za-z_0-9]/;
 

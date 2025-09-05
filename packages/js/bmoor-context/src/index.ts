@@ -1,5 +1,6 @@
-export {
+export type {
 	ContextSecurityInterface,
 	ContextSettings,
-} from './context.interface';
-export {Context} from './context';
+} from './context.interface.ts';
+
+export {Context} from './context.ts';

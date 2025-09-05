@@ -1,4 +1,7 @@
-import {ValidationFn, ValidationReference} from './validation.interface';
+import {
+	ValidationFn,
+	ValidationReference,
+} from './validation.interface.ts';
 
 export interface ValidatorInterface {
 	define(types: Record<ValidationReference, ValidationFn>);

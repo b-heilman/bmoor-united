@@ -1,22 +1,22 @@
 import {Context} from '@bmoor/context';
 
-import {Event} from './event';
 import {
 	EventFeaturesWriteMode,
 	EventJSON,
 	EventReference,
-} from './event.interface';
-import {Features} from './features';
+} from './event.interface.ts';
+import {Event} from './event.ts';
+import {Features} from './features.ts';
 import {
 	GraphBuilder,
 	GraphEventFeatures,
 	GraphInterface,
 	GraphJSON,
 	GraphSelector,
-} from './graph.interface';
-import {GraphDatumInterface} from './graph/datum.interface';
-import {Node, load as loadNode} from './node';
-import {NodeReference, NodeType} from './node.interface';
+} from './graph.interface.ts';
+import {GraphDatumInterface} from './graph/datum.interface.ts';
+import {NodeReference, NodeType} from './node.interface.ts';
+import {Node, load as loadNode} from './node.ts';
 
 // used to manage all top levels nodes and then facilitates
 // passing data through them

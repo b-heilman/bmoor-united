@@ -5,7 +5,7 @@ import {
 	Token,
 } from '@bmoor/compiler';
 
-import {ParserModes, ParserSettings} from '../parser.interface';
+import {ParserModes, ParserSettings} from '../parser.interface.ts';
 
 export class ArrayToken extends Token {
 	static reference = 'array-token';

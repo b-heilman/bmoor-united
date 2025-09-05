@@ -11,9 +11,9 @@ import {
 	isObject,
 	isString,
 	isUndefined,
-} from './index';
+} from './index.ts';
 
-describe('@bmoor/compare', function () {
+export const results = describe('@bmoor/compare', function () {
 	describe('isBoolean', function () {
 		it('should be able to test booleans', function () {
 			expect(isBoolean(true)).to.equal(true);

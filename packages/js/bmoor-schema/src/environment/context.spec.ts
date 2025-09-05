@@ -1,11 +1,11 @@
 import {expect} from 'chai';
 
-import {Schema} from '../schema';
-import {SchemaInterface} from '../schema.interface';
-import {SchemaContext} from '../schema/context';
-import {types} from '../typing';
-import {validations} from '../validator';
-import {EnvironmentContext} from './context';
+import {SchemaInterface} from '../schema.interface.ts';
+import {Schema} from '../schema.ts';
+import {SchemaContext} from '../schema/context.ts';
+import {types} from '../typing.ts';
+import {validations} from '../validator.ts';
+import {EnvironmentContext} from './context.ts';
 
 describe('@bmoor/schema :: Knowledge', function () {
 	let ctx;

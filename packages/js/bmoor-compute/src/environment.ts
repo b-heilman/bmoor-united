@@ -1,11 +1,11 @@
-import {Datum} from './datum';
-import {DatumReference, DatumSettings} from './datum.interface';
+import {DatumReference, DatumSettings} from './datum.interface.ts';
+import {Datum} from './datum.ts';
 import {
 	EnvironmentDatumFactory,
 	EnvironmentInterface,
 	EnvironmentSelector,
 	EnvironmentSettings,
-} from './environment.interface';
+} from './environment.interface.ts';
 
 // This is more abstract, only here for testing
 export class Environment<

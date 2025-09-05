@@ -1,4 +1,4 @@
-import {DatumOffsetSettings} from './offset.interface';
+import {DatumOffsetSettings} from './offset.interface.ts';
 
 export interface DatumComputeSettings<ResponseT, RequirementT, SelectT>
 	extends DatumOffsetSettings<SelectT> {

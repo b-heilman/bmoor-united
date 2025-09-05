@@ -1,11 +1,11 @@
-import {Expressable} from '../expressor/expressable';
 import {
 	ExpressableFunction,
 	ExpressableUsages,
-} from '../expressor/expressable.interface';
-import {Pattern} from '../tokenizer/pattern';
-import {TokenizerState} from '../tokenizer/state';
-import {Token} from '../tokenizer/token';
+} from '../expressor/expressable.interface.ts';
+import {Expressable} from '../expressor/expressable.ts';
+import {Pattern} from '../tokenizer/pattern.ts';
+import {TokenizerState} from '../tokenizer/state.ts';
+import {Token} from '../tokenizer/token.ts';
 
 export class ValueToken extends Token {
 	static reference = 'value';

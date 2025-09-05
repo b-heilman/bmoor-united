@@ -7,9 +7,9 @@ import {
 	FieldJSON,
 	FieldPathLink,
 	FieldReference,
-} from './field.interface';
-import {SchemaContextInterface} from './schema/context.interface';
-import {ValidationJSON} from './validation.interface';
+} from './field.interface.ts';
+import {SchemaContextInterface} from './schema/context.interface.ts';
+import {ValidationJSON} from './validation.interface.ts';
 
 // eslint-disable-next-line  @typescript-eslint/no-explicit-any
 export class Field<T = any> implements FieldInterface {

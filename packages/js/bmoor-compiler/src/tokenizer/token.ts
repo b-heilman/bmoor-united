@@ -1,13 +1,13 @@
-import {CompilerInterface} from '../compiler.interface';
-import {ExpressorExpressSettings} from '../expressor.interface';
-import {Expressable} from '../expressor/expressable';
-import {TokenizerState} from './state';
+import {CompilerInterface} from '../compiler.interface.ts';
+import {ExpressorExpressSettings} from '../expressor.interface.ts';
+import {Expressable} from '../expressor/expressable.ts';
+import {TokenizerState} from './state.ts';
 import {
 	ExpressableToken,
 	TokenReference,
 	TokenSettings,
 	TokenValue,
-} from './token.interface';
+} from './token.interface.ts';
 
 export type TokenConstructor = {
 	// eslint-disable-next-line  @typescript-eslint/no-explicit-any

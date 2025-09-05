@@ -2,9 +2,9 @@ import {expect} from 'chai';
 
 import {Context} from '@bmoor/context';
 
-import {GraphCompute} from '../graph';
-import {Interval} from '../interval';
-import {GraphComputeLoader} from './loader';
+import {GraphCompute} from '../graph.ts';
+import {Interval} from '../interval.ts';
+import {GraphComputeLoader} from './loader.ts';
 
 describe('@bmoor/graph-compute::loader', function () {
 	let ctx: Context = null;

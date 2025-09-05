@@ -3,16 +3,19 @@ import {Context} from '@bmoor/context';
 import {NodeReference, load as loadSection} from '@bmoor/graph';
 import {OrderedMap} from '@bmoor/index';
 
-import {GraphComputeDatum} from './datum';
-import {GraphComputeDatumInterface} from './datum.interface';
+import {GraphComputeDatumInterface} from './datum.interface.ts';
+import {GraphComputeDatum} from './datum.ts';
 import {
 	GraphComputeInterface,
 	GraphComputeJSON,
 	GraphComputeSelector,
-} from './graph.interface';
-import {GraphComputeSection} from './graph/section';
-import {Interval} from './interval';
-import {IntervalInterface, IntervalReference} from './interval.interface';
+} from './graph.interface.ts';
+import {GraphComputeSection} from './graph/section.ts';
+import {
+	IntervalInterface,
+	IntervalReference,
+} from './interval.interface.ts';
+import {Interval} from './interval.ts';
 
 export class GraphCompute
 	implements
@@ -116,9 +119,12 @@ export class GraphCompute
 	): GraphComputeDatumInterface<GraphComputeSelector>[] {
 		if (selector.across) {
 			selector.across = null;
-			return Object.values(this.sections).flatMap((section) =>
-				section.select(selector),
-			);
+			const sects: GraphComputeSection<
+				GraphComputeDatumInterface<GraphComputeSelector>,
+				GraphComputeSelector
+			>[] = Object.values(this.sections);
+
+			return sects.flatMap((section) => section.select(base, selector));
 		} else if (selector.interval) {
 			const interval =
 				typeof selector.interval === 'string'

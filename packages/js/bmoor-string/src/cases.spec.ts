@@ -1,8 +1,8 @@
 import {expect} from 'chai';
 
-import {toCamelCase, toKebabCase, toProperCase} from './cases';
+import {toCamelCase, toKebabCase, toProperCase} from './cases.ts';
 
-describe('@bmoor/string', function () {
+export const results = describe('@bmoor/string', function () {
 	describe('toKebabCase', function () {
 		it('should convert from camelcase', function () {
 			expect(toKebabCase('fooBar')).to.equal('foo-bar');

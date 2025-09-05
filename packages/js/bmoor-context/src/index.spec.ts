@@ -1,8 +1,8 @@
 import {expect} from 'chai';
 
-import {Context} from './index';
+import {Context} from './index.ts';
 
-describe('@bmoor/context', function () {
+export const results = describe('@bmoor/context', function () {
 	describe('context', function () {
 		it('should work', function () {
 			const ctx = new Context({permissions: []});

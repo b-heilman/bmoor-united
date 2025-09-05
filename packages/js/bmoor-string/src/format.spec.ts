@@ -1,6 +1,6 @@
 import {expect} from 'chai';
 
-import {format} from './format';
+import {format} from './format.ts';
 
 describe('@bmoor-string/format', function () {
 	describe('format - string', function () {

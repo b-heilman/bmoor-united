@@ -3,20 +3,20 @@ import {stub} from 'sinon';
 
 import {validations} from '@bmoor/schema';
 
-import {converter} from './converter';
-import {hooks} from './hooker';
-import {Model} from './model';
-import {ModelContext} from './model/context';
-import {Service} from './service';
+import {converter} from './converter.ts';
+import {hooks} from './hooker.ts';
+import {Model} from './model.ts';
+import {ModelContext} from './model/context.ts';
 import {
 	// ServiceExternalGenerics,
 	ServiceInternalGenerics,
 	ServiceStorageGenerics,
-} from './service.interface';
-import {ServiceAdapterInterface} from './service/adapter.interface';
-import {ServiceContextInterface} from './service/context.interface';
-import {ServiceControllerInterface} from './service/controller.interface';
-import {types} from './typing';
+} from './service.interface.ts';
+import {Service} from './service.ts';
+import {ServiceAdapterInterface} from './service/adapter.interface.ts';
+import {ServiceContextInterface} from './service/context.interface.ts';
+import {ServiceControllerInterface} from './service/controller.interface.ts';
+import {types} from './typing.ts';
 
 describe('@bmoor-modeling::Service', function () {
 	type InternalT = ServiceInternalGenerics;

@@ -1,14 +1,14 @@
 import {DynamicObject} from '@bmoor/object';
 
-import {BuilderJSONSchemaObject} from './builder/jsonschema.interface';
-import {EnvironmentContextInterface} from './environment/context.interface';
+import {BuilderJSONSchemaObject} from './builder/jsonschema.interface.ts';
+import {EnvironmentContextInterface} from './environment/context.interface.ts';
 import {
 	FieldInfo,
 	FieldInterface,
 	FieldReference,
-} from './field.interface';
-import {RelationshipJSON} from './relationship.interface';
-import {ValidationJSON} from './validation.interface';
+} from './field.interface.ts';
+import {RelationshipJSON} from './relationship.interface.ts';
+import {ValidationJSON} from './validation.interface.ts';
 
 export type SchemaReference = string;
 

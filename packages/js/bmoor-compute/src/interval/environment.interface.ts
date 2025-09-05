@@ -1,13 +1,13 @@
-import {DatumReference, DatumSettings} from '../datum.interface';
-import {DatumAcrossContext} from '../datum/across.interface';
-import {DatumOffsetContext} from '../datum/offset.interface';
-import {DatumRangeContext} from '../datum/range.interface';
-import {EnvironmentDatumFactory} from '../environment.interface';
-import {IntervalInterface} from '../interval.interface';
+import {DatumReference, DatumSettings} from '../datum.interface.ts';
+import {DatumAcrossContext} from '../datum/across.interface.ts';
+import {DatumOffsetContext} from '../datum/offset.interface.ts';
+import {DatumRangeContext} from '../datum/range.interface.ts';
+import {EnvironmentDatumFactory} from '../environment.interface.ts';
+import {IntervalInterface} from '../interval.interface.ts';
 import {
 	IntervalDatumInterface,
 	IntervalDatumSelector,
-} from './datum.interface';
+} from './datum.interface.ts';
 
 type IntervalT = string;
 type OrderT = number;

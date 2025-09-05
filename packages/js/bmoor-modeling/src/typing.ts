@@ -1,6 +1,6 @@
 import {Typing as OldTyping} from '@bmoor/schema';
 
-import {TypingJSON} from './typing.interface';
+import {TypingJSON} from './typing.interface.ts';
 
 export const types = new OldTyping<TypingJSON>({
 	string: {

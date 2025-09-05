@@ -1,5 +1,5 @@
-import {HookInterface, HookReference} from './hook.interface';
-import {HookerInterface} from './hooker.interface';
+import {HookInterface, HookReference} from './hook.interface.ts';
+import {HookerInterface} from './hooker.interface.ts';
 
 export class Hooker implements HookerInterface {
 	index: Record<HookReference, HookInterface>;

@@ -1,6 +1,6 @@
 import {expect} from 'chai';
 
-import {Path} from './path';
+import {Path} from './path.ts';
 
 describe('@bmoor/path', function () {
 	describe('Path', function () {

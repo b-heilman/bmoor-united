@@ -1,7 +1,7 @@
 import {expect} from 'chai';
 import {beforeEach} from 'mocha';
 
-import {Mapping} from './mapping';
+import {Mapping} from './mapping.ts';
 
 describe('@bmoor/path - mapping', function () {
 	describe('simple object transformations', function () {

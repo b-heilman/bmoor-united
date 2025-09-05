@@ -5,9 +5,9 @@ import {
 	Compiler,
 	RegexOpPattern,
 	RegexValuePattern,
-} from './index';
+} from './index.ts';
 
-describe('@bmoor/compiler', function () {
+export const results = describe('@bmoor/compiler', function () {
 	describe('Compiler', function () {
 		it('should work for a basic case', function () {
 			const compiler = new Compiler({

@@ -1,4 +1,4 @@
-import {ExecutableFunction} from './expressor/executable';
+import {ExecutableFunction} from './expressor/executable.ts';
 
 export interface CompilerInterface {
 	compile(str: string): ExecutableFunction;

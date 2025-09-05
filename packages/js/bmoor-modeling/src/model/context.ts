@@ -5,11 +5,11 @@ import {
 	ValidatorInterface,
 } from '@bmoor/schema';
 
-import {ConvertFn, ConveterInterface} from '../converter.interface';
-import {HookInterface, HookReference} from '../hook.interface';
-import {HookerInterface} from '../hooker.interface';
-import {TypingJSON} from '../typing.interface';
-import {ModelContextInterface} from './context.interface';
+import {ConvertFn, ConveterInterface} from '../converter.interface.ts';
+import {HookInterface, HookReference} from '../hook.interface.ts';
+import {HookerInterface} from '../hooker.interface.ts';
+import {TypingJSON} from '../typing.interface.ts';
+import {ModelContextInterface} from './context.interface.ts';
 
 export class ModelContext<TypingT extends TypingJSON>
 	extends SchemaContext<TypingT>

@@ -1,7 +1,7 @@
 import {isArray, isObject, isString, isUndefined} from '@bmoor/compare';
 import {create} from '@bmoor/error';
 
-import {IgnoreSettings, ImplodeSettings} from './object.interface';
+import {IgnoreSettings, ImplodeSettings} from './object.interface.ts';
 
 export type ParsedPathType = Array<string>;
 export type IncomingPathType = string | ParsedPathType;

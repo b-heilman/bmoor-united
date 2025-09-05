@@ -2,11 +2,11 @@ import {expect} from 'chai';
 
 import {validations} from '@bmoor/schema';
 
-import {converter} from './converter';
-import {Hooker, hooks} from './hooker';
-import {Model} from './model';
-import {ModelContext} from './model/context';
-import {types} from './typing';
+import {converter} from './converter.ts';
+import {Hooker, hooks} from './hooker.ts';
+import {Model} from './model.ts';
+import {ModelContext} from './model/context.ts';
+import {types} from './typing.ts';
 
 describe('@bmoor-modeling::Model', function () {
 	let ctx;

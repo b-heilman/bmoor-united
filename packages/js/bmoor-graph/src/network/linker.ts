@@ -1,6 +1,6 @@
-import {Hub} from './hub';
-import {HubLink} from './hub.interface';
-import {Mapper} from './mapper';
+import {HubLink} from './hub.interface.ts';
+import {Hub} from './hub.ts';
+import {Mapper} from './mapper.ts';
 
 type LinkCheck = {
 	count: number;

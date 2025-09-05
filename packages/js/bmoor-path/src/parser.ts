@@ -5,11 +5,11 @@ import {
 	ExpressorModes,
 } from '@bmoor/compiler';
 
-import {reduceExpressables} from './operands';
-import {ParserModes, ParserSettings} from './parser.interface';
-import {BracketPattern} from './pattern/bracket';
-import {DotPattern} from './pattern/dot';
-import {RTN_VALUE} from './token/accessor';
+import {reduceExpressables} from './operands.ts';
+import {ParserModes, ParserSettings} from './parser.interface.ts';
+import {BracketPattern} from './pattern/bracket.ts';
+import {DotPattern} from './pattern/dot.ts';
+import {RTN_VALUE} from './token/accessor.ts';
 
 export type ReaderFunction = ExecutableFunction;
 export type WriterFunction = ExecutableFunction;

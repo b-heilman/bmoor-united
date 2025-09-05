@@ -1,6 +1,6 @@
 import {expect} from 'chai';
 
-import {OrderedMap} from './index';
+import {OrderedMap} from './index.ts';
 
 describe('@bmoor/index', function () {
 	describe('OrderedMap', function () {

@@ -2,8 +2,8 @@ import {
 	DatumInterface,
 	DatumSelector,
 	DatumSettings,
-} from '../datum.interface';
-import {IntervalInterface} from '../interval.interface';
+} from '../datum.interface.ts';
+import {IntervalInterface} from '../interval.interface.ts';
 
 export interface IntervalDatumSelector extends DatumSelector {
 	interval?: IntervalInterface;

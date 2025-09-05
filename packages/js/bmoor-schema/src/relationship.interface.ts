@@ -1,5 +1,5 @@
-import {FieldReference} from './field.interface';
-import {SchemaReference} from './schema.interface';
+import {FieldReference} from './field.interface.ts';
+import {SchemaReference} from './schema.interface.ts';
 
 export type RelationshipReference = string;
 

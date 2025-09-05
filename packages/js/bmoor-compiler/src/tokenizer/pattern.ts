@@ -1,5 +1,5 @@
-import {TokenizerState} from './state';
-import {Token} from './token';
+import {TokenizerState} from './state.ts';
+import {Token} from './token.ts';
 
 export abstract class Pattern {
 	abstract open(string, number): TokenizerState;

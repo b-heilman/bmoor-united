@@ -9,7 +9,7 @@ import {
 	ContextSettings,
 	EnvVariable,
 	FeatureFlag,
-} from './context.interface';
+} from './context.interface.ts';
 
 export class Context implements ContextSecurityInterface {
 	error?: ContextualError;

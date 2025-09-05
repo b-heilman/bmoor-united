@@ -8,7 +8,7 @@ import {
 	RequestWhereCondition,
 	RequestWhereConditionJoin,
 	RequestWhereExpression,
-} from '../request.interface';
+} from '../request.interface.ts';
 
 export type QueryStatementSeriesReference = string;
 

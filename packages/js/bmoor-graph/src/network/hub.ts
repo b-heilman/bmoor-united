@@ -1,6 +1,6 @@
 import {makeGetter} from '@bmoor/object';
 
-import {HubLink} from './hub.interface';
+import {HubLink} from './hub.interface.ts';
 
 export class Hub {
 	ref: string;

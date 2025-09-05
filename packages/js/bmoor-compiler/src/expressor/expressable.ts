@@ -1,10 +1,10 @@
-import {ExpressableToken} from '../tokenizer/token.interface';
+import {ExpressableToken} from '../tokenizer/token.interface.ts';
 import {
 	ExpressableFunction,
 	ExpressableSettings,
 	ExpressableUsages,
 	ExpressableValue,
-} from './expressable.interface';
+} from './expressable.interface.ts';
 
 export class Expressable {
 	usage: ExpressableUsages;

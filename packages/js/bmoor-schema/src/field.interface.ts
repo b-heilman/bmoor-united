@@ -3,10 +3,10 @@ import {
 	PathArray,
 	PathLeaf,
 	PathObject,
-} from '@bmoor/path/src/path.interface';
+} from '@bmoor/path/src/path.interface.ts';
 
-import {SchemaContextInterface} from './schema/context.interface';
-import {ValidationJSON} from './validation.interface';
+import {SchemaContextInterface} from './schema/context.interface.ts';
+import {ValidationJSON} from './validation.interface.ts';
 
 export type FieldPath = string;
 export type FieldType = string;

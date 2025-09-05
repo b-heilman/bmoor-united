@@ -1,1 +1,1 @@
-export {pearsonCorrelation} from './correlation';
+export {pearsonCorrelation} from './correlation.ts';

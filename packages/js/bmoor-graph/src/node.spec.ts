@@ -1,9 +1,9 @@
 import {expect} from 'chai';
 
-import {Event} from './event';
-import {Features} from './features';
-import {Node} from './node';
-import {NodeValueSelector} from './node.interface';
+import {Event} from './event.ts';
+import {Features} from './features.ts';
+import {NodeValueSelector} from './node.interface.ts';
+import {Node} from './node.ts';
 
 describe('@bmoor/graph::node', function () {
 	let root: Node = null;

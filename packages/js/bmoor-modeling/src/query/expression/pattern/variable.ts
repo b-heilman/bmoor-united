@@ -1,7 +1,7 @@
 import {Pattern, TokenizerState} from '@bmoor/compiler';
 
-import {QueryExpressionTokenConstant} from '../token/constant';
-import {isVariable} from './reference';
+import {QueryExpressionTokenConstant} from '../token/constant.ts';
+import {isVariable} from './reference.ts';
 
 export class QueryExpressionPatternVariable extends Pattern {
 	open(str, pos) {

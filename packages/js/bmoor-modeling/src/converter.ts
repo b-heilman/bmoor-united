@@ -1,6 +1,6 @@
 import {FieldType} from '@bmoor/schema';
 
-import {ConvertFn, ConveterInterface} from './converter.interface';
+import {ConvertFn, ConveterInterface} from './converter.interface.ts';
 
 export class Converter implements ConveterInterface {
 	index: Record<FieldType, Record<FieldType, ConvertFn>>;

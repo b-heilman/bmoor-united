@@ -1,12 +1,12 @@
 // import { DatumOffsetInterface} from './datum/accessor.interface';
 import {Context} from '@bmoor/context';
 
-import {DatumInterface, FeatureValue} from './datum.interface';
-import {DatumReaderInterface} from './datum/reader.interface';
+import {DatumInterface, FeatureValue} from './datum.interface.ts';
+import {DatumReaderInterface} from './datum/reader.interface.ts';
 import {
 	EnvironmentInterface,
 	EnvironmentSelector,
-} from './environment.interface';
+} from './environment.interface.ts';
 
 /****
  * TODO: reimplement in selection logic

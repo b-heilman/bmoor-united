@@ -8,13 +8,13 @@ import {
 	RequestWhereExpression,
 	RequestWhereJoin,
 	RequestWhereScalarMethods,
-} from '../request.interface';
+} from '../request.interface.ts';
 import {
 	SqlPrepared,
 	SqlSelectResponse,
 	SqlWhereResponse,
-} from './sql.interface';
-import {QueryStatementInterface} from './statement.interface';
+} from './sql.interface.ts';
+import {QueryStatementInterface} from './statement.interface.ts';
 
 export function translateExpressable(
 	expression: RequestWhereExpression,

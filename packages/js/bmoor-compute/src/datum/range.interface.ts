@@ -1,5 +1,8 @@
-import {DatumInterface} from '../datum.interface';
-import {DatumOffsetContext, DatumOffsetSettings} from './offset.interface';
+import {DatumInterface} from '../datum.interface.ts';
+import {
+	DatumOffsetContext,
+	DatumOffsetSettings,
+} from './offset.interface.ts';
 
 export interface DatumRangeSettings<ResponseT, RequirementT, SelectT>
 	extends DatumOffsetSettings<SelectT> {

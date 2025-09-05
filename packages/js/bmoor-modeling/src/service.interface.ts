@@ -5,19 +5,19 @@ import {
 	ModelExternalGenerics,
 	ModelInterface,
 	ModelInternalGenerics,
-} from './model.interface';
+} from './model.interface.ts';
 import {
 	ServiceAdapterGenerics,
 	ServiceAdapterInterface,
-} from './service/adapter.interface';
-import {ServiceContextInterface} from './service/context.interface';
-import {ServiceControllerInterface} from './service/controller.interface';
-import {ServiceSearchType} from './service/search.interface';
+} from './service/adapter.interface.ts';
+import {ServiceContextInterface} from './service/context.interface.ts';
+import {ServiceControllerInterface} from './service/controller.interface.ts';
+import {ServiceSearchType} from './service/search.interface.ts';
 import {
 	ServiceSelectActionType,
 	ServiceSelectSettings,
 	ServiceSelectType,
-} from './service/select.interface';
+} from './service/select.interface.ts';
 
 export type ReferenceType = DynamicObject;
 

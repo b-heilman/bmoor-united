@@ -2,17 +2,17 @@ import {isArray} from '@bmoor/compare';
 import {DynamicObject} from '@bmoor/object';
 import {implode} from '@bmoor/path';
 
-import {BuilderJSONSchema} from './builder/jsonschema';
-import {BuilderJSONSchemaObject} from './builder/jsonschema.interface';
-import {BuilderTypescript} from './builder/typescript';
-import {EnvironmentContext} from './environment/context';
-import {Field} from './field';
+import {BuilderJSONSchemaObject} from './builder/jsonschema.interface.ts';
+import {BuilderJSONSchema} from './builder/jsonschema.ts';
+import {BuilderTypescript} from './builder/typescript.ts';
+import {EnvironmentContext} from './environment/context.ts';
 import {
 	FieldInterface,
 	FieldJSON,
 	FieldReference,
-} from './field.interface';
-import {RelationshipJSON} from './relationship.interface';
+} from './field.interface.ts';
+import {Field} from './field.ts';
+import {RelationshipJSON} from './relationship.interface.ts';
 import {
 	SchemaFieldSet,
 	SchemaInterface,
@@ -20,8 +20,8 @@ import {
 	SchemaReference,
 	SchemaSettings,
 	SchemaStructure,
-} from './schema.interface';
-import {SchemaContextInterface} from './schema/context.interface';
+} from './schema.interface.ts';
+import {SchemaContextInterface} from './schema/context.interface.ts';
 
 export function reduceStructure(
 	structure: SchemaStructure,

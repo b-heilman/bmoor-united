@@ -1,7 +1,7 @@
-export {GraphCompute, dump, load} from './graph';
-export * from './graph.interface';
-export {GraphComputeLoader} from './graph/loader';
-export * from './graph/loader.interface';
-export {GraphExecutor} from './executor';
-export {Interval} from './interval';
-export * from './interval.interface';
+export {GraphCompute, dump, load} from './graph.ts';
+export * from './graph.interface.ts';
+export {GraphComputeLoader} from './graph/loader.ts';
+export * from './graph/loader.interface.ts';
+export {GraphExecutor} from './executor.ts';
+export {Interval} from './interval.ts';
+export * from './interval.interface.ts';

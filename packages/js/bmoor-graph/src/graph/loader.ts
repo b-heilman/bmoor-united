@@ -1,11 +1,11 @@
 import {Context} from '@bmoor/context';
 
-import {EventFeaturesWriteMode, EventJSON} from '../event.interface';
-import {Graph, applyBuilder} from '../graph';
-import {GraphBuilder, GraphSelector} from '../graph.interface';
-import {load as loadNode} from '../node';
-import {NodeJSON} from '../node.interface';
-import {GraphDatumInterface} from './datum.interface';
+import {EventFeaturesWriteMode, EventJSON} from '../event.interface.ts';
+import {GraphBuilder, GraphSelector} from '../graph.interface.ts';
+import {Graph, applyBuilder} from '../graph.ts';
+import {NodeJSON} from '../node.interface.ts';
+import {load as loadNode} from '../node.ts';
+import {GraphDatumInterface} from './datum.interface.ts';
 import {
 	GraphLoaderEventGeneratorSettings,
 	GraphLoaderFeatureValueAccessor,
@@ -14,7 +14,7 @@ import {
 	GraphLoaderRow,
 	GraphLoaderSettings,
 	GraphLoaderValue,
-} from './loader.interface';
+} from './loader.interface.ts';
 
 function accessString(
 	row: GraphLoaderRow,

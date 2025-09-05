@@ -6,11 +6,11 @@ import {
 	ServiceInternalGenerics,
 	ServiceStorageGenerics,
 	ServiceUpdateDelta,
-} from '../service.interface';
+} from '../service.interface.ts';
 import {
 	ServiceControllerInterface,
 	ServiceControllerSettings,
-} from './controller.interface';
+} from './controller.interface.ts';
 
 export class ServiceController<
 	InternalT extends ServiceInternalGenerics = ServiceInternalGenerics,

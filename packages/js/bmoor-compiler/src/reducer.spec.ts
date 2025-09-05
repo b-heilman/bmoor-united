@@ -1,11 +1,11 @@
 import {expect} from 'chai';
 
-import {Reducer} from './reducer';
-import {Statement} from './reducer/statement';
-import {Token} from './tokenizer/token';
-import {TokenReference} from './tokenizer/token.interface';
+import {Reducer} from './reducer.ts';
+import {Statement} from './reducer/statement.ts';
+import {TokenReference} from './tokenizer/token.interface.ts';
+import {Token} from './tokenizer/token.ts';
 
-describe('@bmoor/compiler', function () {
+export const results = describe('@bmoor/compiler', function () {
 	describe('Reducer', function () {
 		class EinsToken extends Token {
 			static reference: TokenReference = 'eins';

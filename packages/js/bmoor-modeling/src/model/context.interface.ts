@@ -1,8 +1,8 @@
 import {FieldType, SchemaContextInterface} from '@bmoor/schema';
 
-import {ConvertFn} from '../converter.interface';
-import {HookInterface, HookReference} from '../hook.interface';
-import {TypingJSON} from '../typing.interface';
+import {ConvertFn} from '../converter.interface.ts';
+import {HookInterface, HookReference} from '../hook.interface.ts';
+import {TypingJSON} from '../typing.interface.ts';
 
 // TODO: I might want to split context and nexus
 export interface ModelContextInterface<

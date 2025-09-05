@@ -1,6 +1,6 @@
 import {Readable, Writable} from 'stream';
 
-import {Batched} from '../transformation/batch';
+import {Batched} from '../transformation/batch.ts';
 
 // specializes in converting a stream into a string.     It is assumed that a stream
 // will always be respresented by an array in the resulting json object

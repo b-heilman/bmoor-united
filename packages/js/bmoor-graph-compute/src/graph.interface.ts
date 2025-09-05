@@ -7,12 +7,12 @@ import {
 } from '@bmoor/compute';
 import {GraphBuilder, GraphJSON, GraphSelector} from '@bmoor/graph';
 
-import {GraphComputeSectionInterface} from './graph/section.interface';
+import {GraphComputeSectionInterface} from './graph/section.interface.ts';
 import {
 	IntervalInterface,
 	IntervalJSON,
 	IntervalReference,
-} from './interval.interface';
+} from './interval.interface.ts';
 
 /**
  * I am going to use this to manage the multiple graphs across time.  I believe
@@ -55,7 +55,7 @@ export interface GraphComputeInterface<
 // 12/05/21:eagles:past:pass-yards -> yards for the season for team
 // GraphComputeSelectorMode
 
-export {NodeValueSelector} from '@bmoor/graph/src/node.interface';
+export {NodeValueSelector} from '@bmoor/graph/src/node.interface.ts';
 
 export interface GraphComputeBuilderPage extends GraphBuilder {
 	interval: IntervalInterface;

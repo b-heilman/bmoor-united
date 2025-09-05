@@ -1,12 +1,12 @@
 import {expect} from 'chai';
 
-import {EnvironmentContext} from '../environment/context';
-import {Schema} from '../schema';
-import {SchemaInterface} from '../schema.interface';
-import {SchemaContext} from '../schema/context';
-import {types} from '../typing';
-import {validations} from '../validator';
-import {BuilderTypescript} from './typescript';
+import {EnvironmentContext} from '../environment/context.ts';
+import {SchemaInterface} from '../schema.interface.ts';
+import {Schema} from '../schema.ts';
+import {SchemaContext} from '../schema/context.ts';
+import {types} from '../typing.ts';
+import {validations} from '../validator.ts';
+import {BuilderTypescript} from './typescript.ts';
 
 describe('@bmoor/schema :: BuilderTypescript', function () {
 	let ctx;

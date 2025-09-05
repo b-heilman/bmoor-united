@@ -1,6 +1,6 @@
 import {Context} from '@bmoor/context';
 
-import {DatumInterface} from '../datum.interface';
+import {DatumInterface} from '../datum.interface.ts';
 
 export interface DatumReaderInterface<
 	ResponseT,

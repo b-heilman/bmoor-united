@@ -4,10 +4,10 @@ import {
 	TypingInterface,
 	TypingJSON,
 	TypingReference,
-} from '../typing.interface';
-import {ValidationReference} from '../validation.interface';
-import {ValidatorInterface} from '../validator.interface';
-import {SchemaContextInterface} from './context.interface';
+} from '../typing.interface.ts';
+import {ValidationReference} from '../validation.interface.ts';
+import {ValidatorInterface} from '../validator.interface.ts';
+import {SchemaContextInterface} from './context.interface.ts';
 
 export class SchemaContext<TypingT extends TypingJSON>
 	implements SchemaContextInterface<TypingT>

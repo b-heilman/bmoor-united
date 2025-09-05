@@ -2,7 +2,7 @@ import {
 	TypingInterface,
 	TypingJSON,
 	TypingReference,
-} from './typing.interface';
+} from './typing.interface.ts';
 
 export class Typing<TypeT extends TypingJSON = TypingJSON>
 	implements TypingInterface<TypeT>

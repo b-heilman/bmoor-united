@@ -11,7 +11,7 @@ import {
 	IntervalEnvironment,
 	IntervalEnvironmentSelector,
 	mean,
-} from './index';
+} from './index.ts';
 
 class Offset<RequirementT> extends DatumOffset<
 	RequirementT,

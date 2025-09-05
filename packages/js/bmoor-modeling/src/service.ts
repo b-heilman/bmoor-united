@@ -1,6 +1,6 @@
 import {TypingReference} from '@bmoor/schema';
 
-import {ModelInterface} from './model.interface';
+import {ModelInterface} from './model.interface.ts';
 import {
 	ServiceExternalGenerics,
 	ServiceHooks,
@@ -9,12 +9,12 @@ import {
 	ServiceSettings,
 	ServiceStorageGenerics,
 	ServiceUpdateDelta,
-} from './service.interface';
-import {ServiceContextInterface} from './service/context.interface';
+} from './service.interface.ts';
+import {ServiceContextInterface} from './service/context.interface.ts';
 import {
 	ServiceSelectActionType,
 	ServiceSelectType,
-} from './service/select.interface';
+} from './service/select.interface.ts';
 
 function getStorageModel(model: ModelInterface) {
 	return {

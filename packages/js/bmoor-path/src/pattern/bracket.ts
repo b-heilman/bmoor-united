@@ -1,7 +1,7 @@
 import {Pattern, TokenizerState} from '@bmoor/compiler';
 
-import {AccessorToken} from '../token/accessor';
-import {ArrayToken} from '../token/array';
+import {AccessorToken} from '../token/accessor.ts';
+import {ArrayToken} from '../token/array.ts';
 
 class BracketState extends TokenizerState {
 	isQuote: boolean;

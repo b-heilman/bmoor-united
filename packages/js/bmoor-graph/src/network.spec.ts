@@ -1,7 +1,7 @@
 import {expect} from 'chai';
 
-import {Network} from './network.js';
-import {Mapper} from './network/mapper.js';
+import {Network} from './network.ts';
+import {Mapper} from './network/mapper.ts';
 
 describe('@bmoor/graph - network', function () {
 	describe('::search', function () {

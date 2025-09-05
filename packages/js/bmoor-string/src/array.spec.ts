@@ -1,6 +1,6 @@
 import {expect} from 'chai';
 
-import {prettyArray} from './array';
+import {prettyArray} from './array.ts';
 
 describe('@bmoor-string/array', function () {
 	describe('pretty', function () {

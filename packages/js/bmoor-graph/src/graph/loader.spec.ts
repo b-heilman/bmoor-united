@@ -2,10 +2,10 @@ import {expect} from 'chai';
 
 import {Context} from '@bmoor/context';
 
-import {Graph} from '../graph';
-import {GraphSelector} from '../graph.interface';
-import {GraphDatum} from './datum';
-import {GraphLoader} from './loader';
+import {GraphSelector} from '../graph.interface.ts';
+import {Graph} from '../graph.ts';
+import {GraphDatum} from './datum.ts';
+import {GraphLoader} from './loader.ts';
 
 describe('@bmoor/graph::loader', function () {
 	let ctx: Context = null;

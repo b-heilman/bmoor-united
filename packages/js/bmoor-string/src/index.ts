@@ -1,4 +1,5 @@
-export {prettyArray} from './array';
-export {PrettyArraySettings} from './array.interface';
-export {format} from './format';
-export {toKebabCase, toCamelCase, toProperCase} from './cases';
+export * from './array.interface.ts';
+
+export {prettyArray} from './array.ts';
+export {format} from './format.ts';
+export {toKebabCase, toCamelCase, toProperCase} from './cases.ts';

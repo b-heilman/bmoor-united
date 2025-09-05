@@ -1,4 +1,4 @@
-import { readSeason/*, readWeek*/ } from "./access";
+import { readSeason/*, readWeek*/ } from "./access.ts";
 
 async function main(){
     // https://www.pro-football-reference.com/boxscores/202101090buf.htm

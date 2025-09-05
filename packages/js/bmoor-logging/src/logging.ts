@@ -9,7 +9,7 @@ import {
 	SILENT,
 	VERBOSE,
 	WARN,
-} from './logging.interface';
+} from './logging.interface.ts';
 
 // I'm just adding a comment for no reason
 const levels = {

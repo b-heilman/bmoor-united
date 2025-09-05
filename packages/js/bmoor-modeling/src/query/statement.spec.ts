@@ -1,6 +1,6 @@
 import {expect} from 'chai';
 
-import {QueryStatement} from './statement';
+import {QueryStatement} from './statement.ts';
 
 describe('@bmoor-modeling::query/statement', function () {
 	describe('::validate', function () {

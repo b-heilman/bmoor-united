@@ -2,11 +2,11 @@ import {create} from '@bmoor/error';
 import {DynamicObject} from '@bmoor/object';
 import {toCamelCase} from '@bmoor/string';
 
-import {SchemaInterface, SchemaReference} from '../schema.interface';
+import {SchemaInterface, SchemaReference} from '../schema.interface.ts';
 import {
 	EnvironmentContextInterface,
 	EnvironmentContextJSON,
-} from './context.interface';
+} from './context.interface.ts';
 
 export class EnvironmentContext<
 	SchemaT extends SchemaInterface = SchemaInterface,

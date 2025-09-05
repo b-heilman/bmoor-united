@@ -2,9 +2,9 @@ import {expect} from 'chai';
 
 import {Context} from '@bmoor/context';
 
-import {Datum} from '../datum';
-import {DatumOffset} from './offset';
-import {DatumReader} from './reader';
+import {Datum} from '../datum.ts';
+import {DatumOffset} from './offset.ts';
+import {DatumReader} from './reader.ts';
 
 describe('@bmoor/compute - datum/accessor', function () {
 	it('should construct a payload with historical data', async function () {

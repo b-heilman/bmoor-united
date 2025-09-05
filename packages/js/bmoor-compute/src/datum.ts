@@ -4,7 +4,7 @@ import {
 	DatumSetterSettings,
 	DatumSettings,
 	FeatureValue,
-} from './datum.interface';
+} from './datum.interface.ts';
 
 export class Datum<SelectorT = DatumSelector>
 	implements DatumInterface<SelectorT>

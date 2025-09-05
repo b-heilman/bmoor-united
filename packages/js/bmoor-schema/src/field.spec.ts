@@ -1,10 +1,10 @@
 import {expect} from 'chai';
 
-import {Field} from './field';
-import {SchemaContext} from './schema/context';
-import {types} from './typing';
-import {TypingJSON} from './typing.interface';
-import {validations} from './validator';
+import {Field} from './field.ts';
+import {SchemaContext} from './schema/context.ts';
+import {TypingJSON} from './typing.interface.ts';
+import {types} from './typing.ts';
+import {validations} from './validator.ts';
 
 describe('@bmoor/schema :: Field', function () {
 	let ctx;

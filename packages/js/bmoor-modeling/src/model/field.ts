@@ -6,7 +6,7 @@ import {
 	ModelFieldInfo,
 	ModelFieldInterface,
 	ModelFieldJSON,
-} from './field.interface';
+} from './field.interface.ts';
 
 export class ModelField<T = unknown>
 	extends Field<T>

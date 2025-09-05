@@ -1,6 +1,6 @@
 import {Pattern, TokenizerState} from '@bmoor/compiler';
 
-import {QueryExpressionTokenConstant} from '../token/constant';
+import {QueryExpressionTokenConstant} from '../token/constant.ts';
 
 const isDigit = /\d/;
 

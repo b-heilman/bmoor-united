@@ -1,4 +1,4 @@
-import {FieldInfo} from './field.interface';
+import {FieldInfo} from './field.interface.ts';
 
 export type ValidationReference = string;
 

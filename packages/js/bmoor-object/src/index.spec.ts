@@ -11,7 +11,7 @@ import {
 	merge,
 	parsePath,
 	set,
-} from './index';
+} from './index.ts';
 
 describe('@bmoor/object', function () {
 	describe('parsePath', function () {

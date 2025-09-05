@@ -1,10 +1,10 @@
 import {Context} from '@bmoor/context';
 
-import {DatumInterface, FeatureReference} from '../datum.interface';
+import {DatumInterface, FeatureReference} from '../datum.interface.ts';
 import {
 	DatumReaderInterface,
 	DatumReaderRequirements,
-} from './reader.interface';
+} from './reader.interface.ts';
 
 /***
  * Allows you to variable from a datum and load in requirements

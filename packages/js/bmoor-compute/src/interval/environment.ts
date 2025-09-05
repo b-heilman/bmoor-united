@@ -1,15 +1,15 @@
 import {OrderedMap} from '@bmoor/index';
 
-import {DatumReference} from '../datum.interface';
-import {Environment} from '../environment';
-import {IntervalInterface} from '../interval.interface';
-import {IntervalDatum} from './datum';
-import {IntervalDatumSettings} from './datum.interface';
+import {DatumReference} from '../datum.interface.ts';
+import {Environment} from '../environment.ts';
+import {IntervalInterface} from '../interval.interface.ts';
+import {IntervalDatumSettings} from './datum.interface.ts';
+import {IntervalDatum} from './datum.ts';
 import {
 	IntervalEnvironmentInterface,
 	IntervalEnvironmentSelector,
 	IntervalEnvironmentSettings,
-} from './environment.interface';
+} from './environment.interface.ts';
 
 type IntervalT = string;
 type OrderT = number;

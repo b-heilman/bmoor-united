@@ -1,10 +1,10 @@
-import {Datum} from '../datum';
-import {IntervalInterface} from '../interval.interface';
+import {Datum} from '../datum.ts';
+import {IntervalInterface} from '../interval.interface.ts';
 import {
 	IntervalDatumInterface,
 	IntervalDatumSelector,
 	IntervalDatumSettings,
-} from './datum.interface';
+} from './datum.interface.ts';
 
 export class IntervalDatum
 	extends Datum

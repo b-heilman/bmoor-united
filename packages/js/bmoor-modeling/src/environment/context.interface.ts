@@ -3,8 +3,8 @@ import {
 	SchemaReference,
 } from '@bmoor/schema';
 
-import {ModelInterface} from '../model.interface';
-import {ServiceInterface} from '../service.interface';
+import {ModelInterface} from '../model.interface.ts';
+import {ServiceInterface} from '../service.interface.ts';
 
 export interface EnvironmentContextInterface<
 	ModelT extends ModelInterface = ModelInterface,

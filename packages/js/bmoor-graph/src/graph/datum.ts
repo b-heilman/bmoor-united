@@ -4,13 +4,13 @@ import {
 	FeatureValue,
 } from '@bmoor/compute';
 
-import {GraphInterface, GraphSelector} from '../graph.interface';
-import {Node} from '../node';
-import {NodeValueSelector} from '../node.interface';
+import {GraphInterface, GraphSelector} from '../graph.interface.ts';
+import {NodeValueSelector} from '../node.interface.ts';
+import {Node} from '../node.ts';
 import {
 	GraphDatumInterface,
 	GraphDatumSetterSettings,
-} from './datum.interface';
+} from './datum.interface.ts';
 
 export class GraphDatum<SelectorT extends GraphSelector>
 	implements GraphDatumInterface<SelectorT>

@@ -1,6 +1,6 @@
-import {Features} from './features';
-import {FeatureValues} from './features.interface';
-import {NodeInterface, NodeReference} from './node.interface';
+import {FeatureValues} from './features.interface.ts';
+import {Features} from './features.ts';
+import {NodeInterface, NodeReference} from './node.interface.ts';
 
 export type EventReference = string;
 

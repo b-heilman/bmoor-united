@@ -1,5 +1,8 @@
-import {TypingJSON, TypingReference} from '../typing.interface';
-import {ValidationFn, ValidationReference} from '../validation.interface';
+import {TypingJSON, TypingReference} from '../typing.interface.ts';
+import {
+	ValidationFn,
+	ValidationReference,
+} from '../validation.interface.ts';
 
 export interface SchemaFormatInterface {
 	formatName(ref: string, usage: string): string;

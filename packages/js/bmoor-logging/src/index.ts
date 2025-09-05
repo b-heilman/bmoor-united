@@ -1,11 +1,3 @@
-export {
-	LogInfo,
-	LoggingConfigInterface,
-	SILENT,
-	ERROR,
-	WARN,
-	INFO,
-	VERBOSE,
-} from './logging.interface';
+export * from './logging.interface.ts';
 
-export {Logging} from './logging';
+export {Logging} from './logging.ts';
