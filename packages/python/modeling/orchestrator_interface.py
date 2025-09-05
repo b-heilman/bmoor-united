@@ -1,11 +1,12 @@
-from typing import TypeVar, Union
 from numpy import ndarray
+from typing import TypeVar, Union
+
 
 Raw = TypeVar("Raw")
 Parsed = TypeVar("Parsed")
 Encoded = TypeVar("Encoded")
 
-Embedded = ndarray
+Embedding = ndarray
 
-Embedding = Union[Embedded, list[Embedded]]
+Embedded = Union[Embedding, list[Embedding]]
 Encoding = Union[Encoded, list[Encoded]]
