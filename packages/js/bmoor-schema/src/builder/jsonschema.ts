@@ -1,10 +1,10 @@
-import {FieldInterface} from '../field.interface';
-import {SchemaInterface} from '../schema.interface';
-import {SchemaContextInterface} from '../schema/context.interface';
-import {
+import type {FieldInterface} from '../field.interface.ts';
+import type {SchemaInterface} from '../schema.interface.ts';
+import type {SchemaContextInterface} from '../schema/context.interface.ts';
+import type {
 	BuilderJSONSchemaNode,
 	BuilderJSONSchemaObject,
-} from './jsonschema.interface';
+} from './jsonschema.interface.ts';
 
 export class BuilderJSONSchema {
 	ctx: SchemaContextInterface;

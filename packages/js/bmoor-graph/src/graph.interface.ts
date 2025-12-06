@@ -2,9 +2,9 @@ import {
 	EventInterface,
 	EventJSON,
 	EventReference,
-} from './event.interface';
-import {Features} from './features';
-import {GraphDatumInterface} from './graph/datum.interface';
+} from './event.interface.ts';
+import {Features} from './features.ts';
+import {GraphDatumInterface} from './graph/datum.interface.ts';
 import {
 	NodeBuilder,
 	NodeInterface,
@@ -12,7 +12,7 @@ import {
 	NodeReference,
 	NodeSelector,
 	NodeType,
-} from './node.interface';
+} from './node.interface.ts';
 
 export interface GraphSelector extends NodeSelector {
 	root?: boolean;

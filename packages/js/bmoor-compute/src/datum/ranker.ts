@@ -1,20 +1,25 @@
 import {Context} from '@bmoor/context';
 
-import {DatumInterface, FeatureReference} from '../datum.interface';
-import {DatumOffset} from './offset';
-import {DatumRankerContext, DatumRankerSettings} from './ranker.interface';
-import {
+import type {
+	DatumInterface,
+	FeatureReference,
+} from '../datum.interface.ts';
+import {DatumOffset} from './offset.ts';
+import type {
+	DatumRankerContext,
+	DatumRankerSettings,
+} from './ranker.interface.ts';
+import type {
 	DatumReaderInterface,
 	DatumReaderRequirements,
-} from './reader.interface';
+} from './reader.interface.ts';
 
 export class DatumRanker<
 	RequirementT,
 	DatumT extends DatumInterface,
 	SelectT,
 	EnvT extends DatumRankerContext<DatumT, SelectT>,
-> implements DatumReaderInterface<number, DatumT, EnvT>
-{
+> implements DatumReaderInterface<number, DatumT, EnvT> {
 	name: string;
 	accessor: DatumOffset<RequirementT, DatumT, SelectT, EnvT>;
 	settings: DatumRankerSettings<RequirementT, SelectT>;

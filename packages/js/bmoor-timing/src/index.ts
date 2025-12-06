@@ -1,1 +1,1 @@
-export {pause} from './lib/pause';
+export {pause} from './lib/pause.ts';

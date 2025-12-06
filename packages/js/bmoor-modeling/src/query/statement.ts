@@ -9,11 +9,11 @@ import {
 	RequestWhereCondition,
 	RequestWhereConditionJoin,
 	RequestWhereExpression,
-} from '../request.interface';
+} from '../request.interface.ts';
 import {
 	QueryStatementInterface,
 	QueryStatementSeriesReference,
-} from './statement.interface';
+} from './statement.interface.ts';
 
 export class QueryStatement implements QueryStatementInterface {
 	refs: Record<string, RequestSeries>;
@@ -162,8 +162,6 @@ export class QueryStatement implements QueryStatementInterface {
 
 			return agg;
 		}, {});
-
-		console.log(joined);
 
 		return Object.keys(joined)
 			.filter((ref) => !joined[ref])

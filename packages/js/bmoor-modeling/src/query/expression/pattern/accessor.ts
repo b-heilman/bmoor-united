@@ -1,7 +1,7 @@
 import {Pattern, TokenizerState} from '@bmoor/compiler';
 
-import {QueryExpressionTokenAccessor} from '../token/accessor';
-import {isVariable} from './reference';
+import {QueryExpressionTokenAccessor} from '../token/accessor.ts';
+import {isVariable} from './reference.ts';
 
 // REFERENCE: @bmoor/path.pattern.dot
 export class QueryExpressionPatternAccessor extends Pattern {

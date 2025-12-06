@@ -1,7 +1,7 @@
 import {expect} from 'chai';
 
-import {parser} from './parser';
-import {ParserModes} from './parser.interface';
+import {ParserModes} from './parser.interface.ts';
+import {parser} from './parser.ts';
 
 describe('@bmoor/path', function () {
 	describe('Parser', function () {

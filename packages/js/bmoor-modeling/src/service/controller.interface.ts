@@ -1,13 +1,13 @@
 import {ContextSecurityInterface} from '@bmoor/context';
 
-import {Model} from '../model';
-import {
+import {Model} from '../model.ts';
+import type {
 	ServiceExternalGenerics,
 	ServiceInterface,
 	ServiceInternalGenerics,
 	ServiceStorageGenerics,
 	ServiceUpdateDelta,
-} from '../service.interface';
+} from '../service.interface.ts';
 
 export interface ServiceControllerSettings {
 	permission?: {

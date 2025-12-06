@@ -1,4 +1,4 @@
-import {Hub} from './hub';
+import {Hub} from './hub.ts';
 
 export class Mapper {
 	hubs: Record<string, Hub>;

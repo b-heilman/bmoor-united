@@ -1,7 +1,7 @@
 import {Pattern, TokenizerState} from '@bmoor/compiler';
 
-import {QueryExpressionTokenBlock} from '../token/block';
-import {QueryExpressionTokenConstant} from '../token/constant';
+import {QueryExpressionTokenBlock} from '../token/block.ts';
+import {QueryExpressionTokenConstant} from '../token/constant.ts';
 
 export class QueryExpressionPatternBlock extends Pattern {
 	// (...)

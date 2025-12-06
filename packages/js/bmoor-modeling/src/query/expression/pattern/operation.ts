@@ -1,6 +1,6 @@
 import {Pattern, TokenizerState} from '@bmoor/compiler';
 
-import {QueryExpressionTokenOperation} from '../token/operation';
+import {QueryExpressionTokenOperation} from '../token/operation.ts';
 
 const isOperator = /\+|-|\*|\/|\^|\||&|=|~|<|>|!/;
 

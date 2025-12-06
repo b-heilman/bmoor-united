@@ -1,7 +1,7 @@
 import {expect} from 'chai';
 
-import {Linker} from './linker.js';
-import {Mapper} from './mapper.js';
+import {Linker} from './linker.ts';
+import {Mapper} from './mapper.ts';
 
 describe('@bmoor/graph - network/linker', function () {
 	it('should work with a linear path', function () {

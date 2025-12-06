@@ -1,6 +1,6 @@
-import {CompilerInterface} from '../compiler.interface';
-import {ExpressorExpressSettings} from '../expressor.interface';
-import {Expressable} from '../expressor/expressable';
+import type {CompilerInterface} from '../compiler.interface.ts';
+import type {ExpressorExpressSettings} from '../expressor.interface.ts';
+import {Expressable} from '../expressor/expressable.ts';
 
 // eslint-disable-next-line  @typescript-eslint/no-explicit-any
 export type TokenValue = any;

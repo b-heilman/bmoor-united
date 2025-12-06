@@ -1,6 +1,6 @@
 import {expect} from 'chai';
 
-import {Context} from './index';
+import {Context} from './index.ts';
 
 describe('@bmoor/context', function () {
 	describe('context', function () {

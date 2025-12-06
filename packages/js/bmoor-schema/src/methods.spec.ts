@@ -1,11 +1,11 @@
 import {expect} from 'chai';
 
-import {toJSONSchema} from './methods';
-import {Schema} from './schema';
-import {SchemaContext} from './schema/context';
-import {types} from './typing';
-import {TypingJSON} from './typing.interface';
-import {validations} from './validator';
+import {toJSONSchema} from './methods.ts';
+import {Schema} from './schema.ts';
+import {SchemaContext} from './schema/context.ts';
+import type {TypingJSON} from './typing.interface.ts';
+import {types} from './typing.ts';
+import {validations} from './validator.ts';
 
 describe('@bmoor/schema :: methods', function () {
 	let ctx;

@@ -11,7 +11,7 @@ import {
 	isObject,
 	isString,
 	isUndefined,
-} from './index';
+} from './index.ts';
 
 describe('@bmoor/compare', function () {
 	describe('isBoolean', function () {

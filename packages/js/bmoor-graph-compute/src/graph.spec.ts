@@ -2,9 +2,9 @@ import {expect} from 'chai';
 
 import {Context} from '@bmoor/context';
 
-import {GraphCompute, load} from './graph';
-import {NodeValueSelector} from './graph.interface';
-import {IntervalInterface} from './interval.interface';
+import {NodeValueSelector} from './graph.interface.ts';
+import {GraphCompute, load} from './graph.ts';
+import type {IntervalInterface} from './interval.interface.ts';
 
 describe('@bmoor/graph-compute::graph', function () {
 	const schema = {

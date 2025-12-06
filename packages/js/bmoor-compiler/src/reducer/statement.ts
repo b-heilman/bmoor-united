@@ -1,6 +1,6 @@
-import {Expressable} from '../expressor/expressable';
-import {Token, TokenConstructor} from '../tokenizer/token';
-import {ExpressableToken} from '../tokenizer/token.interface';
+import {Expressable} from '../expressor/expressable.ts';
+import type {ExpressableToken} from '../tokenizer/token.interface.ts';
+import {Token, TokenConstructor} from '../tokenizer/token.ts';
 
 export type StatementConstructor = {
 	new (tokens: Token[]): Statement;

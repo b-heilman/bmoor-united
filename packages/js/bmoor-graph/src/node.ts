@@ -1,10 +1,9 @@
 import {implode} from '@bmoor/object';
 
-import {EventInterface, EventReference} from './event.interface';
-import {Features} from './features';
-import {FeatureValue, FeatureValues} from './features.interface';
-import {
-	NODE_DEFAULT_TYPE,
+import type {EventInterface, EventReference} from './event.interface.ts';
+import type {FeatureValue, FeatureValues} from './features.interface.ts';
+import {Features} from './features.ts';
+import type {
 	NodeBuilder,
 	NodeEdgeLabel,
 	NodeInterface,
@@ -16,8 +15,8 @@ import {
 	NodeSettings,
 	NodeTag,
 	NodeType,
-	NodeValueSelector,
-} from './node.interface';
+} from './node.interface.ts';
+import {NODE_DEFAULT_TYPE, NodeValueSelector} from './node.interface.ts';
 
 /**
  * TODO: I want to allow different types of nodes to exist on a graph all tied to the same event with their own features.

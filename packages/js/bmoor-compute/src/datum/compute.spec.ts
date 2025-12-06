@@ -2,9 +2,9 @@ import {expect} from 'chai';
 
 import {Context} from '@bmoor/context';
 
-import {Datum} from '../datum';
-import {DatumCompute} from './compute';
-import {DatumReader} from './reader';
+import {Datum} from '../datum.ts';
+import {DatumCompute} from './compute.ts';
+import {DatumReader} from './reader.ts';
 
 describe('@bmoor/compute - datum/compute', function () {
 	it('should compute a value with historical data', async function () {

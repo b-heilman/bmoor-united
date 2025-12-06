@@ -1,6 +1,6 @@
 import {Readable} from 'stream';
 
-import {stringify as libStringify} from '../lib/stringify';
+import {stringify as libStringify} from '../lib/stringify.ts';
 
 export function stringify(tgt) {
 	let read = false;

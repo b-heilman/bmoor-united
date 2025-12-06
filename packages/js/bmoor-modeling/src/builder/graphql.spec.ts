@@ -2,14 +2,14 @@ import {expect} from 'chai';
 
 import {validations} from '@bmoor/schema';
 
-import {converter} from '../converter';
-import {EnvironmentContext} from '../environment/context';
-import {hooks} from '../hooker';
-import {Model} from '../model';
-import {ModelContext} from '../model/context';
-import {Service} from '../service';
-import {types} from '../typing';
-import {BuilderGraphql} from './graphql';
+import {converter} from '../converter.ts';
+import {EnvironmentContext} from '../environment/context.ts';
+import {hooks} from '../hooker.ts';
+import {Model} from '../model.ts';
+import {ModelContext} from '../model/context.ts';
+import {Service} from '../service.ts';
+import {types} from '../typing.ts';
+import {BuilderGraphql} from './graphql.ts';
 
 describe('@bmoor/schema :: BuilderGraphql', function () {
 	it('should properly generate a json schema', function () {

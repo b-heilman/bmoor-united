@@ -1,6 +1,6 @@
 import {expect} from 'chai';
 
-import {explode, implode} from './methods';
+import {explode, implode} from './methods.ts';
 
 describe('bmoor-path::methods', function () {
 	describe('implode', function () {

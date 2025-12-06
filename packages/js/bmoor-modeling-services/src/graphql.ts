@@ -8,12 +8,12 @@ import {
 	dictToGraphql,
 } from '@bmoor/modeling';
 
-import {
+import type {
 	GraphqlGenericType,
 	GraphqlJSON,
 	GraphqlSchemaResolvers,
 	GraphqlSchemaSynthetics,
-} from './graphql.interface';
+} from './graphql.interface.ts';
 
 function createSchemaResolver(
 	nexus: EnvironmentContextInterface,

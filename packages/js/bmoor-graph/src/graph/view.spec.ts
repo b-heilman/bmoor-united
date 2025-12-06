@@ -2,12 +2,12 @@ import {expect} from 'chai';
 
 import {Context} from '@bmoor/context';
 
-import {Features} from '../features';
-import {Graph} from '../graph';
-import {GraphSelector} from '../graph.interface';
-import {GraphDatum} from './datum';
-import {GraphLoader} from './loader';
-import {GraphView} from './view';
+import {Features} from '../features.ts';
+import {GraphSelector} from '../graph.interface.ts';
+import {Graph} from '../graph.ts';
+import {GraphDatum} from './datum.ts';
+import {GraphLoader} from './loader.ts';
+import {GraphView} from './view.ts';
 
 describe('@bmoor/graph::view', function () {
 	let ctx: Context = null;

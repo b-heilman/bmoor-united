@@ -1,6 +1,6 @@
 import {Expressable} from '@bmoor/compiler';
 
-import {ArrayToken} from './token/array';
+import {ArrayToken} from './token/array.ts';
 
 export type Operand = {
 	ops: Expressable[];

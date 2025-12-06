@@ -1,5 +1,5 @@
-import {Pattern} from './tokenizer/pattern';
-import {Token} from './tokenizer/token';
+import {Pattern} from './tokenizer/pattern.ts';
+import {Token} from './tokenizer/token.ts';
 
 export class Tokenizer {
 	rules: Pattern[];

@@ -6,11 +6,11 @@ import {
 	SchemaStructure,
 } from '@bmoor/schema';
 
-import {HookFn, HookInterface, HookReference} from './hook.interface';
+import {HookFn, HookInterface, HookReference} from './hook.interface.ts';
 import {
 	ModelFieldInfo,
 	ModelFieldInterface,
-} from './model/field.interface';
+} from './model/field.interface.ts';
 
 export type DeltaType = DynamicObject;
 export type StructureType = DynamicObject;

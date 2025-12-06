@@ -1,10 +1,10 @@
 import {expect} from 'chai';
 
-import {Schema} from '../schema';
-import {SchemaContext} from '../schema/context';
-import {types} from '../typing';
-import {validations} from '../validator';
-import {BuilderJSONSchema} from './jsonschema';
+import {Schema} from '../schema.ts';
+import {SchemaContext} from '../schema/context.ts';
+import {types} from '../typing.ts';
+import {validations} from '../validator.ts';
+import {BuilderJSONSchema} from './jsonschema.ts';
 
 describe('@bmoor/schema :: BuilderJSONSchema', function () {
 	let ctx;

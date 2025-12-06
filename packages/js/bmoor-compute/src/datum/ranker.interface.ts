@@ -1,14 +1,18 @@
-import {DatumInterface} from '../datum.interface';
-import {DatumAcrossContext} from './across.interface';
-import {DatumOffsetSettings} from './offset.interface';
+import type {DatumInterface} from '../datum.interface.ts';
+import type {DatumAcrossContext} from './across.interface.ts';
+import type {DatumOffsetSettings} from './offset.interface.ts';
 
-export interface DatumRankerContext<DatumT extends DatumInterface, SelectT>
-	extends DatumAcrossContext<DatumT, SelectT> {
+export interface DatumRankerContext<
+	DatumT extends DatumInterface,
+	SelectT,
+> extends DatumAcrossContext<DatumT, SelectT> {
 	metadata?: boolean;
 }
 
-export interface DatumRankerSettings<RequirementT, SelectT>
-	extends DatumOffsetSettings<SelectT> {
+export interface DatumRankerSettings<
+	RequirementT,
+	SelectT,
+> extends DatumOffsetSettings<SelectT> {
 	asc?: boolean;
 	bucketsCount?: number; // how many buckets to have
 	bucketSize?: number; // how big a bucket can be

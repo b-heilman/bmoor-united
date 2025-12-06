@@ -1,6 +1,6 @@
 import {expect} from 'chai';
 
-import {CollectionMap} from './collectionMap';
+import {CollectionMap} from './collectionMap.ts';
 
 interface Test {
 	foo: string;

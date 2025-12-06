@@ -1,6 +1,7 @@
 import {expect} from 'chai';
 
-import {Config, ConfigObject, ConfigValue, create} from './index';
+import type {ConfigValue} from './index.ts';
+import {Config, ConfigObject, create} from './index.ts';
 
 describe('@bmoor/config', function () {
 	describe('Config', function () {

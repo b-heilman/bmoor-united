@@ -1,5 +1,5 @@
-import {Features} from './features';
-import {FeatureValues} from './features.interface';
+import type {FeatureValues} from './features.interface.ts';
+import {Features} from './features.ts';
 
 export type NodeReference = string;
 

@@ -3,24 +3,24 @@ import {Context} from '@bmoor/context';
 import {NodeReference, load as loadSection} from '@bmoor/graph';
 import {OrderedMap} from '@bmoor/index';
 
-import {GraphComputeDatum} from './datum';
-import {GraphComputeDatumInterface} from './datum.interface';
-import {
+import type {GraphComputeDatumInterface} from './datum.interface.ts';
+import {GraphComputeDatum} from './datum.ts';
+import type {
 	GraphComputeInterface,
 	GraphComputeJSON,
 	GraphComputeSelector,
-} from './graph.interface';
-import {GraphComputeSection} from './graph/section';
-import {Interval} from './interval';
-import {IntervalInterface, IntervalReference} from './interval.interface';
+} from './graph.interface.ts';
+import {GraphComputeSection} from './graph/section.ts';
+import type {
+	IntervalInterface,
+	IntervalReference,
+} from './interval.interface.ts';
+import {Interval} from './interval.ts';
 
-export class GraphCompute
-	implements
-		GraphComputeInterface<
-			GraphComputeDatumInterface<GraphComputeSelector>,
-			GraphComputeSelector
-		>
-{
+export class GraphCompute implements GraphComputeInterface<
+	GraphComputeDatumInterface<GraphComputeSelector>,
+	GraphComputeSelector
+> {
 	sections: OrderedMap<
 		IntervalReference,
 		GraphComputeSection<

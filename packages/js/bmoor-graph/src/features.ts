@@ -1,6 +1,6 @@
 import {equals} from '@bmoor/object';
 
-import {FeatureValue, FeatureValues} from './features.interface';
+import type {FeatureValue, FeatureValues} from './features.interface.ts';
 
 export class Features {
 	data: FeatureValues;

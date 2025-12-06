@@ -1,18 +1,17 @@
-import {Datum} from './datum';
-import {DatumReference, DatumSettings} from './datum.interface';
-import {
+import type {DatumReference, DatumSettings} from './datum.interface.ts';
+import {Datum} from './datum.ts';
+import type {
 	EnvironmentDatumFactory,
 	EnvironmentInterface,
 	EnvironmentSelector,
 	EnvironmentSettings,
-} from './environment.interface';
+} from './environment.interface.ts';
 
 // This is more abstract, only here for testing
 export class Environment<
 	SelectorT extends EnvironmentSelector,
 	SettingsT extends DatumSettings,
-> implements EnvironmentInterface<Datum, SelectorT>
-{
+> implements EnvironmentInterface<Datum, SelectorT> {
 	references: Map<string, Datum>;
 	factory: EnvironmentDatumFactory<Datum, SettingsT>;
 

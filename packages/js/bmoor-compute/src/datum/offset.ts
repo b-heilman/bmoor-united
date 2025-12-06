@@ -1,9 +1,15 @@
 import {Context} from '@bmoor/context';
 
-import {DatumInterface, FeatureReference} from '../datum.interface';
-import {DatumOffsetContext, DatumOffsetSettings} from './offset.interface';
-import {DatumReader} from './reader';
-import {DatumReaderRequirements} from './reader.interface';
+import type {
+	DatumInterface,
+	FeatureReference,
+} from '../datum.interface.ts';
+import type {
+	DatumOffsetContext,
+	DatumOffsetSettings,
+} from './offset.interface.ts';
+import type {DatumReaderRequirements} from './reader.interface.ts';
+import {DatumReader} from './reader.ts';
 
 /***
  * Allows you to run a action against a datum, but it is offset from 0

@@ -1,9 +1,8 @@
-import {
+import type {
 	EventFeaturesWriteMode,
 	EventJSON,
-	NodeJSON,
-	NodeReference,
-} from '@bmoor/graph';
+} from '../event.interface.ts';
+import type {NodeJSON, NodeReference} from '../node.interface.ts';
 
 export type GraphLoaderValue = string | number | boolean;
 export type GraphLoaderFeature = string;

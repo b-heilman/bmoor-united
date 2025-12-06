@@ -1,4 +1,7 @@
-import {ErrorContext, InvocationContext} from './context.interface';
+import type {
+	ErrorContext,
+	InvocationContext,
+} from './context.interface.ts';
 
 export class ContextualError {
 	parent: Error;

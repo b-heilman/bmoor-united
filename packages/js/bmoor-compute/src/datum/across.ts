@@ -1,12 +1,18 @@
 import {Context} from '@bmoor/context';
 
-import {DatumInterface, FeatureReference} from '../datum.interface';
-import {DatumAcrossContext, DatumAcrossSettings} from './across.interface';
-import {DatumOffset} from './offset';
-import {
+import type {
+	DatumInterface,
+	FeatureReference,
+} from '../datum.interface.ts';
+import type {
+	DatumAcrossContext,
+	DatumAcrossSettings,
+} from './across.interface.ts';
+import {DatumOffset} from './offset.ts';
+import type {
 	DatumReaderInterface,
 	DatumReaderRequirements,
-} from './reader.interface';
+} from './reader.interface.ts';
 
 export class DatumAcross<
 	ResponseT,
@@ -14,8 +20,7 @@ export class DatumAcross<
 	DatumT extends DatumInterface,
 	SelectT,
 	EnvT extends DatumAcrossContext<DatumT, SelectT>,
-> implements DatumReaderInterface<ResponseT, DatumT, EnvT>
-{
+> implements DatumReaderInterface<ResponseT, DatumT, EnvT> {
 	name: string;
 	accessor: DatumOffset<RequirementT, DatumT, SelectT, EnvT>;
 	settings: DatumAcrossSettings<ResponseT, RequirementT, SelectT>;

@@ -1,9 +1,9 @@
 import {expect} from 'chai';
 
-import {Tokenizer} from './tokenizer';
-import {Pattern} from './tokenizer/pattern';
-import {TokenizerState} from './tokenizer/state';
-import {Token} from './tokenizer/token';
+import {Tokenizer} from './tokenizer.ts';
+import {Pattern} from './tokenizer/pattern.ts';
+import {TokenizerState} from './tokenizer/state.ts';
+import {Token} from './tokenizer/token.ts';
 
 describe('@bmoor/compiler', function () {
 	describe('Tokenizer', function () {

@@ -1,21 +1,22 @@
-import {ApolloServer, BaseContext} from '@apollo/server';
+import type {BaseContext} from '@apollo/server';
+import {ApolloServer} from '@apollo/server';
 import {strict as assert} from 'assert';
 import {expect} from 'chai';
 import {stub} from 'sinon';
 
+import type {ServiceAdapterInterface} from '@bmoor/modeling';
 import {
 	EnvironmentContext,
 	Model,
 	ModelContext,
 	Service,
-	ServiceAdapterInterface,
 	converter,
 	hooks,
 	types,
 } from '@bmoor/modeling';
 import {validations} from '@bmoor/schema';
 
-import {Graphql} from './graphql';
+import {Graphql} from './graphql.ts';
 
 describe('@bmoor/modeling-services : graphql', function () {
 	const modelCtx = new ModelContext(types, validations, hooks, converter);

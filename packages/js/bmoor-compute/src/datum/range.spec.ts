@@ -2,9 +2,9 @@ import {expect} from 'chai';
 
 import {Context} from '@bmoor/context';
 
-import {Datum} from '../datum';
-import {DatumRange} from './range';
-import {DatumReader} from './reader';
+import {Datum} from '../datum.ts';
+import {DatumRange} from './range.ts';
+import {DatumReader} from './reader.ts';
 
 describe('@bmoor/compute - datum/range', function () {
 	it('should allow computing a payload with historical data', async function () {

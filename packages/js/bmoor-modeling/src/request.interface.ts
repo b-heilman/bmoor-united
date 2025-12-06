@@ -65,14 +65,12 @@ export interface RequestWhereBaseExpression {
 	path: string;
 }
 
-export interface RequestWhereArrayExpression
-	extends RequestWhereBaseExpression {
+export interface RequestWhereArrayExpression extends RequestWhereBaseExpression {
 	operator: keyof typeof RequestWhereArrayMethods;
 	value: unknown[];
 }
 
-export interface RequestWhereSingleExpression
-	extends RequestWhereBaseExpression {
+export interface RequestWhereSingleExpression extends RequestWhereBaseExpression {
 	operator: keyof typeof RequestWhereScalarMethods;
 	value: unknown;
 }

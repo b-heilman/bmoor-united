@@ -2,11 +2,11 @@ import {expect} from 'chai';
 
 import {Context} from '@bmoor/context';
 
-import {Event} from './event';
-import {Features} from './features';
-import {Graph, load} from './graph';
-import {GraphDatum} from './graph/datum';
-import {Node} from './node';
+import {Event} from './event.ts';
+import {Features} from './features.ts';
+import {Graph, load} from './graph.ts';
+import {GraphDatum} from './graph/datum.ts';
+import {Node} from './node.ts';
 
 describe('@bmoor/graph', function () {
 	describe('Graph building', function () {

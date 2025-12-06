@@ -3,7 +3,7 @@ import {Readable} from 'stream';
 
 import {pause} from '@bmoor/timing';
 
-import {batch, parallel, promisefy, stringify} from './index';
+import {batch, parallel, promisefy, stringify} from './index.ts';
 
 describe('@bmoor/stream', function () {
 	describe('promisefy', function () {

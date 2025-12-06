@@ -1,10 +1,10 @@
 import {expect} from 'chai';
 
-import {Expressor, ExpressorModes} from './expressor';
-import {Expressable} from './expressor/expressable';
-import {ExpressableUsages} from './expressor/expressable.interface';
-import {Statement} from './reducer/statement';
-import {Token} from './tokenizer/token';
+import {Expressor, ExpressorModes} from './expressor.ts';
+import {ExpressableUsages} from './expressor/expressable.interface.ts';
+import {Expressable} from './expressor/expressable.ts';
+import {Statement} from './reducer/statement.ts';
+import {Token} from './tokenizer/token.ts';
 
 describe('@bmoor/compiler', function () {
 	describe('Expressor', function () {

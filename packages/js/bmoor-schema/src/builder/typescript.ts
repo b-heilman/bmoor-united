@@ -1,12 +1,12 @@
 import {DynamicObject, set} from '@bmoor/object';
 
-import {EnvironmentContextInterface} from '../environment/context.interface';
-import {FieldInterface} from '../field.interface';
-import {dictToTypescript} from '../methods';
-import {RelationshipJSON} from '../relationship.interface';
-import {SchemaInterface} from '../schema.interface';
-import {SchemaContextInterface} from '../schema/context.interface';
-import {TypingJSON} from '../typing.interface';
+import type {EnvironmentContextInterface} from '../environment/context.interface.ts';
+import type {FieldInterface} from '../field.interface.ts';
+import {dictToTypescript} from '../methods.ts';
+import type {RelationshipJSON} from '../relationship.interface.ts';
+import type {SchemaInterface} from '../schema.interface.ts';
+import type {SchemaContextInterface} from '../schema/context.interface.ts';
+import type {TypingJSON} from '../typing.interface.ts';
 
 export class BuilderTypescript<TypingT extends TypingJSON = TypingJSON> {
 	ctx: SchemaContextInterface<TypingT>;

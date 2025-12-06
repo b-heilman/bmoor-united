@@ -1,7 +1,7 @@
-import {HubLink} from './network/hub.interface.js';
-import {Hub} from './network/hub.js';
-import {Linker} from './network/linker.js';
-import {Mapper} from './network/mapper.js';
+import {HubLink} from './network/hub.interface.ts';
+import {Hub} from './network/hub.ts';
+import {Linker} from './network/linker.ts';
+import {Mapper} from './network/mapper.ts';
 
 // Builds a network give a mapper
 type NetworkSettings = {

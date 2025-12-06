@@ -1,11 +1,7 @@
-export {
+export type {
 	LogInfo,
 	LoggingConfigInterface,
-	SILENT,
-	ERROR,
-	WARN,
-	INFO,
-	VERBOSE,
-} from './logging.interface';
+} from './logging.interface.ts';
+export {SILENT, ERROR, WARN, INFO, VERBOSE} from './logging.interface.ts';
 
-export {Logging} from './logging';
+export {Logging} from './logging.ts';

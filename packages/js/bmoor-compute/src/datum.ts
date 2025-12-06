@@ -1,14 +1,14 @@
-import {
+import type {
 	DatumInterface,
 	DatumSelector,
 	DatumSetterSettings,
 	DatumSettings,
 	FeatureValue,
-} from './datum.interface';
+} from './datum.interface.ts';
 
-export class Datum<SelectorT = DatumSelector>
-	implements DatumInterface<SelectorT>
-{
+export class Datum<
+	SelectorT = DatumSelector,
+> implements DatumInterface<SelectorT> {
 	ref: string;
 	parent: Datum;
 	children: Map<string, Datum>;

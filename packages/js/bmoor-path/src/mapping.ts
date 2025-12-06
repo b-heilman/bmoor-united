@@ -1,9 +1,9 @@
 import {Expressable} from '@bmoor/compiler';
 
-import {MappingSettings} from './mapping.interface';
-import {ArrayInfo, OperandIndex, indexExpressables} from './operands';
-import {Parser, ReaderFunction, WriterFunction} from './parser';
-import {ParserModes} from './parser.interface';
+import type {MappingSettings} from './mapping.interface.ts';
+import {ArrayInfo, OperandIndex, indexExpressables} from './operands.ts';
+import {ParserModes} from './parser.interface.ts';
+import {Parser, ReaderFunction, WriterFunction} from './parser.ts';
 
 const pathParser = new Parser();
 

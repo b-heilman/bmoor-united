@@ -1,12 +1,12 @@
 import {Compiler} from '@bmoor/compiler';
 
-import {QueryExpressionPatternAccessor} from './expression/pattern/accessor';
-import {QueryExpressionPatternBlock} from './expression/pattern/block';
-import {QueryExpressionPatternNumber} from './expression/pattern/number';
-import {QueryExpressionPatternOperation} from './expression/pattern/operation';
-import {QueryExpressionPatternReference} from './expression/pattern/reference';
-import {QueryExpressionPatternString} from './expression/pattern/string';
-import {QueryExpressionPatternVariable} from './expression/pattern/variable';
+import {QueryExpressionPatternAccessor} from './expression/pattern/accessor.ts';
+import {QueryExpressionPatternBlock} from './expression/pattern/block.ts';
+import {QueryExpressionPatternNumber} from './expression/pattern/number.ts';
+import {QueryExpressionPatternOperation} from './expression/pattern/operation.ts';
+import {QueryExpressionPatternReference} from './expression/pattern/reference.ts';
+import {QueryExpressionPatternString} from './expression/pattern/string.ts';
+import {QueryExpressionPatternVariable} from './expression/pattern/variable.ts';
 
 // REFERENCE: @bmoor/path.parser
 export class Parser extends Compiler {

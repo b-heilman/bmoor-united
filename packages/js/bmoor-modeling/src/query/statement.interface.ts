@@ -1,6 +1,6 @@
 import {SchemaReference} from '@bmoor/schema';
 
-import {
+import type {
 	RequestField,
 	RequestJoin,
 	RequestJoinMapping,
@@ -8,7 +8,7 @@ import {
 	RequestWhereCondition,
 	RequestWhereConditionJoin,
 	RequestWhereExpression,
-} from '../request.interface';
+} from '../request.interface.ts';
 
 export type QueryStatementSeriesReference = string;
 

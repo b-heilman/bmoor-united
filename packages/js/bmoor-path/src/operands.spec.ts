@@ -2,9 +2,9 @@ import {expect} from 'chai';
 
 import {Expressable} from '@bmoor/compiler';
 
-import {OperandIndex, indexExpressables} from './operands';
-import {Parser} from './parser';
-import {ParserModes} from './parser.interface';
+import {OperandIndex, indexExpressables} from './operands.ts';
+import {ParserModes} from './parser.interface.ts';
+import {Parser} from './parser.ts';
 
 describe('@bmoor/path - operands', function () {
 	const pathParser = new Parser();

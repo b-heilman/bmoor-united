@@ -1,25 +1,24 @@
-export {Compiler} from './compiler';
-export {CompilerInterface} from './compiler.interface';
-export {Pattern} from './tokenizer/pattern';
-export {Token} from './tokenizer/token';
-export {TokenizerState} from './tokenizer/state';
-export {Tokenizer} from './tokenizer';
-export {
-	ExpressableUsages,
+export type {CompilerInterface} from './compiler.interface.ts';
+export type {
 	ExpressableValue,
 	ExpressableFunction,
-} from './expressor/expressable.interface';
-export {Expressable} from './expressor/expressable';
-export {
-	ExpressorExpressPosition,
-	ExpressorExpressSettings,
-} from './expressor.interface';
-export {ExecutableFunction} from './expressor/executable';
-export {ExpressorModes} from './expressor';
+} from './expressor/expressable.interface.ts';
+export type {ExpressorExpressSettings} from './expressor.interface.ts';
+export type {ExecutableFunction} from './expressor/executable.interface.ts';
+
+export {Compiler} from './compiler.ts';
+export {Pattern} from './tokenizer/pattern.ts';
+export {Token} from './tokenizer/token.ts';
+export {TokenizerState} from './tokenizer/state.ts';
+export {Tokenizer} from './tokenizer.ts';
+export {ExpressableUsages} from './expressor/expressable.interface.ts';
+export {Expressable} from './expressor/expressable.ts';
+export {ExpressorExpressPosition} from './expressor.interface.ts';
+export {ExpressorModes} from './expressor.ts';
 export {
 	ValueToken,
 	RegexValuePattern,
 	OpToken,
 	RegexOpPattern,
-} from './pattern/regex';
-export {BlockToken, BlockPattern} from './pattern/block';
+} from './pattern/regex.ts';
+export {BlockToken, BlockPattern} from './pattern/block.ts';

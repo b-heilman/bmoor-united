@@ -1,10 +1,10 @@
 import {DynamicObject} from '@bmoor/object';
 
-import {
+import type {
 	SchemaInterface,
 	SchemaJSON,
 	SchemaReference,
-} from '../schema.interface';
+} from '../schema.interface.ts';
 
 export interface EnvironmentContextJSON {
 	schemas: SchemaJSON[];

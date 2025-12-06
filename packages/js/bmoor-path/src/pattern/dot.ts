@@ -1,6 +1,6 @@
 import {Pattern, TokenizerState} from '@bmoor/compiler';
 
-import {AccessorToken} from '../token/accessor';
+import {AccessorToken} from '../token/accessor.ts';
 
 const isVariable = /[A-Za-z_0-9]/;
 

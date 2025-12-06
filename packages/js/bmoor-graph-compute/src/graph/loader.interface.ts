@@ -1,6 +1,6 @@
 import {GraphLoaderRow, GraphLoaderSettings} from '@bmoor/graph';
 
-import {IntervalInterface} from '../interval.interface';
+import type {IntervalInterface} from '../interval.interface.ts';
 
 export type LoaderIntervalGenerator = (
 	row: GraphLoaderRow,

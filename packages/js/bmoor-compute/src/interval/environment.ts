@@ -1,24 +1,23 @@
 import {OrderedMap} from '@bmoor/index';
 
-import {DatumReference} from '../datum.interface';
-import {Environment} from '../environment';
-import {IntervalInterface} from '../interval.interface';
-import {IntervalDatum} from './datum';
-import {IntervalDatumSettings} from './datum.interface';
-import {
+import type {DatumReference} from '../datum.interface.ts';
+import {Environment} from '../environment.ts';
+import type {IntervalInterface} from '../interval.interface.ts';
+import type {IntervalDatumSettings} from './datum.interface.ts';
+import {IntervalDatum} from './datum.ts';
+import type {
 	IntervalEnvironmentInterface,
 	IntervalEnvironmentSelector,
 	IntervalEnvironmentSettings,
-} from './environment.interface';
+} from './environment.interface.ts';
 
 type IntervalT = string;
 type OrderT = number;
 
 export class IntervalEnvironment<
-	SelectorT extends
-		IntervalEnvironmentSelector = IntervalEnvironmentSelector,
-> implements IntervalEnvironmentInterface<IntervalDatum, SelectorT>
-{
+	SelectorT extends IntervalEnvironmentSelector =
+		IntervalEnvironmentSelector,
+> implements IntervalEnvironmentInterface<IntervalDatum, SelectorT> {
 	intervals: Map<IntervalT, IntervalInterface<IntervalT, OrderT>>;
 	envs: OrderedMap<string, Environment<SelectorT, IntervalDatumSettings>>;
 

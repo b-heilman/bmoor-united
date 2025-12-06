@@ -1,8 +1,8 @@
-export * from './context.interface';
+export type * from './context.interface.ts';
 export {
 	ContextualError,
 	extendError,
 	assignError,
 	wrapError,
 	create,
-} from './contextual';
+} from './contextual.ts';

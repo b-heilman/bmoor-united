@@ -1,6 +1,6 @@
 import {expect} from 'chai';
 
-import {Mapping} from './index';
+import {Mapping} from './index.ts';
 
 describe('@bmoor/path', function () {
 	describe('path', function () {

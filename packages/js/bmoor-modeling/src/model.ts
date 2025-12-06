@@ -1,5 +1,5 @@
 import {Mapping} from '@bmoor/path';
-import {MappingSettings} from '@bmoor/path/src/mapping.interface';
+import {MappingSettings} from '@bmoor/path/src/mapping.interface.ts';
 import {FieldReference, Schema, reduceStructure} from '@bmoor/schema';
 
 import {
@@ -9,13 +9,13 @@ import {
 	ModelJSON,
 	ModelSettings,
 	ModelStorageGenerics,
-} from './model.interface';
-import {ModelContextInterface} from './model/context.interface';
-import {ModelField} from './model/field';
+} from './model.interface.ts';
+import {ModelContextInterface} from './model/context.interface.ts';
 import {
 	ModelFieldInterface,
 	ModelFieldJSON,
-} from './model/field.interface';
+} from './model/field.interface.ts';
+import {ModelField} from './model/field.ts';
 
 function runHooks(obj, model: Model, action: string) {
 	if ('hooks' in model.settings) {
@@ -110,10 +110,10 @@ function reduceMapings(
  * be in the service.
  ***/
 export class Model<
-		InternalT extends ModelInternalGenerics = ModelInternalGenerics,
-		ExternalT extends ModelExternalGenerics = ModelExternalGenerics,
-		StorageT extends ModelStorageGenerics = ModelStorageGenerics,
-	>
+	InternalT extends ModelInternalGenerics = ModelInternalGenerics,
+	ExternalT extends ModelExternalGenerics = ModelExternalGenerics,
+	StorageT extends ModelStorageGenerics = ModelStorageGenerics,
+>
 	extends Schema
 	implements ModelInterface<InternalT, ExternalT, StorageT>
 {

@@ -1,4 +1,4 @@
-import {DatumInterface} from '../datum.interface';
+import type {DatumInterface} from '../datum.interface.ts';
 
 export interface DatumOffsetSettings<SelectT> {
 	select?: SelectT;

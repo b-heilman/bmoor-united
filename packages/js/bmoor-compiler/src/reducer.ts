@@ -1,9 +1,9 @@
-import {StatementConstructor} from './reducer/statement';
-import {Token} from './tokenizer/token';
-import {
+import {StatementConstructor} from './reducer/statement.ts';
+import type {
 	ExpressableToken,
 	TokenReference,
-} from './tokenizer/token.interface';
+} from './tokenizer/token.interface.ts';
+import {Token} from './tokenizer/token.ts';
 
 type TreeBranch = {
 	value: StatementConstructor;

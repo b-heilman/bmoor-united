@@ -1,8 +1,8 @@
 import {isArray, isObject} from '@bmoor/compare';
 import {DynamicObject, ImplodeSettings, MappedObject} from '@bmoor/object';
-import {IgnoreSettings} from '@bmoor/object/src/object.interface';
+import type {IgnoreSettings} from '@bmoor/object/src/object.interface.ts';
 
-import {Path} from './path';
+import {Path} from './path.ts';
 
 function connectPath(key: string, next: string = null): string {
 	if (next) {

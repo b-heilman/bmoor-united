@@ -5,7 +5,7 @@ import {
 	Compiler,
 	RegexOpPattern,
 	RegexValuePattern,
-} from './index';
+} from './index.ts';
 
 describe('@bmoor/compiler', function () {
 	describe('Compiler', function () {

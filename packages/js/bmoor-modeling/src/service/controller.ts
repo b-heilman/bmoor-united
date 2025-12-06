@@ -1,23 +1,22 @@
 import {ContextSecurityInterface} from '@bmoor/context';
 
-import {
+import type {
 	ServiceExternalGenerics,
 	// ServiceInterface,
 	ServiceInternalGenerics,
 	ServiceStorageGenerics,
 	ServiceUpdateDelta,
-} from '../service.interface';
+} from '../service.interface.ts';
 import {
 	ServiceControllerInterface,
 	ServiceControllerSettings,
-} from './controller.interface';
+} from './controller.interface.ts';
 
 export class ServiceController<
 	InternalT extends ServiceInternalGenerics = ServiceInternalGenerics,
 	ExternalT extends ServiceExternalGenerics = ServiceExternalGenerics,
 	StorageT extends ServiceStorageGenerics = ServiceStorageGenerics,
-> implements ServiceControllerInterface<InternalT, ExternalT, StorageT>
-{
+> implements ServiceControllerInterface<InternalT, ExternalT, StorageT> {
 	settings: ServiceControllerSettings;
 
 	constructor(settings: ServiceControllerSettings) {

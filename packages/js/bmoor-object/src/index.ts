@@ -1,19 +1,14 @@
-export * from './object.interface';
+export type * from './object.interface.ts';
 export {
 	parsePath,
-	DynamicObject,
 	set,
-	SetterFn,
 	makeSetter,
 	get,
-	GetterFn,
 	makeGetter,
 	del,
-	MappedObject,
-	ParsedPathType,
 	explode,
 	implode,
 	keys,
 	merge,
 	equals,
-} from './object';
+} from './object.ts';

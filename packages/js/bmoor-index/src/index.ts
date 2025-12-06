@@ -1,2 +1,2 @@
-export {CollectionMap} from './collectionMap';
-export {OrderedMap} from './orderedMap';
+export {CollectionMap} from './collectionMap.ts';
+export {OrderedMap} from './orderedMap.ts';

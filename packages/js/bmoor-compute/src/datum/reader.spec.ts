@@ -2,8 +2,8 @@ import {expect} from 'chai';
 
 import {Context} from '@bmoor/context';
 
-import {Datum} from '../datum';
-import {DatumReader} from './reader';
+import {Datum} from '../datum.ts';
+import {DatumReader} from './reader.ts';
 
 describe('@bmoor/compute - datum/action', function () {
 	it('should construct a payload', async function () {

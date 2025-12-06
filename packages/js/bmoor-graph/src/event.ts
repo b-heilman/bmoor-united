@@ -1,12 +1,12 @@
-import {
-	EventFeaturesWriteMode,
+import type {
 	EventInterface,
 	EventJSON,
 	EventNodeInformation,
 	EventReference,
-} from './event.interface';
-import {Features} from './features';
-import {NodeInterface, NodeReference, NodeType} from './node.interface';
+} from './event.interface.ts';
+import {EventFeaturesWriteMode} from './event.interface.ts';
+import {Features} from './features.ts';
+import {NodeInterface, NodeReference, NodeType} from './node.interface.ts';
 
 export class Event implements EventInterface {
 	ref: EventReference;

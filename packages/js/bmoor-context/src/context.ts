@@ -4,12 +4,12 @@ import {
 	InvocationContext,
 } from '@bmoor/error';
 
-import {
+import type {
 	ContextSecurityInterface,
 	ContextSettings,
 	EnvVariable,
 	FeatureFlag,
-} from './context.interface';
+} from './context.interface.ts';
 
 export class Context implements ContextSecurityInterface {
 	error?: ContextualError;

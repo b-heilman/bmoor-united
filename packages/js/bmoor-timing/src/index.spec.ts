@@ -1,6 +1,6 @@
 import {expect} from 'chai';
 
-import {pause} from './index';
+import {pause} from './index.ts';
 
 describe('@bmoor/timing', function () {
 	describe('pause', function () {

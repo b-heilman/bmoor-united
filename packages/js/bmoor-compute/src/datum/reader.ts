@@ -1,17 +1,22 @@
 import {Context} from '@bmoor/context';
 
-import {DatumInterface, FeatureReference} from '../datum.interface';
-import {
+import type {
+	DatumInterface,
+	FeatureReference,
+} from '../datum.interface.ts';
+import type {
 	DatumReaderInterface,
 	DatumReaderRequirements,
-} from './reader.interface';
+} from './reader.interface.ts';
 
 /***
  * Allows you to variable from a datum and load in requirements
  */
-export class DatumReader<RequirementT, DatumT extends DatumInterface, EnvT>
-	implements DatumReaderInterface<RequirementT, DatumT, EnvT>
-{
+export class DatumReader<
+	RequirementT,
+	DatumT extends DatumInterface,
+	EnvT,
+> implements DatumReaderInterface<RequirementT, DatumT, EnvT> {
 	name: FeatureReference;
 	requirements: DatumReaderRequirements<RequirementT, DatumT, EnvT>;
 

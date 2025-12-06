@@ -1,5 +1,6 @@
 import {expect} from 'chai';
 
+import type {IntervalEnvironmentSelector} from './index.ts';
 import {
 	DatumAcross,
 	DatumCompute,
@@ -9,9 +10,8 @@ import {
 	Executor,
 	IntervalDatum,
 	IntervalEnvironment,
-	IntervalEnvironmentSelector,
 	mean,
-} from './index';
+} from './index.ts';
 
 class Offset<RequirementT> extends DatumOffset<
 	RequirementT,

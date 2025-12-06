@@ -2,9 +2,9 @@ import {expect} from 'chai';
 
 import {Context} from '@bmoor/context';
 
-import {Datum} from '../datum';
-import {DatumRanker} from './ranker';
-import {DatumReader} from './reader';
+import {Datum} from '../datum.ts';
+import {DatumRanker} from './ranker.ts';
+import {DatumReader} from './reader.ts';
 
 describe('@bmoor/compute - datum/across', function () {
 	it('should allow computing group data', async function () {

@@ -1,6 +1,6 @@
 import {expect} from 'chai';
 
-import {assignError, create, extendError} from './index';
+import {assignError, create, extendError} from './index.ts';
 
 describe('@bmoor/error', function () {
 	describe('create', function () {

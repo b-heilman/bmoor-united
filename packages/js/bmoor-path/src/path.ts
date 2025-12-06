@@ -1,9 +1,9 @@
 import {DynamicObject} from '@bmoor/object';
 
-import {parser} from './parser';
-import {PathInterface, PathLink} from './path.interface';
-import {AccessorToken} from './token/accessor';
-import {ArrayToken} from './token/array';
+import {parser} from './parser.ts';
+import type {PathInterface, PathLink} from './path.interface.ts';
+import {AccessorToken} from './token/accessor.ts';
+import {ArrayToken} from './token/array.ts';
 
 // eslint-disable-next-line  @typescript-eslint/no-explicit-any
 export class Path<T = any> implements PathInterface<T> {

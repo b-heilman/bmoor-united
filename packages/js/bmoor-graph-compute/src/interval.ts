@@ -1,9 +1,9 @@
-import {
+import type {
 	IntervalInterface,
 	IntervalLabel,
 	IntervalOrder,
 	IntervalReference,
-} from './interval.interface';
+} from './interval.interface.ts';
 
 export class Interval implements IntervalInterface {
 	ref: IntervalReference;

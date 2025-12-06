@@ -1,12 +1,12 @@
 import {Context} from '@bmoor/context';
 
-import {DatumInterface, FeatureReference} from '../datum.interface';
-import {DatumOffset} from './offset';
-import {DatumRangeContext, DatumRangeSettings} from './range.interface';
+import {DatumInterface, FeatureReference} from '../datum.interface.ts';
+import {DatumOffset} from './offset.ts';
+import {DatumRangeContext, DatumRangeSettings} from './range.interface.ts';
 import {
 	DatumReaderInterface,
 	DatumReaderRequirements,
-} from './reader.interface';
+} from './reader.interface.ts';
 
 export class DatumRange<
 	ResponseT,
@@ -14,8 +14,7 @@ export class DatumRange<
 	DatumT extends DatumInterface,
 	SelectT,
 	EnvT extends DatumRangeContext<DatumT, SelectT>,
-> implements DatumReaderInterface<ResponseT, DatumT, EnvT>
-{
+> implements DatumReaderInterface<ResponseT, DatumT, EnvT> {
 	name: string;
 	accessor: DatumOffset<RequirementT, DatumT, SelectT, EnvT>;
 	settings: DatumRangeSettings<ResponseT, RequirementT, SelectT>;

@@ -1,10 +1,10 @@
-import {EventReference} from '../event.interface';
-import {Features} from '../features';
-import {Graph} from '../graph';
-import {GraphSelector} from '../graph.interface';
-import {NodeReference} from '../node.interface';
-import {GraphDatum} from './datum';
-import {NodePath} from './view.interface';
+import type {EventReference} from '../event.interface.ts';
+import {Features} from '../features.ts';
+import type {GraphSelector} from '../graph.interface.ts';
+import {Graph} from '../graph.ts';
+import type {NodeReference} from '../node.interface.ts';
+import {GraphDatum} from './datum.ts';
+import type {NodePath} from './view.interface.ts';
 
 function searchGraphs<
 	DatumT extends GraphDatum<GraphSelector>,

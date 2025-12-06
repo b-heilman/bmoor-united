@@ -1,13 +1,13 @@
-import {DatumReference, DatumSettings} from '../datum.interface';
-import {DatumAcrossContext} from '../datum/across.interface';
-import {DatumOffsetContext} from '../datum/offset.interface';
-import {DatumRangeContext} from '../datum/range.interface';
-import {EnvironmentDatumFactory} from '../environment.interface';
-import {IntervalInterface} from '../interval.interface';
-import {
+import type {DatumReference, DatumSettings} from '../datum.interface.ts';
+import type {DatumAcrossContext} from '../datum/across.interface.ts';
+import type {DatumOffsetContext} from '../datum/offset.interface.ts';
+import type {DatumRangeContext} from '../datum/range.interface.ts';
+import type {EnvironmentDatumFactory} from '../environment.interface.ts';
+import type {IntervalInterface} from '../interval.interface.ts';
+import type {
 	IntervalDatumInterface,
 	IntervalDatumSelector,
-} from './datum.interface';
+} from './datum.interface.ts';
 
 type IntervalT = string;
 type OrderT = number;
@@ -22,8 +22,7 @@ export interface IntervalEnvironmentSettings<
 	content: Record<IntervalT, Record<DatumReference, SettingsT>>;
 }
 
-export interface IntervalEnvironmentSelector
-	extends IntervalDatumSelector {
+export interface IntervalEnvironmentSelector extends IntervalDatumSelector {
 	reference?: string;
 }
 
@@ -32,7 +31,9 @@ export interface IntervalEnvironmentSelector
 export interface IntervalEnvironmentInterface<
 	DatumT extends IntervalDatumInterface,
 	SelectorT extends IntervalEnvironmentSelector,
-> extends DatumOffsetContext<DatumT, SelectorT>,
+>
+	extends
+		DatumOffsetContext<DatumT, SelectorT>,
 		DatumAcrossContext<DatumT, SelectorT>,
 		DatumRangeContext<DatumT, SelectorT> {
 	select(base: DatumT, select: SelectorT): DatumT[];

@@ -1,7 +1,7 @@
 import {get} from '@bmoor/object';
 
-import {PrettyArraySettings} from './array.interface';
-import {format} from './format';
+import type {PrettyArraySettings} from './array.interface.ts';
+import {format} from './format.ts';
 
 export function prettyArray(
 	// eslint-disable-next-line  @typescript-eslint/no-explicit-any

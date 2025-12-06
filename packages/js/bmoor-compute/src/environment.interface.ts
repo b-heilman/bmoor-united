@@ -1,9 +1,9 @@
-import {
+import type {
 	DatumInterface,
 	DatumReference,
 	DatumSelector,
 	DatumSettings,
-} from './datum.interface';
+} from './datum.interface.ts';
 
 export type EnvironmentDatumFactory<DatumT, SettingsT> = (
 	string: string,

@@ -5,7 +5,8 @@ import {
 	Token,
 } from '@bmoor/compiler';
 
-import {ParserModes, ParserSettings} from '../parser.interface';
+import type {ParserSettings} from '../parser.interface.ts';
+import {ParserModes} from '../parser.interface.ts';
 
 // Doing this because null or undefined COULD be valid parameter values
 export const NO_VALUE = Symbol('no-value');
