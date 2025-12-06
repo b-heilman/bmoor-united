@@ -1,5 +1,5 @@
 import {Expressable} from '../expressor/expressable.ts';
-import {ExpressableToken} from '../tokenizer/token.interface.ts';
+import type {ExpressableToken} from '../tokenizer/token.interface.ts';
 import {Token, TokenConstructor} from '../tokenizer/token.ts';
 
 export type StatementConstructor = {

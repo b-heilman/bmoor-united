@@ -3,11 +3,11 @@ import {
 	SchemaReference,
 } from '@bmoor/schema';
 
-import {ConveterInterface} from '../converter.interface.ts';
-import {HookerInterface} from '../hooker.interface.ts';
-import {ModelInterface} from '../model.interface.ts';
-import {ServiceInterface} from '../service.interface.ts';
-import {EnvironmentContextInterface} from './context.interface.ts';
+import type {ConveterInterface} from '../converter.interface.ts';
+import type {HookerInterface} from '../hooker.interface.ts';
+import type {ModelInterface} from '../model.interface.ts';
+import type {ServiceInterface} from '../service.interface.ts';
+import type {EnvironmentContextInterface} from './context.interface.ts';
 
 export class EnvironmentContext
 	extends OldContext<ModelInterface>

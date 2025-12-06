@@ -1,12 +1,12 @@
-import {
+import type {
 	TypingInterface,
 	TypingJSON,
 	TypingReference,
 } from './typing.interface.ts';
 
-export class Typing<TypeT extends TypingJSON = TypingJSON>
-	implements TypingInterface<TypeT>
-{
+export class Typing<
+	TypeT extends TypingJSON = TypingJSON,
+> implements TypingInterface<TypeT> {
 	index: Record<TypingReference, TypeT>;
 
 	constructor(types: Record<TypingReference, TypeT> = {}) {

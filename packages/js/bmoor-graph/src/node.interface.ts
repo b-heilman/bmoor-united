@@ -1,4 +1,4 @@
-import {FeatureValues} from './features.interface.ts';
+import type {FeatureValues} from './features.interface.ts';
 import {Features} from './features.ts';
 
 export type NodeReference = string;

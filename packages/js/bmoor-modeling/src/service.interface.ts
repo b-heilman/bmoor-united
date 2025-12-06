@@ -1,19 +1,19 @@
 import {DynamicObject} from '@bmoor/object';
 import {TypingReference} from '@bmoor/schema';
 
-import {
+import type {
 	ModelExternalGenerics,
 	ModelInterface,
 	ModelInternalGenerics,
 } from './model.interface.ts';
-import {
+import type {
 	ServiceAdapterGenerics,
 	ServiceAdapterInterface,
 } from './service/adapter.interface.ts';
-import {ServiceContextInterface} from './service/context.interface.ts';
-import {ServiceControllerInterface} from './service/controller.interface.ts';
-import {ServiceSearchType} from './service/search.interface.ts';
-import {
+import type {ServiceContextInterface} from './service/context.interface.ts';
+import type {ServiceControllerInterface} from './service/controller.interface.ts';
+import type {ServiceSearchType} from './service/search.interface.ts';
+import type {
 	ServiceSelectActionType,
 	ServiceSelectSettings,
 	ServiceSelectType,

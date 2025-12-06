@@ -6,7 +6,8 @@ import {
 } from '@bmoor/compiler';
 
 import {reduceExpressables} from './operands.ts';
-import {ParserModes, ParserSettings} from './parser.interface.ts';
+import type {ParserSettings} from './parser.interface.ts';
+import {ParserModes} from './parser.interface.ts';
 import {BracketPattern} from './pattern/bracket.ts';
 import {DotPattern} from './pattern/dot.ts';
 import {RTN_VALUE} from './token/accessor.ts';

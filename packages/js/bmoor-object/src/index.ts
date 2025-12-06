@@ -1,12 +1,4 @@
-export * from './object.interface.ts';
-export type {
-	DynamicObject,
-	SetterFn,
-	GetterFn,
-	MappedObject,
-	ParsedPathType,
-} from './object.ts';
-
+export type * from './object.interface.ts';
 export {
 	parsePath,
 	set,

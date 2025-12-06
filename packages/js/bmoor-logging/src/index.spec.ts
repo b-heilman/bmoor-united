@@ -1,6 +1,7 @@
 import {expect} from 'chai';
 
-import {ERROR, INFO, LogInfo, Logging} from './index';
+import type {LogInfo} from './index.ts';
+import {ERROR, INFO, Logging} from './index.ts';
 
 describe('@bmoor/logging', function () {
 	describe('Logging', function () {

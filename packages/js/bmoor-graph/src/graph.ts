@@ -1,21 +1,18 @@
 import {Context} from '@bmoor/context';
 
-import {
-	EventFeaturesWriteMode,
-	EventJSON,
-	EventReference,
-} from './event.interface.ts';
+import type {EventJSON, EventReference} from './event.interface.ts';
+import {EventFeaturesWriteMode} from './event.interface.ts';
 import {Event} from './event.ts';
 import {Features} from './features.ts';
-import {
+import type {
 	GraphBuilder,
 	GraphEventFeatures,
 	GraphInterface,
 	GraphJSON,
 	GraphSelector,
 } from './graph.interface.ts';
-import {GraphDatumInterface} from './graph/datum.interface.ts';
-import {NodeReference, NodeType} from './node.interface.ts';
+import type {GraphDatumInterface} from './graph/datum.interface.ts';
+import type {NodeReference, NodeType} from './node.interface.ts';
 import {Node, load as loadNode} from './node.ts';
 
 // used to manage all top levels nodes and then facilitates
@@ -40,8 +37,7 @@ function connect<
 export class Graph<
 	DatumT extends GraphDatumInterface<GraphSelector>,
 	SelectorT extends GraphSelector,
-> implements GraphInterface<DatumT, SelectorT>
-{
+> implements GraphInterface<DatumT, SelectorT> {
 	root: Node;
 	types: Map<NodeType, Node[]>;
 	nodeDex: Map<NodeReference, Node>;

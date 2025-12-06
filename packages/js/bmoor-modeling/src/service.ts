@@ -1,7 +1,7 @@
 import {TypingReference} from '@bmoor/schema';
 
-import {ModelInterface} from './model.interface.ts';
-import {
+import type {ModelInterface} from './model.interface.ts';
+import type {
 	ServiceExternalGenerics,
 	ServiceHooks,
 	ServiceInterface,
@@ -10,8 +10,8 @@ import {
 	ServiceStorageGenerics,
 	ServiceUpdateDelta,
 } from './service.interface.ts';
-import {ServiceContextInterface} from './service/context.interface.ts';
-import {
+import type {ServiceContextInterface} from './service/context.interface.ts';
+import type {
 	ServiceSelectActionType,
 	ServiceSelectType,
 } from './service/select.interface.ts';
@@ -29,8 +29,7 @@ export class Service<
 	InternalT extends ServiceInternalGenerics = ServiceInternalGenerics,
 	ExternalT extends ServiceExternalGenerics = ServiceExternalGenerics,
 	StorageT extends ServiceStorageGenerics = ServiceStorageGenerics,
-> implements ServiceInterface<InternalT, ExternalT, StorageT>
-{
+> implements ServiceInterface<InternalT, ExternalT, StorageT> {
 	hooks: ServiceHooks<InternalT>;
 	model: ModelInterface<InternalT, ExternalT, StorageT>;
 	settings: ServiceSettings<InternalT, StorageT>;

@@ -1,6 +1,6 @@
 import {get} from '@bmoor/object';
 
-import {PrettyArraySettings} from './array.interface.ts';
+import type {PrettyArraySettings} from './array.interface.ts';
 import {format} from './format.ts';
 
 export function prettyArray(

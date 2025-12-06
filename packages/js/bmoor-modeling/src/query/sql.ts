@@ -1,20 +1,22 @@
-import {
+import type {
 	RequestCreate,
 	RequestDelete,
 	RequestRead,
 	RequestSelect,
 	RequestUpdate,
-	RequestWhereArrayMethods,
 	RequestWhereExpression,
+} from '../request.interface.ts';
+import {
+	RequestWhereArrayMethods,
 	RequestWhereJoin,
 	RequestWhereScalarMethods,
 } from '../request.interface.ts';
-import {
+import type {
 	SqlPrepared,
 	SqlSelectResponse,
 	SqlWhereResponse,
 } from './sql.interface.ts';
-import {QueryStatementInterface} from './statement.interface.ts';
+import type {QueryStatementInterface} from './statement.interface.ts';
 
 export function translateExpressable(
 	expression: RequestWhereExpression,

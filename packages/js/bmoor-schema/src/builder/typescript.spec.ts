@@ -1,7 +1,7 @@
 import {expect} from 'chai';
 
 import {EnvironmentContext} from '../environment/context.ts';
-import {SchemaInterface} from '../schema.interface.ts';
+import type {SchemaInterface} from '../schema.interface.ts';
 import {Schema} from '../schema.ts';
 import {SchemaContext} from '../schema/context.ts';
 import {types} from '../typing.ts';

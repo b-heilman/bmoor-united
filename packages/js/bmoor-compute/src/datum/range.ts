@@ -14,8 +14,7 @@ export class DatumRange<
 	DatumT extends DatumInterface,
 	SelectT,
 	EnvT extends DatumRangeContext<DatumT, SelectT>,
-> implements DatumReaderInterface<ResponseT, DatumT, EnvT>
-{
+> implements DatumReaderInterface<ResponseT, DatumT, EnvT> {
 	name: string;
 	accessor: DatumOffset<RequirementT, DatumT, SelectT, EnvT>;
 	settings: DatumRangeSettings<ResponseT, RequirementT, SelectT>;

@@ -365,7 +365,7 @@ class NeuralClassifier(ModelAbstract):
         team = team.detach().numpy()
 
         return {
-            "offense": {s
+            "offense": {
                 "max": np.max(offense, axis=0).tolist(),
                 "min": np.min(offense, axis=0).tolist(),
                 "mean": np.mean(offense, axis=0).tolist(),

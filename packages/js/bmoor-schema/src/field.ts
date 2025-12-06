@@ -1,15 +1,15 @@
 import {DynamicObject} from '@bmoor/object';
 import {Path, PathInterface} from '@bmoor/path';
 
-import {
+import type {
 	FieldInfo,
 	FieldInterface,
 	FieldJSON,
 	FieldPathLink,
 	FieldReference,
 } from './field.interface.ts';
-import {SchemaContextInterface} from './schema/context.interface.ts';
-import {ValidationJSON} from './validation.interface.ts';
+import type {SchemaContextInterface} from './schema/context.interface.ts';
+import type {ValidationJSON} from './validation.interface.ts';
 
 // eslint-disable-next-line  @typescript-eslint/no-explicit-any
 export class Field<T = any> implements FieldInterface {

@@ -1,5 +1,6 @@
 import {expect} from 'chai';
 
+import type {IntervalEnvironmentSelector} from './index.ts';
 import {
 	DatumAcross,
 	DatumCompute,
@@ -9,7 +10,6 @@ import {
 	Executor,
 	IntervalDatum,
 	IntervalEnvironment,
-	IntervalEnvironmentSelector,
 	mean,
 } from './index.ts';
 

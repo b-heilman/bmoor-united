@@ -1,7 +1,7 @@
-import {FieldInterface} from '../field.interface.ts';
-import {SchemaInterface} from '../schema.interface.ts';
-import {SchemaContextInterface} from '../schema/context.interface.ts';
-import {
+import type {FieldInterface} from '../field.interface.ts';
+import type {SchemaInterface} from '../schema.interface.ts';
+import type {SchemaContextInterface} from '../schema/context.interface.ts';
+import type {
 	BuilderJSONSchemaNode,
 	BuilderJSONSchemaObject,
 } from './jsonschema.interface.ts';

@@ -2,7 +2,7 @@ import {expect} from 'chai';
 
 import {Field} from './field.ts';
 import {SchemaContext} from './schema/context.ts';
-import {TypingJSON} from './typing.interface.ts';
+import type {TypingJSON} from './typing.interface.ts';
 import {types} from './typing.ts';
 import {validations} from './validator.ts';
 

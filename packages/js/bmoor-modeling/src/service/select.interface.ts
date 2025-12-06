@@ -1,6 +1,6 @@
 import {TypingReference} from '@bmoor/schema';
 
-import {RequestParameters} from '../request.interface.ts';
+import type {RequestParameters} from '../request.interface.ts';
 
 export type ServiceSelectActionType = string;
 export type ServiceSelectActionCommand = string;

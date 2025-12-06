@@ -1,5 +1,5 @@
 import {StatementConstructor} from './reducer/statement.ts';
-import {
+import type {
 	ExpressableToken,
 	TokenReference,
 } from './tokenizer/token.interface.ts';

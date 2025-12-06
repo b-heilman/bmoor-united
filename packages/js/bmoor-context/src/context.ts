@@ -4,7 +4,7 @@ import {
 	InvocationContext,
 } from '@bmoor/error';
 
-import {
+import type {
 	ContextSecurityInterface,
 	ContextSettings,
 	EnvVariable,

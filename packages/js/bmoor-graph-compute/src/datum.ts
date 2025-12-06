@@ -1,12 +1,12 @@
 import {DatumInterface} from '@bmoor/compute';
 import {GraphDatum, GraphSelector, Node} from '@bmoor/graph';
 
-import {GraphComputeDatumInterface} from './datum.interface.ts';
-import {
+import type {GraphComputeDatumInterface} from './datum.interface.ts';
+import type {
 	GraphComputeInterface,
 	GraphComputeSelector,
 } from './graph.interface.ts';
-import {GraphComputeSectionInterface} from './graph/section.interface.ts';
+import type {GraphComputeSectionInterface} from './graph/section.interface.ts';
 
 export class GraphComputeDatum<SelectorT extends GraphComputeSelector>
 	extends GraphDatum<SelectorT>

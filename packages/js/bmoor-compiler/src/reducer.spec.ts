@@ -2,7 +2,7 @@ import {expect} from 'chai';
 
 import {Reducer} from './reducer.ts';
 import {Statement} from './reducer/statement.ts';
-import {TokenReference} from './tokenizer/token.interface.ts';
+import type {TokenReference} from './tokenizer/token.interface.ts';
 import {Token} from './tokenizer/token.ts';
 
 export const results = describe('@bmoor/compiler', function () {

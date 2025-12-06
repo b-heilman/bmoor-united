@@ -1,4 +1,4 @@
-export * from './context.interface.ts';
+export type * from './context.interface.ts';
 export {
 	ContextualError,
 	extendError,

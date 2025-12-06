@@ -1,7 +1,5 @@
-import {
-	ExpressableFunction,
-	ExpressableUsages,
-} from '../expressor/expressable.interface.ts';
+import {ExpressableUsages} from '../expressor/expressable.interface.ts';
+import type {ExpressableFunction} from '../expressor/expressable.interface.ts';
 import {Expressable} from '../expressor/expressable.ts';
 import {Pattern} from '../tokenizer/pattern.ts';
 import {TokenizerState} from '../tokenizer/state.ts';

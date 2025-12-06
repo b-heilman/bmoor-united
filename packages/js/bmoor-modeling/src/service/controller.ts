@@ -1,6 +1,6 @@
 import {ContextSecurityInterface} from '@bmoor/context';
 
-import {
+import type {
 	ServiceExternalGenerics,
 	// ServiceInterface,
 	ServiceInternalGenerics,
@@ -16,8 +16,7 @@ export class ServiceController<
 	InternalT extends ServiceInternalGenerics = ServiceInternalGenerics,
 	ExternalT extends ServiceExternalGenerics = ServiceExternalGenerics,
 	StorageT extends ServiceStorageGenerics = ServiceStorageGenerics,
-> implements ServiceControllerInterface<InternalT, ExternalT, StorageT>
-{
+> implements ServiceControllerInterface<InternalT, ExternalT, StorageT> {
 	settings: ServiceControllerSettings;
 
 	constructor(settings: ServiceControllerSettings) {

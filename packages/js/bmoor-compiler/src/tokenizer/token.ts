@@ -1,8 +1,8 @@
-import {CompilerInterface} from '../compiler.interface.ts';
-import {ExpressorExpressSettings} from '../expressor.interface.ts';
+import type {CompilerInterface} from '../compiler.interface.ts';
+import type {ExpressorExpressSettings} from '../expressor.interface.ts';
 import {Expressable} from '../expressor/expressable.ts';
 import {TokenizerState} from './state.ts';
-import {
+import type {
 	ExpressableToken,
 	TokenReference,
 	TokenSettings,

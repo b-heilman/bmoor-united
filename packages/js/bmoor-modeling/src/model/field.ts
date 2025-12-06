@@ -2,7 +2,7 @@ import {DynamicObject} from '@bmoor/object';
 import {Path, PathInterface} from '@bmoor/path';
 import {Field} from '@bmoor/schema';
 
-import {
+import type {
 	ModelFieldInfo,
 	ModelFieldInterface,
 	ModelFieldJSON,

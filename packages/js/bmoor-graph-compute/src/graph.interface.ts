@@ -7,8 +7,8 @@ import {
 } from '@bmoor/compute';
 import {GraphBuilder, GraphJSON, GraphSelector} from '@bmoor/graph';
 
-import {GraphComputeSectionInterface} from './graph/section.interface.ts';
-import {
+import type {GraphComputeSectionInterface} from './graph/section.interface.ts';
+import type {
 	IntervalInterface,
 	IntervalJSON,
 	IntervalReference,
@@ -34,7 +34,9 @@ export interface GraphComputeSelector extends GraphSelector {
 export interface GraphComputeInterface<
 	DatumT extends DatumInterface<SelectorT>,
 	SelectorT extends GraphComputeSelector,
-> extends EnvironmentInterface<DatumT, SelectorT>,
+>
+	extends
+		EnvironmentInterface<DatumT, SelectorT>,
 		DatumOffsetContext<DatumT, SelectorT>,
 		DatumAcrossContext<DatumT, SelectorT>,
 		DatumRangeContext<DatumT, SelectorT> {

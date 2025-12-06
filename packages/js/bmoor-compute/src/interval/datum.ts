@@ -1,6 +1,6 @@
 import {Datum} from '../datum.ts';
-import {IntervalInterface} from '../interval.interface.ts';
-import {
+import type {IntervalInterface} from '../interval.interface.ts';
+import type {
 	IntervalDatumInterface,
 	IntervalDatumSelector,
 	IntervalDatumSettings,

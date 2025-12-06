@@ -1,15 +1,11 @@
 import {Config} from '@bmoor/config';
 import {ContextualError, InvocationContext, wrapError} from '@bmoor/error';
 
-import {
-	ERROR,
-	INFO,
+import type {
 	LogInfo,
 	LoggingConfigInterface,
-	SILENT,
-	VERBOSE,
-	WARN,
 } from './logging.interface.ts';
+import {ERROR, INFO, SILENT, VERBOSE, WARN} from './logging.interface.ts';
 
 // I'm just adding a comment for no reason
 const levels = {

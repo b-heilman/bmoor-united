@@ -1,10 +1,16 @@
 import {isArray, isObject, isString, isUndefined} from '@bmoor/compare';
 import {create} from '@bmoor/error';
 
-import {IgnoreSettings, ImplodeSettings} from './object.interface.ts';
-
-export type ParsedPathType = Array<string>;
-export type IncomingPathType = string | ParsedPathType;
+import {
+	DynamicObject,
+	GetterFn,
+	IgnoreSettings,
+	ImplodeSettings,
+	IncomingPathType,
+	MappedObject,
+	ParsedPathType,
+	SetterFn,
+} from './object.interface.ts';
 
 export function parsePath(path: IncomingPathType): ParsedPathType {
 	if (!path) {
@@ -37,12 +43,6 @@ export function parsePath(path: IncomingPathType): ParsedPathType {
 		});
 	}
 }
-
-// base functionality does not support arrays
-// eslint-disable-next-line  @typescript-eslint/no-explicit-any
-export type DynamicObject<T = any> = {
-	[key: string]: T | DynamicObject<T> | DynamicObject<T>[];
-};
 
 /**
  * Sets a value to a namespace, returns the old value
@@ -85,12 +85,6 @@ export function set<T>(
 
 	return curSpace;
 }
-
-// https://www.typescriptlang.org/docs/handbook/2/functions.html
-export type SetterFn<T> = (
-	root: DynamicObject<T>,
-	value: T,
-) => DynamicObject<T>;
 
 function _makeSetter<T>(property: string, next: SetterFn<T>): SetterFn<T> {
 	property = String(property);
@@ -180,8 +174,6 @@ export function get<T>(root: DynamicObject<T>, path: IncomingPathType): T {
 	return rtnValue;
 }
 
-export type GetterFn<T> = (root: DynamicObject<T>) => T;
-
 function _makeGetter<T>(property: string, next: GetterFn<T>): GetterFn<T> {
 	if (
 		property === '__proto__' ||
@@ -269,7 +261,6 @@ export function del<T>(root: DynamicObject<T>, path: IncomingPathType): T {
  * @param {object} mappings An object orientended as [ namespace ] => value
  * @return {object} The object that has had content mapped into it
  **/
-export type MappedObject<T> = {[key: string]: T};
 
 export function explode<T>(
 	mappings: MappedObject<T>,

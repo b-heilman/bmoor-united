@@ -1,6 +1,6 @@
 import {SchemaReference} from '@bmoor/schema';
 
-import {
+import type {
 	RequestField,
 	RequestJoin,
 	RequestJoinMapping,

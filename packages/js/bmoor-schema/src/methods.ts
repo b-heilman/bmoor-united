@@ -1,13 +1,13 @@
 import {DynamicObject} from '@bmoor/object';
 
-import {BuilderJSONSchemaObject} from './builder/jsonschema.interface.ts';
+import type {BuilderJSONSchemaObject} from './builder/jsonschema.interface.ts';
 import {BuilderJSONSchema} from './builder/jsonschema.ts';
-import {SchemaInterface} from './schema.interface.ts';
-import {
+import type {SchemaInterface} from './schema.interface.ts';
+import type {
 	SchemaContextInterface,
 	SchemaFormatInterface,
 } from './schema/context.interface.ts';
-import {TypingJSON} from './typing.interface.ts';
+import type {TypingJSON} from './typing.interface.ts';
 
 export function toJSONSchema<T extends TypingJSON = TypingJSON>(
 	ctx: SchemaContextInterface<T>,

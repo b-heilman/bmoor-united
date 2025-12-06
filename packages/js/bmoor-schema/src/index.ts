@@ -1,12 +1,12 @@
-export * from './builder/jsonschema.interface.ts';
-export * from './environment/context.interface.ts';
-export * from './field.interface.ts';
-export * from './relationship.interface.ts';
-export * from './schema.interface.ts';
-export * from './schema/context.interface.ts';
-export * from './typing.interface.ts';
-export * from './validation.interface.ts';
-export * from './validator.interface.ts';
+export type * from './builder/jsonschema.interface.ts';
+export type * from './environment/context.interface.ts';
+export type * from './field.interface.ts';
+export type * from './relationship.interface.ts';
+export type * from './schema.interface.ts';
+export type * from './schema/context.interface.ts';
+export type * from './typing.interface.ts';
+export type * from './validation.interface.ts';
+export type * from './validator.interface.ts';
 
 export * from './methods.ts';
 

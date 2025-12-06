@@ -1,6 +1,6 @@
 import {expect} from 'chai';
 
-import {Mapper} from './mapper.js';
+import {Mapper} from './mapper.ts';
 
 describe('@bmoor/graph - network/mapper', function () {
 	it('should properly instantiate', function () {

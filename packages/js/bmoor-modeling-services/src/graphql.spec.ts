@@ -1,14 +1,15 @@
-import {ApolloServer, BaseContext} from '@apollo/server';
+import type {BaseContext} from '@apollo/server';
+import {ApolloServer} from '@apollo/server';
 import {strict as assert} from 'assert';
 import {expect} from 'chai';
 import {stub} from 'sinon';
 
+import type {ServiceAdapterInterface} from '@bmoor/modeling';
 import {
 	EnvironmentContext,
 	Model,
 	ModelContext,
 	Service,
-	ServiceAdapterInterface,
 	converter,
 	hooks,
 	types,

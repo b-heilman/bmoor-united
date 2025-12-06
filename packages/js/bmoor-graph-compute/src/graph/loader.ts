@@ -6,14 +6,14 @@ import {
 	applyBuilder,
 } from '@bmoor/graph';
 
-import {GraphComputeDatumInterface} from '../datum.interface.ts';
-import {
+import type {GraphComputeDatumInterface} from '../datum.interface.ts';
+import type {
 	GraphComputeBuilder,
 	GraphComputeBuilderPage,
 	GraphComputeSelector,
 } from '../graph.interface.ts';
 import {GraphCompute} from '../graph.ts';
-import {GraphComputeLoaderSettings} from './loader.interface.ts';
+import type {GraphComputeLoaderSettings} from './loader.interface.ts';
 
 export class GraphComputeLoader extends GraphLoader<
 	GraphComputeDatumInterface<GraphComputeSelector>,

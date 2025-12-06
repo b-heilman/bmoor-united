@@ -1,9 +1,9 @@
 // import { DatumOffsetInterface} from './datum/accessor.interface';
 import {Context} from '@bmoor/context';
 
-import {DatumInterface, FeatureValue} from './datum.interface.ts';
-import {DatumReaderInterface} from './datum/reader.interface.ts';
-import {
+import type {DatumInterface, FeatureValue} from './datum.interface.ts';
+import type {DatumReaderInterface} from './datum/reader.interface.ts';
+import type {
 	EnvironmentInterface,
 	EnvironmentSelector,
 } from './environment.interface.ts';

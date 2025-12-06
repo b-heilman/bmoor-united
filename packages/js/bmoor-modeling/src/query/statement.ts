@@ -163,8 +163,6 @@ export class QueryStatement implements QueryStatementInterface {
 			return agg;
 		}, {});
 
-		console.log(joined);
-
 		return Object.keys(joined)
 			.filter((ref) => !joined[ref])
 			.map((ref) => `Series ${ref} is detached`);

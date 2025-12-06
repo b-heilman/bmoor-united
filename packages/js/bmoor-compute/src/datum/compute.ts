@@ -1,10 +1,10 @@
 import {Context} from '@bmoor/context';
 
 import {DatumInterface, FeatureReference} from '../datum.interface.ts';
-import {DatumComputeSettings} from './compute.interface.ts';
-import {DatumOffsetContext} from './offset.interface.ts';
+import type {DatumComputeSettings} from './compute.interface.ts';
+import type {DatumOffsetContext} from './offset.interface.ts';
 import {DatumOffset} from './offset.ts';
-import {
+import type {
 	DatumReaderInterface,
 	DatumReaderRequirements,
 } from './reader.interface.ts';
@@ -15,8 +15,7 @@ export class DatumCompute<
 	DatumT extends DatumInterface,
 	SelectT,
 	EnvT extends DatumOffsetContext<DatumT, SelectT>,
-> implements DatumReaderInterface<ResponseT, DatumT, EnvT>
-{
+> implements DatumReaderInterface<ResponseT, DatumT, EnvT> {
 	name: string;
 	accessor: DatumOffset<RequirementT, DatumT, SelectT, EnvT>;
 	settings: DatumComputeSettings<ResponseT, RequirementT, SelectT>;

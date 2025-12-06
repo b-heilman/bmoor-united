@@ -1,14 +1,14 @@
-export * from './converter.interface.ts';
-export * from './datum.interface.ts';
-export * from './environment/context.interface.ts';
-export * from './hook.interface.ts';
-export * from './hooker.interface.ts';
-export * from './model.interface.ts';
-export * from './service.interface.ts';
-export * from './service/adapter.interface.ts';
-export * from './model/context.interface.ts';
-export * from './service/controller.interface.ts';
-export * from './typing.interface.ts';
+export type * from './converter.interface.ts';
+export type * from './datum.interface.ts';
+export type * from './environment/context.interface.ts';
+export type * from './hook.interface.ts';
+export type * from './hooker.interface.ts';
+export type * from './model.interface.ts';
+export type * from './service.interface.ts';
+export type * from './service/adapter.interface.ts';
+export type * from './model/context.interface.ts';
+export type * from './service/controller.interface.ts';
+export type * from './typing.interface.ts';
 
 export {BuilderGraphql} from './builder/graphql.ts';
 export {Converter, converter} from './converter.ts';

@@ -5,10 +5,10 @@ import {
 	SchemaInterface,
 } from '@bmoor/schema';
 
-import {EnvironmentContextInterface} from '../environment/context.interface.ts';
+import type {EnvironmentContextInterface} from '../environment/context.interface.ts';
 import {dictToGraphql} from '../methods.ts';
-import {ModelContextInterface} from '../model/context.interface.ts';
-import {TypingJSON} from '../typing.interface.ts';
+import type {ModelContextInterface} from '../model/context.interface.ts';
+import type {TypingJSON} from '../typing.interface.ts';
 
 // TODO: I need to handle multiple dimensions and sub types
 

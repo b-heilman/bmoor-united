@@ -5,8 +5,8 @@ import {
 	PathObject,
 } from '@bmoor/path/src/path.interface.ts';
 
-import {SchemaContextInterface} from './schema/context.interface.ts';
-import {ValidationJSON} from './validation.interface.ts';
+import type {SchemaContextInterface} from './schema/context.interface.ts';
+import type {ValidationJSON} from './validation.interface.ts';
 
 export type FieldPath = string;
 export type FieldType = string;

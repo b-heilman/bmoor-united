@@ -8,7 +8,7 @@ import {
 	dictToGraphql,
 } from '@bmoor/modeling';
 
-import {
+import type {
 	GraphqlGenericType,
 	GraphqlJSON,
 	GraphqlSchemaResolvers,

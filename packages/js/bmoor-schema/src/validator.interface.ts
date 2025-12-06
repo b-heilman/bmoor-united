@@ -1,4 +1,4 @@
-import {
+import type {
 	ValidationFn,
 	ValidationReference,
 } from './validation.interface.ts';

@@ -1,4 +1,4 @@
-import {CompilerInterface} from '../compiler.interface.ts';
+import type {CompilerInterface} from '../compiler.interface.ts';
 import {ExpressableUsages} from '../expressor/expressable.interface.ts';
 import {Expressable} from '../expressor/expressable.ts';
 import {Pattern} from '../tokenizer/pattern.ts';

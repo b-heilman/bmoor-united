@@ -1,11 +1,14 @@
 import {Context} from '@bmoor/context';
 
-import {DatumInterface, FeatureReference} from '../datum.interface.ts';
-import {
+import type {
+	DatumInterface,
+	FeatureReference,
+} from '../datum.interface.ts';
+import type {
 	DatumOffsetContext,
 	DatumOffsetSettings,
 } from './offset.interface.ts';
-import {DatumReaderRequirements} from './reader.interface.ts';
+import type {DatumReaderRequirements} from './reader.interface.ts';
 import {DatumReader} from './reader.ts';
 
 /***

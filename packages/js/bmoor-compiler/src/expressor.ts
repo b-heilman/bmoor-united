@@ -1,12 +1,10 @@
 import {CompilerInterface} from './compiler.interface.ts';
-import {
-	ExpressorExpressPosition,
-	ExpressorExpressSettings,
-} from './expressor.interface.ts';
-import {ExecutableFunction} from './expressor/executable.ts';
+import {ExpressorExpressPosition} from './expressor.interface.ts';
+import type {ExpressorExpressSettings} from './expressor.interface.ts';
+import {ExecutableFunction} from './expressor/executable.interface.ts';
 import {ExpressableUsages} from './expressor/expressable.interface.ts';
 import {Expressable} from './expressor/expressable.ts';
-import {ExpressableToken} from './tokenizer/token.interface.ts';
+import type {ExpressableToken} from './tokenizer/token.interface.ts';
 
 export enum ExpressorModes {
 	infix = 'infix',

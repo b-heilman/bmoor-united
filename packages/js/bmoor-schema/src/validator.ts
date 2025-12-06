@@ -1,8 +1,8 @@
-import {
+import type {
 	ValidationFn,
 	ValidationReference,
 } from './validation.interface.ts';
-import {ValidatorInterface} from './validator.interface.ts';
+import type {ValidatorInterface} from './validator.interface.ts';
 
 export class Validator implements ValidatorInterface {
 	index: Record<ValidationReference, ValidationFn>;

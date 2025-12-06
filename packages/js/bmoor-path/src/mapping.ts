@@ -1,6 +1,6 @@
 import {Expressable} from '@bmoor/compiler';
 
-import {MappingSettings} from './mapping.interface.ts';
+import type {MappingSettings} from './mapping.interface.ts';
 import {ArrayInfo, OperandIndex, indexExpressables} from './operands.ts';
 import {ParserModes} from './parser.interface.ts';
 import {Parser, ReaderFunction, WriterFunction} from './parser.ts';

@@ -1,5 +1,5 @@
 module.exports = {
-    extension: ['js', 'jsx', 'ts', 'tsx'],
+    extension: ['ts', 'tsx'],
     // spec: ['./src/**.spec.{js,ts,jsx,tsx}', ],
     loader: 'ts-node/esm',
     // "require": "ts-node/esm-register"

@@ -1,7 +1,7 @@
 import {DynamicObject} from '@bmoor/object';
 
 import {parser} from './parser.ts';
-import {PathInterface, PathLink} from './path.interface.ts';
+import type {PathInterface, PathLink} from './path.interface.ts';
 import {AccessorToken} from './token/accessor.ts';
 import {ArrayToken} from './token/array.ts';
 

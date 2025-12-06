@@ -1,17 +1,17 @@
 import {toCamelCase} from '@bmoor/string';
 
-import {
+import type {
 	TypingInterface,
 	TypingJSON,
 	TypingReference,
 } from '../typing.interface.ts';
-import {ValidationReference} from '../validation.interface.ts';
-import {ValidatorInterface} from '../validator.interface.ts';
-import {SchemaContextInterface} from './context.interface.ts';
+import type {ValidationReference} from '../validation.interface.ts';
+import type {ValidatorInterface} from '../validator.interface.ts';
+import type {SchemaContextInterface} from './context.interface.ts';
 
-export class SchemaContext<TypingT extends TypingJSON>
-	implements SchemaContextInterface<TypingT>
-{
+export class SchemaContext<
+	TypingT extends TypingJSON,
+> implements SchemaContextInterface<TypingT> {
 	typing: TypingInterface<TypingT>;
 	validator: ValidatorInterface;
 

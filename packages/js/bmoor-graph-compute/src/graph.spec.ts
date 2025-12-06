@@ -4,7 +4,7 @@ import {Context} from '@bmoor/context';
 
 import {NodeValueSelector} from './graph.interface.ts';
 import {GraphCompute, load} from './graph.ts';
-import {IntervalInterface} from './interval.interface.ts';
+import type {IntervalInterface} from './interval.interface.ts';
 
 describe('@bmoor/graph-compute::graph', function () {
 	const schema = {

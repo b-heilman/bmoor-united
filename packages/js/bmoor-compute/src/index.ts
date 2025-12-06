@@ -1,11 +1,11 @@
-export * from './datum.interface.ts';
-export * from './datum/offset.interface.ts';
-export * from './datum/across.interface.ts';
-export * from './datum/range.interface.ts';
-export * from './environment.interface.ts';
-export * from './interval.interface.ts';
-export * from './interval/environment.interface.ts';
-export * from './interval/datum.interface.ts';
+export type * from './datum.interface.ts';
+export type * from './datum/offset.interface.ts';
+export type * from './datum/across.interface.ts';
+export type * from './datum/range.interface.ts';
+export type * from './environment.interface.ts';
+export type * from './interval.interface.ts';
+export type * from './interval/environment.interface.ts';
+export type * from './interval/datum.interface.ts';
 
 export {Executor} from './executor.ts';
 export {Environment} from './environment.ts';

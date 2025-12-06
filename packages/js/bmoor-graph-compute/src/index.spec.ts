@@ -10,8 +10,9 @@ import {
 	sum,
 } from '@bmoor/compute';
 import {Context} from '@bmoor/context';
+import {NodeValueSelector} from '@bmoor/graph';
 
-import {GraphComputeDatumInterface} from './datum.interface.ts';
+import type {GraphComputeDatumInterface} from './datum.interface.ts';
 import {
 	GraphCompute,
 	GraphComputeInterface,
@@ -20,7 +21,6 @@ import {
 	GraphExecutor,
 	Interval,
 	IntervalInterface,
-	NodeValueSelector,
 } from './index.ts';
 
 class Offset<RequirementT> extends DatumOffset<

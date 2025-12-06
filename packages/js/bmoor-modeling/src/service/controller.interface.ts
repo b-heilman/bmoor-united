@@ -1,7 +1,7 @@
 import {ContextSecurityInterface} from '@bmoor/context';
 
 import {Model} from '../model.ts';
-import {
+import type {
 	ServiceExternalGenerics,
 	ServiceInterface,
 	ServiceInternalGenerics,

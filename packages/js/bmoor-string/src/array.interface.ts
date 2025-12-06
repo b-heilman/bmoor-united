@@ -1,4 +1,4 @@
-import {FormatInterface} from './format.interface.ts';
+import type {FormatInterface} from './format.interface.ts';
 
 export interface ColumnInterface extends FormatInterface {
 	heading?: string;

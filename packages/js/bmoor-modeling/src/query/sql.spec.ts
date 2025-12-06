@@ -5,7 +5,7 @@ import {
 	prepareInsert,
 	prepareQuery,
 	prepareUpdate,
-} from './sql.ts';
+} from './sql.js';
 import {QueryStatement} from './statement.ts';
 
 describe('@bmoor-modeling::query/sql', function () {

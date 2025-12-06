@@ -1,6 +1,6 @@
 import {DynamicObject} from '@bmoor/object';
 
-import {
+import type {
 	SchemaInterface,
 	SchemaJSON,
 	SchemaReference,

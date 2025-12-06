@@ -110,10 +110,10 @@ function reduceMapings(
  * be in the service.
  ***/
 export class Model<
-		InternalT extends ModelInternalGenerics = ModelInternalGenerics,
-		ExternalT extends ModelExternalGenerics = ModelExternalGenerics,
-		StorageT extends ModelStorageGenerics = ModelStorageGenerics,
-	>
+	InternalT extends ModelInternalGenerics = ModelInternalGenerics,
+	ExternalT extends ModelExternalGenerics = ModelExternalGenerics,
+	StorageT extends ModelStorageGenerics = ModelStorageGenerics,
+>
 	extends Schema
 	implements ModelInterface<InternalT, ExternalT, StorageT>
 {

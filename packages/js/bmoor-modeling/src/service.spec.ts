@@ -7,15 +7,15 @@ import {converter} from './converter.ts';
 import {hooks} from './hooker.ts';
 import {Model} from './model.ts';
 import {ModelContext} from './model/context.ts';
-import {
+import type {
 	// ServiceExternalGenerics,
 	ServiceInternalGenerics,
 	ServiceStorageGenerics,
 } from './service.interface.ts';
 import {Service} from './service.ts';
-import {ServiceAdapterInterface} from './service/adapter.interface.ts';
-import {ServiceContextInterface} from './service/context.interface.ts';
-import {ServiceControllerInterface} from './service/controller.interface.ts';
+import type {ServiceAdapterInterface} from './service/adapter.interface.ts';
+import type {ServiceContextInterface} from './service/context.interface.ts';
+import type {ServiceControllerInterface} from './service/controller.interface.ts';
 import {types} from './typing.ts';
 
 describe('@bmoor-modeling::Service', function () {

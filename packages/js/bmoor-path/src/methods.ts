@@ -1,6 +1,6 @@
 import {isArray, isObject} from '@bmoor/compare';
 import {DynamicObject, ImplodeSettings, MappedObject} from '@bmoor/object';
-import {IgnoreSettings} from '@bmoor/object/src/object.interface.ts';
+import type {IgnoreSettings} from '@bmoor/object/src/object.interface.ts';
 
 import {Path} from './path.ts';
 
