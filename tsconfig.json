@@ -1,8 +1,5 @@
 {
   "compilerOptions": {
-    "module": "nodenext", // "node20",
-    "moduleResolution": "node16",
-    "allowImportingTsExtensions": true,
     "rootDirs": ["src"],
     "outDir": "dist",
     "lib": ["es2020"],
