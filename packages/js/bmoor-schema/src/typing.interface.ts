@@ -4,6 +4,7 @@ export type TypingReference = string;
 export interface TypingJSON {
 	json: string;
 	typescript: string;
+	python: string;
 }
 
 export interface TypingInterface<T extends TypingJSON = TypingJSON> {

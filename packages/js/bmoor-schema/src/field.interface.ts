@@ -12,10 +12,21 @@ export type FieldPath = string;
 export type FieldType = string;
 export type FieldReference = string;
 
+export enum FieldUse {
+	primary = 'primary',
+	synthetic = 'synthetic'
+}
+
+export enum FieldNeed {
+	required = 'required',
+	nullable = 'nullable',
+	optional = 'optional'
+}
+
 export interface FieldInfo {
 	type: FieldType;
-	use?: 'primary' | 'synthetic';
-	required?: boolean;
+	use?: keyof typeof FieldUse;
+	need?: keyof typeof FieldNeed;
 }
 
 export interface FieldJSON {

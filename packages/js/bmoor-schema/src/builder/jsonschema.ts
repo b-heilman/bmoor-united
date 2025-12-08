@@ -1,4 +1,5 @@
 import type {FieldInterface} from '../field.interface.ts';
+import { FieldUse } from '../field.interface.ts';
 import type {SchemaInterface} from '../schema.interface.ts';
 import type {SchemaContextInterface} from '../schema/context.interface.ts';
 import type {
@@ -26,7 +27,7 @@ export class BuilderJSONSchema {
 
 	addField(field: FieldInterface) {
 		// For now, I'm not supporting synthetic fields
-		if (field.getInfo().use === 'synthetic') {
+		if (field.getInfo().use === FieldUse.synthetic) {
 			return;
 		}
 

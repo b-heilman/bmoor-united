@@ -2,6 +2,7 @@ import {DynamicObject, set} from '@bmoor/object';
 
 import type {EnvironmentContextInterface} from '../environment/context.interface.ts';
 import type {FieldInterface} from '../field.interface.ts';
+import {FieldNeed} from '../field.interface.ts';
 import {dictToTypescript} from '../methods.ts';
 import type {RelationshipJSON} from '../relationship.interface.ts';
 import type {SchemaInterface} from '../schema.interface.ts';
@@ -41,7 +42,7 @@ export class BuilderTypescript<TypingT extends TypingJSON = TypingJSON> {
 			set(
 				this.root,
 				field.getPath() +
-					(info.required || info.use === 'primary' ? '' : '?'),
+					(info.need === FieldNeed.optional ? '?' : ''),
 				this.ctx.getTyping(info.type).typescript,
 			);
 		}

@@ -34,29 +34,36 @@ export const types = new Typing<TypingJSON>({
 	string: {
 		json: 'string',
 		typescript: 'string',
+		python: 'str'
 	},
 	number: {
 		json: 'number',
 		typescript: 'number',
+		python: 'float'
 	},
 	int: {
 		json: 'number',
 		typescript: 'number',
+		python: 'int'
 	},
 	float: {
 		json: 'number',
 		typescript: 'number',
+		python: 'float'
 	},
 	boolean: {
 		json: 'boolean',
 		typescript: 'boolean',
+		python: 'bool'
 	},
 	object: {
 		json: 'object',
 		typescript: 'object',
+		python: 'dict'
 	},
 	array: {
 		json: 'array',
 		typescript: 'array',
+		python: 'list'
 	},
 });
