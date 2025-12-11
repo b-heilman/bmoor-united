@@ -7,8 +7,8 @@ import type {
 	FieldJSON,
 	FieldPathLink,
 	FieldReference,
+	FieldType,
 } from './field.interface.ts';
-import type {SchemaContextInterface} from './schema/context.interface.ts';
 import type {ValidationJSON} from './validation.interface.ts';
 
 // eslint-disable-next-line  @typescript-eslint/no-explicit-any
@@ -26,6 +26,14 @@ export class Field<T = any> implements FieldInterface {
 		return this.source.ref || this.source.path;
 	}
 
+	getType(): FieldType {
+		if ('alias' in this.source.info){
+			return this.source.info.alias.getType();
+		} else {
+			return this.source.info.type;
+		}
+	}
+
 	getInfo(): FieldInfo {
 		return this.source.info;
 	}
@@ -40,7 +48,7 @@ export class Field<T = any> implements FieldInterface {
 		return chain.map((link) => {
 			if (link.type === 'leaf') {
 				return Object.assign(link, {
-					fieldType: this.source.info.type,
+					fieldType: this.getType(),
 				});
 			} else {
 				return link;
@@ -54,22 +62,5 @@ export class Field<T = any> implements FieldInterface {
 
 	write(root: DynamicObject<T>, v: T): void {
 		return this.path.write(root, v);
-	}
-
-	setValidator(settings: ValidationJSON) {
-		this.validation = settings;
-	}
-
-	validate(
-		ctx: SchemaContextInterface,
-		root: DynamicObject<T>,
-		mode: 'create' | 'update' = 'create',
-	): Promise<string> {
-		if (this.validation) {
-			const validation = ctx.getValidation(this.validation.reference);
-			return validation(this.read(root), this.getInfo(), mode);
-		} else {
-			return null;
-		}
 	}
 }

@@ -1,25 +1,18 @@
 import {expect} from 'chai';
 
-import {EnvironmentContext} from '../environment/context.ts';
+import {Environment} from '../environment.ts';
+import {FieldNeed, FieldUse} from '../field.interface.ts';
 import type {SchemaInterface} from '../schema.interface.ts';
 import {Schema} from '../schema.ts';
-import {SchemaContext} from '../schema/context.ts';
 import {types} from '../typing.ts';
-import {validations} from '../validator.ts';
-import {BuilderTypescript} from './typescript.ts';
+import {generateTypescript} from './typescript.ts';
 
 describe('@bmoor/schema :: BuilderTypescript', function () {
-	let ctx;
-
-	beforeEach(function () {
-		ctx = new SchemaContext(types, validations);
-	});
-
 	it('should properly generate a json schema', function () {
-		const dictionary = new EnvironmentContext<SchemaInterface>();
+		const dictionary = new Environment<SchemaInterface>();
 
 		dictionary.addSchema(
-			new Schema(ctx, {
+			new Schema(types, {
 				reference: 's-1',
 				info: {
 					foo: {
@@ -43,7 +36,7 @@ describe('@bmoor/schema :: BuilderTypescript', function () {
 		);
 
 		dictionary.addSchema(
-			new Schema(ctx, {
+			new Schema(types, {
 				reference: 's-2',
 				info: {
 					hello: {
@@ -67,23 +60,23 @@ describe('@bmoor/schema :: BuilderTypescript', function () {
 		);
 
 		dictionary.addSchema(
-			new Schema(ctx, {
+			new Schema(types, {
 				reference: 's-3',
 				info: {
 					id: {
-						use: 'primary',
+						use: FieldUse.primary,
 						type: 'string',
 					},
 					otherId: {
-						required: true,
+						need: FieldNeed.required,
 						type: 'string',
 					},
 					mount: {
-						use: 'synthetic',
+						use: FieldUse.mount,
 						type: 'array',
 					},
 					parent: {
-						use: 'synthetic',
+						use: FieldUse.computed,
 						type: 'object',
 					},
 				},
@@ -124,18 +117,11 @@ describe('@bmoor/schema :: BuilderTypescript', function () {
 			}),
 		);
 
-		const formatter = new BuilderTypescript(ctx, dictionary);
-
-		formatter.addSchema(dictionary.getSchema('s-3'));
-
-		expect(formatter.toJSON()).to.deep.equal({
-			id: 'string',
-			otherId: 'string',
-			parent: 's2',
-			mount: 's1[]',
-		});
-
-		expect(formatter.toString().replace(/\s/g, '')).to.deep.equal(
+		expect(
+			generateTypescript(dictionary.getSchema('s-3'))
+				.toString()
+				.replace(/\s/g, ''),
+		).to.deep.equal(
 			`
 			interface s3 {
 			id: string
@@ -148,20 +134,23 @@ describe('@bmoor/schema :: BuilderTypescript', function () {
 	});
 
 	it('should properly generate a complex schema', function () {
-		const dictionary = new EnvironmentContext<SchemaInterface>();
+		const dictionary = new Environment<SchemaInterface>();
 
 		dictionary.addSchema(
-			new Schema(ctx, {
+			new Schema(types, {
 				reference: 's-1',
 				info: {
 					bar: {
 						type: 'string',
+						use: FieldUse.primary,
 					},
 					world: {
 						type: 'number',
+						need: FieldNeed.nullable,
 					},
 					drei: {
 						type: 'float',
+						need: FieldNeed.optional,
 					},
 				},
 				structure: [
@@ -181,42 +170,28 @@ describe('@bmoor/schema :: BuilderTypescript', function () {
 			}),
 		);
 
-		const formatter = new BuilderTypescript(ctx, dictionary);
-
-		formatter.addSchema(dictionary.getSchema('s-1'));
-
-		expect(formatter.toJSON()).to.deep.equal({
-			foo: {
-				'bar?': 'string',
-			},
-			hello: {
-				'world?': 'number',
-			},
-			eins: {
-				zwei: {
-					'drei?': 'number',
-				},
-			},
-		});
-
-		expect(formatter.toString()).to.deep.equal(
+		expect(
+			generateTypescript(dictionary.getSchema('s-1'))
+				.toString()
+				.replace(/\s/g, ''),
+		).to.deep.equal(
 			`interface s1 {
-	foo: s1Foo
-	hello: s1Hello
-	eins: s1Eins
-}
-interface s1Foo {
-	bar?: string
-}
-interface s1Hello {
-	world?: number
-}
-interface s1Eins {
-	zwei: s1EinsZwei
-}
-interface s1EinsZwei {
-	drei?: number
-}`,
+				foo: s1Foo
+				hello: s1Hello
+				eins: s1Eins
+			}
+			interface s1Foo {
+				bar: string
+			}
+			interface s1Hello {
+				world: number|null
+			}
+			interface s1Eins {
+				zwei: s1EinsZwei
+			}
+			interface s1EinsZwei {
+				drei?: number
+			}`.replace(/\s/g, ''),
 		);
 	});
 });

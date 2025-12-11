@@ -1,39 +1,22 @@
-import type {FieldInterface} from '../field.interface.ts';
-import { FieldUse } from '../field.interface.ts';
+import {FieldUse} from '../field.interface.ts';
 import type {SchemaInterface} from '../schema.interface.ts';
-import type {SchemaContextInterface} from '../schema/context.interface.ts';
 import type {
 	BuilderJSONSchemaNode,
 	BuilderJSONSchemaObject,
 } from './jsonschema.interface.ts';
 
-export class BuilderJSONSchema {
-	ctx: SchemaContextInterface;
-	root: BuilderJSONSchemaObject;
+export function generateJsonSchema(
+	schema: SchemaInterface,
+): BuilderJSONSchemaObject {
+	const root: BuilderJSONSchemaObject = {
+		type: 'object',
+		properties: {},
+	};
 
-	constructor(ctx: SchemaContextInterface) {
-		this.ctx = ctx;
-		this.root = {
-			type: 'object',
-			properties: {},
-		};
-	}
-
-	addSchema(schema: SchemaInterface) {
-		for (const field of schema.getFields()) {
-			this.addField(field);
-		}
-	}
-
-	addField(field: FieldInterface) {
-		// For now, I'm not supporting synthetic fields
-		if (field.getInfo().use === FieldUse.synthetic) {
-			return;
-		}
-
+	for (const field of schema.getFields()) {
 		const chain = field.getPathChain();
 
-		let cur: BuilderJSONSchemaNode = this.root;
+		let cur: BuilderJSONSchemaNode = root;
 
 		for (const link of chain) {
 			if ('properties' in cur) {
@@ -55,7 +38,7 @@ export class BuilderJSONSchema {
 					}
 				} else {
 					cur.properties[ref] = {
-						type: this.ctx.getTyping(link.fieldType).json,
+						type: schema.getTyping().getType(link.fieldType).alias.json,
 					};
 				}
 
@@ -90,17 +73,17 @@ export class BuilderJSONSchema {
 						}
 
 						cur = cur.items.properties[ref] = {
-							type: this.ctx.getTyping(link.fieldType).json,
+							type: schema.getTyping().getType(link.fieldType).alias.json,
 						};
 					} else {
-						cur.items.type = this.ctx.getTyping(link.fieldType).json;
+						cur.items.type = schema
+							.getTyping()
+							.getType(link.fieldType).alias.json;
 					}
 				}
 			}
 		}
 	}
 
-	toJSON() {
-		return this.root;
-	}
+	return root;
 }

@@ -25,45 +25,88 @@ export class Typing<
 		this.index[type] = info;
 	}
 
-	getType(type: TypingReference): TypeT {
-		return this.index[type];
+	getType(type: TypingReference): TypeT | null {
+		if (type in this.index) {
+			return this.index[type];
+		} else {
+			return null;
+		}
+	}
+
+	clone(): Typing<TypeT> {
+		return new Typing<TypeT>({...this.index});
 	}
 }
 
 export const types = new Typing<TypingJSON>({
 	string: {
-		json: 'string',
-		typescript: 'string',
-		python: 'str'
+		alias: {
+			json: 'string',
+			typescript: 'string',
+			python: 'str',
+		},
+		info: {
+			validations: ['string'],
+		},
 	},
 	number: {
-		json: 'number',
-		typescript: 'number',
-		python: 'float'
+		alias: {
+			json: 'number',
+			typescript: 'number',
+			python: 'float',
+		},
+		info: {
+			validations: ['number'],
+		},
 	},
 	int: {
-		json: 'number',
-		typescript: 'number',
-		python: 'int'
+		alias: {
+			json: 'number',
+			typescript: 'number',
+			python: 'int',
+		},
+		info: {
+			validations: ['number', 'int'],
+		},
 	},
 	float: {
-		json: 'number',
-		typescript: 'number',
-		python: 'float'
+		alias: {
+			json: 'number',
+			typescript: 'number',
+			python: 'float',
+		},
+		info: {
+			validations: ['number', 'float'],
+		},
 	},
 	boolean: {
-		json: 'boolean',
-		typescript: 'boolean',
-		python: 'bool'
+		alias: {
+			json: 'boolean',
+			typescript: 'boolean',
+			python: 'bool',
+		},
+		info: {
+			validations: ['bool'],
+		},
 	},
 	object: {
-		json: 'object',
-		typescript: 'object',
-		python: 'dict'
+		alias: {
+			json: 'object',
+			typescript: 'object',
+			python: 'dict',
+		},
+		info: {
+			validations: ['object'],
+		},
 	},
 	array: {
-		json: 'array',
-		typescript: 'array',
-		python: 'list'
+		alias: {
+			json: 'array',
+			typescript: 'array',
+			python: 'list',
+		},
+		info: {
+			validations: ['array'],
+		},
 	},
 });

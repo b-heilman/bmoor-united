@@ -1,20 +1,13 @@
 import {expect} from 'chai';
 
+import {FieldUse} from '../field.interface.ts';
 import {Schema} from '../schema.ts';
-import {SchemaContext} from '../schema/context.ts';
 import {types} from '../typing.ts';
-import {validations} from '../validator.ts';
-import {BuilderJSONSchema} from './jsonschema.ts';
+import {generateJsonSchema} from './jsonschema.ts';
 
 describe('@bmoor/schema :: BuilderJSONSchema', function () {
-	let ctx;
-
-	beforeEach(function () {
-		ctx = new SchemaContext(types, validations);
-	});
-
 	it('should properly generate a json schema', function () {
-		const schema = new Schema(ctx, {
+		const schema = new Schema(types, {
 			reference: 'test',
 			info: {
 				'f-1': {
@@ -30,7 +23,7 @@ describe('@bmoor/schema :: BuilderJSONSchema', function () {
 					type: 'string',
 				},
 				fail: {
-					use: 'synthetic',
+					use: FieldUse.synthetic,
 					type: 'string',
 				},
 			},
@@ -58,11 +51,8 @@ describe('@bmoor/schema :: BuilderJSONSchema', function () {
 			],
 		});
 
-		const formatter = new BuilderJSONSchema(ctx);
-
-		formatter.addSchema(schema);
-
-		expect(formatter.toJSON()).to.deep.equal({
+		// TODO: need to set environment
+		expect(generateJsonSchema(schema)).to.deep.equal({
 			type: 'object',
 			properties: {
 				foo: {

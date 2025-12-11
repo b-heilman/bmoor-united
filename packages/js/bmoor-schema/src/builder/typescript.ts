@@ -1,81 +1,63 @@
 import {DynamicObject, set} from '@bmoor/object';
+import {toCamelCase} from '@bmoor/string';
 
-import type {EnvironmentContextInterface} from '../environment/context.interface.ts';
-import type {FieldInterface} from '../field.interface.ts';
 import {FieldNeed} from '../field.interface.ts';
-import {dictToTypescript} from '../methods.ts';
-import type {RelationshipJSON} from '../relationship.interface.ts';
 import type {SchemaInterface} from '../schema.interface.ts';
-import type {SchemaContextInterface} from '../schema/context.interface.ts';
-import type {TypingJSON} from '../typing.interface.ts';
 
-export class BuilderTypescript<TypingT extends TypingJSON = TypingJSON> {
-	ctx: SchemaContextInterface<TypingT>;
-	root: DynamicObject;
-	schema?: SchemaInterface;
-	knowledge: EnvironmentContextInterface;
+export function dictToTypescript(
+	root: DynamicObject,
+	namespace: string,
+): string {
+	const children = [];
+	const schema = [];
 
-	constructor(
-		ctx: SchemaContextInterface<TypingT>,
-		know: EnvironmentContextInterface,
-	) {
-		this.ctx = ctx;
-		this.root = {};
-		this.knowledge = know;
-	}
+	for (const [key, value] of Object.entries(root)) {
+		if (typeof value === 'object') {
+			const child = toCamelCase(namespace + '_' + key);
 
-	addSchema(schema: SchemaInterface) {
-		this.schema = schema;
-		for (const field of schema.getFields()) {
-			this.addField(field);
-		}
-
-		for (const relationship of schema.getRelationships()) {
-			this.addRelationship(schema, relationship);
+			children.push(dictToTypescript(value, child));
+			schema.push(key + ': ' + child);
+		} else {
+			schema.push(key + ': ' + value);
 		}
 	}
 
-	addField(field: FieldInterface) {
+	let content = `interface ${namespace} {\n\t${schema.join('\n\t')}\n}`;
+
+	if (children.length) {
+		content = content + '\n' + children.join('\n');
+	}
+
+	return content;
+}
+
+export function generateTypescript(schema: SchemaInterface): string {
+	const root = {};
+	const name = toCamelCase(schema.getReference());
+
+	for (const field of schema.getFields()) {
 		const info = field.getInfo();
 
 		if (info.use !== 'synthetic') {
 			set(
-				this.root,
-				field.getPath() +
-					(info.need === FieldNeed.optional ? '?' : ''),
-				this.ctx.getTyping(info.type).typescript,
+				root,
+				field.getPath() + (info.need === FieldNeed.optional ? '?' : ''),
+				schema.getTyping().getType(info.type).alias.typescript +
+					(info.need === FieldNeed.nullable ? '|null' : ''),
 			);
 		}
 	}
 
-	addRelationship(
-		schema: SchemaInterface,
-		relationship: RelationshipJSON,
-	) {
-		const other = this.knowledge.getSchema(relationship.other);
+	for (const relationship of schema.getRelationships()) {
+		const other = schema.getEnvironment().getSchema(relationship.other);
 
-		let result = this.ctx.formatName(other.getReference(), 'typescript');
+		let result = toCamelCase(other.getReference());
 		if (relationship.type === 'toMany') {
 			result = result + '[]';
 		}
 
-		set(
-			this.root,
-			schema.getField(relationship.reference).getPath(),
-			result,
-		);
+		set(root, schema.getField(relationship.reference).getPath(), result);
 	}
 
-	toJSON() {
-		return this.root;
-	}
-
-	toString() {
-		const name = this.ctx.formatName(
-			this.schema?.getReference() || '__replace__',
-			'typescript',
-		);
-
-		return dictToTypescript(this.ctx, this.root, name);
-	}
+	return dictToTypescript(root, name);
 }

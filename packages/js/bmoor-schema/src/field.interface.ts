@@ -4,30 +4,46 @@ import {
 	PathLeaf,
 	PathObject,
 } from '@bmoor/path/src/path.interface.ts';
-
-import type {SchemaContextInterface} from './schema/context.interface.ts';
-import type {ValidationJSON} from './validation.interface.ts';
+import { RelationshipReference } from './relationship.interface.ts';
 
 export type FieldPath = string;
 export type FieldType = string;
 export type FieldReference = string;
 
-export enum FieldUse {
-	primary = 'primary',
-	synthetic = 'synthetic'
-}
-
 export enum FieldNeed {
 	required = 'required',
 	nullable = 'nullable',
-	optional = 'optional'
+	optional = 'optional',
 }
 
-export interface FieldInfo {
-	type: FieldType;
-	use?: keyof typeof FieldUse;
-	need?: keyof typeof FieldNeed;
+/** 
+ * FieldComputedInfo
+ * use: FieldUse.computed
+ * 
+ * FieldGeneralInfo
+ * use?: FieldUse.primary
+ */
+export interface FieldBaseInfo {
+	need?: FieldNeed;
 }
+
+export interface FieldGeneralInfo extends FieldBaseInfo {
+	primary?: boolean;
+	type: FieldType;
+}
+
+export interface FieldAliasInfo extends FieldBaseInfo {
+	alias: FieldInterface;
+}
+
+// A mount should always be expected to be an array or object, probably
+// should validate
+export interface FieldMountInfo extends FieldBaseInfo {
+	mount: RelationshipReference
+	type: FieldType
+}
+
+export type FieldInfo = FieldGeneralInfo | FieldAliasInfo | FieldMountInfo;
 
 export interface FieldJSON {
 	ref?: FieldReference;
@@ -55,15 +71,8 @@ export interface FieldInterface<T = any> {
 	getReference(): FieldReference;
 	getInfo(): FieldInfo;
 	getPath(): string;
+	getType(): string;
 	getPathChain(): FieldPathLink[];
-
-	setValidator(settings: ValidationJSON);
-	// Only returns a string if invalid, otherwise returns null
-	validate(
-		ctx: SchemaContextInterface,
-		root: DynamicObject<T>,
-		mode: 'create' | 'update',
-	): Promise<string>;
 
 	read(root: DynamicObject<T>): T;
 	write(root: DynamicObject<T>, v: T);

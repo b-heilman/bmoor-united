@@ -2,13 +2,13 @@ import type {FieldInfo} from './field.interface.ts';
 
 export type ValidationReference = string;
 
+export type ValidationError = string | null;
+
 // Only returns a string if invalid, otherwise returns null
 export type ValidationFn = (
-	// eslint-disable-next-line  @typescript-eslint/no-explicit-any
-	value: any,
+	value: any, // eslint-disable-line  @typescript-eslint/no-explicit-any
 	info: FieldInfo,
-	mode: 'create' | 'update',
-) => Promise<string>;
+) => Promise<ValidationError>;
 
 export interface ValidationJSON {
 	reference: ValidationReference;

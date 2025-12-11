@@ -1,47 +1,107 @@
+import { DynamicObject } from '@bmoor/object';
+import {FieldInfo, FieldNeed} from './field.interface.ts';
+import { SchemaInterface } from './schema.interface.ts';
+import {TypingInterface, TypingJSON} from './typing.interface.ts';
 import type {
+	ValidationError,
 	ValidationFn,
 	ValidationReference,
 } from './validation.interface.ts';
 import type {ValidatorInterface} from './validator.interface.ts';
 
-export class Validator implements ValidatorInterface {
+export class Validator<
+	TypeT extends TypingJSON = TypingJSON,
+> implements ValidatorInterface<TypeT> {
 	index: Record<ValidationReference, ValidationFn>;
 
-	constructor(types: Record<ValidationReference, ValidationFn> = {}) {
-		this.index = types;
+	constructor(
+		validations: Record<ValidationReference, ValidationFn> = {},
+	) {
+		this.index = validations;
 	}
 
 	clear() {
 		this.index = {};
 	}
 
-	define(types: Record<ValidationReference, ValidationFn>) {
-		this.index = {...this.index, ...types};
+	define(validations: Record<ValidationReference, ValidationFn>) {
+		this.index = {...this.index, ...validations};
 	}
 
 	addValidation(type: ValidationReference, info: ValidationFn) {
 		this.index[type] = info;
 	}
 
-	getValidation(type: ValidationReference): ValidationFn {
-		return this.index[type];
+	getValidation(type: ValidationReference): ValidationFn | null {
+		if (type in this.index) {
+			return this.index[type];
+		} else {
+			return null;
+		}
 	}
-}
 
-export const validations = new Validator({
-	string: async (input, info, mode) => {
-		if (!input && info.required) {
-			if (input === null) {
-				return 'can not be null';
-			} else if (mode === 'update' && input === undefined) {
-				return null;
+	async validateField(
+		types: TypingInterface<TypeT>,
+		value: any, // eslint-disable-line  @typescript-eslint/no-explicit-any
+		info: FieldInfo,
+	): Promise<ValidationError> {
+		const toTest = types.getType(info.type).info.validations;
+
+		let rtn = null;
+		const c = toTest.length;
+
+		for (let i = 0; i < c && rtn === null; i++) {
+			const isEmpty = value === null || value === undefined;
+			if (isEmpty) {
+				if (info.need === FieldNeed.required) {
+					rtn = 'is required';
+				} else if (info.need === FieldNeed.optional && value === null) {
+					rtn = 'as optional field is null';
+				}
 			} else {
-				return 'is required';
+				const validation = this.getValidation(toTest[i]);
+
+				if (validation) {
+					rtn = await validation(value, info);
+				}
 			}
 		}
 
-		return typeof input === 'string' ? null : 'not a string';
-	},
+		return rtn;
+	}
+
+	async validateSchema(
+		schema: SchemaInterface<TypeT>,
+		obj: DynamicObject
+	): Promise<ValidationError[]> {
+		return (await Promise.all(
+			schema.getFields().map(field => {
+				return this.validateField(
+					schema.getTyping(),
+					field.read(obj),
+					field.getInfo()
+				);
+			})
+		)).filter((error) => error);
+	}
+}
+
+/*
+	Types can be defined and assumed validations registered.  Validations can then be added, removed, 
+	or edited here to effect how types are validated.
+
+	I used to assume there would be a generic central schema, but going forward I am going to allow 
+	synthetic schemas, like User -> UserUpdate where the requirements can be more finetuned.
+	The synthetic schemas point back to the primary schema.  If User schema is different from what 
+	would be sent on create, you can set up a synthetic User -> UserCreate.  This allows me to remove
+	mode from being passed around
+*/
+export const validator = new Validator({
+	string: async (input) =>
+		typeof input === 'string' ? null : 'is not a string',
 	number: async (input) =>
-		typeof input === 'number' ? null : 'not a number',
+		typeof input === 'number' ? null : 'is not a number',
+	int: async (input) =>
+		Number.isInteger(input) ? null : 'is not integer',
+	float: async (input) => (!Number.isInteger(input) ? null : 'is integer'),
 });

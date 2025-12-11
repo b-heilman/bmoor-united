@@ -2,10 +2,8 @@ import {isArray} from '@bmoor/compare';
 import {DynamicObject} from '@bmoor/object';
 import {implode} from '@bmoor/path';
 
-import type {BuilderJSONSchemaObject} from './builder/jsonschema.interface.ts';
-import {BuilderJSONSchema} from './builder/jsonschema.ts';
-import {BuilderTypescript} from './builder/typescript.ts';
-import {EnvironmentContext} from './environment/context.ts';
+import {EnvironmentInterface} from './environment.interface.ts';
+import {Environment} from './environment.ts';
 import type {
 	FieldInterface,
 	FieldJSON,
@@ -21,7 +19,7 @@ import type {
 	SchemaSettings,
 	SchemaStructure,
 } from './schema.interface.ts';
-import type {SchemaContextInterface} from './schema/context.interface.ts';
+import type {TypingInterface, TypingJSON} from './typing.interface.ts';
 
 export function reduceStructure(
 	structure: SchemaStructure,
@@ -47,28 +45,36 @@ export function reduceStructure(
 	}
 }
 
-export class Schema implements SchemaInterface {
-	ctx: SchemaContextInterface;
-	env: EnvironmentContext;
+export class Schema<
+	TypingT extends TypingJSON = TypingJSON,
+> implements SchemaInterface<TypingT> {
+	typing: TypingInterface<TypingT>;
+	env: Environment;
 	fields: Record<FieldReference, FieldInterface>;
 	settings: SchemaJSON;
 	relationships: Record<SchemaReference, RelationshipJSON>;
 
-	constructor(ctx: SchemaContextInterface, schema: SchemaSettings) {
-		this.ctx = ctx;
+	constructor(typing: TypingInterface<TypingT>, schema: SchemaSettings) {
+		this.typing = typing;
 		this.settings = schema; // I'll probably change this later, but for now, is what it is
-
 		this.fields = this.defineFields();
 		this.relationships = this.defineRelationships();
 	}
 
-	setSpace(env: EnvironmentContext) {
+	setEnvironment(env: Environment) {
 		this.env = env;
+	}
+
+	getTyping(): TypingInterface<TypingT> {
+		return this.typing;
+	}
+
+	getEnvironment(): EnvironmentInterface {
+		return this.env;
 	}
 
 	defineFields(): Record<FieldReference, FieldInterface> {
 		const schema = this.settings;
-		// TODO: verify types here?
 		const fields: FieldJSON[] = reduceStructure(schema.structure).map(
 			(field) =>
 				Object.assign(field, {
@@ -80,14 +86,8 @@ export class Schema implements SchemaInterface {
 			const field = new Field(fieldSchema);
 			const ref = field.getReference() || 'field_' + dex;
 
+			// TODO: I should make sure all types are actually defined
 			agg[ref] = field;
-
-			if (schema.validators) {
-				const validator = schema.validators[ref];
-				if (validator) {
-					field.setValidator(validator);
-				}
-			}
 
 			return agg;
 		}, {});
@@ -113,7 +113,14 @@ export class Schema implements SchemaInterface {
 
 	getPrimaryFields(): FieldInterface[] {
 		return this.getFields().filter(
-			(field) => field.getInfo().use === 'primary',
+			(field) => {
+				const info = field.getInfo();
+				if ('primary' in info){
+					return info.primary;
+				} else {
+					return false;
+				}
+			}
 		);
 	}
 
@@ -153,36 +160,7 @@ export class Schema implements SchemaInterface {
 		return rtn;
 	}
 
-	async validate(
-		root: DynamicObject,
-		mode: 'create' | 'update' = 'create',
-	): Promise<string[]> {
-		return (
-			await Promise.all(
-				this.getFields().map((field) =>
-					field.validate(this.ctx, root, mode),
-				),
-			)
-		).filter((error) => error !== null);
-	}
-
 	toJSON(): SchemaJSON {
 		return this.settings;
-	}
-
-	toJSONSchema(): BuilderJSONSchemaObject {
-		const builder = new BuilderJSONSchema(this.ctx);
-
-		builder.addSchema(this);
-
-		return builder.toJSON();
-	}
-
-	toTypescript(): string {
-		const builder = new BuilderTypescript(this.ctx, this.env);
-
-		builder.addSchema(this);
-
-		return builder.toString();
 	}
 }

@@ -1,19 +1,18 @@
 import {create} from '@bmoor/error';
-import {DynamicObject} from '@bmoor/object';
 import {toCamelCase} from '@bmoor/string';
 
+import {
+	EnvironmentInterface,
+	EnvironmentJSON,
+} from './environment.interface.ts';
 import type {
 	SchemaInterface,
 	SchemaReference,
-} from '../schema.interface.ts';
-import {
-	EnvironmentContextInterface,
-	EnvironmentContextJSON,
-} from './context.interface.ts';
+} from './schema.interface.ts';
 
-export class EnvironmentContext<
+export class Environment<
 	SchemaT extends SchemaInterface = SchemaInterface,
-> implements EnvironmentContextInterface<SchemaT> {
+> implements EnvironmentInterface<SchemaT> {
 	schemas: Record<SchemaReference, SchemaT>;
 
 	constructor() {
@@ -29,7 +28,7 @@ export class EnvironmentContext<
 			});
 		}
 
-		schema.setSpace(this);
+		schema.setEnvironment(this);
 
 		this.schemas[ref] = schema;
 	}
@@ -42,19 +41,11 @@ export class EnvironmentContext<
 		return Object.values(this.schemas);
 	}
 
-	async validate(
-		ref: SchemaReference,
-		root: DynamicObject,
-		mode: 'create' | 'update' = 'create',
-	): Promise<string[]> {
-		return this.getSchema(ref).validate(root, mode);
-	}
-
 	formatName(ref: string): string {
 		return toCamelCase(ref);
 	}
 
-	toJSON(): EnvironmentContextJSON {
+	toJSON(): EnvironmentJSON {
 		return {
 			schemas: Object.values(this.schemas).map((schema) =>
 				schema.toJSON(),

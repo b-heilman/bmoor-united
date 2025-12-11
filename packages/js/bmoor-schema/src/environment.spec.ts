@@ -1,22 +1,19 @@
 import {expect} from 'chai';
 
-import type {SchemaInterface} from '../schema.interface.ts';
-import {Schema} from '../schema.ts';
-import {SchemaContext} from '../schema/context.ts';
-import {types} from '../typing.ts';
-import {validations} from '../validator.ts';
-import {EnvironmentContext} from './context.ts';
+import {Environment} from './environment.ts';
+import {FieldNeed} from './field.interface.ts';
+import type {SchemaInterface} from './schema.interface.ts';
+import {Schema} from './schema.ts';
+import {types} from './typing.ts';
 
 describe('@bmoor/schema :: Knowledge', function () {
-	let ctx;
-	let knowledge: EnvironmentContext<SchemaInterface>;
+	let knowledge: Environment<SchemaInterface>;
 
 	beforeEach(function () {
-		ctx = new SchemaContext(types, validations);
-		knowledge = new EnvironmentContext<SchemaInterface>();
+		knowledge = new Environment<SchemaInterface>();
 
 		knowledge.addSchema(
-			new Schema(ctx, {
+			new Schema(types, {
 				reference: 's-1',
 				info: {
 					foo: {
@@ -40,7 +37,7 @@ describe('@bmoor/schema :: Knowledge', function () {
 		);
 
 		knowledge.addSchema(
-			new Schema(ctx, {
+			new Schema(types, {
 				reference: 's-2',
 				info: {
 					hello: {
@@ -64,23 +61,21 @@ describe('@bmoor/schema :: Knowledge', function () {
 		);
 
 		knowledge.addSchema(
-			new Schema(ctx, {
+			new Schema(types, {
 				reference: 's-3',
 				info: {
 					id: {
-						use: 'primary',
+						primary: true,
 						type: 'string',
 					},
 					otherId: {
-						required: true,
+						need: FieldNeed.required,
 						type: 'string',
 					},
 					mount: {
-						use: 'synthetic',
 						type: 'array',
 					},
 					parent: {
-						use: 'synthetic',
 						type: 'object',
 					},
 				},
