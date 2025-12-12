@@ -1,4 +1,3 @@
-import {FieldUse} from '../field.interface.ts';
 import type {SchemaInterface} from '../schema.interface.ts';
 import type {
 	BuilderJSONSchemaNode,

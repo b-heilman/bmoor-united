@@ -27,7 +27,7 @@ export class Field<T = any> implements FieldInterface {
 	}
 
 	getType(): FieldType {
-		if ('alias' in this.source.info){
+		if ('alias' in this.source.info) {
 			return this.source.info.alias.getType();
 		} else {
 			return this.source.info.type;

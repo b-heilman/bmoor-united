@@ -1,6 +1,5 @@
 import {expect} from 'chai';
 
-import {FieldUse} from '../field.interface.ts';
 import {Schema} from '../schema.ts';
 import {types} from '../typing.ts';
 import {generateJsonSchema} from './jsonschema.ts';
@@ -23,7 +22,6 @@ describe('@bmoor/schema :: BuilderJSONSchema', function () {
 					type: 'string',
 				},
 				fail: {
-					use: FieldUse.synthetic,
 					type: 'string',
 				},
 			},

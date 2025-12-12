@@ -15,15 +15,19 @@ export class Environment<
 > implements EnvironmentInterface<SchemaT> {
 	schemas: Record<SchemaReference, SchemaT>;
 
-	constructor() {
+	constructor(schemas?: SchemaT[]) {
 		this.schemas = {};
+
+		for (const schema of schemas) {
+			this.addSchema(schema);
+		}
 	}
 
 	addSchema(schema: SchemaT) {
 		const ref = schema.getReference();
 
 		if (!ref) {
-			throw create('Schemas in Knowledge must have reference', {
+			throw create('Schemas in and evironment must have reference', {
 				code: 'BMS_Knowledge_UNNAMED_SCHEMA',
 			});
 		}

@@ -1,7 +1,7 @@
 import {expect} from 'chai';
 
 import {Environment} from '../environment.ts';
-import {FieldNeed, FieldUse} from '../field.interface.ts';
+import {FieldNeed} from '../field.interface.ts';
 import type {SchemaInterface} from '../schema.interface.ts';
 import {Schema} from '../schema.ts';
 import {types} from '../typing.ts';
@@ -64,7 +64,7 @@ describe('@bmoor/schema :: BuilderTypescript', function () {
 				reference: 's-3',
 				info: {
 					id: {
-						use: FieldUse.primary,
+						primary: true,
 						type: 'string',
 					},
 					otherId: {
@@ -72,11 +72,11 @@ describe('@bmoor/schema :: BuilderTypescript', function () {
 						type: 'string',
 					},
 					mount: {
-						use: FieldUse.mount,
+						mount: 'children',
 						type: 'array',
 					},
 					parent: {
-						use: FieldUse.computed,
+						mount: 'parent',
 						type: 'object',
 					},
 				},
@@ -107,7 +107,7 @@ describe('@bmoor/schema :: BuilderTypescript', function () {
 						otherFields: ['hello'],
 					},
 					{
-						reference: 'mount',
+						reference: 'children',
 						type: 'toMany',
 						fields: ['id'],
 						other: 's-1',
@@ -142,7 +142,7 @@ describe('@bmoor/schema :: BuilderTypescript', function () {
 				info: {
 					bar: {
 						type: 'string',
-						use: FieldUse.primary,
+						primary: true,
 					},
 					world: {
 						type: 'number',

@@ -1,6 +1,7 @@
-import { DynamicObject } from '@bmoor/object';
-import {FieldInfo, FieldNeed} from './field.interface.ts';
-import { SchemaInterface } from './schema.interface.ts';
+import {DynamicObject} from '@bmoor/object';
+
+import {FieldInterface, FieldNeed} from './field.interface.ts';
+import {SchemaInterface} from './schema.interface.ts';
 import {TypingInterface, TypingJSON} from './typing.interface.ts';
 import type {
 	ValidationError,
@@ -42,13 +43,15 @@ export class Validator<
 
 	async validateField(
 		types: TypingInterface<TypeT>,
-		value: any, // eslint-disable-line  @typescript-eslint/no-explicit-any
-		info: FieldInfo,
+		obj: DynamicObject,
+		field: FieldInterface,
 	): Promise<ValidationError> {
-		const toTest = types.getType(info.type).info.validations;
+		const value = field.read(obj);
+		const toTest = types.getType(field.getType()).info.validations;
+		const info = field.getInfo();
+		const c = toTest.length;
 
 		let rtn = null;
-		const c = toTest.length;
 
 		for (let i = 0; i < c && rtn === null; i++) {
 			const isEmpty = value === null || value === undefined;
@@ -72,17 +75,36 @@ export class Validator<
 
 	async validateSchema(
 		schema: SchemaInterface<TypeT>,
-		obj: DynamicObject
+		obj: DynamicObject,
 	): Promise<ValidationError[]> {
-		return (await Promise.all(
-			schema.getFields().map(field => {
-				return this.validateField(
-					schema.getTyping(),
-					field.read(obj),
-					field.getInfo()
-				);
-			})
-		)).filter((error) => error);
+		return (
+			await Promise.all(
+				schema.getFields().map(async (field) => {
+					const info = field.getInfo();
+					const rtn = this.validateField(
+						schema.getTyping(),
+						obj,
+						field,
+					);
+
+					if (!rtn && 'mount' in info){
+						const mount = field.read(obj);
+						const relationship = schema.getRelationship(info.mount);
+
+						let child;
+						if (relationship.type === 'toOne'){
+							child = this.validateSchema(relationship.other, mount);
+						} else {
+
+						}
+
+						return await Promise.all([rtn]);
+					} else {
+						return rtn;
+					}
+				}),
+			)
+		).flat().filter((error) => error);
 	}
 }
 

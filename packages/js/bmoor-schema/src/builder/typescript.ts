@@ -38,25 +38,19 @@ export function generateTypescript(schema: SchemaInterface): string {
 	for (const field of schema.getFields()) {
 		const info = field.getInfo();
 
-		if (info.use !== 'synthetic') {
-			set(
-				root,
-				field.getPath() + (info.need === FieldNeed.optional ? '?' : ''),
-				schema.getTyping().getType(info.type).alias.typescript +
-					(info.need === FieldNeed.nullable ? '|null' : ''),
-			);
-		}
-	}
+		let type;
 
-	for (const relationship of schema.getRelationships()) {
-		const other = schema.getEnvironment().getSchema(relationship.other);
-
-		let result = toCamelCase(other.getReference());
-		if (relationship.type === 'toMany') {
-			result = result + '[]';
+		if ('mount' in info){
+			type = toCamelCase(schema.getRelationship(info.mount).other.getReference());
+		} else {
+			type = schema.getTyping().getType(field.getType()).alias.typescript;
 		}
 
-		set(root, schema.getField(relationship.reference).getPath(), result);
+		set(
+			root,
+			field.getPath() + (info.need === FieldNeed.optional ? '?' : ''),
+			type + (info.need === FieldNeed.nullable ? '|null' : ''),
+		);
 	}
 
 	return dictToTypescript(root, name);

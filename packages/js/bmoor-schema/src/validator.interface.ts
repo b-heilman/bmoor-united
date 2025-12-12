@@ -1,4 +1,4 @@
-import {FieldInfo} from './field.interface.ts';
+import {FieldInterface} from './field.interface.ts';
 import {TypingInterface, TypingJSON} from './typing.interface.ts';
 import type {
 	ValidationError,
@@ -15,6 +15,6 @@ export interface ValidatorInterface<T extends TypingJSON = TypingJSON> {
 		types: TypingInterface<T>,
 		// eslint-disable-next-line  @typescript-eslint/no-explicit-any
 		value: any,
-		info: FieldInfo,
+		info: FieldInterface,
 	): Promise<ValidationError>;
 }

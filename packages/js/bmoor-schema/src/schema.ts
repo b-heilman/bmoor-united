@@ -16,6 +16,7 @@ import type {
 	SchemaInterface,
 	SchemaJSON,
 	SchemaReference,
+	SchemaRelationship,
 	SchemaSettings,
 	SchemaStructure,
 } from './schema.interface.ts';
@@ -52,17 +53,20 @@ export class Schema<
 	env: Environment;
 	fields: Record<FieldReference, FieldInterface>;
 	settings: SchemaJSON;
-	relationships: Record<SchemaReference, RelationshipJSON>;
+	relationships: Record<SchemaReference, SchemaRelationship<TypingT>>;
 
 	constructor(typing: TypingInterface<TypingT>, schema: SchemaSettings) {
 		this.typing = typing;
 		this.settings = schema; // I'll probably change this later, but for now, is what it is
 		this.fields = this.defineFields();
-		this.relationships = this.defineRelationships();
+		
 	}
 
 	setEnvironment(env: Environment) {
 		this.env = env;
+
+		// build the relationships here
+		this.relationships = this.defineRelationships();
 	}
 
 	getTyping(): TypingInterface<TypingT> {
@@ -93,12 +97,19 @@ export class Schema<
 		}, {});
 	}
 
-	defineRelationships(): Record<SchemaReference, RelationshipJSON> {
-		const schema = this.settings;
+	defineRelationships(): Record<SchemaReference, SchemaRelationship<TypingT>> {
+		const {relationships} = this.settings;
 
-		if (schema.relationships) {
-			return schema.relationships.reduce((agg, relationship) => {
-				agg[relationship.other] = relationship;
+		if (relationships) {
+			return relationships.reduce((agg, relationship) => {
+				const other = this.env.getSchema(relationship.other);
+
+				agg[relationship.reference] = {
+					type: relationship.type,
+					fields: relationship.fields.map(ref => this.getField(ref)),
+					other,
+					otherFields: relationship.otherFields.map(ref => other.getField(ref))
+				};
 
 				return agg;
 			}, {});
@@ -112,16 +123,21 @@ export class Schema<
 	}
 
 	getPrimaryFields(): FieldInterface[] {
-		return this.getFields().filter(
-			(field) => {
-				const info = field.getInfo();
-				if ('primary' in info){
-					return info.primary;
-				} else {
-					return false;
-				}
+		return this.getFields().filter((field) => {
+			const info = field.getInfo();
+			if ('primary' in info) {
+				return info.primary;
+			} else {
+				return false;
 			}
-		);
+		});
+	}
+
+	getMountFields(): FieldInterface[] {
+		return this.getFields().filter((field) => {
+			const info = field.getInfo();
+			return 'mount' in info;
+		});
 	}
 
 	getFields(): FieldInterface[] {
@@ -132,11 +148,11 @@ export class Schema<
 		return this.fields[ref];
 	}
 
-	getRelationships(): RelationshipJSON[] {
+	getRelationships(): SchemaRelationship<TypingT>[] {
 		return Object.values(this.relationships);
 	}
 
-	getRelationship(other: SchemaReference): RelationshipJSON {
+	getRelationship(other: SchemaReference): SchemaRelationship<TypingT> {
 		return this.relationships[other];
 	}
 

@@ -1,11 +1,11 @@
 import {expect} from 'chai';
 
+import {Environment} from './environment.ts';
 import {FieldNeed} from './field.interface.ts';
+import {SchemaInterface} from './schema.interface.ts';
+import {Schema} from './schema.ts';
 import {types} from './typing.ts';
 import {validator} from './validator.ts';
-import { Schema } from './schema.ts';
-import { Environment } from './environment.ts';
-import { SchemaInterface } from './schema.interface.ts';
 
 describe('@bmoor/schema :: Validator', function () {
 	describe('validateField', function () {
@@ -190,12 +190,12 @@ describe('@bmoor/schema :: Validator', function () {
 		});
 	});
 
-	describe('validateSchema', function(){
+	describe('validateSchema', function () {
 		let knowledge: Environment<SchemaInterface>;
 
 		beforeEach(function () {
 			knowledge = new Environment<SchemaInterface>();
-	
+
 			knowledge.addSchema(
 				new Schema(types, {
 					reference: 's-1',
@@ -219,7 +219,7 @@ describe('@bmoor/schema :: Validator', function () {
 					],
 				}),
 			);
-	
+
 			knowledge.addSchema(
 				new Schema(types, {
 					reference: 's-2',
@@ -243,7 +243,7 @@ describe('@bmoor/schema :: Validator', function () {
 					],
 				}),
 			);
-	
+
 			knowledge.addSchema(
 				new Schema(types, {
 					reference: 's-3',
@@ -286,8 +286,8 @@ describe('@bmoor/schema :: Validator', function () {
 						 * NOTE: all relationships don't need a mount point.  Some are just
 						 * to let you know the relationship exists, but the nested data might
 						 * not exist on the object.  Say a schema extends another, it could add
-						 * the mount which the child schema requires more processing than the 
-						 * parent 
+						 * the mount which the child schema requires more processing than the
+						 * parent
 						 */
 						{
 							reference: 'parent',
@@ -308,12 +308,11 @@ describe('@bmoor/schema :: Validator', function () {
 				}),
 			);
 		});
-	
+
 		it('should allow reading', async function () {
 			const ref2 = knowledge.getSchema('s-2').getReference();
-	
+
 			expect(ref2).to.deep.equal('s-2');
 		});
-
 	});
 });
