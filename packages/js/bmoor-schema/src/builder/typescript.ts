@@ -1,6 +1,7 @@
 import {DynamicObject, set} from '@bmoor/object';
 import {toCamelCase} from '@bmoor/string';
 
+import {EnvironmentInterface} from '../environment.interface.ts';
 import {FieldNeed} from '../field.interface.ts';
 import type {SchemaInterface} from '../schema.interface.ts';
 
@@ -31,25 +32,29 @@ export function dictToTypescript(
 	return content;
 }
 
-export function generateTypescript(schema: SchemaInterface): string {
+export function generateTypescript(
+	env: EnvironmentInterface,
+	schema: SchemaInterface,
+): string {
 	const root = {};
 	const name = toCamelCase(schema.getReference());
 
 	for (const field of schema.getFields()) {
 		const info = field.getInfo();
 
-		let type;
+		//if ('mount' in info) {
+		//	type = toCamelCase(
+		//		schema.getRelationship(info.mount).other.getReference(),
+		//	);
 
-		if ('mount' in info){
-			type = toCamelCase(schema.getRelationship(info.mount).other.getReference());
-		} else {
-			type = schema.getTyping().getType(field.getType()).alias.typescript;
-		}
+		const type = env.getTyping().getType(field.getType()).alias.typescript;
 
 		set(
 			root,
 			field.getPath() + (info.need === FieldNeed.optional ? '?' : ''),
-			type + (info.need === FieldNeed.nullable ? '|null' : ''),
+			type +
+				(info.isMany ? '[]' : '') +
+				(info.need === FieldNeed.nullable ? '|null' : ''),
 		);
 	}
 

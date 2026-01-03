@@ -1,14 +1,13 @@
 import {expect} from 'chai';
 
 import {Schema} from './schema.ts';
-import {types} from './typing.ts';
 
 describe('bmoor-schema :: schema', function () {
 	beforeEach(function () {});
 
 	describe('implode', function () {
 		it('should work', function () {
-			const schema = new Schema(types, {
+			const schema = new Schema({
 				info: {
 					'f-1': {
 						type: 'string',
@@ -21,6 +20,7 @@ describe('bmoor-schema :: schema', function () {
 					},
 					'f-4': {
 						type: 'string',
+						isMany: true,
 					},
 				},
 				structure: [
@@ -67,7 +67,7 @@ describe('bmoor-schema :: schema', function () {
 
 	describe('explode', function () {
 		it('should work', function () {
-			const schema = new Schema(types, {
+			const schema = new Schema({
 				info: {
 					'f-1': {
 						type: 'string',

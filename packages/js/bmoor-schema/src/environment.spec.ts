@@ -2,18 +2,18 @@ import {expect} from 'chai';
 
 import {Environment} from './environment.ts';
 import {FieldNeed} from './field.interface.ts';
-import type {SchemaInterface} from './schema.interface.ts';
 import {Schema} from './schema.ts';
+import type {TypingAlias} from './typing.interface.ts';
 import {types} from './typing.ts';
 
 describe('@bmoor/schema :: Knowledge', function () {
-	let knowledge: Environment<SchemaInterface>;
+	let knowledge: Environment<TypingAlias>;
 
 	beforeEach(function () {
-		knowledge = new Environment<SchemaInterface>();
+		knowledge = new Environment<TypingAlias>(types);
 
 		knowledge.addSchema(
-			new Schema(types, {
+			new Schema({
 				reference: 's-1',
 				info: {
 					foo: {
@@ -37,7 +37,7 @@ describe('@bmoor/schema :: Knowledge', function () {
 		);
 
 		knowledge.addSchema(
-			new Schema(types, {
+			new Schema({
 				reference: 's-2',
 				info: {
 					hello: {
@@ -61,7 +61,7 @@ describe('@bmoor/schema :: Knowledge', function () {
 		);
 
 		knowledge.addSchema(
-			new Schema(types, {
+			new Schema({
 				reference: 's-3',
 				info: {
 					id: {

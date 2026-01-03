@@ -1,3 +1,4 @@
+import {EnvironmentInterface} from '../environment.interface.ts';
 import type {SchemaInterface} from '../schema.interface.ts';
 import type {
 	BuilderJSONSchemaNode,
@@ -5,8 +6,10 @@ import type {
 } from './jsonschema.interface.ts';
 
 export function generateJsonSchema(
+	env: EnvironmentInterface,
 	schema: SchemaInterface,
 ): BuilderJSONSchemaObject {
+	const types = env.getTyping();
 	const root: BuilderJSONSchemaObject = {
 		type: 'object',
 		properties: {},
@@ -37,7 +40,7 @@ export function generateJsonSchema(
 					}
 				} else {
 					cur.properties[ref] = {
-						type: schema.getTyping().getType(link.fieldType).alias.json,
+						type: types.getType(link.fieldType).alias.json,
 					};
 				}
 
@@ -72,12 +75,10 @@ export function generateJsonSchema(
 						}
 
 						cur = cur.items.properties[ref] = {
-							type: schema.getTyping().getType(link.fieldType).alias.json,
+							type: types.getType(link.fieldType).alias.json,
 						};
 					} else {
-						cur.items.type = schema
-							.getTyping()
-							.getType(link.fieldType).alias.json;
+						cur.items.type = types.getType(link.fieldType).alias.json;
 					}
 				}
 			}

@@ -9,21 +9,33 @@ import type {
 	SchemaInterface,
 	SchemaReference,
 } from './schema.interface.ts';
+import type {TypingAlias, TypingInterface} from './typing.interface.ts';
 
 export class Environment<
-	SchemaT extends SchemaInterface = SchemaInterface,
-> implements EnvironmentInterface<SchemaT> {
-	schemas: Record<SchemaReference, SchemaT>;
+	TypingT extends TypingAlias = TypingAlias,
+> implements EnvironmentInterface<TypingT> {
+	typing: TypingInterface<TypingT>;
+	schemas: Record<SchemaReference, SchemaInterface>;
 
-	constructor(schemas?: SchemaT[]) {
+	constructor(
+		typing: TypingInterface<TypingT>,
+		schemas?: SchemaInterface[],
+	) {
+		this.typing = typing;
 		this.schemas = {};
 
-		for (const schema of schemas) {
-			this.addSchema(schema);
+		if (schemas) {
+			for (const schema of schemas) {
+				this.addSchema(schema);
+			}
 		}
 	}
 
-	addSchema(schema: SchemaT) {
+	getTyping(): TypingInterface<TypingT> {
+		return this.typing;
+	}
+
+	addSchema(schema: SchemaInterface) {
 		const ref = schema.getReference();
 
 		if (!ref) {
@@ -32,16 +44,14 @@ export class Environment<
 			});
 		}
 
-		schema.setEnvironment(this);
-
 		this.schemas[ref] = schema;
 	}
 
-	getSchema(ref: SchemaReference): SchemaT {
+	getSchema(ref: SchemaReference): SchemaInterface {
 		return this.schemas[ref];
 	}
 
-	getSchemas(): SchemaT[] {
+	getSchemas(): SchemaInterface[] {
 		return Object.values(this.schemas);
 	}
 

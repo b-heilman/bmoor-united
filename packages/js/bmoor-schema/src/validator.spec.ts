@@ -2,12 +2,21 @@ import {expect} from 'chai';
 
 import {Environment} from './environment.ts';
 import {FieldNeed} from './field.interface.ts';
-import {SchemaInterface} from './schema.interface.ts';
+import {Field} from './field.ts';
 import {Schema} from './schema.ts';
+import type {TypingAlias} from './typing.interface.ts';
 import {types} from './typing.ts';
 import {validator} from './validator.ts';
 
 describe('@bmoor/schema :: Validator', function () {
+	let env: Environment<TypingAlias>;
+
+	beforeEach(function () {
+		env = new Environment<TypingAlias>(types);
+
+		validator.setEnvironment(env);
+	});
+
 	describe('validateField', function () {
 		it('should return back nothing if fine', async function () {
 			/*
@@ -19,88 +28,203 @@ describe('@bmoor/schema :: Validator', function () {
 			});
 			*/
 
-			const res = await validator.validateField(types, 'bar', {
-				type: 'string',
-			});
+			const res = await validator.validateField(
+				{
+					value: 'bar',
+				},
+				new Field({
+					path: 'value',
+					info: {
+						type: 'string',
+					},
+				}),
+			);
 
 			expect(res).to.equal(null);
 		});
 
 		it('should return back a string if failed', async function () {
-			const res = await validator.validateField(types, 123, {
-				type: 'string',
-			});
+			const res = await validator.validateField(
+				{value: 123},
+				new Field({
+					path: 'value',
+					info: {
+						type: 'string',
+					},
+				}),
+			);
 
 			expect(res).to.equal('is not a string');
 		});
 
 		it('should handle null and required', async function () {
-			const res = await validator.validateField(types, null, {
-				type: 'string',
-				need: FieldNeed.required,
-			});
+			const res = await validator.validateField(
+				{value: null},
+				new Field({
+					path: 'value',
+					info: {
+						type: 'string',
+						need: FieldNeed.required,
+					},
+				}),
+			);
 
 			expect(res).to.equal('is required');
 		});
 
 		it('should handle null and optional', async function () {
-			const res = await validator.validateField(types, null, {
-				type: 'string',
-				need: FieldNeed.optional,
-			});
+			const res = await validator.validateField(
+				{value: null},
+				new Field({
+					path: 'value',
+					info: {
+						type: 'string',
+						need: FieldNeed.optional,
+					},
+				}),
+			);
 
 			expect(res).to.equal('as optional field is null');
 		});
 
 		it('should handle null and nullable', async function () {
-			const res = await validator.validateField(types, null, {
-				type: 'string',
-				need: FieldNeed.nullable,
-			});
+			const res = await validator.validateField(
+				{value: null},
+				new Field({
+					path: 'value',
+					info: {
+						type: 'string',
+						need: FieldNeed.nullable,
+					},
+				}),
+			);
 
 			expect(res).to.equal(null);
 		});
 
 		it('should handle undefined and required', async function () {
-			const res = await validator.validateField(types, undefined, {
-				type: 'string',
-				need: FieldNeed.required,
-			});
+			const res = await validator.validateField(
+				{value: undefined},
+				new Field({
+					path: 'value',
+					info: {
+						type: 'string',
+						need: FieldNeed.required,
+					},
+				}),
+			);
 
 			expect(res).to.equal('is required');
 		});
 
 		it('should handle undefined and optional', async function () {
-			const res = await validator.validateField(types, undefined, {
-				type: 'string',
-				need: FieldNeed.optional,
-			});
+			const res = await validator.validateField(
+				{value: undefined},
+				new Field({
+					path: 'value',
+					info: {
+						type: 'string',
+						need: FieldNeed.optional,
+					},
+				}),
+			);
 
 			expect(res).to.equal(null);
 		});
 
 		it('should handle undefined and nullable', async function () {
-			const res = await validator.validateField(types, undefined, {
-				type: 'string',
-				need: FieldNeed.nullable,
-			});
+			const res = await validator.validateField(
+				{value: undefined},
+				new Field({
+					path: 'value',
+					info: {
+						type: 'string',
+						need: FieldNeed.nullable,
+					},
+				}),
+			);
 
 			expect(res).to.equal(null);
 		});
 
+		describe('array', function () {
+			it('should correctly run', async function () {
+				const res = await validator.validateField(
+					{
+						value: ['bar'],
+					},
+					new Field({
+						path: 'value',
+						info: {
+							isMany: true,
+							type: 'string',
+						},
+					}),
+				);
+
+				expect(res).to.equal(null);
+			});
+
+			it('should correctly fail without an array', async function () {
+				const res = await validator.validateField(
+					{
+						value: 'bar',
+					},
+					new Field({
+						path: 'value',
+						info: {
+							isMany: true,
+							type: 'string',
+						},
+					}),
+				);
+
+				expect(res).to.equal('expected array');
+			});
+
+			it('should correctly fail with bad inside data', async function () {
+				const res = await validator.validateField(
+					{
+						value: [123],
+					},
+					new Field({
+						path: 'value',
+						info: {
+							isMany: true,
+							type: 'string',
+						},
+					}),
+				);
+
+				expect(res).to.equal('is not a string');
+			});
+		});
+
 		describe('string', function () {
 			it('should work', async function () {
-				const res = await validator.validateField(types, 'hello world', {
-					type: 'string',
-				});
+				const res = await validator.validateField(
+					{value: 'hello world'},
+					new Field({
+						path: 'value',
+						info: {
+							type: 'string',
+						},
+					}),
+				);
 
 				expect(res).to.equal(null);
 			});
 
 			it('should work fail on number', async function () {
-				const res = await validator.validateField(types, 123, {
-					type: 'string',
-				});
+				const res = await validator.validateField(
+					{value: 123},
+					new Field({
+						path: 'value',
+						info: {
+							type: 'string',
+						},
+					}),
+				);
 
 				expect(res).to.equal('is not a string');
 			});
@@ -108,57 +232,99 @@ describe('@bmoor/schema :: Validator', function () {
 
 		describe('number', function () {
 			it('should work as int', async function () {
-				const res = await validator.validateField(types, 123, {
-					type: 'number',
-				});
+				const res = await validator.validateField(
+					{value: 123},
+					new Field({
+						path: 'value',
+						info: {
+							type: 'number',
+						},
+					}),
+				);
 
 				expect(res).to.equal(null);
 			});
 
 			it('should work as float', async function () {
-				const res = await validator.validateField(types, 12.3, {
-					type: 'number',
-				});
+				const res = await validator.validateField(
+					{value: 12.3},
+					new Field({
+						path: 'value',
+						info: {
+							type: 'number',
+						},
+					}),
+				);
 
 				expect(res).to.equal(null);
 			});
 
 			it('should work fail on number', async function () {
-				const res = await validator.validateField(types, 'foo bar', {
-					type: 'number',
-				});
+				const res = await validator.validateField(
+					{value: 'foo bar'},
+					new Field({
+						path: 'value',
+						info: {
+							type: 'number',
+						},
+					}),
+				);
 
 				expect(res).to.equal('is not a number');
 			});
 
 			it('should work as integer', async function () {
-				const res = await validator.validateField(types, 123, {
-					type: 'int',
-				});
+				const res = await validator.validateField(
+					{value: 123},
+					new Field({
+						path: 'value',
+						info: {
+							type: 'int',
+						},
+					}),
+				);
 
 				expect(res).to.equal(null);
 			});
 
 			it('should fail as integer with float', async function () {
-				const res = await validator.validateField(types, 123.2, {
-					type: 'int',
-				});
+				const res = await validator.validateField(
+					{value: 123.2},
+					new Field({
+						path: 'value',
+						info: {
+							type: 'int',
+						},
+					}),
+				);
 
 				expect(res).to.equal('is not integer');
 			});
 
 			it('should work as float', async function () {
-				const res = await validator.validateField(types, 123.2, {
-					type: 'float',
-				});
+				const res = await validator.validateField(
+					{value: 123.2},
+					new Field({
+						path: 'value',
+						info: {
+							type: 'float',
+						},
+					}),
+				);
 
 				expect(res).to.equal(null);
 			});
 
 			it('should fail as float with integer', async function () {
-				const res = await validator.validateField(types, 123, {
-					type: 'float',
-				});
+				const res = await validator.validateField(
+					{value: 123},
+					new Field({
+						path: 'value',
+						info: {
+							type: 'float',
+						},
+					}),
+				);
 
 				expect(res).to.equal('is integer');
 			});
@@ -168,6 +334,9 @@ describe('@bmoor/schema :: Validator', function () {
 	describe('missing validations', function () {
 		it('should still work', async function () {
 			const myTypes = types.clone();
+			const myEnv = new Environment<TypingAlias>(myTypes);
+
+			validator.setEnvironment(myEnv);
 
 			myTypes.addType('missing', {
 				alias: {
@@ -182,22 +351,28 @@ describe('@bmoor/schema :: Validator', function () {
 
 			expect(types.getType('missing')).to.equal(null);
 
-			const res = await validator.validateField(myTypes, 'foo bar', {
-				type: 'missing',
-			});
+			const res = await validator.validateField(
+				{value: 'foo bar'},
+				new Field({
+					path: 'value',
+					info: {
+						type: 'missing',
+					},
+				}),
+			);
 
 			expect(res).to.equal(null);
 		});
 	});
 
 	describe('validateSchema', function () {
-		let knowledge: Environment<SchemaInterface>;
+		let knowledge: Environment<TypingAlias>;
 
 		beforeEach(function () {
-			knowledge = new Environment<SchemaInterface>();
+			knowledge = new Environment<TypingAlias>(types);
 
 			knowledge.addSchema(
-				new Schema(types, {
+				new Schema({
 					reference: 's-1',
 					info: {
 						foo: {
@@ -221,7 +396,7 @@ describe('@bmoor/schema :: Validator', function () {
 			);
 
 			knowledge.addSchema(
-				new Schema(types, {
+				new Schema({
 					reference: 's-2',
 					info: {
 						hello: {
@@ -245,7 +420,7 @@ describe('@bmoor/schema :: Validator', function () {
 			);
 
 			knowledge.addSchema(
-				new Schema(types, {
+				new Schema({
 					reference: 's-3',
 					info: {
 						id: {

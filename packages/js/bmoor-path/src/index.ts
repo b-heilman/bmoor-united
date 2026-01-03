@@ -1,4 +1,5 @@
-export type {PathInterface} from './path.interface.ts';
+export type * from './path.interface.ts';
+export type * from './mapping.interface.ts';
 export {ParserModes} from './parser.interface.ts';
 
 export {parser} from './parser.ts';

@@ -2,25 +2,20 @@ import {isArray} from '@bmoor/compare';
 import {DynamicObject} from '@bmoor/object';
 import {implode} from '@bmoor/path';
 
-import {EnvironmentInterface} from './environment.interface.ts';
-import {Environment} from './environment.ts';
 import type {
 	FieldInterface,
 	FieldJSON,
 	FieldReference,
 } from './field.interface.ts';
 import {Field} from './field.ts';
-import type {RelationshipJSON} from './relationship.interface.ts';
 import type {
 	SchemaFieldSet,
 	SchemaInterface,
 	SchemaJSON,
 	SchemaReference,
-	SchemaRelationship,
 	SchemaSettings,
 	SchemaStructure,
 } from './schema.interface.ts';
-import type {TypingInterface, TypingJSON} from './typing.interface.ts';
 
 export function reduceStructure(
 	structure: SchemaStructure,
@@ -46,35 +41,13 @@ export function reduceStructure(
 	}
 }
 
-export class Schema<
-	TypingT extends TypingJSON = TypingJSON,
-> implements SchemaInterface<TypingT> {
-	typing: TypingInterface<TypingT>;
-	env: Environment;
+export class Schema implements SchemaInterface {
 	fields: Record<FieldReference, FieldInterface>;
 	settings: SchemaJSON;
-	relationships: Record<SchemaReference, SchemaRelationship<TypingT>>;
 
-	constructor(typing: TypingInterface<TypingT>, schema: SchemaSettings) {
-		this.typing = typing;
+	constructor(schema: SchemaSettings) {
 		this.settings = schema; // I'll probably change this later, but for now, is what it is
 		this.fields = this.defineFields();
-		
-	}
-
-	setEnvironment(env: Environment) {
-		this.env = env;
-
-		// build the relationships here
-		this.relationships = this.defineRelationships();
-	}
-
-	getTyping(): TypingInterface<TypingT> {
-		return this.typing;
-	}
-
-	getEnvironment(): EnvironmentInterface {
-		return this.env;
 	}
 
 	defineFields(): Record<FieldReference, FieldInterface> {
@@ -95,27 +68,6 @@ export class Schema<
 
 			return agg;
 		}, {});
-	}
-
-	defineRelationships(): Record<SchemaReference, SchemaRelationship<TypingT>> {
-		const {relationships} = this.settings;
-
-		if (relationships) {
-			return relationships.reduce((agg, relationship) => {
-				const other = this.env.getSchema(relationship.other);
-
-				agg[relationship.reference] = {
-					type: relationship.type,
-					fields: relationship.fields.map(ref => this.getField(ref)),
-					other,
-					otherFields: relationship.otherFields.map(ref => other.getField(ref))
-				};
-
-				return agg;
-			}, {});
-		} else {
-			return {};
-		}
 	}
 
 	getReference(): SchemaReference {
@@ -146,14 +98,6 @@ export class Schema<
 
 	getField(ref: FieldReference): FieldInterface {
 		return this.fields[ref];
-	}
-
-	getRelationships(): SchemaRelationship<TypingT>[] {
-		return Object.values(this.relationships);
-	}
-
-	getRelationship(other: SchemaReference): SchemaRelationship<TypingT> {
-		return this.relationships[other];
 	}
 
 	implode(root: DynamicObject): DynamicObject {

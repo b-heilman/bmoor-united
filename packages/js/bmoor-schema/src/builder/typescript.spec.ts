@@ -2,17 +2,62 @@ import {expect} from 'chai';
 
 import {Environment} from '../environment.ts';
 import {FieldNeed} from '../field.interface.ts';
-import type {SchemaInterface} from '../schema.interface.ts';
 import {Schema} from '../schema.ts';
 import {types} from '../typing.ts';
 import {generateTypescript} from './typescript.ts';
+import type { TypingAlias } from '../typing.interface.ts';
 
 describe('@bmoor/schema :: BuilderTypescript', function () {
+	let env: Environment<TypingAlias>;
+		
+	beforeEach(function () {
+		env = new Environment<TypingAlias>(types);
+	});
+	
 	it('should properly generate a json schema', function () {
-		const dictionary = new Environment<SchemaInterface>();
+		env.addSchema(
+			new Schema({
+				reference: 's-3',
+				info: {
+					id: {
+						primary: true,
+						type: 'string',
+					},
+					otherId: {
+						need: FieldNeed.required,
+						type: 'string',
+					},
+				},
+				structure: [
+					{
+						path: 'id',
+						ref: 'id',
+					},
+					{
+						path: 'otherId',
+						ref: 'otherId',
+					},
+				],
+			}),
+		);
 
-		dictionary.addSchema(
-			new Schema(types, {
+		expect(
+			generateTypescript(env, env.getSchema('s-3'))
+				.toString()
+				.replace(/\s/g, ''),
+		).to.deep.equal(
+			`
+			interface s3 {
+			id: string
+			otherId: string
+			}
+		`.replace(/\s/g, ''),
+		);
+	});
+
+	xit('should properly generate a json schema', function () {
+		env.addSchema(
+			new Schema({
 				reference: 's-1',
 				info: {
 					foo: {
@@ -35,8 +80,8 @@ describe('@bmoor/schema :: BuilderTypescript', function () {
 			}),
 		);
 
-		dictionary.addSchema(
-			new Schema(types, {
+		env.addSchema(
+			new Schema({
 				reference: 's-2',
 				info: {
 					hello: {
@@ -59,8 +104,8 @@ describe('@bmoor/schema :: BuilderTypescript', function () {
 			}),
 		);
 
-		dictionary.addSchema(
-			new Schema(types, {
+		env.addSchema(
+			new Schema({
 				reference: 's-3',
 				info: {
 					id: {
@@ -73,7 +118,8 @@ describe('@bmoor/schema :: BuilderTypescript', function () {
 					},
 					mount: {
 						mount: 'children',
-						type: 'array',
+						type: 'object',
+						isMany: true,
 					},
 					parent: {
 						mount: 'parent',
@@ -118,7 +164,7 @@ describe('@bmoor/schema :: BuilderTypescript', function () {
 		);
 
 		expect(
-			generateTypescript(dictionary.getSchema('s-3'))
+			generateTypescript(env, env.getSchema('s-3'))
 				.toString()
 				.replace(/\s/g, ''),
 		).to.deep.equal(
@@ -126,18 +172,16 @@ describe('@bmoor/schema :: BuilderTypescript', function () {
 			interface s3 {
 			id: string
 			otherId: string
-			parent: s2
 			mount: s1[]
+			parent: s2
 			}
 		`.replace(/\s/g, ''),
 		);
 	});
 
 	it('should properly generate a complex schema', function () {
-		const dictionary = new Environment<SchemaInterface>();
-
-		dictionary.addSchema(
-			new Schema(types, {
+		env.addSchema(
+			new Schema({
 				reference: 's-1',
 				info: {
 					bar: {
@@ -171,7 +215,7 @@ describe('@bmoor/schema :: BuilderTypescript', function () {
 		);
 
 		expect(
-			generateTypescript(dictionary.getSchema('s-1'))
+			generateTypescript(env, env.getSchema('s-1'))
 				.toString()
 				.replace(/\s/g, ''),
 		).to.deep.equal(

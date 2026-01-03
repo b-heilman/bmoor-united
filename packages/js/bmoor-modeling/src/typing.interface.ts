@@ -1,5 +1,5 @@
-import {TypingJSON as SimpleTyping} from '@bmoor/schema';
+import {TypingAlias} from '@bmoor/schema';
 
-export interface TypingJSON extends SimpleTyping {
+export interface ModelingTypingAlias extends TypingAlias {
 	graphql: string;
 }

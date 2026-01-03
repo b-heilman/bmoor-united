@@ -1,5 +1,4 @@
-import {Mapping} from '@bmoor/path';
-import {MappingSettings} from '@bmoor/path/src/mapping.interface.ts';
+import {Mapping, MappingSettings} from '@bmoor/path';
 import {FieldReference, Schema, reduceStructure} from '@bmoor/schema';
 
 import {

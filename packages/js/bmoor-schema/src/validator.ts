@@ -1,8 +1,8 @@
 import {DynamicObject} from '@bmoor/object';
 
+import {EnvironmentInterface} from './environment.interface.ts';
 import {FieldInterface, FieldNeed} from './field.interface.ts';
 import {SchemaInterface} from './schema.interface.ts';
-import {TypingInterface, TypingJSON} from './typing.interface.ts';
 import type {
 	ValidationError,
 	ValidationFn,
@@ -10,15 +10,18 @@ import type {
 } from './validation.interface.ts';
 import type {ValidatorInterface} from './validator.interface.ts';
 
-export class Validator<
-	TypeT extends TypingJSON = TypingJSON,
-> implements ValidatorInterface<TypeT> {
+export class Validator implements ValidatorInterface {
+	env: EnvironmentInterface;
 	index: Record<ValidationReference, ValidationFn>;
 
 	constructor(
 		validations: Record<ValidationReference, ValidationFn> = {},
 	) {
 		this.index = validations;
+	}
+
+	setEnvironment(env: EnvironmentInterface) {
+		this.env = env;
 	}
 
 	clear() {
@@ -42,30 +45,49 @@ export class Validator<
 	}
 
 	async validateField(
-		types: TypingInterface<TypeT>,
 		obj: DynamicObject,
 		field: FieldInterface,
 	): Promise<ValidationError> {
-		const value = field.read(obj);
-		const toTest = types.getType(field.getType()).info.validations;
+		const types = this.env.getTyping();
+		const input = field.read(obj);
+		const type = types.getType(field.getType());
+
+		if (!type){
+
+		}
+
+		const toTest = type.info.validations;
 		const info = field.getInfo();
 		const c = toTest.length;
 
 		let rtn = null;
-
-		for (let i = 0; i < c && rtn === null; i++) {
-			const isEmpty = value === null || value === undefined;
-			if (isEmpty) {
-				if (info.need === FieldNeed.required) {
-					rtn = 'is required';
-				} else if (info.need === FieldNeed.optional && value === null) {
-					rtn = 'as optional field is null';
-				}
+		let testing;
+		if (info.isMany) {
+			if (!Array.isArray(input)) {
+				return 'expected array';
 			} else {
-				const validation = this.getValidation(toTest[i]);
+				testing = input;
+			}
+		} else {
+			testing = [input];
+		}
 
-				if (validation) {
-					rtn = await validation(value, info);
+		for (let j = 0, co = testing.length; j < co && rtn === null; j++) {
+			const value = testing[j];
+			for (let i = 0; i < c && rtn === null; i++) {
+				const isEmpty = value === null || value === undefined;
+				if (isEmpty) {
+					if (info.need === FieldNeed.required) {
+						rtn = 'is required';
+					} else if (info.need === FieldNeed.optional && value === null) {
+						rtn = 'as optional field is null';
+					}
+				} else {
+					const validation = this.getValidation(toTest[i]);
+
+					if (validation) {
+						rtn = await validation(value, info);
+					}
 				}
 			}
 		}
@@ -74,37 +96,48 @@ export class Validator<
 	}
 
 	async validateSchema(
-		schema: SchemaInterface<TypeT>,
+		schema: SchemaInterface,
 		obj: DynamicObject,
 	): Promise<ValidationError[]> {
 		return (
 			await Promise.all(
 				schema.getFields().map(async (field) => {
-					const info = field.getInfo();
-					const rtn = this.validateField(
-						schema.getTyping(),
-						obj,
-						field,
-					);
+					// const info = field.getInfo();
+					const rtn = this.validateField(obj, field);
 
-					if (!rtn && 'mount' in info){
+					/*
+					if (!rtn && 'mount' in info) {
 						const mount = field.read(obj);
 						const relationship = schema.getRelationship(info.mount);
 
-						let child;
-						if (relationship.type === 'toOne'){
-							child = this.validateSchema(relationship.other, mount);
+						if (relationship.type === 'toOne') {
+							return this.validateSchema(relationship.other, mount);
+						} else if (!Array.isArray(mount)) {
+							return 'toMany implies array, but none received';
 						} else {
+							for (const item of mount) {
+								const res = await this.validateSchema(
+									relationship.other,
+									item,
+								);
 
+								if (res.length > 0) {
+									return res;
+								}
+							}
+
+							return null;
 						}
-
-						return await Promise.all([rtn]);
 					} else {
 						return rtn;
 					}
+					*/
+					return rtn;
 				}),
 			)
-		).flat().filter((error) => error);
+		)
+			.flat()
+			.filter((error) => error);
 	}
 }
 

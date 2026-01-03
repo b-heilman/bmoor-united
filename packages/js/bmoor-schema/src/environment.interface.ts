@@ -3,17 +3,19 @@ import type {
 	SchemaJSON,
 	SchemaReference,
 } from './schema.interface.ts';
+import type {TypingAlias, TypingInterface} from './typing.interface.ts';
 
 export interface EnvironmentJSON {
 	schemas: SchemaJSON[];
 }
 
 export interface EnvironmentInterface<
-	SchemaT extends SchemaInterface = SchemaInterface,
+	T extends TypingAlias = TypingAlias,
 > {
-	addSchema(schema: SchemaT);
-	getSchema(ref: SchemaReference): SchemaT;
-	getSchemas(): SchemaT[];
+	getTyping(): TypingInterface<T>;
+	addSchema(schema: SchemaInterface);
+	getSchema(ref: SchemaReference): SchemaInterface;
+	getSchemas(): SchemaInterface[];
 
 	toJSON(): EnvironmentJSON;
 }

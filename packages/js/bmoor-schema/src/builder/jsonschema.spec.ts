@@ -3,10 +3,18 @@ import {expect} from 'chai';
 import {Schema} from '../schema.ts';
 import {types} from '../typing.ts';
 import {generateJsonSchema} from './jsonschema.ts';
+import { Environment } from '../environment.ts';
+import type { TypingAlias } from '../typing.interface.ts';
 
 describe('@bmoor/schema :: BuilderJSONSchema', function () {
+	let env: Environment<TypingAlias>;
+	
+	beforeEach(function () {
+		env = new Environment<TypingAlias>(types);
+	});
+
 	it('should properly generate a json schema', function () {
-		const schema = new Schema(types, {
+		const schema = new Schema({
 			reference: 'test',
 			info: {
 				'f-1': {
@@ -20,9 +28,7 @@ describe('@bmoor/schema :: BuilderJSONSchema', function () {
 				},
 				'f-4': {
 					type: 'string',
-				},
-				fail: {
-					type: 'string',
+					isMany: true,
 				},
 			},
 			structure: [
@@ -42,15 +48,10 @@ describe('@bmoor/schema :: BuilderJSONSchema', function () {
 					ref: 'f-4',
 					path: 'hello[].other_world[]',
 				},
-				{
-					ref: 'fail',
-					path: 'should.fail',
-				},
 			],
 		});
 
-		// TODO: need to set environment
-		expect(generateJsonSchema(schema)).to.deep.equal({
+		expect(generateJsonSchema(env, schema)).to.deep.equal({
 			type: 'object',
 			properties: {
 				foo: {

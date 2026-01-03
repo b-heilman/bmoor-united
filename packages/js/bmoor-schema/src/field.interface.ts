@@ -5,8 +5,6 @@ import {
 	PathObject,
 } from '@bmoor/path/src/path.interface.ts';
 
-import {RelationshipReference} from './relationship.interface.ts';
-
 export type FieldPath = string;
 export type FieldType = string;
 export type FieldReference = string;
@@ -19,6 +17,7 @@ export enum FieldNeed {
 
 export interface FieldBaseInfo {
 	need?: FieldNeed;
+	isMany?: boolean;
 }
 
 export interface FieldGeneralInfo extends FieldBaseInfo {
@@ -26,18 +25,7 @@ export interface FieldGeneralInfo extends FieldBaseInfo {
 	type: FieldType;
 }
 
-export interface FieldAliasInfo extends FieldBaseInfo {
-	alias: FieldInterface;
-}
-
-// A mount should always be expected to be an array or object, probably
-// should validate
-export interface FieldMountInfo extends FieldBaseInfo {
-	mount: RelationshipReference;
-	type: FieldType;
-}
-
-export type FieldInfo = FieldGeneralInfo | FieldAliasInfo | FieldMountInfo;
+export type FieldInfo = FieldGeneralInfo;
 
 export interface FieldJSON {
 	ref?: FieldReference;
