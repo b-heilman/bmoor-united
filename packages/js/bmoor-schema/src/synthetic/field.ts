@@ -9,13 +9,11 @@ import type {
 	FieldReference,
 	FieldType,
 } from './field.interface.ts';
-import type {ValidationJSON} from './validation.interface.ts';
 
 // eslint-disable-next-line  @typescript-eslint/no-explicit-any
 export class Field<T = any> implements FieldInterface {
 	source: FieldJSON;
 	path: PathInterface<T>;
-	validation: ValidationJSON;
 
 	constructor(schema: FieldJSON) {
 		this.path = new Path(schema.path);

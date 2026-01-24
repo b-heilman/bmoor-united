@@ -59,8 +59,8 @@ export class Schema implements SchemaInterface {
 				}),
 		);
 
-		return fields.reduce((agg, fieldSchema, dex) => {
-			const field = new Field(fieldSchema);
+		return fields.reduce((agg, fieldSettings, dex) => {
+			const field = new Field(this, fieldSettings);
 			const ref = field.getReference() || 'field_' + dex;
 
 			// TODO: I should make sure all types are actually defined

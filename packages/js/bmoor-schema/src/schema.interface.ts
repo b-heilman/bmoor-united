@@ -5,7 +5,6 @@ import type {
 	FieldInterface,
 	FieldReference,
 } from './field.interface.ts';
-import type {RelationshipJSON} from './relationship.interface.ts';
 
 export type SchemaReference = string;
 
@@ -19,7 +18,6 @@ export interface SchemaJSON {
 	reference?: SchemaReference;
 	structure: SchemaStructure;
 	info: Record<FieldReference, FieldInfo>;
-	relationships?: RelationshipJSON[];
 }
 
 export interface SchemaSettings extends SchemaJSON {

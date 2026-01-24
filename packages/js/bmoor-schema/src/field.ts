@@ -9,33 +9,41 @@ import type {
 	FieldReference,
 	FieldType,
 } from './field.interface.ts';
-import type {ValidationJSON} from './validation.interface.ts';
+
+import type {
+	SchemaInterface
+} from './schema.interface.ts'
 
 // eslint-disable-next-line  @typescript-eslint/no-explicit-any
 export class Field<T = any> implements FieldInterface {
-	source: FieldJSON;
 	path: PathInterface<T>;
-	validation: ValidationJSON;
+	schema: SchemaInterface;
+	settings: FieldJSON;
 
-	constructor(schema: FieldJSON) {
-		this.path = new Path(schema.path);
-		this.source = schema;
+	constructor(schema: SchemaInterface, settings: FieldJSON) {
+		this.path = new Path(settings.path);
+		this.schema = schema;
+		this.settings = settings;
+	}
+
+	getSchema(): SchemaInterface {
+		return this.schema;
 	}
 
 	getReference(): FieldReference {
-		return this.source.ref || this.source.path;
+		return this.settings.ref || this.settings.path;
 	}
 
 	getType(): FieldType {
-		return this.source.info.type;
+		return this.settings.info.type;
 	}
 
 	getInfo(): FieldInfo {
-		return this.source.info;
+		return this.settings.info;
 	}
 
 	getPath(): string {
-		return this.source.path;
+		return this.settings.path;
 	}
 
 	getPathChain(): FieldPathLink[] {

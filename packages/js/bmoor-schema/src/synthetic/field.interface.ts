@@ -5,46 +5,59 @@ import {
 	PathObject,
 } from '@bmoor/path/src/path.interface.ts';
 
-import {RelationshipReference} from './relationship.interface.ts';
+import { FieldBaseInfo, FieldType, FieldJSON, FieldReference } from '../field.interface.ts';
+import { SchemaInterface, SchemaReference } from '../schema.interface.ts';
 
-export type FieldPath = string;
-export type FieldType = string;
-export type FieldReference = string;
+/****
+ * TODO: define three typed of fields
+ * ------
+ * mount: directly loads in an object of a different schema
+ * reference: loads in a field from a different schema
+ * computed: loads in fields from a different schema and does a calculation
+ *   - computed fields don't allow input, therefor no validation
+ ***/
 
-export enum FieldNeed {
-	required = 'required',
-	nullable = 'nullable',
-	optional = 'optional',
+export interface SyntheticFieldMountInfo extends FieldBaseInfo {
+	schema: SchemaInterface
 }
 
-export interface FieldBaseInfo {
-	need?: FieldNeed;
-	isMany?: boolean;
+export interface SyntheticFieldReferenceInfo extends FieldBaseInfo {
+	reference: FieldInterface;
 }
 
-export interface FieldGeneralInfo extends FieldBaseInfo {
-	primary?: boolean;
+export interface SyntheticFieldComputedInfo extends FieldBaseInfo {
 	type: FieldType;
+	arguments: FieldInterface[];
+	fn: (...args: any[]) => any;
 }
 
-export interface FieldAliasInfo extends FieldBaseInfo {
-	alias: FieldInterface;
+export type SyntheticFieldInfo = 
+	SyntheticFieldMountInfo | 
+	SyntheticFieldReferenceInfo | 
+	SyntheticFieldComputedInfo;
+
+export interface FieldReferenceJSON {
+	schema: SchemaReference,
+	field: FieldReference
 }
 
-// A mount should always be expected to be an array or object, probably
-// should validate
-export interface FieldMountInfo extends FieldBaseInfo {
-	mount: RelationshipReference;
-	type: FieldType;
+export interface SyntheticFieldMountJSON extends FieldJSON {
+	schema: SchemaReference
 }
 
-export type FieldInfo = FieldGeneralInfo | FieldAliasInfo | FieldMountInfo;
-
-export interface FieldJSON {
-	ref?: FieldReference;
-	path: FieldPath;
-	info: FieldInfo;
+export interface SyntheticFieldReferenceJSON extends FieldJSON {
+	reference: FieldReferenceJSON
 }
+
+export interface SyntheticFieldComputedJSON extends FieldJSON {
+	arguments: FieldReferenceJSON[];
+	fn: string // for now, how I'll encode
+}
+	
+export type SyntheticFieldJSON = 
+	SyntheticFieldMountJSON | 
+	SyntheticFieldReferenceJSON | 
+	SyntheticFieldComputedJSON;
 
 // eslint-disable-next-line
 export interface FieldPathObject extends PathObject {}

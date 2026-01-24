@@ -4,6 +4,7 @@ import {
 	PathLeaf,
 	PathObject,
 } from '@bmoor/path/src/path.interface.ts';
+import { SchemaInterface } from './schema.interface.ts';
 
 export type FieldPath = string;
 export type FieldType = string;
@@ -20,12 +21,12 @@ export interface FieldBaseInfo {
 	isMany?: boolean;
 }
 
-export interface FieldGeneralInfo extends FieldBaseInfo {
+export interface FieldCommonInfo extends FieldBaseInfo {
 	primary?: boolean;
 	type: FieldType;
 }
 
-export type FieldInfo = FieldGeneralInfo;
+export type FieldInfo = FieldCommonInfo;
 
 export interface FieldJSON {
 	ref?: FieldReference;
@@ -55,6 +56,7 @@ export interface FieldInterface<T = any> {
 	getPath(): string;
 	getType(): string;
 	getPathChain(): FieldPathLink[];
+	getSchema(): SchemaInterface;
 
 	read(root: DynamicObject<T>): T;
 	write(root: DynamicObject<T>, v: T);
